@@ -32,8 +32,9 @@ export function generateStaticParams() {
   return Object.keys(products).map((slug) => ({ slug }));
 }
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
-  const product = products[params.slug as keyof typeof products];
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = products[slug as keyof typeof products];
   if (!product) return notFound();
   const showAffiliateDisclosure = shouldShowAffiliateDisclosure({ linkUrls: product.outboundLinks });
 

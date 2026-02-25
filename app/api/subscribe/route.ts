@@ -26,9 +26,32 @@ export async function POST(request: Request) {
       const payload = {
         data: {
           type: "profile-subscription-bulk-create-job",
+          relationships: {
+            list: {
+              data: {
+                type: "list",
+                id: klaviyoListId
+              }
+            }
+          },
           attributes: {
-            list_id: klaviyoListId,
-            subscriptions: [{ email }]
+            profiles: {
+              data: [
+                {
+                  type: "profile",
+                  attributes: {
+                    email,
+                    subscriptions: {
+                      email: {
+                        marketing: {
+                          consent: "SUBSCRIBED"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
           }
         }
       };
@@ -46,9 +69,10 @@ export async function POST(request: Request) {
 
       if (!response.ok) {
         const text = await response.text();
-        console.error("Klaviyo error", text);
+        console.error("Klaviyo error", response.status, text);
       } else {
-        profileId = `pending:${email}`;
+        const body = (await response.json()) as { data?: { id?: string } };
+        profileId = body?.data?.id ? `job:${body.data.id}` : `pending:${email}`;
       }
     } catch (error) {
       console.error("Klaviyo request failed", error);

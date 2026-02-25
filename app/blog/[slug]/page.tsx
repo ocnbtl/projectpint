@@ -9,8 +9,9 @@ export function generateStaticParams() {
   return readBlogs().map((b) => ({ slug: b.Slug }));
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const blog = readBlogs().find((b) => b.Slug === params.slug);
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const blog = readBlogs().find((b) => b.Slug === slug);
   if (!blog) return notFound();
   const showAffiliateDisclosure = shouldShowAffiliateDisclosure({
     explicitFlag: blog.Affiliate_Disclosure_Required,

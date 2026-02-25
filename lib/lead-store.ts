@@ -1,6 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
 import { randomUUID } from "node:crypto";
+import { loadTab, saveTab } from "./store.ts";
 
 interface LeadInput {
   email: string;
@@ -14,8 +13,7 @@ interface LeadInput {
 }
 
 export function persistLead(input: LeadInput): void {
-  const p = path.join(process.cwd(), "data", "sheets", "Leads.json");
-  const rows = fs.existsSync(p) ? (JSON.parse(fs.readFileSync(p, "utf8")) as Record<string, unknown>[]) : [];
+  const rows = loadTab<Record<string, unknown>>("Leads");
 
   rows.push({
     Lead_ID: `LEAD-${randomUUID()}`,
@@ -30,6 +28,5 @@ export function persistLead(input: LeadInput): void {
     Consent_Text: input.consentText
   });
 
-  fs.mkdirSync(path.dirname(p), { recursive: true });
-  fs.writeFileSync(p, JSON.stringify(rows, null, 2));
+  saveTab("Leads", rows);
 }

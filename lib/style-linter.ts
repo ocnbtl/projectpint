@@ -4,6 +4,7 @@ export interface IcpAlignmentScore {
   matched_terms: string[];
   score: number;
 }
+type IcpId = IcpAlignmentScore["icp_id"];
 
 export interface StyleLintResult {
   target_id: string;
@@ -37,7 +38,7 @@ const BENEFIT_TERMS = [
   "more functional"
 ];
 
-const ICP_TERMS: Record<string, { label: string; terms: string[] }> = {
+const ICP_TERMS: Record<IcpId, { label: string; terms: string[] }> = {
   "ICP-1": {
     label: "Constraint-First Renter",
     terms: ["renter", "deposit", "no-drill", "reversible", "landlord", "temporary", "damage"]
@@ -74,7 +75,7 @@ export function lintEditorialStyle(targetId: string, targetType: "blog" | "micro
     suggestions.push("Address the reader directly using second-person language.");
   }
 
-  const icpAlignment: IcpAlignmentScore[] = (Object.keys(ICP_TERMS) as Array<keyof typeof ICP_TERMS>).map((icpId) => {
+  const icpAlignment: IcpAlignmentScore[] = (Object.keys(ICP_TERMS) as IcpId[]).map((icpId) => {
     const matched = ICP_TERMS[icpId].terms.filter((term) => lower.includes(term));
     const score = Math.min(100, Math.round((matched.length / ICP_TERMS[icpId].terms.length) * 100));
     return {

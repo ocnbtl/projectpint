@@ -7,8 +7,9 @@ export function generateStaticParams() {
   return hubs.map((hub) => ({ slug: hub.slug }));
 }
 
-export default function HubPage({ params }: { params: { slug: string } }) {
-  const hub = hubs.find((h) => h.slug === params.slug);
+export default async function HubPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const hub = hubs.find((h) => h.slug === slug);
   if (!hub) return notFound();
 
   return (
