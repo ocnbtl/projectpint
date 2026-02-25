@@ -37,7 +37,7 @@ export default function PlantPickerPage() {
           </label>
           <input type="hidden" name="sourceUrl" value="/lead-magnets/plant-picker" />
           <input type="hidden" name="pillarInterest" value="PlantsBiophilic" />
-          <input type="hidden" name="consentText" value="I agree to receive Ranosa Decor emails and plant picker follow-ups. I can unsubscribe anytime." />
+          <input type="hidden" name="consentText" value="I agree to receive Diyesu Decor emails and plant picker follow-ups. I can unsubscribe anytime." />
           <button style={{ marginTop: 10 }}>Get my plant picks</button>
           <ConsentNote />
         </form>

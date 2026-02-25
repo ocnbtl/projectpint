@@ -7,7 +7,7 @@ export default function HomePage() {
   return (
     <SiteShell>
       <section className="banner">
-        <h1>Ranosa Decor: DIY Bathroom Upgrades</h1>
+        <h1>Diyesu Decor: DIY Bathroom Upgrades</h1>
         <p>Faceless, practical systems that turn small bathrooms into calmer, better-functioning spaces.</p>
         <p>
           <Link href="/start-here" style={{ color: "#fef08a", fontWeight: 700 }}>
@@ -42,7 +42,7 @@ export default function HomePage() {
             <input name="email" type="email" required style={{ width: "100%", padding: 8, marginTop: 4 }} />
           </label>
           <input type="hidden" name="sourceUrl" value="/" />
-          <input type="hidden" name="consentText" value="I agree to receive Ranosa Decor emails and understand I can unsubscribe anytime." />
+          <input type="hidden" name="consentText" value="I agree to receive Diyesu Decor emails and understand I can unsubscribe anytime." />
           <button style={{ marginTop: 8 }}>Subscribe</button>
           <ConsentNote />
         </form>

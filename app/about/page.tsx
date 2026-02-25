@@ -4,10 +4,10 @@ export default function AboutPage() {
   return (
     <SiteShell>
       <div className="card">
-        <h1>About Ranosa Decor</h1>
+        <h1>About Diyesu Decor</h1>
         <p>Tagline: DIY Bathroom Upgrades</p>
         <p>
-          Ranosa Decor publishes practical, renter-aware bathroom improvement systems for budget-first households.
+          Diyesu Decor publishes practical, renter-aware bathroom improvement systems for budget-first households.
           Content focuses on small-space function, low-cost style, and decision frameworks that reduce guesswork.
         </p>
         <p>

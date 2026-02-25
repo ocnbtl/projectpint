@@ -20,7 +20,7 @@ export function writePinsExportCsv(maxPins = 200): void {
     "Media URL": `https://drive.google.com/mock/${pin.Content_ID}.png`,
     "Pin URL": `https://projectpint.example.com${pin.UTM_URL}`,
     Description: pin.Description_With_Hashtags,
-    Board: `Ranosa Decor ${pin.Pillar}`,
+    Board: `Diyesu Decor ${pin.Pillar}`,
     "Publish date": pin.Scheduled_At || ""
   }));
 

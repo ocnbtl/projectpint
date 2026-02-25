@@ -15,6 +15,11 @@
 - Edit `.env.local`:
   - `ADMIN_PASSWORD` (required)
   - `KLAVIYO_PRIVATE_API_KEY` and `KLAVIYO_LIST_ID` (optional for live list sync)
+  - `NEXT_PUBLIC_SITE_URL=https://diyesu.com` (for production canonical URLs)
+
+Brand account setup targets:
+- Website: `diyesu.com`
+- Social handle priority: `@diyesu`, fallback `@diyesudecor`
 
 ## 5) Generate Week 1 baseline
 Run in order:

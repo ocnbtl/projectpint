@@ -1,8 +1,10 @@
 # Project Pint (`projectpint`)
 
 Internal codename: **Project Pint**
-Public brand: **Ranosa Decor**
+Public brand: **Diyesu Decor**
 Tagline: **DIY Bathroom Upgrades**
+Website (planned): **https://diyesu.com**
+Social handles (planned): **@diyesu** (preferred), **@diyesudecor** (fallback)
 
 Flow: **Pinterest -> Next.js site -> Klaviyo signup -> monetization (ads + affiliate + digital products)**
 

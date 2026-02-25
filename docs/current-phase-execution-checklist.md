@@ -35,8 +35,12 @@ This checklist covers the immediate execution phase after repo setup: credential
 
 6. Add remaining env vars in local `.env`.
 - `ADMIN_PASSWORD=<strong_password>`
-- `NEXT_PUBLIC_SITE_URL=<your_domain_or_vercel_url>`
+- `NEXT_PUBLIC_SITE_URL=https://diyesu.com` (or temporary Vercel URL until domain points live)
 - plus Klaviyo vars from step 5.
+
+Brand account handles to reserve:
+- Preferred: `@diyesu`
+- Fallback: `@diyesudecor`
 
 7. Add same env vars in Vercel project settings.
 - Vercel -> Project -> Settings -> Environment Variables.

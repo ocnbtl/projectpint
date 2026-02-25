@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata = {
-  title: "Ranosa Decor | DIY Bathroom Upgrades",
+  title: "Diyesu Decor | DIY Bathroom Upgrades",
   description: "Renter-friendly bathroom DIY systems for budget-first households"
 };
 

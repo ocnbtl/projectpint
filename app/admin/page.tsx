@@ -31,7 +31,7 @@ export default function AdminPage() {
     <main className="container">
       <div className="card">
         <h1>Project Pint Admin Dashboard (V2 Scaffold)</h1>
-        <p>Public brand: Ranosa Decor (DIY Bathroom Upgrades).</p>
+        <p>Public brand: Diyesu Decor (DIY Bathroom Upgrades).</p>
         <p>Assisted mode active: human approval required for publish and pin export.</p>
         <p>
           API endpoints: <code>/api/admin/sheets/[tab]</code> (GET/POST, authenticated).

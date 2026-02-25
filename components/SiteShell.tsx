@@ -7,7 +7,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
     <div>
       <header className="container">
         <div className="card" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Link href="/" style={{ fontWeight: 700 }}>Ranosa Decor</Link>
+          <Link href="/" style={{ fontWeight: 700 }}>Diyesu Decor</Link>
           <nav style={{ display: "flex", gap: 14 }}>
             <Link href="/start-here">Start Here</Link>
             <Link href="/hub/renter-friendly-upgrades">Hubs</Link>
@@ -25,7 +25,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       </div>
       <footer className="container">
         <div className="card small">
-          <p>Ranosa Decor | DIY Bathroom Upgrades</p>
+          <p>Diyesu Decor | DIY Bathroom Upgrades</p>
           <p>
             Disclosure: Some links may be affiliate links. We may earn a commission at no extra cost to you.
           </p>
