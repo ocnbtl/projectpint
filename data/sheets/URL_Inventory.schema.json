@@ -1,0 +1,14 @@
+{
+  "tab": "URL_Inventory",
+  "headers": [
+    "URL_ID",
+    "URL",
+    "Type",
+    "Pillar",
+    "Status",
+    "Last_Posted_At",
+    "Cooldown_Hours",
+    "Destination_Intent_Default",
+    "Priority"
+  ]
+}

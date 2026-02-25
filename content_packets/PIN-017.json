@@ -1,0 +1,36 @@
+{
+  "Content_ID": "PIN-017",
+  "Created_At": "2026-02-23T09:30:18.839Z",
+  "Status": "draft",
+  "Hook_Class": "BudgetBreakdown",
+  "Destination_Intent": "Teach",
+  "Pillar": "Styling",
+  "Topic": "styling-budgetbreakdown-17",
+  "Destination_URL": "/micro/no-drill-art-layout-guide",
+  "Title": "BudgetBreakdown for Styling: renter-safe update under $75",
+  "Caption_1": "You want personality without making the room feel busier. This BudgetBreakdown plan stays under $75.",
+  "Caption_2": "You get a bathroom that looks intentional, not expensive. Use one color rule and one texture layer for instant cohesion.",
+  "Caption_3": "Use this exact checklist.",
+  "Description_With_Hashtags": "You want personality without making the room feel busier. This BudgetBreakdown plan stays under $75. You get a bathroom that looks intentional, not expensive. Use one color rule and one texture layer for instant cohesion. Use this exact checklist. #bathroomdiy #rentersafe #budgetdecor #bathroomstyling #colorformula #maximalistdecor #budgetbreakdown",
+  "Overlay_1": "BudgetBreakdown under $75",
+  "Overlay_2": "Renter-safe path",
+  "Has_Text_Overlay": true,
+  "Primary_CTA": "Use this exact checklist",
+  "Visual_Preset": "tiny_bathroom_scene_v1",
+  "Image_Prompt": "AI-generated bathroom scene, no people, no logos, Styling styling, matte tile textures, soft daylight, clean composition with text safe area",
+  "UTM_URL": "/micro/no-drill-art-layout-guide?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-017_budgetbreakdown_teach",
+  "Quality_Score": 92,
+  "Quality_Flags": [
+    "non_blocking:benefit_framing_weak"
+  ],
+  "AutoFixSuggestions": [
+    "Add one clear reader benefit (example: saves time, reduces clutter, calmer routine)."
+  ],
+  "Hook_Class_Uniqueness_Flag": true,
+  "Intent_Balance_Flag": true,
+  "Visual_Risk_Flags": [],
+  "Naturalness_Flag": true,
+  "Human_Approved": false,
+  "Scheduled_At": "",
+  "Posted_At": ""
+}

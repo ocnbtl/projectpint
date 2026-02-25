@@ -1,0 +1,20 @@
+{
+  "tab": "Blog_Posts",
+  "headers": [
+    "Blog_ID",
+    "Slug",
+    "Title",
+    "Pillar",
+    "Keyword_Target",
+    "Outline",
+    "Draft_Markdown",
+    "Internal_Links",
+    "CTA_Block",
+    "Status",
+    "Human_Approved",
+    "Published_At",
+    "Ad_Enabled",
+    "Contains_Affiliate_Links",
+    "Affiliate_Disclosure_Required"
+  ]
+}

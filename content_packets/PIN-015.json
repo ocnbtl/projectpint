@@ -1,0 +1,36 @@
+{
+  "Content_ID": "PIN-015",
+  "Created_At": "2026-02-23T09:30:18.839Z",
+  "Status": "draft",
+  "Hook_Class": "MistakesToAvoid",
+  "Destination_Intent": "Subscribe",
+  "Pillar": "SmallSpace",
+  "Topic": "smallspace-mistakestoavoid-15",
+  "Destination_URL": "/blog/budget-maximalist-bathroom-color-map",
+  "Title": "MistakesToAvoid for SmallSpace: renter-safe update under $225",
+  "Caption_1": "Tiny layouts make daily routines feel cramped and frustrating. This MistakesToAvoid plan stays under $225.",
+  "Caption_2": "You get smoother movement and less visual stress in tight spaces. Re-route one clutter point and create one clear landing zone.",
+  "Caption_3": "Send me the free guide.",
+  "Description_With_Hashtags": "Tiny layouts make daily routines feel cramped and frustrating. This MistakesToAvoid plan stays under $225. You get smoother movement and less visual stress in tight spaces. Re-route one clutter point and create one clear landing zone. Send me the free guide. #bathroomdiy #rentersafe #budgetdecor #smallbathroom #smallspacehacks #tinybathroom #mistakestoavoid",
+  "Overlay_1": "MistakesToAvoid under $225",
+  "Overlay_2": "Renter-safe path",
+  "Has_Text_Overlay": true,
+  "Primary_CTA": "Send me the free guide",
+  "Visual_Preset": "tiny_bathroom_scene_v1",
+  "Image_Prompt": "AI-generated bathroom scene, no people, no logos, SmallSpace styling, matte tile textures, soft daylight, clean composition with text safe area",
+  "UTM_URL": "/blog/budget-maximalist-bathroom-color-map?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-015_mistakestoavoid_subscribe",
+  "Quality_Score": 92,
+  "Quality_Flags": [
+    "non_blocking:benefit_framing_weak"
+  ],
+  "AutoFixSuggestions": [
+    "Add one clear reader benefit (example: saves time, reduces clutter, calmer routine)."
+  ],
+  "Hook_Class_Uniqueness_Flag": true,
+  "Intent_Balance_Flag": true,
+  "Visual_Risk_Flags": [],
+  "Naturalness_Flag": true,
+  "Human_Approved": false,
+  "Scheduled_At": "",
+  "Posted_At": ""
+}

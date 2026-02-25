@@ -1,0 +1,41 @@
+[
+  {
+    "Product_ID": "PROD-001",
+    "Name": "Renter Bathroom Upgrade Blueprint",
+    "Type": "paid",
+    "Status": "approved",
+    "Price_USD": "29",
+    "Segment": "renter,budget,small_space",
+    "Problem_Solved": "Choose-path system for no-drill/drill-allowed upgrades by budget tier and style",
+    "Landing_URL": "/products/renter-bathroom-upgrade-blueprint",
+    "Email_Flow_Status": "draft",
+    "Supporting_Content_Status": "planned",
+    "Last_Updated": "2026-02-23T09:30:18.839Z"
+  },
+  {
+    "Product_ID": "PROD-002",
+    "Name": "Bathroom Plant Picks (Free Lead Magnet)",
+    "Type": "lead_magnet",
+    "Status": "approved",
+    "Price_USD": "0",
+    "Segment": "plants,small_space,renter",
+    "Problem_Solved": "Constraint-based plant matches + placement guidance",
+    "Landing_URL": "/lead-magnets/plant-picker",
+    "Email_Flow_Status": "draft",
+    "Supporting_Content_Status": "planned",
+    "Last_Updated": "2026-02-23T09:30:18.839Z"
+  },
+  {
+    "Product_ID": "PROD-003",
+    "Name": "Bathroom Plant Picks Expanded Guide",
+    "Type": "upgrade",
+    "Status": "approved",
+    "Price_USD": "19",
+    "Segment": "plants,small_space,renter",
+    "Problem_Solved": "Expanded decision trees, placement maps, care cheat sheets",
+    "Landing_URL": "/products/bathroom-plant-picks-upgrade",
+    "Email_Flow_Status": "draft",
+    "Supporting_Content_Status": "planned",
+    "Last_Updated": "2026-02-23T09:30:18.839Z"
+  }
+]

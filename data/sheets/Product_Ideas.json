@@ -1,0 +1,54 @@
+[
+  {
+    "Idea_ID": "IDEA-001",
+    "Month": "2026-02",
+    "Name": "7-Day Bathroom Reset Challenge Kit",
+    "Segment": "renter,budget",
+    "Evidence": "Pinned for later backlog concept",
+    "Differentiation": "Daily checklist + planner + printable reset map",
+    "MVP_Scope": "1-week email flow + printable workbook",
+    "Pricing_Hypothesis": "$12",
+    "Upsell_Path": "Renter Bathroom Upgrade Blueprint",
+    "Recommended": "no",
+    "Human_Approved": false
+  },
+  {
+    "Idea_ID": "IDEA-002",
+    "Month": "2026-02",
+    "Name": "Peel & Stick Bathroom Master Guide",
+    "Segment": "renter,styling",
+    "Evidence": "Backlog concept",
+    "Differentiation": "Material chooser + cut templates + cleaning prep matrix",
+    "MVP_Scope": "Guide PDF + decision chart",
+    "Pricing_Hypothesis": "$17",
+    "Upsell_Path": "Blueprint",
+    "Recommended": "no",
+    "Human_Approved": false
+  },
+  {
+    "Idea_ID": "IDEA-003",
+    "Month": "2026-02",
+    "Name": "Budget Maximalist Bathroom Pack",
+    "Segment": "styling,budget",
+    "Evidence": "Backlog concept",
+    "Differentiation": "Palette recipes + accessory map + anti-clutter guardrails",
+    "MVP_Scope": "Template pack + examples",
+    "Pricing_Hypothesis": "$21",
+    "Upsell_Path": "Plant Picks Upgrade",
+    "Recommended": "no",
+    "Human_Approved": false
+  },
+  {
+    "Idea_ID": "IDEA-004",
+    "Month": "2026-02",
+    "Name": "Seasonal Bathroom Refresh Bundles",
+    "Segment": "styling,plants",
+    "Evidence": "Backlog concept",
+    "Differentiation": "Seasonal swap checklist + humidity-safe decor picks",
+    "MVP_Scope": "Quarterly bundle templates",
+    "Pricing_Hypothesis": "$15",
+    "Upsell_Path": "Blueprint",
+    "Recommended": "no",
+    "Human_Approved": false
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "Entry_ID": "GOV-001",
+    "Timestamp": "2026-02-23T09:30:18.847Z",
+    "Version": "1.0.0",
+    "Section": "bootstrap",
+    "Change_Summary": "Initialized Content Bible v1 mirror",
+    "Reason": "Phase 1 setup",
+    "Approved_By": "human_pending",
+    "Content_Bible_Snapshot": "data/generated/content-bible.v1.mirror.json"
+  }
+]

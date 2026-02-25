@@ -1,0 +1,31 @@
+{
+  "Content_ID": "PIN-016",
+  "Created_At": "2026-02-22T10:12:05.913Z",
+  "Status": "draft",
+  "Hook_Class": "QuickWin",
+  "Destination_Intent": "Inspire",
+  "Pillar": "StorageOrganization",
+  "Topic": "storageorganization-quickwin-16",
+  "Destination_URL": "/blog/humidity-friendly-bathroom-plants",
+  "Title": "QuickWin for StorageOrganization: renter-safe update under $300",
+  "Caption_1": "Try this StorageOrganization fix in a small bathroom for under $300.",
+  "Caption_2": "Renter-safe order of operations plus tools list and cost cap.",
+  "Caption_3": "Save this plan and choose the no-drill or drill-allowed path.",
+  "Overlay_1": "QuickWin in 15 minutes",
+  "Overlay_2": "Renter-safe budget plan",
+  "Image_Prompt": "AI-generated bathroom scene, no people, no logos, StorageOrganization styling, matte tile textures, soft daylight, clean composition with text safe area",
+  "UTM_URL": "/blog/humidity-friendly-bathroom-plants?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-016_quickwin_inspire",
+  "Quality_Score": 90,
+  "Quality_Flags": [],
+  "AutoFixSuggestions": [
+    "Remove visual risk term \"logo\" from prompt."
+  ],
+  "Hook_Class_Uniqueness_Flag": true,
+  "Intent_Balance_Flag": true,
+  "Visual_Risk_Flags": [
+    "prompt_risk:logo"
+  ],
+  "Human_Approved": false,
+  "Scheduled_At": "",
+  "Posted_At": ""
+}

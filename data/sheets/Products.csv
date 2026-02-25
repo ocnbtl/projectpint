@@ -1,0 +1,4 @@
+Product_ID,Name,Type,Status,Price_USD,Segment,Problem_Solved,Landing_URL,Email_Flow_Status,Supporting_Content_Status,Last_Updated
+PROD-001,Renter Bathroom Upgrade Blueprint,paid,approved,29,"renter,budget,small_space",Choose-path system for no-drill/drill-allowed upgrades by budget tier and style,/products/renter-bathroom-upgrade-blueprint,draft,planned,2026-02-23T09:30:18.839Z
+PROD-002,Bathroom Plant Picks (Free Lead Magnet),lead_magnet,approved,0,"plants,small_space,renter",Constraint-based plant matches + placement guidance,/lead-magnets/plant-picker,draft,planned,2026-02-23T09:30:18.839Z
+PROD-003,Bathroom Plant Picks Expanded Guide,upgrade,approved,19,"plants,small_space,renter","Expanded decision trees, placement maps, care cheat sheets",/products/bathroom-plant-picks-upgrade,draft,planned,2026-02-23T09:30:18.839Z

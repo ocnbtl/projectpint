@@ -1,0 +1,36 @@
+{
+  "Content_ID": "PIN-008",
+  "Created_At": "2026-02-23T09:30:18.839Z",
+  "Status": "draft",
+  "Hook_Class": "PlantPicker",
+  "Destination_Intent": "Solve",
+  "Pillar": "BudgetDIY",
+  "Topic": "budgetdiy-plantpicker-8",
+  "Destination_URL": "/lead-magnets/plant-picker",
+  "Title": "PlantPicker for BudgetDIY: renter-safe update under $300",
+  "Caption_1": "You want visible change but every home project feels expensive. This PlantPicker plan stays under $300.",
+  "Caption_2": "You get high-impact updates without blowing your monthly budget. Use one anchor fix plus one support layer under a hard budget cap.",
+  "Caption_3": "Choose your best-fit path.",
+  "Description_With_Hashtags": "You want visible change but every home project feels expensive. This PlantPicker plan stays under $300. You get high-impact updates without blowing your monthly budget. Use one anchor fix plus one support layer under a hard budget cap. Choose your best-fit path. #bathroomdiy #rentersafe #budgetdecor #budgetdiy #cheapdecor #diyhomeprojects #plantpicker",
+  "Overlay_1": "PlantPicker under $300",
+  "Overlay_2": "Renter-safe path",
+  "Has_Text_Overlay": true,
+  "Primary_CTA": "Choose your best-fit path",
+  "Visual_Preset": "bathroom_flatlay_v1",
+  "Image_Prompt": "AI-generated bathroom scene, no people, no logos, BudgetDIY styling, matte tile textures, soft daylight, clean composition with text safe area",
+  "UTM_URL": "/lead-magnets/plant-picker?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-008_plantpicker_solve",
+  "Quality_Score": 92,
+  "Quality_Flags": [
+    "non_blocking:benefit_framing_weak"
+  ],
+  "AutoFixSuggestions": [
+    "Add one clear reader benefit (example: saves time, reduces clutter, calmer routine)."
+  ],
+  "Hook_Class_Uniqueness_Flag": true,
+  "Intent_Balance_Flag": true,
+  "Visual_Risk_Flags": [],
+  "Naturalness_Flag": true,
+  "Human_Approved": false,
+  "Scheduled_At": "",
+  "Posted_At": ""
+}

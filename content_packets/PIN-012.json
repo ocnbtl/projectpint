@@ -1,0 +1,36 @@
+{
+  "Content_ID": "PIN-012",
+  "Created_At": "2026-02-23T09:30:18.839Z",
+  "Status": "draft",
+  "Hook_Class": "MythBuster",
+  "Destination_Intent": "Teach",
+  "Pillar": "PlantsBiophilic",
+  "Topic": "plantsbiophilic-mythbuster-12",
+  "Destination_URL": "/blog/15-dollar-bathroom-upgrades",
+  "Title": "MythBuster for PlantsBiophilic: renter-safe update under $300",
+  "Caption_1": "Plants die quickly in low-light, humid bathrooms. This MythBuster plan stays under $300.",
+  "Caption_2": "You get greenery that actually survives and softens the space. Match plants to light + humidity constraints before styling.",
+  "Caption_3": "See the full instructions.",
+  "Description_With_Hashtags": "Plants die quickly in low-light, humid bathrooms. This MythBuster plan stays under $300. You get greenery that actually survives and softens the space. Match plants to light + humidity constraints before styling. See the full instructions. #bathroomdiy #rentersafe #budgetdecor #bathroomplants #biophilicdesign #plantstyling #mythbuster",
+  "Overlay_1": "MythBuster under $300",
+  "Overlay_2": "Renter-safe path",
+  "Has_Text_Overlay": true,
+  "Primary_CTA": "See the full instructions",
+  "Visual_Preset": "bathroom_flatlay_v1",
+  "Image_Prompt": "AI-generated bathroom scene, no people, no logos, PlantsBiophilic styling, matte tile textures, soft daylight, clean composition with text safe area",
+  "UTM_URL": "/blog/15-dollar-bathroom-upgrades?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-012_mythbuster_teach",
+  "Quality_Score": 92,
+  "Quality_Flags": [
+    "non_blocking:benefit_framing_weak"
+  ],
+  "AutoFixSuggestions": [
+    "Add one clear reader benefit (example: saves time, reduces clutter, calmer routine)."
+  ],
+  "Hook_Class_Uniqueness_Flag": true,
+  "Intent_Balance_Flag": true,
+  "Visual_Risk_Flags": [],
+  "Naturalness_Flag": true,
+  "Human_Approved": false,
+  "Scheduled_At": "",
+  "Posted_At": ""
+}

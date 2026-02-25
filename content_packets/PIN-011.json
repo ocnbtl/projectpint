@@ -1,0 +1,36 @@
+{
+  "Content_ID": "PIN-011",
+  "Created_At": "2026-02-23T09:30:18.839Z",
+  "Status": "draft",
+  "Hook_Class": "StylingFormula",
+  "Destination_Intent": "Inspire",
+  "Pillar": "Styling",
+  "Topic": "styling-stylingformula-11",
+  "Destination_URL": "/blog/no-drill-towel-storage-renters",
+  "Title": "StylingFormula for Styling: renter-safe update under $225",
+  "Caption_1": "You want personality without making the room feel busier. This StylingFormula plan stays under $225.",
+  "Caption_2": "You get a bathroom that looks intentional, not expensive. Use one color rule and one texture layer for instant cohesion.",
+  "Caption_3": "Click for the full setup.",
+  "Description_With_Hashtags": "You want personality without making the room feel busier. This StylingFormula plan stays under $225. You get a bathroom that looks intentional, not expensive. Use one color rule and one texture layer for instant cohesion. Click for the full setup. #bathroomdiy #rentersafe #budgetdecor #bathroomstyling #colorformula #maximalistdecor #stylingformula",
+  "Overlay_1": "StylingFormula under $225",
+  "Overlay_2": "Renter-safe path",
+  "Has_Text_Overlay": true,
+  "Primary_CTA": "Click for the full setup",
+  "Visual_Preset": "tiny_bathroom_scene_v1",
+  "Image_Prompt": "AI-generated bathroom scene, no people, no logos, Styling styling, matte tile textures, soft daylight, clean composition with text safe area",
+  "UTM_URL": "/blog/no-drill-towel-storage-renters?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-011_stylingformula_inspire",
+  "Quality_Score": 92,
+  "Quality_Flags": [
+    "non_blocking:benefit_framing_weak"
+  ],
+  "AutoFixSuggestions": [
+    "Add one clear reader benefit (example: saves time, reduces clutter, calmer routine)."
+  ],
+  "Hook_Class_Uniqueness_Flag": true,
+  "Intent_Balance_Flag": true,
+  "Visual_Risk_Flags": [],
+  "Naturalness_Flag": true,
+  "Human_Approved": false,
+  "Scheduled_At": "",
+  "Posted_At": ""
+}

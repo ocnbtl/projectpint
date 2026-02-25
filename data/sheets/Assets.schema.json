@@ -1,0 +1,14 @@
+{
+  "tab": "Assets",
+  "headers": [
+    "Asset_ID",
+    "Type",
+    "Drive_URL",
+    "Local_Path",
+    "Prompt_Preset",
+    "Prompt_Text",
+    "Status",
+    "Linked_Content_ID",
+    "Quality_Notes"
+  ]
+}

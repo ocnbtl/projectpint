@@ -1,0 +1,16 @@
+{
+  "tab": "Product_Ideas",
+  "headers": [
+    "Idea_ID",
+    "Month",
+    "Name",
+    "Segment",
+    "Evidence",
+    "Differentiation",
+    "MVP_Scope",
+    "Pricing_Hypothesis",
+    "Upsell_Path",
+    "Recommended",
+    "Human_Approved"
+  ]
+}

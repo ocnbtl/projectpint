@@ -1,0 +1,16 @@
+[
+  {
+    "Experiment_ID": "EXP-AUTO-001",
+    "Hypothesis": "StepByStepHowTo will outperform Checklist on outbound clicks.",
+    "Primary_Metric": "Outbound_Clicks / Impressions",
+    "Success_Threshold": "+12%",
+    "Status": "proposed"
+  },
+  {
+    "Experiment_ID": "EXP-AUTO-002",
+    "Hypothesis": "Solve intent will beat Inspire for signup rate.",
+    "Primary_Metric": "Signup_Events / Outbound_Clicks",
+    "Success_Threshold": "+10%",
+    "Status": "proposed"
+  }
+]

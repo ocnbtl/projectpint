@@ -1,0 +1,36 @@
+{
+  "Content_ID": "PIN-009",
+  "Created_At": "2026-02-23T09:30:18.839Z",
+  "Status": "draft",
+  "Hook_Class": "RenterHack",
+  "Destination_Intent": "Shop",
+  "Pillar": "SmallSpace",
+  "Topic": "smallspace-renterhack-9",
+  "Destination_URL": "/products/renter-bathroom-upgrade-blueprint",
+  "Title": "RenterHack for SmallSpace: renter-safe update under $75",
+  "Caption_1": "Tiny layouts make daily routines feel cramped and frustrating. This RenterHack plan stays under $75.",
+  "Caption_2": "You get smoother movement and less visual stress in tight spaces. Re-route one clutter point and create one clear landing zone.",
+  "Caption_3": "Shop the under-$150 tier.",
+  "Description_With_Hashtags": "Tiny layouts make daily routines feel cramped and frustrating. This RenterHack plan stays under $75. You get smoother movement and less visual stress in tight spaces. Re-route one clutter point and create one clear landing zone. Shop the under-$150 tier. #bathroomdiy #rentersafe #budgetdecor #smallbathroom #smallspacehacks #tinybathroom #renterhack",
+  "Overlay_1": "RenterHack under $75",
+  "Overlay_2": "Renter-safe path",
+  "Has_Text_Overlay": true,
+  "Primary_CTA": "Shop the under-$150 tier",
+  "Visual_Preset": "tiny_bathroom_scene_v1",
+  "Image_Prompt": "AI-generated bathroom scene, no people, no logos, SmallSpace styling, matte tile textures, soft daylight, clean composition with text safe area",
+  "UTM_URL": "/products/renter-bathroom-upgrade-blueprint?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-009_renterhack_shop",
+  "Quality_Score": 92,
+  "Quality_Flags": [
+    "non_blocking:benefit_framing_weak"
+  ],
+  "AutoFixSuggestions": [
+    "Add one clear reader benefit (example: saves time, reduces clutter, calmer routine)."
+  ],
+  "Hook_Class_Uniqueness_Flag": true,
+  "Intent_Balance_Flag": true,
+  "Visual_Risk_Flags": [],
+  "Naturalness_Flag": true,
+  "Human_Approved": false,
+  "Scheduled_At": "",
+  "Posted_At": ""
+}

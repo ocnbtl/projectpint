@@ -1,0 +1,423 @@
+version: "1.1.0"
+brand:
+  internal_project_name: "Project Pint"
+  public_brand_name: "Ranosa Decor"
+  tagline: "DIY Bathroom Upgrades"
+  niche: "faceless bathroom decor + renter-safe diy + small-space renovation"
+  mission: "Help budget-first households create bathrooms that feel calm, functional, and stylish without expensive remodels."
+
+audience:
+  income_band: "middle_low"
+  broad_segments:
+    renter_budget_reset:
+      description: "Renters needing reversible, low-risk upgrades with landlord-safe installation."
+      core_constraints: ["no-drill preference", "tight budget", "small bathrooms", "time-poor routines"]
+    starter_home_budget_renovators:
+      description: "First-time homeowners with limited cashflow who prioritize practical visual wins over full remodels."
+      core_constraints: ["staggered budgets", "basic tool confidence", "needs clear order-of-ops"]
+    tiny_space_organizers:
+      description: "Households in compact bathrooms seeking storage flow and clutter control before styling."
+      core_constraints: ["limited vertical space", "counter crowding", "daily routine friction"]
+    style_driven_budget_creatives:
+      description: "Users wanting personality-rich bathroom style (including maximalist looks) at low spend."
+      core_constraints: ["trend interest", "budget cap", "avoid visual clutter"]
+    plant_forward_biophilic_users:
+      description: "Users seeking humidity-tolerant plant styling that survives low-light bathrooms."
+      core_constraints: ["inconsistent light", "humidity swings", "pet/child safety"]
+
+  icp_profiles:
+    - id: "ICP-1"
+      name: "Constraint-First Renter"
+      fit_reason: "Highest conversion likelihood for renter-safe systems and no-drill templates."
+      demographics:
+        age_range: "24-39"
+        housing: "apartment rental"
+        budget_band: "<$150 monthly home refresh"
+      buying_motives: ["avoid deposit risk", "get quick visible change", "reduce morning routine chaos"]
+      trust_triggers: ["exact budget tiers", "tool/time estimates", "before/after with constraints"]
+      likely_converts_to: ["Renter Bathroom Upgrade Blueprint", "Plant Picks free lead magnet"]
+
+    - id: "ICP-2"
+      name: "Small-Space Systems Optimizer"
+      fit_reason: "Strong response to Solve + Teach intent content and high repeat usage of checklists/maps."
+      demographics:
+        age_range: "28-47"
+        housing: "rental or starter home"
+        budget_band: "$75-$300 per project"
+      buying_motives: ["declutter fast", "improve storage flow", "reduce cleaning burden"]
+      trust_triggers: ["layout maps", "zone plans", "step-by-step workflows"]
+      likely_converts_to: ["Blueprint", "future storage map products"]
+
+    - id: "ICP-3"
+      name: "Style-Forward Budget Decorator"
+      fit_reason: "High save/share behavior on Pinterest and likely to buy templates that reduce style decision fatigue."
+      demographics:
+        age_range: "22-38"
+        housing: "renter-heavy, urban/suburban"
+        budget_band: "<$300 quarterly refresh"
+      buying_motives: ["personal style expression", "photo-ready bathroom", "cheap maximalist look"]
+      trust_triggers: ["color formulas", "shopping checklists", "clear do/don't rules"]
+      likely_converts_to: ["Blueprint", "Plant Picks paid upgrade", "future styling packs"]
+
+voice:
+  tone: ["practical", "specific", "non-judgmental", "budget-first", "constraint-aware"]
+  banned_phrases:
+    - "game changer"
+    - "luxury look for less"
+    - "perfect for everyone"
+    - "effortless transformation"
+  quality_gate:
+    naturalness_checks:
+      - "Read copy aloud test: sentence rhythm should sound conversational, not ad-scripted."
+      - "Avoid stacked hype adjectives in one sentence (e.g., amazing, stunning, incredible)."
+      - "Limit exclamation marks to <=1 per 150 words."
+    sales_pressure_checks:
+      - "No false urgency without evidence (e.g., last chance, don't miss out)."
+      - "No guarantee language for outcomes, savings, or speed."
+  content_specificity_requirements:
+    purpose: "Applies to posts/pages/pins, not audience identification."
+    required_elements:
+      - "State concrete budget ranges (at least one numeric amount)."
+      - "State renter or install constraint explicitly (no-drill/drill/landlord-safe)."
+      - "State tool + time expectation when process is instructional."
+      - "State one realistic tradeoff (cost vs time, look vs durability, etc.)."
+
+editorial_style:
+  objective: "Sound like a practical friend who has tested budget bathroom fixes, not a hard seller."
+  style_signals_from_reference_blogs:
+    - "Open with a relatable pain moment, then offer a realistic weekend path."
+    - "Use short sections and numbered idea blocks for scanability."
+    - "Blend style and function; do not treat decor as separate from daily routine."
+    - "Use budget and effort framing (time, tools, renter risk)."
+    - "Keep recommendations grounded and non-hyped."
+  icp_language_rules:
+    constraint_first_renter:
+      must_echo: ["deposit-safe", "no-drill option", "reversible", "landlord-safe"]
+      avoid: ["full remodel assumptions", "permanent contractor framing"]
+    small_space_systems_optimizer:
+      must_echo: ["daily flow", "counter reset", "zone mapping", "time savings"]
+      avoid: ["purely aesthetic framing with no routine benefit"]
+    style_forward_budget_decorator:
+      must_echo: ["personality without clutter", "budget styling recipe", "high impact with low spend"]
+      avoid: ["luxury status language", "expensive shopping pressure"]
+  linking_style:
+    rules:
+      - "Use 1-2 contextual internal links where they help the reader's next step."
+      - "Avoid abrupt product pitching blocks."
+      - "Product mentions should be optional, low-pressure, and end-weighted."
+
+cta_system:
+  goals: ["increase outbound clicks", "grow email list", "qualify paid-product buyers"]
+  rotation_rules:
+    - "No exact CTA repeat more than twice in one 25-pin batch unless winner override is enabled."
+    - "Track CTA performance weekly by hook class and destination intent."
+    - "Retire bottom 20% CTAs monthly; add at least 5 new variants monthly."
+  cta_library:
+    subscribe:
+      - "Get the free plant match"
+      - "Start your bathroom reset"
+      - "Grab the weekly checklist"
+      - "Send me the renter-safe plan"
+      - "Get this in your inbox"
+      - "Unlock the free starter kit"
+      - "Take the 60-second picker"
+      - "Claim the free setup guide"
+    teach:
+      - "Follow this exact order"
+      - "Copy this 3-step setup"
+      - "Use this checklist today"
+      - "Try this 15-minute fix"
+      - "See the full breakdown"
+      - "Start with step one"
+      - "Use the tiny-space map"
+      - "Apply the no-drill method"
+    solve:
+      - "Fix this bottleneck first"
+      - "Solve counter clutter fast"
+      - "Choose your best-fit path"
+      - "Use the decision tree"
+      - "Match your bathroom constraints"
+      - "Find your low-cost option"
+      - "Pick your layout route"
+      - "Stop this common mistake"
+    shop:
+      - "Shop the budget list"
+      - "Compare options by budget"
+      - "See renter-safe picks"
+      - "Build your cart by tier"
+      - "Use this under-$75 list"
+      - "Pick the no-drill option"
+      - "Check the tiny-space picks"
+      - "View the color formula set"
+
+visual_style:
+  output_policy:
+    ai_generated_only: true
+    no_real_people: true
+    no_brand_logos: true
+    no_copyrighted_photo_emulation: true
+    no_lookalike_of_specific_brand_photos: true
+
+  preset_registry:
+    bathroom_flatlay_v1:
+      use_case: "Checklist, budget breakdown, product roundup, material planning"
+      camera:
+        aspect_ratio: "2:3 vertical"
+        sensor_simulation: "full-frame"
+        lens_type: "prime"
+        focal_length_mm: 35
+        aperture_f: 4.0
+        shutter_speed: "1/80"
+        iso: 320
+        white_balance_kelvin: 5200
+        focus_mode: "single-point"
+        focus_depth_note: "all key props tack sharp"
+        camera_height_cm: 165
+        orientation: "top-down with 5-10 degree tilt"
+      composition:
+        grid_rule: "rule of thirds with center-safe text zone"
+        safe_areas:
+          top_pct: 18
+          bottom_pct: 15
+          left_pct: 8
+          right_pct: 8
+        subject_density: "medium"
+        negative_space_priority: "high"
+      lighting:
+        key_light: "soft north-window daylight from upper-left"
+        fill_light: "subtle bounce on lower-right"
+        shadow_style: "soft edge, physically plausible"
+        reflection_control: "matte finish preference"
+      materials_textures:
+        required: ["matte ceramic", "cotton towel", "brushed metal", "sealed wood grain"]
+        avoid: ["hyper-gloss CGI plastics", "chrome mirror artifacts"]
+      post_processing:
+        contrast: "low-to-medium"
+        saturation: "natural"
+        grain: "very low"
+        sharpness: "moderate"
+      prompt_template: "Vertical 2:3 bathroom flatlay, no people, no logos, [pillar-specific props], soft daylight from left, center safe text area, matte realistic textures, physically plausible shadows"
+      negative_prompt: "watermark, logo text, celebrity, person, distorted reflections, impossible geometry"
+
+    tiny_bathroom_scene_v1:
+      use_case: "Before/after, renter hacks, step-by-step, small-space tricks"
+      camera:
+        aspect_ratio: "2:3 vertical"
+        sensor_simulation: "APS-C"
+        lens_type: "wide"
+        focal_length_mm: 24
+        aperture_f: 5.6
+        shutter_speed: "1/60"
+        iso: 640
+        white_balance_kelvin: 4600
+        focus_mode: "zone focus"
+        focus_depth_note: "front vanity to shower plane readable"
+        camera_height_cm: 145
+        orientation: "corner perspective, straight verticals"
+      composition:
+        grid_rule: "vertical composition with overlay band"
+        safe_areas:
+          top_pct: 16
+          bottom_pct: 20
+          left_pct: 10
+          right_pct: 10
+        subject_density: "medium-high"
+        negative_space_priority: "medium"
+      lighting:
+        key_light: "ambient humid bathroom realism"
+        fill_light: "bounce fill from opposite wall"
+        shadow_style: "soft, no floating shadows"
+        reflection_control: "mirror reflections must match camera placement"
+      materials_textures:
+        required: ["matte tile", "painted drywall", "fabric shower curtain", "sealed grout"]
+        avoid: ["melting fixtures", "wavy grout lines", "warped mirror edges"]
+      post_processing:
+        contrast: "medium"
+        saturation: "slightly warm neutral"
+        grain: "low"
+        sharpness: "moderate"
+      prompt_template: "Vertical 2:3 small bathroom interior, no people, no logos, renter-safe styling, realistic mirror geometry, clean text-safe band, physically plausible plumbing"
+      negative_prompt: "watermark, gibberish text, impossible fixtures, floating sink, duplicated faucet"
+
+  extension_rules:
+    - "Any new preset must define camera, composition, lighting, textures, post-processing, prompt_template, and negative_prompt."
+    - "New preset IDs must be versioned (e.g., styling_formula_scene_v1)."
+    - "Do not remove old presets immediately; deprecate with changelog entry first."
+
+  reject_flags:
+    - "unrealistic mirrors/reflections"
+    - "gibberish or nonsense text artifacts"
+    - "floating fixtures or impossible plumbing"
+    - "warped tile perspective"
+    - "duplicated faucets/handles"
+    - "impossible shadows inconsistent with light source"
+    - "broken anatomy or hidden human presence"
+    - "brand logos or trademark marks"
+    - "watermark remnants"
+    - "cropped sink/toilet that confuses scene"
+    - "excessive blur hiding detail"
+    - "hallucinated electrical hazards"
+    - "plants with impossible leaf geometry"
+    - "oversaturated neon color cast"
+    - "text overlay area obstructed"
+    - "low-resolution aliasing"
+
+compliance:
+  affiliate:
+    global_disclosure_locations: ["site_footer", "about_page", "affiliate_disclosure_page"]
+    page_level_disclosure_rule: "Required only when affiliate links are present on that page."
+    page_level_disclosure_text: "Disclosure: Some links on this page may be affiliate links. If you buy through them, we may earn a commission at no extra cost to you."
+    auto_detection:
+      enabled: true
+      detect_from:
+        - "known affiliate domains"
+        - "affiliate query params"
+        - "known shortlinks"
+      known_domains: ["amazon.com", "amzn.to", "shareasale.com", "impact.com", "awin1.com", "cj.com"]
+      query_params: ["tag", "aff", "affiliate", "ref", "utm_affiliate"]
+  privacy_terms:
+    privacy_page_required: true
+    terms_page_required: true
+    cookie_notice_if_tracking: true
+    email_consent_language_required: true
+  claims:
+    no_income_or_savings_guarantees: true
+    price_claims_must_include_context: true
+    no_policy_evasion_or_label_bypass: true
+
+hook_classes:
+  definitions:
+    BeforeAfter:
+      description: "Show a visible contrast from initial state to improved state with one key constraint called out."
+      good_example: "Before: cluttered sink. After: 3-zone tray system under $40, no drill."
+      guidelines: ["must specify what changed", "must include cost/time boundary"]
+    Checklist:
+      description: "Actionable short list users can screenshot and execute."
+      good_example: "5-item no-drill reset checklist for under-sink storage."
+      guidelines: ["3-7 items", "use imperative verbs", "avoid vague tips"]
+    MistakesToAvoid:
+      description: "Call out common errors and their practical fixes."
+      good_example: "3 reasons peel-and-stick fails in humid bathrooms and how to prep walls."
+      guidelines: ["include at least one fix per mistake", "no shame tone"]
+    QuickWin:
+      description: "One low-effort change that creates immediate visual or functional improvement."
+      good_example: "15-minute vanity counter reset using a two-bin split system."
+      guidelines: ["<=30 minutes", "clear starter action"]
+    BudgetBreakdown:
+      description: "Transparent spend tiers with expected outcomes."
+      good_example: "Under $75 / $150 / $300 mirror-lighting combinations with tradeoffs."
+      guidelines: ["must include numeric tiers", "state tradeoffs"]
+    StepByStepHowTo:
+      description: "Ordered workflow from prep to final check."
+      good_example: "No-drill towel bar replacement in 6 steps with cure time included."
+      guidelines: ["minimum 4 steps", "include tools + duration"]
+    ProductRoundup:
+      description: "Curated picks by constraint, not by hype."
+      good_example: "Renter-safe adhesive shelves that hold up in humidity (weight-tested)."
+      guidelines: ["group by use-case", "include why/when not to choose"]
+    PlantPicker:
+      description: "Constraint-driven plant recommendation flow."
+      good_example: "Low light + high humidity + tiny shelf => pothos + ZZ + cast iron."
+      guidelines: ["map to constraints", "include care baseline"]
+    RenterHack:
+      description: "Reversible workaround that avoids permit/landlord conflict."
+      good_example: "Removable under-cabinet lighting route with no wall drilling."
+      guidelines: ["must mention reversibility", "damage-risk note required"]
+    SmallSpaceTrick:
+      description: "Layout or storage move optimized for tight bathrooms."
+      good_example: "Door-back vertical organizer map for sub-30-inch vanities."
+      guidelines: ["space dimension context required", "focus on flow"]
+    StylingFormula:
+      description: "Repeatable styling recipe for color/texture/accessory balance."
+      good_example: "60/30/10 color split with two low-cost texture layers."
+      guidelines: ["must be formulaic", "state max accessory count"]
+    MythBuster:
+      description: "Challenge common advice with practical evidence and safer alternative."
+      good_example: "Myth: all peel-and-stick fails in bathrooms. Reality: prep and substrate matter."
+      guidelines: ["present myth + correction + action", "no condescension"]
+
+  diversity_constraints:
+    min_distinct_per_25_batch: 8
+    max_share_per_batch: 0.30
+    similarity_window_days: 60
+    explanation:
+      - "Use at least 8 different hook classes per 25-pin batch to avoid creative fatigue."
+      - "No single hook class over 30% (max 7 of 25) unless human override is set."
+      - "Similarity guard checks near-duplicate topic+hook combinations across last 60 days."
+
+destination_intents:
+  definitions:
+    Inspire: "Pattern interrupt and motivation; light CTA to save or click."
+    Teach: "Instruction-first content aimed at competence building."
+    Solve: "Problem-specific fix with clear success condition."
+    Shop: "Comparison and purchase-oriented path when relevant."
+    Subscribe: "Lead capture path for long-term nurture."
+  enum: ["Inspire", "Teach", "Solve", "Shop", "Subscribe"]
+  weekly_mix:
+    dominance_flag_threshold: 0.45
+  daily_mix:
+    avoid_single_intent_stack_gt: 3
+
+pin_text_system:
+  required: true
+  render_rule: "Every pin image must include text overlay before posting/export."
+  component_roles:
+    overlay_text:
+      purpose: "Stop-scroll signal on image; communicates core promise in <=8 words."
+      constraints:
+        - "primary overlay <= 8 words"
+        - "secondary overlay <= 6 words"
+        - "high contrast and readable at mobile width"
+    pin_title:
+      purpose: "Search/discovery relevance in Pinterest feed and detail view."
+      constraints:
+        - "keyword aligned"
+        - "specific + non-clickbait"
+    pin_description:
+      purpose: "Context, credibility, and CTA with hashtags."
+      constraints:
+        - "2-3 short sentences"
+        - "include 3-8 targeted hashtags"
+    cta_text:
+      purpose: "Single next action (click/subscribe/shop) aligned with destination intent."
+      constraints:
+        - "one primary CTA"
+        - "avoid pressure language"
+
+formats:
+  outputs:
+    required_files:
+      - "review_pack.html"
+      - "weekly_review.md"
+      - "monthly_review.md"
+      - "yearly_review.md"
+      - "weekly_ops_info.md"
+      - "weekly_ops_info.zip"
+      - "pins_export.csv"
+      - "content_packets/<Content_ID>.json"
+      - "blog_drafts/<slug>.md"
+      - "micro_guides/<slug>.md"
+  pin_fields:
+    - Content_ID
+    - Hook_Class
+    - Destination_Intent
+    - Destination_URL
+    - Title
+    - Overlay_1
+    - Overlay_2
+    - Has_Text_Overlay
+    - Caption_1
+    - Caption_2
+    - Caption_3
+    - Description_With_Hashtags
+    - Image_Prompt
+    - UTM_URL
+    - Quality_Score
+  linter_output_definitions:
+    Quality_Score: "0-100 aggregate score across copy quality, compliance, diversity, and visual risk."
+    Quality_Flags: "Blocking and non-blocking flags with machine-readable labels."
+    AutoFixSuggestions: "Concrete rewrites or remediation actions tied to each flag."
+    Hook_Class_Uniqueness_Flag: "Boolean check for hook/topic novelty within similarity window."
+    Intent_Balance_Flag: "Boolean check for weekly/daily intent distribution health."
+    Visual_Risk_Flags: "Prompt-level risk list for artifact or policy violations."
+    Naturalness_Flag: "Boolean indicating copy reads natural, not overly salesy/hype-heavy."

@@ -1,0 +1,13 @@
+{
+  "tab": "Governance",
+  "headers": [
+    "Entry_ID",
+    "Timestamp",
+    "Version",
+    "Section",
+    "Change_Summary",
+    "Reason",
+    "Approved_By",
+    "Content_Bible_Snapshot"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "Content_ID": "PIN-011",
+  "Created_At": "2026-02-22T10:12:05.913Z",
+  "Status": "draft",
+  "Hook_Class": "StylingFormula",
+  "Destination_Intent": "Inspire",
+  "Pillar": "Styling",
+  "Topic": "styling-stylingformula-11",
+  "Destination_URL": "/blog/no-drill-towel-storage-renters",
+  "Title": "StylingFormula for Styling: renter-safe update under $225",
+  "Caption_1": "Try this Styling fix in a small bathroom for under $225.",
+  "Caption_2": "Renter-safe order of operations plus tools list and cost cap.",
+  "Caption_3": "Save this plan and choose the no-drill or drill-allowed path.",
+  "Overlay_1": "StylingFormula in 15 minutes",
+  "Overlay_2": "Renter-safe budget plan",
+  "Image_Prompt": "AI-generated bathroom scene, no people, no logos, Styling styling, matte tile textures, soft daylight, clean composition with text safe area",
+  "UTM_URL": "/blog/no-drill-towel-storage-renters?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-011_stylingformula_inspire",
+  "Quality_Score": 90,
+  "Quality_Flags": [],
+  "AutoFixSuggestions": [
+    "Remove visual risk term \"logo\" from prompt."
+  ],
+  "Hook_Class_Uniqueness_Flag": true,
+  "Intent_Balance_Flag": true,
+  "Visual_Risk_Flags": [
+    "prompt_risk:logo"
+  ],
+  "Human_Approved": false,
+  "Scheduled_At": "",
+  "Posted_At": ""
+}

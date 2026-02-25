@@ -1,0 +1,80 @@
+name: projectpint-automation
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 14 * * 1"   # weekly Monday 14:00 UTC
+    - cron: "0 15 1 * *"   # monthly day 1
+    - cron: "0 16 2 1 *"   # yearly Jan 2
+
+jobs:
+  weekly:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 14 * * 1'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 25
+      - name: Generate weekly packet
+        run: |
+          node scripts/cli.ts init_project
+          node scripts/cli.ts init_sheets
+          node scripts/cli.ts weekly_ops_info
+      - name: Upload weekly artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly-ops-info
+          path: |
+            review_pack.html
+            weekly_review.md
+            weekly_ops_info.md
+            weekly_ops_info.zip
+            pins_export.csv
+            content_packets
+            blog_drafts
+            micro_guides
+            outputs/weekly
+
+  monthly:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 15 1 * *'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 25
+      - name: Generate monthly review
+        run: |
+          node scripts/cli.ts init_project
+          node scripts/cli.ts init_sheets
+          node scripts/cli.ts monthly_review
+          node scripts/cli.ts product_opportunity_report
+      - name: Upload monthly artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: monthly-review
+          path: |
+            monthly_review.md
+            outputs/monthly
+
+  yearly:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 16 2 1 *'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 25
+      - name: Generate yearly review
+        run: |
+          node scripts/cli.ts init_project
+          node scripts/cli.ts init_sheets
+          node scripts/cli.ts yearly_review
+      - name: Upload yearly artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: yearly-review
+          path: |
+            yearly_review.md
+            outputs/yearly

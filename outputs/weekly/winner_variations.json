@@ -1,0 +1,452 @@
+[
+  {
+    "Source_Content_ID": "PIN-001",
+    "Variant_ID": "PIN-001-V1",
+    "Hook_Class": "BeforeAfter",
+    "Destination_Intent": "Inspire",
+    "Title": "BeforeAfter for RenterFriendly: renter-safe update under $75 (Variant 1)",
+    "Overlay_1": "BeforeAfter in 15 minutes | angle 1",
+    "Overlay_2": "Renter-safe budget plan | test 1"
+  },
+  {
+    "Source_Content_ID": "PIN-001",
+    "Variant_ID": "PIN-001-V2",
+    "Hook_Class": "BeforeAfter",
+    "Destination_Intent": "Inspire",
+    "Title": "BeforeAfter for RenterFriendly: renter-safe update under $75 (Variant 2)",
+    "Overlay_1": "BeforeAfter in 15 minutes | angle 2",
+    "Overlay_2": "Renter-safe budget plan | test 2"
+  },
+  {
+    "Source_Content_ID": "PIN-001",
+    "Variant_ID": "PIN-001-V3",
+    "Hook_Class": "BeforeAfter",
+    "Destination_Intent": "Inspire",
+    "Title": "BeforeAfter for RenterFriendly: renter-safe update under $75 (Variant 3)",
+    "Overlay_1": "BeforeAfter in 15 minutes | angle 3",
+    "Overlay_2": "Renter-safe budget plan | test 3"
+  },
+  {
+    "Source_Content_ID": "PIN-001",
+    "Variant_ID": "PIN-001-V4",
+    "Hook_Class": "BeforeAfter",
+    "Destination_Intent": "Inspire",
+    "Title": "BeforeAfter for RenterFriendly: renter-safe update under $75 (Variant 4)",
+    "Overlay_1": "BeforeAfter in 15 minutes | angle 4",
+    "Overlay_2": "Renter-safe budget plan | test 4"
+  },
+  {
+    "Source_Content_ID": "PIN-001",
+    "Variant_ID": "PIN-001-V5",
+    "Hook_Class": "BeforeAfter",
+    "Destination_Intent": "Inspire",
+    "Title": "BeforeAfter for RenterFriendly: renter-safe update under $75 (Variant 5)",
+    "Overlay_1": "BeforeAfter in 15 minutes | angle 5",
+    "Overlay_2": "Renter-safe budget plan | test 5"
+  },
+  {
+    "Source_Content_ID": "PIN-002",
+    "Variant_ID": "PIN-002-V1",
+    "Hook_Class": "Checklist",
+    "Destination_Intent": "Teach",
+    "Title": "Checklist for BudgetDIY: renter-safe update under $150 (Variant 1)",
+    "Overlay_1": "Checklist in 15 minutes | angle 1",
+    "Overlay_2": "Renter-safe budget plan | test 1"
+  },
+  {
+    "Source_Content_ID": "PIN-002",
+    "Variant_ID": "PIN-002-V2",
+    "Hook_Class": "Checklist",
+    "Destination_Intent": "Teach",
+    "Title": "Checklist for BudgetDIY: renter-safe update under $150 (Variant 2)",
+    "Overlay_1": "Checklist in 15 minutes | angle 2",
+    "Overlay_2": "Renter-safe budget plan | test 2"
+  },
+  {
+    "Source_Content_ID": "PIN-002",
+    "Variant_ID": "PIN-002-V3",
+    "Hook_Class": "Checklist",
+    "Destination_Intent": "Teach",
+    "Title": "Checklist for BudgetDIY: renter-safe update under $150 (Variant 3)",
+    "Overlay_1": "Checklist in 15 minutes | angle 3",
+    "Overlay_2": "Renter-safe budget plan | test 3"
+  },
+  {
+    "Source_Content_ID": "PIN-002",
+    "Variant_ID": "PIN-002-V4",
+    "Hook_Class": "Checklist",
+    "Destination_Intent": "Teach",
+    "Title": "Checklist for BudgetDIY: renter-safe update under $150 (Variant 4)",
+    "Overlay_1": "Checklist in 15 minutes | angle 4",
+    "Overlay_2": "Renter-safe budget plan | test 4"
+  },
+  {
+    "Source_Content_ID": "PIN-002",
+    "Variant_ID": "PIN-002-V5",
+    "Hook_Class": "Checklist",
+    "Destination_Intent": "Teach",
+    "Title": "Checklist for BudgetDIY: renter-safe update under $150 (Variant 5)",
+    "Overlay_1": "Checklist in 15 minutes | angle 5",
+    "Overlay_2": "Renter-safe budget plan | test 5"
+  },
+  {
+    "Source_Content_ID": "PIN-003",
+    "Variant_ID": "PIN-003-V1",
+    "Hook_Class": "MistakesToAvoid",
+    "Destination_Intent": "Solve",
+    "Title": "MistakesToAvoid for SmallSpace: renter-safe update under $225 (Variant 1)",
+    "Overlay_1": "MistakesToAvoid in 15 minutes | angle 1",
+    "Overlay_2": "Renter-safe budget plan | test 1"
+  },
+  {
+    "Source_Content_ID": "PIN-003",
+    "Variant_ID": "PIN-003-V2",
+    "Hook_Class": "MistakesToAvoid",
+    "Destination_Intent": "Solve",
+    "Title": "MistakesToAvoid for SmallSpace: renter-safe update under $225 (Variant 2)",
+    "Overlay_1": "MistakesToAvoid in 15 minutes | angle 2",
+    "Overlay_2": "Renter-safe budget plan | test 2"
+  },
+  {
+    "Source_Content_ID": "PIN-003",
+    "Variant_ID": "PIN-003-V3",
+    "Hook_Class": "MistakesToAvoid",
+    "Destination_Intent": "Solve",
+    "Title": "MistakesToAvoid for SmallSpace: renter-safe update under $225 (Variant 3)",
+    "Overlay_1": "MistakesToAvoid in 15 minutes | angle 3",
+    "Overlay_2": "Renter-safe budget plan | test 3"
+  },
+  {
+    "Source_Content_ID": "PIN-003",
+    "Variant_ID": "PIN-003-V4",
+    "Hook_Class": "MistakesToAvoid",
+    "Destination_Intent": "Solve",
+    "Title": "MistakesToAvoid for SmallSpace: renter-safe update under $225 (Variant 4)",
+    "Overlay_1": "MistakesToAvoid in 15 minutes | angle 4",
+    "Overlay_2": "Renter-safe budget plan | test 4"
+  },
+  {
+    "Source_Content_ID": "PIN-003",
+    "Variant_ID": "PIN-003-V5",
+    "Hook_Class": "MistakesToAvoid",
+    "Destination_Intent": "Solve",
+    "Title": "MistakesToAvoid for SmallSpace: renter-safe update under $225 (Variant 5)",
+    "Overlay_1": "MistakesToAvoid in 15 minutes | angle 5",
+    "Overlay_2": "Renter-safe budget plan | test 5"
+  },
+  {
+    "Source_Content_ID": "PIN-004",
+    "Variant_ID": "PIN-004-V1",
+    "Hook_Class": "QuickWin",
+    "Destination_Intent": "Shop",
+    "Title": "QuickWin for StorageOrganization: renter-safe update under $300 (Variant 1)",
+    "Overlay_1": "QuickWin in 15 minutes | angle 1",
+    "Overlay_2": "Renter-safe budget plan | test 1"
+  },
+  {
+    "Source_Content_ID": "PIN-004",
+    "Variant_ID": "PIN-004-V2",
+    "Hook_Class": "QuickWin",
+    "Destination_Intent": "Shop",
+    "Title": "QuickWin for StorageOrganization: renter-safe update under $300 (Variant 2)",
+    "Overlay_1": "QuickWin in 15 minutes | angle 2",
+    "Overlay_2": "Renter-safe budget plan | test 2"
+  },
+  {
+    "Source_Content_ID": "PIN-004",
+    "Variant_ID": "PIN-004-V3",
+    "Hook_Class": "QuickWin",
+    "Destination_Intent": "Shop",
+    "Title": "QuickWin for StorageOrganization: renter-safe update under $300 (Variant 3)",
+    "Overlay_1": "QuickWin in 15 minutes | angle 3",
+    "Overlay_2": "Renter-safe budget plan | test 3"
+  },
+  {
+    "Source_Content_ID": "PIN-004",
+    "Variant_ID": "PIN-004-V4",
+    "Hook_Class": "QuickWin",
+    "Destination_Intent": "Shop",
+    "Title": "QuickWin for StorageOrganization: renter-safe update under $300 (Variant 4)",
+    "Overlay_1": "QuickWin in 15 minutes | angle 4",
+    "Overlay_2": "Renter-safe budget plan | test 4"
+  },
+  {
+    "Source_Content_ID": "PIN-004",
+    "Variant_ID": "PIN-004-V5",
+    "Hook_Class": "QuickWin",
+    "Destination_Intent": "Shop",
+    "Title": "QuickWin for StorageOrganization: renter-safe update under $300 (Variant 5)",
+    "Overlay_1": "QuickWin in 15 minutes | angle 5",
+    "Overlay_2": "Renter-safe budget plan | test 5"
+  },
+  {
+    "Source_Content_ID": "PIN-005",
+    "Variant_ID": "PIN-005-V1",
+    "Hook_Class": "BudgetBreakdown",
+    "Destination_Intent": "Subscribe",
+    "Title": "BudgetBreakdown for Styling: renter-safe update under $75 (Variant 1)",
+    "Overlay_1": "BudgetBreakdown in 15 minutes | angle 1",
+    "Overlay_2": "Renter-safe budget plan | test 1"
+  },
+  {
+    "Source_Content_ID": "PIN-005",
+    "Variant_ID": "PIN-005-V2",
+    "Hook_Class": "BudgetBreakdown",
+    "Destination_Intent": "Subscribe",
+    "Title": "BudgetBreakdown for Styling: renter-safe update under $75 (Variant 2)",
+    "Overlay_1": "BudgetBreakdown in 15 minutes | angle 2",
+    "Overlay_2": "Renter-safe budget plan | test 2"
+  },
+  {
+    "Source_Content_ID": "PIN-005",
+    "Variant_ID": "PIN-005-V3",
+    "Hook_Class": "BudgetBreakdown",
+    "Destination_Intent": "Subscribe",
+    "Title": "BudgetBreakdown for Styling: renter-safe update under $75 (Variant 3)",
+    "Overlay_1": "BudgetBreakdown in 15 minutes | angle 3",
+    "Overlay_2": "Renter-safe budget plan | test 3"
+  },
+  {
+    "Source_Content_ID": "PIN-005",
+    "Variant_ID": "PIN-005-V4",
+    "Hook_Class": "BudgetBreakdown",
+    "Destination_Intent": "Subscribe",
+    "Title": "BudgetBreakdown for Styling: renter-safe update under $75 (Variant 4)",
+    "Overlay_1": "BudgetBreakdown in 15 minutes | angle 4",
+    "Overlay_2": "Renter-safe budget plan | test 4"
+  },
+  {
+    "Source_Content_ID": "PIN-005",
+    "Variant_ID": "PIN-005-V5",
+    "Hook_Class": "BudgetBreakdown",
+    "Destination_Intent": "Subscribe",
+    "Title": "BudgetBreakdown for Styling: renter-safe update under $75 (Variant 5)",
+    "Overlay_1": "BudgetBreakdown in 15 minutes | angle 5",
+    "Overlay_2": "Renter-safe budget plan | test 5"
+  },
+  {
+    "Source_Content_ID": "PIN-006",
+    "Variant_ID": "PIN-006-V1",
+    "Hook_Class": "StepByStepHowTo",
+    "Destination_Intent": "Inspire",
+    "Title": "StepByStepHowTo for PlantsBiophilic: renter-safe update under $150 (Variant 1)",
+    "Overlay_1": "StepByStepHowTo in 15 minutes | angle 1",
+    "Overlay_2": "Renter-safe budget plan | test 1"
+  },
+  {
+    "Source_Content_ID": "PIN-006",
+    "Variant_ID": "PIN-006-V2",
+    "Hook_Class": "StepByStepHowTo",
+    "Destination_Intent": "Inspire",
+    "Title": "StepByStepHowTo for PlantsBiophilic: renter-safe update under $150 (Variant 2)",
+    "Overlay_1": "StepByStepHowTo in 15 minutes | angle 2",
+    "Overlay_2": "Renter-safe budget plan | test 2"
+  },
+  {
+    "Source_Content_ID": "PIN-006",
+    "Variant_ID": "PIN-006-V3",
+    "Hook_Class": "StepByStepHowTo",
+    "Destination_Intent": "Inspire",
+    "Title": "StepByStepHowTo for PlantsBiophilic: renter-safe update under $150 (Variant 3)",
+    "Overlay_1": "StepByStepHowTo in 15 minutes | angle 3",
+    "Overlay_2": "Renter-safe budget plan | test 3"
+  },
+  {
+    "Source_Content_ID": "PIN-006",
+    "Variant_ID": "PIN-006-V4",
+    "Hook_Class": "StepByStepHowTo",
+    "Destination_Intent": "Inspire",
+    "Title": "StepByStepHowTo for PlantsBiophilic: renter-safe update under $150 (Variant 4)",
+    "Overlay_1": "StepByStepHowTo in 15 minutes | angle 4",
+    "Overlay_2": "Renter-safe budget plan | test 4"
+  },
+  {
+    "Source_Content_ID": "PIN-006",
+    "Variant_ID": "PIN-006-V5",
+    "Hook_Class": "StepByStepHowTo",
+    "Destination_Intent": "Inspire",
+    "Title": "StepByStepHowTo for PlantsBiophilic: renter-safe update under $150 (Variant 5)",
+    "Overlay_1": "StepByStepHowTo in 15 minutes | angle 5",
+    "Overlay_2": "Renter-safe budget plan | test 5"
+  },
+  {
+    "Source_Content_ID": "PIN-007",
+    "Variant_ID": "PIN-007-V1",
+    "Hook_Class": "ProductRoundup",
+    "Destination_Intent": "Teach",
+    "Title": "ProductRoundup for RenterFriendly: renter-safe update under $225 (Variant 1)",
+    "Overlay_1": "ProductRoundup in 15 minutes | angle 1",
+    "Overlay_2": "Renter-safe budget plan | test 1"
+  },
+  {
+    "Source_Content_ID": "PIN-007",
+    "Variant_ID": "PIN-007-V2",
+    "Hook_Class": "ProductRoundup",
+    "Destination_Intent": "Teach",
+    "Title": "ProductRoundup for RenterFriendly: renter-safe update under $225 (Variant 2)",
+    "Overlay_1": "ProductRoundup in 15 minutes | angle 2",
+    "Overlay_2": "Renter-safe budget plan | test 2"
+  },
+  {
+    "Source_Content_ID": "PIN-007",
+    "Variant_ID": "PIN-007-V3",
+    "Hook_Class": "ProductRoundup",
+    "Destination_Intent": "Teach",
+    "Title": "ProductRoundup for RenterFriendly: renter-safe update under $225 (Variant 3)",
+    "Overlay_1": "ProductRoundup in 15 minutes | angle 3",
+    "Overlay_2": "Renter-safe budget plan | test 3"
+  },
+  {
+    "Source_Content_ID": "PIN-007",
+    "Variant_ID": "PIN-007-V4",
+    "Hook_Class": "ProductRoundup",
+    "Destination_Intent": "Teach",
+    "Title": "ProductRoundup for RenterFriendly: renter-safe update under $225 (Variant 4)",
+    "Overlay_1": "ProductRoundup in 15 minutes | angle 4",
+    "Overlay_2": "Renter-safe budget plan | test 4"
+  },
+  {
+    "Source_Content_ID": "PIN-007",
+    "Variant_ID": "PIN-007-V5",
+    "Hook_Class": "ProductRoundup",
+    "Destination_Intent": "Teach",
+    "Title": "ProductRoundup for RenterFriendly: renter-safe update under $225 (Variant 5)",
+    "Overlay_1": "ProductRoundup in 15 minutes | angle 5",
+    "Overlay_2": "Renter-safe budget plan | test 5"
+  },
+  {
+    "Source_Content_ID": "PIN-008",
+    "Variant_ID": "PIN-008-V1",
+    "Hook_Class": "PlantPicker",
+    "Destination_Intent": "Solve",
+    "Title": "PlantPicker for BudgetDIY: renter-safe update under $300 (Variant 1)",
+    "Overlay_1": "PlantPicker in 15 minutes | angle 1",
+    "Overlay_2": "Renter-safe budget plan | test 1"
+  },
+  {
+    "Source_Content_ID": "PIN-008",
+    "Variant_ID": "PIN-008-V2",
+    "Hook_Class": "PlantPicker",
+    "Destination_Intent": "Solve",
+    "Title": "PlantPicker for BudgetDIY: renter-safe update under $300 (Variant 2)",
+    "Overlay_1": "PlantPicker in 15 minutes | angle 2",
+    "Overlay_2": "Renter-safe budget plan | test 2"
+  },
+  {
+    "Source_Content_ID": "PIN-008",
+    "Variant_ID": "PIN-008-V3",
+    "Hook_Class": "PlantPicker",
+    "Destination_Intent": "Solve",
+    "Title": "PlantPicker for BudgetDIY: renter-safe update under $300 (Variant 3)",
+    "Overlay_1": "PlantPicker in 15 minutes | angle 3",
+    "Overlay_2": "Renter-safe budget plan | test 3"
+  },
+  {
+    "Source_Content_ID": "PIN-008",
+    "Variant_ID": "PIN-008-V4",
+    "Hook_Class": "PlantPicker",
+    "Destination_Intent": "Solve",
+    "Title": "PlantPicker for BudgetDIY: renter-safe update under $300 (Variant 4)",
+    "Overlay_1": "PlantPicker in 15 minutes | angle 4",
+    "Overlay_2": "Renter-safe budget plan | test 4"
+  },
+  {
+    "Source_Content_ID": "PIN-008",
+    "Variant_ID": "PIN-008-V5",
+    "Hook_Class": "PlantPicker",
+    "Destination_Intent": "Solve",
+    "Title": "PlantPicker for BudgetDIY: renter-safe update under $300 (Variant 5)",
+    "Overlay_1": "PlantPicker in 15 minutes | angle 5",
+    "Overlay_2": "Renter-safe budget plan | test 5"
+  },
+  {
+    "Source_Content_ID": "PIN-009",
+    "Variant_ID": "PIN-009-V1",
+    "Hook_Class": "RenterHack",
+    "Destination_Intent": "Shop",
+    "Title": "RenterHack for SmallSpace: renter-safe update under $75 (Variant 1)",
+    "Overlay_1": "RenterHack in 15 minutes | angle 1",
+    "Overlay_2": "Renter-safe budget plan | test 1"
+  },
+  {
+    "Source_Content_ID": "PIN-009",
+    "Variant_ID": "PIN-009-V2",
+    "Hook_Class": "RenterHack",
+    "Destination_Intent": "Shop",
+    "Title": "RenterHack for SmallSpace: renter-safe update under $75 (Variant 2)",
+    "Overlay_1": "RenterHack in 15 minutes | angle 2",
+    "Overlay_2": "Renter-safe budget plan | test 2"
+  },
+  {
+    "Source_Content_ID": "PIN-009",
+    "Variant_ID": "PIN-009-V3",
+    "Hook_Class": "RenterHack",
+    "Destination_Intent": "Shop",
+    "Title": "RenterHack for SmallSpace: renter-safe update under $75 (Variant 3)",
+    "Overlay_1": "RenterHack in 15 minutes | angle 3",
+    "Overlay_2": "Renter-safe budget plan | test 3"
+  },
+  {
+    "Source_Content_ID": "PIN-009",
+    "Variant_ID": "PIN-009-V4",
+    "Hook_Class": "RenterHack",
+    "Destination_Intent": "Shop",
+    "Title": "RenterHack for SmallSpace: renter-safe update under $75 (Variant 4)",
+    "Overlay_1": "RenterHack in 15 minutes | angle 4",
+    "Overlay_2": "Renter-safe budget plan | test 4"
+  },
+  {
+    "Source_Content_ID": "PIN-009",
+    "Variant_ID": "PIN-009-V5",
+    "Hook_Class": "RenterHack",
+    "Destination_Intent": "Shop",
+    "Title": "RenterHack for SmallSpace: renter-safe update under $75 (Variant 5)",
+    "Overlay_1": "RenterHack in 15 minutes | angle 5",
+    "Overlay_2": "Renter-safe budget plan | test 5"
+  },
+  {
+    "Source_Content_ID": "PIN-010",
+    "Variant_ID": "PIN-010-V1",
+    "Hook_Class": "SmallSpaceTrick",
+    "Destination_Intent": "Subscribe",
+    "Title": "SmallSpaceTrick for StorageOrganization: renter-safe update under $150 (Variant 1)",
+    "Overlay_1": "SmallSpaceTrick in 15 minutes | angle 1",
+    "Overlay_2": "Renter-safe budget plan | test 1"
+  },
+  {
+    "Source_Content_ID": "PIN-010",
+    "Variant_ID": "PIN-010-V2",
+    "Hook_Class": "SmallSpaceTrick",
+    "Destination_Intent": "Subscribe",
+    "Title": "SmallSpaceTrick for StorageOrganization: renter-safe update under $150 (Variant 2)",
+    "Overlay_1": "SmallSpaceTrick in 15 minutes | angle 2",
+    "Overlay_2": "Renter-safe budget plan | test 2"
+  },
+  {
+    "Source_Content_ID": "PIN-010",
+    "Variant_ID": "PIN-010-V3",
+    "Hook_Class": "SmallSpaceTrick",
+    "Destination_Intent": "Subscribe",
+    "Title": "SmallSpaceTrick for StorageOrganization: renter-safe update under $150 (Variant 3)",
+    "Overlay_1": "SmallSpaceTrick in 15 minutes | angle 3",
+    "Overlay_2": "Renter-safe budget plan | test 3"
+  },
+  {
+    "Source_Content_ID": "PIN-010",
+    "Variant_ID": "PIN-010-V4",
+    "Hook_Class": "SmallSpaceTrick",
+    "Destination_Intent": "Subscribe",
+    "Title": "SmallSpaceTrick for StorageOrganization: renter-safe update under $150 (Variant 4)",
+    "Overlay_1": "SmallSpaceTrick in 15 minutes | angle 4",
+    "Overlay_2": "Renter-safe budget plan | test 4"
+  },
+  {
+    "Source_Content_ID": "PIN-010",
+    "Variant_ID": "PIN-010-V5",
+    "Hook_Class": "SmallSpaceTrick",
+    "Destination_Intent": "Subscribe",
+    "Title": "SmallSpaceTrick for StorageOrganization: renter-safe update under $150 (Variant 5)",
+    "Overlay_1": "SmallSpaceTrick in 15 minutes | angle 5",
+    "Overlay_2": "Renter-safe budget plan | test 5"
+  }
+]
