@@ -37,7 +37,8 @@
     "monthly_digest": "node scripts/cli.ts monthly_digest",
     "yearly_review": "node scripts/cli.ts yearly_review",
     "product_opportunity_report": "node scripts/cli.ts product_opportunity_report",
-    "generate_product_mvp": "node scripts/cli.ts generate_product_mvp"
+    "generate_product_mvp": "node scripts/cli.ts generate_product_mvp",
+    "test": "node --test tests/*.test.ts"
   },
   "dependencies": {
     "next": "15.2.1",

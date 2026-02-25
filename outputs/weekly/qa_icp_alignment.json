@@ -1,0 +1,407 @@
+{
+  "generated_at": "2026-02-23T10:47:57.864Z",
+  "top_alignment": [
+    {
+      "target_id": "BLOG-001",
+      "target_type": "blog",
+      "best_icp": {
+        "icp_id": "ICP-2",
+        "label": "Small-Space Systems Optimizer",
+        "matched_terms": [
+          "flow",
+          "counter",
+          "zone",
+          "storage",
+          "clutter"
+        ],
+        "score": 63
+      },
+      "score": 100,
+      "flags": []
+    },
+    {
+      "target_id": "BLOG-002",
+      "target_type": "blog",
+      "best_icp": {
+        "icp_id": "ICP-2",
+        "label": "Small-Space Systems Optimizer",
+        "matched_terms": [
+          "small bathroom",
+          "flow",
+          "counter",
+          "zone",
+          "storage",
+          "clutter"
+        ],
+        "score": 75
+      },
+      "score": 100,
+      "flags": []
+    },
+    {
+      "target_id": "BLOG-003",
+      "target_type": "blog",
+      "best_icp": {
+        "icp_id": "ICP-2",
+        "label": "Small-Space Systems Optimizer",
+        "matched_terms": [
+          "flow",
+          "counter",
+          "zone",
+          "storage",
+          "clutter"
+        ],
+        "score": 63
+      },
+      "score": 100,
+      "flags": []
+    },
+    {
+      "target_id": "auto-generated-mini-guide-1",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-3",
+        "label": "Style-Forward Budget Decorator",
+        "matched_terms": [
+          "style",
+          "color",
+          "visual",
+          "budget",
+          "decor"
+        ],
+        "score": 63
+      },
+      "score": 80,
+      "flags": [
+        "benefit_framing_weak"
+      ]
+    },
+    {
+      "target_id": "auto-generated-mini-guide-10",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-3",
+        "label": "Style-Forward Budget Decorator",
+        "matched_terms": [
+          "style",
+          "color",
+          "visual",
+          "budget",
+          "decor"
+        ],
+        "score": 63
+      },
+      "score": 80,
+      "flags": [
+        "benefit_framing_weak"
+      ]
+    },
+    {
+      "target_id": "auto-generated-mini-guide-2",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-3",
+        "label": "Style-Forward Budget Decorator",
+        "matched_terms": [
+          "style",
+          "color",
+          "visual",
+          "budget",
+          "decor"
+        ],
+        "score": 63
+      },
+      "score": 80,
+      "flags": [
+        "benefit_framing_weak"
+      ]
+    },
+    {
+      "target_id": "auto-generated-mini-guide-3",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-3",
+        "label": "Style-Forward Budget Decorator",
+        "matched_terms": [
+          "style",
+          "color",
+          "visual",
+          "budget",
+          "decor"
+        ],
+        "score": 63
+      },
+      "score": 80,
+      "flags": [
+        "benefit_framing_weak"
+      ]
+    },
+    {
+      "target_id": "auto-generated-mini-guide-4",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-3",
+        "label": "Style-Forward Budget Decorator",
+        "matched_terms": [
+          "style",
+          "color",
+          "visual",
+          "budget",
+          "decor"
+        ],
+        "score": 63
+      },
+      "score": 80,
+      "flags": [
+        "benefit_framing_weak"
+      ]
+    },
+    {
+      "target_id": "auto-generated-mini-guide-5",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-3",
+        "label": "Style-Forward Budget Decorator",
+        "matched_terms": [
+          "style",
+          "color",
+          "visual",
+          "budget",
+          "decor"
+        ],
+        "score": 63
+      },
+      "score": 80,
+      "flags": [
+        "benefit_framing_weak"
+      ]
+    },
+    {
+      "target_id": "auto-generated-mini-guide-6",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-3",
+        "label": "Style-Forward Budget Decorator",
+        "matched_terms": [
+          "style",
+          "color",
+          "visual",
+          "budget",
+          "decor"
+        ],
+        "score": 63
+      },
+      "score": 80,
+      "flags": [
+        "benefit_framing_weak"
+      ]
+    },
+    {
+      "target_id": "auto-generated-mini-guide-7",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-3",
+        "label": "Style-Forward Budget Decorator",
+        "matched_terms": [
+          "style",
+          "color",
+          "visual",
+          "budget",
+          "decor"
+        ],
+        "score": 63
+      },
+      "score": 80,
+      "flags": [
+        "benefit_framing_weak"
+      ]
+    },
+    {
+      "target_id": "auto-generated-mini-guide-8",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-3",
+        "label": "Style-Forward Budget Decorator",
+        "matched_terms": [
+          "style",
+          "color",
+          "visual",
+          "budget",
+          "decor"
+        ],
+        "score": 63
+      },
+      "score": 80,
+      "flags": [
+        "benefit_framing_weak"
+      ]
+    },
+    {
+      "target_id": "auto-generated-mini-guide-9",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-3",
+        "label": "Style-Forward Budget Decorator",
+        "matched_terms": [
+          "style",
+          "color",
+          "visual",
+          "budget",
+          "decor"
+        ],
+        "score": 63
+      },
+      "score": 80,
+      "flags": [
+        "benefit_framing_weak"
+      ]
+    },
+    {
+      "target_id": "mini-bath-plant-shelf-layout",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-2",
+        "label": "Small-Space Systems Optimizer",
+        "matched_terms": [
+          "layout",
+          "counter",
+          "storage",
+          "clutter"
+        ],
+        "score": 50
+      },
+      "score": 100,
+      "flags": []
+    },
+    {
+      "target_id": "no-drill-art-layout-guide",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-2",
+        "label": "Small-Space Systems Optimizer",
+        "matched_terms": [
+          "layout",
+          "counter",
+          "storage",
+          "clutter"
+        ],
+        "score": 50
+      },
+      "score": 100,
+      "flags": []
+    },
+    {
+      "target_id": "one-hour-bathroom-reset",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-1",
+        "label": "Constraint-First Renter",
+        "matched_terms": [
+          "renter",
+          "deposit",
+          "no-drill"
+        ],
+        "score": 43
+      },
+      "score": 100,
+      "flags": []
+    },
+    {
+      "target_id": "peel-stick-backsplash-cut-plan",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-2",
+        "label": "Small-Space Systems Optimizer",
+        "matched_terms": [
+          "counter",
+          "storage",
+          "clutter"
+        ],
+        "score": 38
+      },
+      "score": 100,
+      "flags": []
+    },
+    {
+      "target_id": "removable-lighting-upgrade-checklist",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-2",
+        "label": "Small-Space Systems Optimizer",
+        "matched_terms": [
+          "counter",
+          "storage",
+          "clutter"
+        ],
+        "score": 38
+      },
+      "score": 100,
+      "flags": []
+    },
+    {
+      "target_id": "renter-mirror-placement-map",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-2",
+        "label": "Small-Space Systems Optimizer",
+        "matched_terms": [
+          "counter",
+          "storage",
+          "clutter"
+        ],
+        "score": 38
+      },
+      "score": 100,
+      "flags": []
+    },
+    {
+      "target_id": "tiny-vanity-top-organization-map",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-2",
+        "label": "Small-Space Systems Optimizer",
+        "matched_terms": [
+          "tiny",
+          "counter",
+          "storage",
+          "clutter"
+        ],
+        "score": 50
+      },
+      "score": 100,
+      "flags": []
+    },
+    {
+      "target_id": "under-75-color-refresh-plan",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-2",
+        "label": "Small-Space Systems Optimizer",
+        "matched_terms": [
+          "counter",
+          "storage",
+          "clutter"
+        ],
+        "score": 38
+      },
+      "score": 100,
+      "flags": []
+    },
+    {
+      "target_id": "under-sink-bin-label-system",
+      "target_type": "micro",
+      "best_icp": {
+        "icp_id": "ICP-2",
+        "label": "Small-Space Systems Optimizer",
+        "matched_terms": [
+          "counter",
+          "storage",
+          "clutter"
+        ],
+        "score": 38
+      },
+      "score": 100,
+      "flags": []
+    }
+  ]
+}

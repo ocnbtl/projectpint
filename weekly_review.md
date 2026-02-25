@@ -4,16 +4,16 @@
 # Weekly Performance Metrics
 
 ## Winners (Outbound Clicks / Impressions)
-1. PIN-001 | /start-here | 0.00%
-2. PIN-002 | /hub/renter-friendly-upgrades | 0.00%
-3. PIN-003 | /hub/budget-diy-transformations | 0.00%
-4. PIN-004 | /hub/small-bathroom-space-hacks | 0.00%
-5. PIN-005 | /hub/storage-and-clutter-to-calm | 0.00%
-6. PIN-006 | /start-here | 0.00%
-7. PIN-007 | /hub/renter-friendly-upgrades | 0.00%
-8. PIN-008 | /hub/budget-diy-transformations | 0.00%
-9. PIN-009 | /hub/small-bathroom-space-hacks | 0.00%
-10. PIN-010 | /hub/storage-and-clutter-to-calm | 0.00%
+1. PIN-001 | /hub/styling-mirrors-lighting-color | 0.00%
+2. PIN-002 | /hub/bathroom-plants-biophilic-vibe | 0.00%
+3. PIN-003 | /lead-magnets/plant-picker | 0.00%
+4. PIN-004 | /products/renter-bathroom-upgrade-blueprint | 0.00%
+5. PIN-005 | /products/bathroom-plant-picks-upgrade | 0.00%
+6. PIN-006 | /hub/styling-mirrors-lighting-color | 0.00%
+7. PIN-007 | /hub/bathroom-plants-biophilic-vibe | 0.00%
+8. PIN-008 | /lead-magnets/plant-picker | 0.00%
+9. PIN-009 | /products/renter-bathroom-upgrade-blueprint | 0.00%
+10. PIN-010 | /products/bathroom-plant-picks-upgrade | 0.00%
 
 ## Top Hook Classes
 - BeforeAfter: 0.00%
@@ -35,8 +35,9 @@
 - Subscribe: 0.00%
 
 ## Destination Type Performance
-- start: 0.00%
 - hub: 0.00%
+- lead: 0.00%
+- product: 0.00%
 
 ## Recommendation
 - Shift 20% of next batch toward top 2 hook classes and top 2 intents.
@@ -66,31 +67,31 @@ The schedule plan below is consumed by weekly_ops_info:
 - Human approval required for blog publish and pin export.
 
 ## Schedule
-- 2026-02-23T00:00:00.000Z | PIN-001 | Inspire | BeforeAfter | /start-here
-- 2026-02-23T03:00:00.000Z | PIN-002 | Teach | Checklist | /hub/renter-friendly-upgrades
-- 2026-02-23T06:00:00.000Z | PIN-003 | Solve | MistakesToAvoid | /hub/budget-diy-transformations
-- 2026-02-23T09:00:00.000Z | PIN-004 | Shop | QuickWin | /hub/small-bathroom-space-hacks
-- 2026-02-23T23:00:00.000Z | PIN-005 | Subscribe | BudgetBreakdown | /hub/storage-and-clutter-to-calm
-- 2026-02-24T02:00:00.000Z | PIN-006 | Inspire | StepByStepHowTo | /start-here
-- 2026-02-24T05:00:00.000Z | PIN-007 | Teach | ProductRoundup | /hub/renter-friendly-upgrades
-- 2026-02-24T08:00:00.000Z | PIN-008 | Solve | PlantPicker | /hub/budget-diy-transformations
-- 2026-02-24T22:00:00.000Z | PIN-009 | Shop | RenterHack | /hub/small-bathroom-space-hacks
-- 2026-02-25T01:00:00.000Z | PIN-010 | Subscribe | SmallSpaceTrick | /hub/storage-and-clutter-to-calm
-- 2026-02-25T04:00:00.000Z | PIN-011 | Inspire | StylingFormula | /start-here
-- 2026-02-25T07:00:00.000Z | PIN-012 | Teach | MythBuster | /hub/renter-friendly-upgrades
-- 2026-02-25T21:00:00.000Z | PIN-013 | Solve | BeforeAfter | /hub/budget-diy-transformations
-- 2026-02-26T00:00:00.000Z | PIN-014 | Shop | Checklist | /hub/small-bathroom-space-hacks
-- 2026-02-26T03:00:00.000Z | PIN-015 | Subscribe | MistakesToAvoid | /hub/storage-and-clutter-to-calm
-- 2026-02-26T06:00:00.000Z | PIN-016 | Inspire | QuickWin | /start-here
-- 2026-02-26T20:00:00.000Z | PIN-017 | Teach | BudgetBreakdown | /hub/renter-friendly-upgrades
-- 2026-02-26T23:00:00.000Z | PIN-018 | Solve | StepByStepHowTo | /hub/budget-diy-transformations
-- 2026-02-27T02:00:00.000Z | PIN-019 | Shop | ProductRoundup | /hub/small-bathroom-space-hacks
-- 2026-02-27T05:00:00.000Z | PIN-020 | Subscribe | PlantPicker | /hub/storage-and-clutter-to-calm
-- 2026-02-27T19:00:00.000Z | PIN-021 | Inspire | RenterHack | /start-here
-- 2026-02-27T22:00:00.000Z | PIN-022 | Teach | SmallSpaceTrick | /hub/renter-friendly-upgrades
-- 2026-02-28T01:00:00.000Z | PIN-023 | Solve | StylingFormula | /hub/budget-diy-transformations
-- 2026-02-28T04:00:00.000Z | PIN-024 | Shop | MythBuster | /hub/small-bathroom-space-hacks
-- 2026-02-28T18:00:00.000Z | PIN-025 | Subscribe | BeforeAfter | /hub/storage-and-clutter-to-calm
+- 2026-02-23T00:00:00.000Z | PIN-001 | Inspire | BeforeAfter | /hub/styling-mirrors-lighting-color
+- 2026-02-23T03:00:00.000Z | PIN-002 | Teach | Checklist | /hub/bathroom-plants-biophilic-vibe
+- 2026-02-23T06:00:00.000Z | PIN-003 | Solve | MistakesToAvoid | /lead-magnets/plant-picker
+- 2026-02-23T09:00:00.000Z | PIN-004 | Shop | QuickWin | /products/renter-bathroom-upgrade-blueprint
+- 2026-02-23T23:00:00.000Z | PIN-005 | Subscribe | BudgetBreakdown | /products/bathroom-plant-picks-upgrade
+- 2026-02-24T02:00:00.000Z | PIN-006 | Inspire | StepByStepHowTo | /hub/styling-mirrors-lighting-color
+- 2026-02-24T05:00:00.000Z | PIN-007 | Teach | ProductRoundup | /hub/bathroom-plants-biophilic-vibe
+- 2026-02-24T08:00:00.000Z | PIN-008 | Solve | PlantPicker | /lead-magnets/plant-picker
+- 2026-02-24T22:00:00.000Z | PIN-009 | Shop | RenterHack | /products/renter-bathroom-upgrade-blueprint
+- 2026-02-25T01:00:00.000Z | PIN-010 | Subscribe | SmallSpaceTrick | /products/bathroom-plant-picks-upgrade
+- 2026-02-25T04:00:00.000Z | PIN-011 | Inspire | StylingFormula | /hub/styling-mirrors-lighting-color
+- 2026-02-25T07:00:00.000Z | PIN-012 | Teach | MythBuster | /hub/bathroom-plants-biophilic-vibe
+- 2026-02-25T21:00:00.000Z | PIN-013 | Solve | BeforeAfter | /lead-magnets/plant-picker
+- 2026-02-26T00:00:00.000Z | PIN-014 | Shop | Checklist | /products/renter-bathroom-upgrade-blueprint
+- 2026-02-26T03:00:00.000Z | PIN-015 | Subscribe | MistakesToAvoid | /products/bathroom-plant-picks-upgrade
+- 2026-02-26T06:00:00.000Z | PIN-016 | Inspire | QuickWin | /hub/styling-mirrors-lighting-color
+- 2026-02-26T20:00:00.000Z | PIN-017 | Teach | BudgetBreakdown | /hub/bathroom-plants-biophilic-vibe
+- 2026-02-26T23:00:00.000Z | PIN-018 | Solve | StepByStepHowTo | /lead-magnets/plant-picker
+- 2026-02-27T02:00:00.000Z | PIN-019 | Shop | ProductRoundup | /products/renter-bathroom-upgrade-blueprint
+- 2026-02-27T05:00:00.000Z | PIN-020 | Subscribe | PlantPicker | /products/bathroom-plant-picks-upgrade
+- 2026-02-27T19:00:00.000Z | PIN-021 | Inspire | RenterHack | /hub/styling-mirrors-lighting-color
+- 2026-02-27T22:00:00.000Z | PIN-022 | Teach | SmallSpaceTrick | /hub/bathroom-plants-biophilic-vibe
+- 2026-02-28T01:00:00.000Z | PIN-023 | Solve | StylingFormula | /lead-magnets/plant-picker
+- 2026-02-28T04:00:00.000Z | PIN-024 | Shop | MythBuster | /products/renter-bathroom-upgrade-blueprint
+- 2026-02-28T18:00:00.000Z | PIN-025 | Subscribe | BeforeAfter | /products/bathroom-plant-picks-upgrade
 
 ## Warnings
 - none

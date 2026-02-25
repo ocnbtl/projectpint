@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import { execSync } from "node:child_process";
 import { TAB_HEADERS } from "./constants.ts";
 import { startOfWeekIso } from "./date.ts";
 import { ensureDir, readJsonFile, toCsv, todayIso, writeJsonFile, writeText } from "./io.ts";
@@ -8,6 +7,9 @@ import { flagIntentDominance, lintPin } from "./linter.ts";
 import { assignSchedule, validateIntentDailyMix, validateNo24hRepeats } from "./scheduler.ts";
 import { seedBlogs, seedPins, seedProductIdeas, seedProducts, seedUrlInventory } from "./seed.ts";
 import { loadTab, saveTab } from "./store.ts";
+import { generateMicroDestinations, writeMicroGuidesForInventory } from "./commands/content.ts";
+import { writeManualPackZip, writeOverlayRenderJobBook, writePinsExportCsv, writeWeeklyZip } from "./commands/exports.ts";
+import { analyzeWinners, writeMonthlyReview, writeQaReports, writeWeeklyOpsInfo, writeWeeklyReview, writeYearlyReview } from "./commands/reviews.ts";
 import type { BlogDraft, PinDraft, ProductRow, UrlInventoryItem } from "./types.ts";
 
 interface CliArgs {
@@ -15,9 +17,23 @@ interface CliArgs {
   [key: string]: string | string[];
 }
 
+interface ReviewPaths {
+  outputWeekly: string;
+  outputMonthly: string;
+  outputYearly: string;
+}
+
 const OUTPUT_WEEKLY = path.join(process.cwd(), "outputs", "weekly");
 const OUTPUT_MONTHLY = path.join(process.cwd(), "outputs", "monthly");
 const OUTPUT_YEARLY = path.join(process.cwd(), "outputs", "yearly");
+
+function reviewPaths(): ReviewPaths {
+  return {
+    outputWeekly: OUTPUT_WEEKLY,
+    outputMonthly: OUTPUT_MONTHLY,
+    outputYearly: OUTPUT_YEARLY
+  };
+}
 
 function parseArgs(argv: string[]): CliArgs {
   const result: CliArgs = { _: [] };
@@ -228,69 +244,6 @@ function hookClassIssues(pins: PinDraft[]): string[] {
   return issues;
 }
 
-function renderMicroGuide(slug: string, pillar: string): string {
-  const title = slug
-    .replace("/micro/", "")
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (m) => m.toUpperCase());
-  const pillarLine: Record<string, string> = {
-    RenterFriendly: "This mini guide is written for renters who want cleaner function without risking their deposit.",
-    BudgetDIY: "This mini guide is for anyone who needs visual progress on a strict budget.",
-    SmallSpace: "This mini guide helps when your bathroom feels crowded even after cleaning.",
-    StorageOrganization: "This mini guide targets daily clutter loops that keep coming back.",
-    Styling: "This mini guide helps you add personality without making the room feel busier.",
-    PlantsBiophilic: "This mini guide helps you add plants that survive real bathroom conditions."
-  };
-
-  return `# ${title}
-
-${pillarLine[pillar] ?? pillarLine.BudgetDIY}
-
-## Quick Framing
-Most people do too much at once and end up spending more without fixing daily friction. This guide keeps it simple: one pain point, one anchor fix, one support layer.
-
-## What To Do In 45-90 Minutes
-1. **Pick one friction point.**
-Choose the thing that annoys you every day (counter clutter, weak lighting, nowhere for towels, etc.).
-
-2. **Set the boundary first.**
-- Budget: under $75 / $150 / $300
-- Install mode: no-drill or drill-allowed
-- Non-negotiable: easy cleanup and maintenance
-
-3. **Install one anchor fix.**
-Anchor fixes are changes you can feel immediately. Example: vertical storage, better task light placement, or a category tray system.
-
-4. **Add one support habit.**
-Labeling, category rules, or \"reset in 2 minutes\" keeps the upgrade working after week one.
-
-## The Benefit You Should Notice
-- Less visual noise when you walk in
-- Faster daily routine
-- Fewer impulse buys because decisions are clearer
-
-## Common Mistakes
-- Shopping before measuring
-- Choosing pretty items that are hard to maintain
-- Ignoring humidity when selecting materials
-
-## Related Reads (Subtle Next Step)
-If you want a broader path by budget and install type, check \`/start-here\`. If your next focus is plants, \`/lead-magnets/plant-picker\` is a practical follow-up.
-`;
-}
-
-function writeMicroGuidesForInventory(inventory: UrlInventoryItem[]): void {
-  ensureDir(path.join(process.cwd(), "micro_guides"));
-  const microRows = inventory.filter((item) => item.Type === "micro");
-  for (const item of microRows) {
-    const slug = item.URL.replace("/micro/", "");
-    const content = renderMicroGuide(item.URL, item.Pillar);
-    writeText(path.join(process.cwd(), "micro_guides", `${slug}.md`), content);
-    // Keep a blog_drafts copy so all draft content is in one review surface.
-    writeText(path.join(process.cwd(), "blog_drafts", `${slug}.md`), content);
-  }
-}
-
 function seedPhaseOne(nPins: number, nBlogs: number): void {
   ensureBaseArtifacts();
   writeSchemaFiles();
@@ -383,270 +336,9 @@ function runScheduleBuild(): { plan: string; pins: PinDraft[]; blogs: BlogDraft[
   saveTab("Content_Pins", scheduled.pins);
   saveTab("URL_Inventory", urls);
   writeText(path.join(process.cwd(), "weekly_schedule.md"), plan);
-  // Backward-compatible alias
   writeText(path.join(process.cwd(), "week_plan.md"), plan);
 
   return { plan, pins: scheduled.pins, blogs };
-}
-
-function writePinsExportCsv(maxPins = 200): void {
-  const pins = loadTab<PinDraft>("Content_Pins").slice(0, maxPins);
-  const rows = pins.map((pin) => ({
-    Title: pin.Title,
-    "Media URL": `https://drive.google.com/mock/${pin.Content_ID}.png`,
-    "Pin URL": `https://projectpint.example.com${pin.UTM_URL}`,
-    Description: pin.Description_With_Hashtags,
-    Board: `Ranosa Decor ${pin.Pillar}`,
-    "Publish date": pin.Scheduled_At || ""
-  }));
-
-  writeText(path.join(process.cwd(), "pins_export.csv"), toCsv(rows, ["Title", "Media URL", "Pin URL", "Description", "Board", "Publish date"]));
-}
-
-function writeManualPackZip(): void {
-  ensureDir(OUTPUT_WEEKLY);
-  const packDir = path.join(OUTPUT_WEEKLY, "manual_post_pack");
-  ensureDir(packDir);
-  const packZip = path.join(OUTPUT_WEEKLY, "manual_post_pack.zip");
-  if (fs.existsSync(packZip)) fs.rmSync(packZip);
-
-  const pins = loadTab<PinDraft>("Content_Pins");
-  const lines = pins
-    .map(
-      (p) =>
-        `${p.Content_ID}\nTITLE: ${p.Title}\nOVERLAY_1: ${p.Overlay_1}\nOVERLAY_2: ${p.Overlay_2}\nDESCRIPTION: ${p.Description_With_Hashtags}\nCTA: ${p.Primary_CTA}\nURL: ${p.UTM_URL}\n`
-    )
-    .join("\n");
-  writeText(path.join(packDir, "captions_and_links.txt"), lines);
-
-  const src = [
-    path.join(process.cwd(), "pins_export.csv"),
-    path.join(process.cwd(), "weekly_ops_info.md"),
-    path.join(process.cwd(), "weekly_review.md"),
-    path.join(process.cwd(), "review_pack.html")
-  ]
-    .filter((p) => fs.existsSync(p))
-    .map((p) => `"${path.relative(process.cwd(), p)}"`)
-    .join(" ");
-
-  try {
-    execSync(`cd "${process.cwd()}" && zip -j -q "${packZip}" ${src} "${path.relative(process.cwd(), path.join(packDir, "captions_and_links.txt"))}"`);
-  } catch {
-    writeText(path.join(OUTPUT_WEEKLY, "manual_post_pack.zip.README.txt"), "zip command unavailable; manual pack files are in outputs/weekly/manual_post_pack/");
-  }
-}
-
-function writeOverlayRenderJobBook(): void {
-  ensureDir(OUTPUT_WEEKLY);
-  const pins = loadTab<PinDraft>("Content_Pins");
-  const lines: string[] = [
-    "#!/usr/bin/env bash",
-    "set -euo pipefail",
-    "",
-    "# Requires ImageMagick (`magick`) installed.",
-    "# Input images should be available in ./assets/raw/<Content_ID>.png",
-    "# Output images are written to ./assets/final/<Content_ID>.png",
-    ""
-  ];
-
-  for (const pin of pins) {
-    const safeOverlay1 = pin.Overlay_1.replace(/\"/g, '\\"');
-    const safeOverlay2 = pin.Overlay_2.replace(/\"/g, '\\"');
-    lines.push(
-      `magick \"assets/raw/${pin.Content_ID}.png\" -gravity North -fill \"#FFFFFF\" -stroke \"#00000099\" -strokewidth 2 -pointsize 72 -annotate +0+120 \"${safeOverlay1}\" -gravity South -fill \"#F8FAFC\" -stroke \"#00000099\" -strokewidth 2 -pointsize 56 -annotate +0+140 \"${safeOverlay2}\" \"assets/final/${pin.Content_ID}.png\"`
-    );
-  }
-
-  const out = path.join(OUTPUT_WEEKLY, "overlay_render_jobs.sh");
-  writeText(out, lines.join("\n") + "\n");
-  writeText(path.join(process.cwd(), "overlay_render_jobs.sh"), lines.join("\n") + "\n");
-}
-
-function writeWeeklyZip(): void {
-  ensureDir(OUTPUT_WEEKLY);
-  const opsZip = path.join(OUTPUT_WEEKLY, "weekly_ops_info.zip");
-  if (fs.existsSync(opsZip)) fs.rmSync(opsZip);
-  const blogFiles = fs
-    .readdirSync(path.join(process.cwd(), "blog_drafts"), { withFileTypes: true })
-    .filter((f) => f.isFile() && f.name.endsWith(".md"))
-    .map((f) => path.join(process.cwd(), "blog_drafts", f.name));
-  const packetFiles = fs
-    .readdirSync(path.join(process.cwd(), "content_packets"), { withFileTypes: true })
-    .filter((f) => f.isFile() && f.name.endsWith(".json"))
-    .slice(0, 25)
-    .map((f) => path.join(process.cwd(), "content_packets", f.name));
-
-  const files = [
-    path.join(process.cwd(), "weekly_ops_info.md"),
-    path.join(process.cwd(), "weekly_review.md"),
-    path.join(process.cwd(), "review_pack.html"),
-    path.join(process.cwd(), "pins_export.csv"),
-    path.join(OUTPUT_WEEKLY, "winners.md"),
-    path.join(process.cwd(), "monthly_review.md"),
-    path.join(process.cwd(), "yearly_review.md"),
-    path.join(process.cwd(), "micro_guides"),
-    ...blogFiles,
-    ...packetFiles
-  ]
-    .filter((f) => fs.existsSync(f))
-    .map((f) => `"${path.relative(process.cwd(), f)}"`)
-    .join(" ");
-
-  try {
-    execSync(`cd "${process.cwd()}" && zip -r -q "${opsZip}" ${files}`);
-    fs.copyFileSync(opsZip, path.join(process.cwd(), "weekly_ops_info.zip"));
-    fs.copyFileSync(opsZip, path.join(process.cwd(), "weekly_operating_packet.zip"));
-    fs.copyFileSync(opsZip, path.join(OUTPUT_WEEKLY, "weekly_operating_packet.zip"));
-  } catch {
-    writeText(path.join(OUTPUT_WEEKLY, "weekly_ops_info.zip.README.txt"), "zip command unavailable; packet files remain as plain outputs.");
-  }
-}
-
-function writeWeeklyReview(schedulePlan: string): string {
-  const winnerDigest = analyzeWinners();
-  const content = `# Weekly Review
-
-## Performance Snapshot (Past 7 Days)
-${winnerDigest}
-
-## Quality and Compliance Audit
-- Banned phrase check active.
-- Sales-tone naturalness check active.
-- Visual risk flags active for policy-sensitive prompt terms.
-- URL cooldown and published-only destination checks active.
-
-## What to Improve Next Week
-1. Push 20% more volume toward top-performing hook classes in outbound clicks per impression.
-2. Keep intent mix balanced; avoid same-intent clustering on the same day.
-3. Refresh 5 winners with new overlays, not just new captions.
-4. Prioritize conversion-ready destinations: Start Here, Plant Picker, and approved product pages.
-
-## Ops Inputs
-The schedule plan below is consumed by weekly_ops_info:
-
-${schedulePlan}
-`;
-  writeText(path.join(process.cwd(), "weekly_review.md"), content);
-  writeText(path.join(OUTPUT_WEEKLY, "weekly_review.md"), content);
-  return content;
-}
-
-function writeWeeklyOpsInfo(schedulePlan: string, weeklyReview: string): string {
-  const content = `# Weekly Ops Info
-
-## This Week's Objectives
-- Primary KPI: outbound clicks from Pinterest to site.
-- Secondary KPIs: saves, CTR, email signups, affiliate clicks, product CTA clicks, pageviews.
-
-## Inputs Used
-- weekly_review.md recommendations
-- URL cooldown + published-only scheduler output
-- Current draft inventory (pins, blogs, micro-guides)
-
-## Operating Checklist (All Channels)
-1. Pinterest
-- Review 25 pins in review_pack.html.
-- Verify each pin has text overlay rendered in final image.
-- Approve pins, then export CSV/manual pack.
-
-2. Website
-- Approve/publish 3 blog drafts after QA.
-- Ensure affiliate disclosures only appear on pages with affiliate links.
-- Verify legal/privacy/terms/about/disclosure pages are live.
-
-3. Email (Klaviyo)
-- Validate subscribe endpoint logs and list subscription success.
-- Send weekly nurture email linked to this week's best Teach + Solve posts.
-
-4. Product Pipeline
-- Run product_opportunity_report.
-- Review evidence thresholds for 1-2 MVP recommendations.
-
-5. Governance
-- Log content bible changes in Governance tab using changelog template.
-
-## This Week's Schedule Plan
-${schedulePlan}
-
-## Weekly Review (embedded)
-${weeklyReview}
-`;
-  writeText(path.join(process.cwd(), "weekly_ops_info.md"), content);
-  writeText(path.join(OUTPUT_WEEKLY, "weekly_ops_info.md"), content);
-  return content;
-}
-
-function writeMonthlyReview(): void {
-  const content = `# Monthly Review
-
-## Product Opportunity Report
-1. No-Drill Vanity Lighting Planner
-- Problem solved: renters need brighter vanity lighting without rewiring.
-- Segment: renter + budget.
-- Evidence: Top outbound clicks from Solve intent pins on lighting.
-- Differentiation: placement map + wattage chooser + adhesive mount matrix.
-- MVP scope: 1-week guide + checklist + worksheet.
-- Pricing hypothesis: $19.
-
-2. Tiny Bathroom Storage Routing Map
-- Problem solved: clutter around sink and shower transfer path.
-- Segment: small space + organization.
-- Evidence: high saves and outbound clicks on zone-layout content.
-- Differentiation: printable map templates + decision tree.
-- MVP scope: map pack + setup walkthrough.
-- Pricing hypothesis: $17.
-
-## Recommended MVPs This Month
-- Build 1: Tiny Bathroom Storage Routing Map.
-- Build 2: No-Drill Vanity Lighting Planner.
-
-## Content Bible Refinement Suggestions
-- Increase weight on StepByStepHowTo and RenterHack hooks where outbound click per impression is strongest.
-- Tighten banned phrase list for vague urgency language.
-
-## SEO Cluster Health
-- Weak coverage: Styling and Plants clusters need more micro-destinations.
-
-## Monetization Review
-- Affiliate clicks trend: instrumented, insufficient data volume yet.
-- Ad readiness: start with high-pageview hub and start-here pages.
-- Product funnel readiness: Plant Picker lead magnet is primary entry.
-`;
-
-  writeText(path.join(process.cwd(), "monthly_review.md"), content);
-  writeText(path.join(OUTPUT_MONTHLY, "monthly_review.md"), content);
-  // Backward-compatible alias file.
-  writeText(path.join(process.cwd(), "monthly_digest.md"), content);
-  writeText(path.join(OUTPUT_MONTHLY, "monthly_digest.md"), content);
-}
-
-function writeYearlyReview(): void {
-  const content = `# Yearly Review
-
-## Compounding Wins
-- Hub pages + refreshed winners increased repeat outbound sessions.
-- Email lead magnet funnels improved retention.
-
-## Risks and Platform Changes
-- Monitor Pinterest distribution variance by hook class and intent.
-
-## Content Inventory Audit
-- Refresh high-performing evergreen posts first.
-- Consolidate overlapping micro-destinations.
-
-## Product Catalog Strategy
-- Expand renter + small-space stacks first, then plants upgrade ladder.
-
-## Governance Audit
-- Keep monthly content bible changelog updates mandatory.
-
-## Year-Ahead Plan
-- Keep 25 pins/week and 3 blogs/week baseline.
-- Add 1 new product MVP/month if thresholds pass.
-`;
-
-  writeText(path.join(process.cwd(), "yearly_review.md"), content);
-  writeText(path.join(OUTPUT_YEARLY, "yearly_review.md"), content);
 }
 
 function writeReviewPackAndExports(): void {
@@ -654,13 +346,17 @@ function writeReviewPackAndExports(): void {
   const html = toReviewHtml(pins, blogs, plan);
   writeText(path.join(process.cwd(), "review_pack.html"), html);
   writeText(path.join(process.cwd(), "public", "review_pack.html"), html);
-  const weeklyReview = writeWeeklyReview(plan);
-  writeWeeklyOpsInfo(plan, weeklyReview);
+
+  const paths = reviewPaths();
+  writeQaReports(paths);
+  const weeklyReview = writeWeeklyReview(paths, plan);
+  writeWeeklyOpsInfo(paths, plan, weeklyReview);
+
   writePinsExportCsv(200);
-  writeManualPackZip();
-  writeMonthlyReview();
-  writeYearlyReview();
-  writeWeeklyZip();
+  writeManualPackZip({ outputWeekly: OUTPUT_WEEKLY });
+  writeMonthlyReview(paths);
+  writeYearlyReview(paths);
+  writeWeeklyZip({ outputWeekly: OUTPUT_WEEKLY });
 }
 
 function approveRows(tab: "Content_Pins" | "Blog_Posts", idField: string, idValue?: string): void {
@@ -702,97 +398,6 @@ function ingestMetricsCsv(file?: string): void {
     current.push(row);
   }
   saveTab("Metrics_Weekly", current);
-}
-
-function analyzeWinners(): string {
-  const metrics = loadTab<Record<string, string>>("Metrics_Weekly");
-  const pins = loadTab<PinDraft>("Content_Pins");
-  const urls = loadTab<UrlInventoryItem>("URL_Inventory");
-  const pinById = new Map(pins.map((p) => [p.Content_ID, p]));
-  const urlTypeByUrl = new Map(urls.map((u) => [u.URL, u.Type]));
-  const scored = metrics
-    .map((m) => {
-      const impressions = Number(m.Impressions ?? 0) || 1;
-      const outbound = Number(m.Outbound_Clicks ?? 0);
-      return {
-        Content_ID: m.Content_ID ?? "",
-        URL: m.URL ?? "",
-        score: outbound / impressions
-      };
-    })
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 10);
-
-  const source = scored.length ? scored : pins.slice(0, 10).map((p) => ({ Content_ID: p.Content_ID, URL: p.Destination_URL, score: 0 }));
-
-  const hookScores = new Map<string, number[]>();
-  const intentScores = new Map<string, number[]>();
-  const typeScores = new Map<string, number[]>();
-  for (const item of source) {
-    const pin = pinById.get(item.Content_ID);
-    const hook = pin?.Hook_Class ?? "unknown";
-    const intent = pin?.Destination_Intent ?? "unknown";
-    const type = urlTypeByUrl.get(item.URL) ?? "unknown";
-    hookScores.set(hook, [...(hookScores.get(hook) ?? []), item.score]);
-    intentScores.set(intent, [...(intentScores.get(intent) ?? []), item.score]);
-    typeScores.set(type, [...(typeScores.get(type) ?? []), item.score]);
-  }
-
-  const avgLines = (m: Map<string, number[]>) =>
-    [...m.entries()]
-      .map(([k, arr]) => ({ k, avg: arr.reduce((a, b) => a + b, 0) / (arr.length || 1) }))
-      .sort((a, b) => b.avg - a.avg)
-      .map((x) => `- ${x.k}: ${(x.avg * 100).toFixed(2)}%`)
-      .join("\n");
-
-  const markdown = `# Weekly Performance Metrics
-
-## Winners (Outbound Clicks / Impressions)
-${source.map((w, i) => `${i + 1}. ${w.Content_ID} | ${w.URL} | ${(w.score * 100).toFixed(2)}%`).join("\n")}
-
-## Top Hook Classes
-${avgLines(hookScores) || "- No data"}
-
-## Top Destination Intents
-${avgLines(intentScores) || "- No data"}
-
-## Destination Type Performance
-${avgLines(typeScores) || "- No data"}
-
-## Recommendation
-- Shift 20% of next batch toward top 2 hook classes and top 2 intents.
-- Keep URL cooldown and published-only checks strict.
-`;
-  writeText(path.join(OUTPUT_WEEKLY, "winners.md"), markdown);
-  return markdown;
-}
-
-function generateMicroDestinations(n: number): void {
-  const inventory = loadTab<UrlInventoryItem>("URL_Inventory");
-  const existing = new Set(inventory.map((u) => u.URL));
-  let counter = 1;
-  while (n > 0) {
-    const slug = `/micro/auto-generated-mini-guide-${counter}`;
-    counter += 1;
-    if (existing.has(slug)) continue;
-    inventory.push({
-      URL_ID: `URL-AUTO-${String(counter).padStart(3, "0")}`,
-      URL: slug,
-      Type: "micro",
-      Pillar: "BudgetDIY",
-      Status: "published",
-      Last_Posted_At: "",
-      Cooldown_Hours: 24,
-      Destination_Intent_Default: "Teach",
-      Priority: 40
-    });
-    const content = renderMicroGuide(slug, "BudgetDIY");
-    writeText(path.join(process.cwd(), "blog_drafts", `${slug.replace("/micro/", "")}.md`), content);
-    ensureDir(path.join(process.cwd(), "micro_guides"));
-    writeText(path.join(process.cwd(), "micro_guides", `${slug.replace("/micro/", "")}.md`), content);
-    n -= 1;
-  }
-  saveTab("URL_Inventory", inventory);
 }
 
 function productOpportunityReport(): void {
@@ -854,9 +459,46 @@ function initProject(): void {
   writeText(path.join(process.cwd(), "outputs", ".keep"), "");
 }
 
+function writeHelpFile(): void {
+  writeText(
+    path.join(process.cwd(), "outputs", "cli-help.txt"),
+    "Supported commands: " +
+      [
+        "init_project",
+        "init_sheets",
+        "init_url_inventory",
+        "generate_content_bible",
+        "generate_blog_week --n=3",
+        "generate_pin_week --n=25",
+        "generate_micro_destinations --n=10",
+        "render_review",
+        "approve_blog --blog_id=BLOG-001",
+        "publish_blog --blog_id=BLOG-001",
+        "approve_pin --content_id=PIN-001",
+        "build_schedule_plan",
+        "export_pinterest_bulk_csv --max=200",
+        "export_manual_post_pack",
+        "prepare_overlay_jobs",
+        "generate_variations_of_winners --top=10 --variants=5",
+        "propose_experiments --n=2",
+        "ingest_pinterest_metrics_csv --file=path.csv",
+        "analyze_winners",
+        "weekly_review",
+        "weekly_ops_info",
+        "weekly_operating_packet",
+        "monthly_review",
+        "monthly_digest",
+        "yearly_review",
+        "product_opportunity_report",
+        "generate_product_mvp --product_id=PROD-001"
+      ].join("\n")
+  );
+}
+
 export function runCommand(argv: string[]): void {
   const parsed = parseArgs(argv);
   const [command] = parsed._;
+  const paths = reviewPaths();
 
   switch (command) {
     case "init_project":
@@ -908,10 +550,10 @@ export function runCommand(argv: string[]): void {
       writePinsExportCsv(getNumberArg(parsed, "max", 200));
       break;
     case "export_manual_post_pack":
-      writeManualPackZip();
+      writeManualPackZip({ outputWeekly: OUTPUT_WEEKLY });
       break;
     case "prepare_overlay_jobs":
-      writeOverlayRenderJobBook();
+      writeOverlayRenderJobBook({ outputWeekly: OUTPUT_WEEKLY });
       break;
     case "generate_variations_of_winners":
       generateWinnerVariations(getNumberArg(parsed, "top", 10), getNumberArg(parsed, "variants", 5));
@@ -923,7 +565,7 @@ export function runCommand(argv: string[]): void {
       ingestMetricsCsv(typeof parsed.file === "string" ? parsed.file : undefined);
       break;
     case "analyze_winners":
-      analyzeWinners();
+      analyzeWinners(paths);
       break;
     case "weekly_operating_packet":
     case "weekly_ops_info":
@@ -931,15 +573,16 @@ export function runCommand(argv: string[]): void {
       break;
     case "weekly_review": {
       const { plan } = runScheduleBuild();
-      writeWeeklyReview(plan);
+      writeQaReports(paths);
+      writeWeeklyReview(paths, plan);
       break;
     }
     case "monthly_digest":
     case "monthly_review":
-      writeMonthlyReview();
+      writeMonthlyReview(paths);
       break;
     case "yearly_review":
-      writeYearlyReview();
+      writeYearlyReview(paths);
       break;
     case "product_opportunity_report":
       productOpportunityReport();
@@ -948,42 +591,9 @@ export function runCommand(argv: string[]): void {
       generateProductMvp(typeof parsed.product_id === "string" ? parsed.product_id : undefined);
       break;
     default:
-      writeText(
-        path.join(process.cwd(), "outputs", "cli-help.txt"),
-        "Supported commands: " +
-          [
-            "init_project",
-            "init_sheets",
-            "init_url_inventory",
-            "generate_content_bible",
-            "generate_blog_week --n=3",
-            "generate_pin_week --n=25",
-            "generate_micro_destinations --n=10",
-            "render_review",
-            "approve_blog --blog_id=BLOG-001",
-            "publish_blog --blog_id=BLOG-001",
-            "approve_pin --content_id=PIN-001",
-            "build_schedule_plan",
-            "export_pinterest_bulk_csv --max=200",
-            "export_manual_post_pack",
-            "prepare_overlay_jobs",
-            "generate_variations_of_winners --top=10 --variants=5",
-            "propose_experiments --n=2",
-            "ingest_pinterest_metrics_csv --file=path.csv",
-            "analyze_winners",
-            "weekly_review",
-            "weekly_ops_info",
-            "weekly_operating_packet",
-            "monthly_review",
-            "monthly_digest",
-            "yearly_review",
-            "product_opportunity_report",
-            "generate_product_mvp --product_id=PROD-001"
-          ].join("\n")
-      );
+      writeHelpFile();
   }
 
-  // Ensure row shapes remain consistent with schema headers.
   for (const [tab, headers] of Object.entries(TAB_HEADERS)) {
     const file = path.join(process.cwd(), "data", "sheets", `${tab}.json`);
     if (!fs.existsSync(file)) continue;

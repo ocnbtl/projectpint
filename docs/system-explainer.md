@@ -1,94 +1,146 @@
 # System Explainer
 
-## Step-by-Step Workflow (Operator View)
-1. Initialize project folders and seed data.
+## Workflow (Step-by-Step)
+1. Initialize project and source-of-truth tabs.
 - Run: `npm run init_project`
 - Run: `npm run init_sheets`
+- What this does: creates folders, seeds Google-Sheets-shaped tab data, and writes starter pins/blogs/products so you are not starting from blank.
 
-2. Generate and validate weekly plan inputs.
+2. Build the weekly schedule safely.
 - Run: `npm run build_schedule_plan`
-- This enforces published-only destinations + 24h URL cooldown.
+- What this does: assigns destination URLs only if they are `published` and outside cooldown; prevents 24h URL repeats and flags intent stacking.
 
-3. Generate weekly analysis + action packet.
+3. Generate weekly review and ops instructions.
 - Run: `npm run weekly_review`
 - Run: `npm run weekly_ops_info`
-- Output includes KPI review + concrete weekly checklist across Pinterest, website, email, and product tasks.
+- What this does: analyzes current data, writes next-week improvement guidance, and creates the operator checklist you execute.
 
-4. Generate content assets.
-- Blog drafts are written to `blog_drafts/`
-- Micro guides are written to `micro_guides/`
-- Pin records are written to `data/sheets/Content_Pins.json` + `content_packets/`
+4. Generate or refresh content inventory.
+- Run: `npm run generate_blog_week -- --n=3`
+- Run: `npm run generate_pin_week -- --n=25`
+- Run: `npm run generate_micro_destinations -- --n=10`
+- What this does: creates new drafts for blogs, pins, and micro guides so URL inventory stays deep enough for cooldown-safe posting.
 
-5. Render pin overlays before posting.
+5. Run copy + visual QA outputs.
+- Auto-generated during `weekly_review` and `weekly_ops_info`.
+- Files: `outputs/weekly/qa_copy.json`, `outputs/weekly/qa_visual.json`, `outputs/weekly/qa_icp_alignment.json`.
+- What this does: gives structured pass/fail style checks, visual risk checks, and ICP-alignment checks before export.
+
+6. Render overlay jobs for pin images.
 - Run: `npm run prepare_overlay_jobs`
-- Execute generated commands from `overlay_render_jobs.sh` (or `outputs/weekly/overlay_render_jobs.sh`) on raw images.
+- What this does: generates a shell job file for text overlays so every pin image includes required in-image text before posting.
 
-6. Human review + approval gate.
-- Open `review_pack.html`
-- Approve blog rows and pin rows before publish/export actions.
+7. Human review gate.
+- Open: `review_pack.html`
+- What this does: final assisted-automation checkpoint before any publish/export; you approve rows that should move forward.
 
-7. Export posting assets.
+8. Approve and publish blogs.
+- Run: `npm run approve_blog -- --blog_id=BLOG-001`
+- Run: `npm run publish_blog -- --blog_id=BLOG-001`
+- What this does: changes status in source-of-truth and marks publish timestamp only for approved rows.
+
+9. Approve and export pin posting assets.
+- Run: `npm run approve_pin -- --content_id=PIN-001`
 - Run: `npm run export_pinterest_bulk_csv`
-- Optional manual pack: `npm run export_manual_post_pack`
+- Optional: `npm run export_manual_post_pack`
+- What this does: creates Pinterest-ready CSV and manual pack without using unofficial posting automation.
 
-8. Monthly and yearly review cycle.
+10. Run monthly and yearly strategic loops.
 - Run: `npm run monthly_review`
 - Run: `npm run yearly_review`
-- Feed findings back into Content Bible and Governance changelog.
+- What this does: converts performance data into product opportunities, cluster decisions, and next-cycle roadmap changes.
+
+11. Generate full packet deliverable.
+- Run: `npm run weekly_operating_packet`
+- What this does: bundles review + schedule + drafts + exports into `weekly_ops_info.zip`/`weekly_operating_packet.zip`.
 
 ---
 
-## `lib/scheduler.ts`
-Purpose: schedule enforcement engine.
+## Command Reference (Plain Language)
+- `init_project`: creates required output folders and baseline structure.
+- `init_sheets`: seeds all tabs and starter content rows.
+- `init_url_inventory`: resets URL inventory tab with starter published URLs.
+- `generate_content_bible`: mirrors YAML bible into generated JSON + governance entry.
+- `generate_blog_week --n=3`: writes N blog drafts.
+- `generate_pin_week --n=25`: writes N pin rows + content packets.
+- `generate_micro_destinations --n=10`: adds N micro URLs and writes micro guide drafts.
+- `render_review`: creates `review_pack.html` from current rows.
+- `approve_blog --blog_id=...`: marks blog rows approved.
+- `publish_blog --blog_id=...`: marks approved blog rows published.
+- `approve_pin --content_id=...`: marks pin rows approved.
+- `build_schedule_plan`: assigns weekly slots with cooldown/published checks.
+- `export_pinterest_bulk_csv --max=200`: outputs Pinterest bulk CSV.
+- `export_manual_post_pack`: builds manual post zip with captions + links.
+- `prepare_overlay_jobs`: writes overlay render script for image text.
+- `ingest_pinterest_metrics_csv --file=...`: appends metric rows from CSV.
+- `analyze_winners`: outputs winner analysis markdown.
+- `weekly_review`: writes weekly review + QA JSON reports.
+- `weekly_ops_info`: writes ops brief and zipped weekly packet.
+- `monthly_review`: writes monthly review (plus backward-compatible monthly digest).
+- `yearly_review`: writes yearly strategy review.
+- `product_opportunity_report`: writes product-opportunity short report.
+- `generate_product_mvp --product_id=...`: scaffolds product landing/email/supporting-content docs.
 
-What it does:
-- Assigns destination URLs to pin records.
-- Enforces published-only URL eligibility.
-- Enforces rolling cooldown (`Cooldown_Hours`, default 24).
-- Validates no destination URL repeats inside 24 hours.
-- Flags daily intent stacking risk.
+---
 
-Why it matters:
-- Prevents policy-risk posting behavior.
-- Preserves destination diversity and content distribution quality.
-
+## Core Files (How You Use Them)
 ## `lib/commands.ts`
-Purpose: orchestration layer for CLI operations.
+Purpose: central orchestrator.
+What it does: routes CLI commands, coordinates scheduler/linter/review/export modules, and keeps tab files normalized.
+How you use it: you do not edit rows manually first; run commands and let this file orchestrate repeatable operations.
 
-What it does:
-- Seeds and normalizes source-of-truth tab data.
-- Generates weekly/monthly/yearly review artifacts.
-- Builds weekly execution packet (`weekly_ops_info`).
-- Generates blog drafts and micro guides.
-- Generates pin exports and manual posting packs.
-- Writes Google-Sheets-compatible CSV exports per tab.
+## `lib/commands/content.ts`
+Purpose: content-domain helpers.
+What it does: generates micro destinations and writes micro-guide markdown files.
+How you use it: called from CLI when you need to expand URL pool quickly.
 
-Why it matters:
-- Centralizes automation logic so recurring execution is repeatable and auditable.
+## `lib/commands/exports.ts`
+Purpose: export-domain helpers.
+What it does: builds Pinterest CSV, manual posting pack, overlay render jobs, and weekly zip bundles.
+How you use it: run export scripts after human approval.
+
+## `lib/commands/reviews.ts`
+Purpose: analysis/reporting-domain helpers.
+What it does: winner analysis, weekly/monthly/yearly review writing, and QA JSON reports including ICP alignment.
+How you use it: run weekly/monthly/yearly loops and read outputs before next batch generation.
 
 ## `scripts/cli.ts`
-Purpose: command entrypoint.
-
-What it does:
-- Reads command-line arguments.
-- Calls `runCommand(...)` from `lib/commands.ts`.
-
-Why it matters:
-- Standardizes all operations under `npm run ...` commands.
+Purpose: single command entrypoint.
+What it does: passes shell args into `runCommand(...)`.
+How you use it: indirectly through `npm run <script>` commands.
 
 ## `package.json`
-Purpose: runtime manifest + operations menu.
+Purpose: operator command menu + dependency manifest.
+What it does: defines scripts for every operational action and runtime/dev dependencies.
+How you use it: this is your human-friendly interface; run scripts rather than calling internals directly.
 
-What it does:
-- Defines runtime dependencies.
-- Defines all operator-facing scripts (`weekly_ops_info`, `monthly_review`, exports, etc.).
-- Provides a stable command surface for local and CI runs.
+---
 
-Why it matters:
-- Non-engineer-friendly operational interface.
+## Implemented Recommendations (Status)
+1. Split command logic into domain modules.
+- Implemented: `lib/commands/content.ts`, `lib/commands/exports.ts`, `lib/commands/reviews.ts`.
+- `lib/commands.ts` now acts as orchestration only.
 
-## Practical Improvement Recommendations
-1. Split `lib/commands.ts` into smaller domain files (`commands/seed.ts`, `commands/reviews.ts`, `commands/exports.ts`).
-2. Add unit tests for cooldown and linter edge cases.
-3. Add a true Google Sheets adapter behind an interface (keep local JSON as fallback).
-4. Add copy style QA reports by ICP (`qa_icp_alignment.json`) to reduce drift.
+2. Add unit tests for scheduler/linter edge cases.
+- Implemented: `tests/scheduler.test.ts`, `tests/linter.test.ts`, `tests/style-linter.test.ts`.
+- Run with: `npm test`.
+
+3. Add Google Sheets adapter behind interface with local fallback.
+- Implemented: `lib/sheets/google-adapter.ts` + `lib/sheets/local-adapter.ts` + `lib/sheets/index.ts`.
+- Switch mode with env: `SHEETS_MODE=google` or `SHEETS_MODE=local`.
+
+4. Add style/ICP QA reports for blogs/micro guides.
+- Implemented: style linter in `lib/style-linter.ts` and weekly QA JSON outputs in `outputs/weekly/`.
+
+---
+
+## Output Paths You Should Watch Weekly
+- `review_pack.html`
+- `week_plan.md`
+- `weekly_review.md`
+- `weekly_ops_info.md`
+- `pins_export.csv`
+- `outputs/weekly/qa_copy.json`
+- `outputs/weekly/qa_visual.json`
+- `outputs/weekly/qa_icp_alignment.json`
+- `weekly_ops_info.zip`

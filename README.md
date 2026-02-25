@@ -27,7 +27,8 @@ Flow: **Pinterest -> Next.js site -> Klaviyo signup -> monetization (ads + affil
 - `npm run init_project`
 - `npm run init_sheets`
 - `npm run weekly_ops_info`
-5. Start app: `npm run dev`
+5. Run tests: `npm test`
+6. Start app: `npm run dev`
 
 ## Primary CLI Commands
 - `init_project`
@@ -100,3 +101,4 @@ Runs:
 - Pin production workflow: `docs/pin-production-workflow.md`
 - Research notes: `docs/research-notes.md`
 - Style calibration: `docs/style-calibration.md`
+- Current execution checklist: `docs/current-phase-execution-checklist.md`

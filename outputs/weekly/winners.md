@@ -1,16 +1,16 @@
 # Weekly Performance Metrics
 
 ## Winners (Outbound Clicks / Impressions)
-1. PIN-001 | /start-here | 0.00%
-2. PIN-002 | /hub/renter-friendly-upgrades | 0.00%
-3. PIN-003 | /hub/budget-diy-transformations | 0.00%
-4. PIN-004 | /hub/small-bathroom-space-hacks | 0.00%
-5. PIN-005 | /hub/storage-and-clutter-to-calm | 0.00%
-6. PIN-006 | /start-here | 0.00%
-7. PIN-007 | /hub/renter-friendly-upgrades | 0.00%
-8. PIN-008 | /hub/budget-diy-transformations | 0.00%
-9. PIN-009 | /hub/small-bathroom-space-hacks | 0.00%
-10. PIN-010 | /hub/storage-and-clutter-to-calm | 0.00%
+1. PIN-001 | /hub/styling-mirrors-lighting-color | 0.00%
+2. PIN-002 | /hub/bathroom-plants-biophilic-vibe | 0.00%
+3. PIN-003 | /lead-magnets/plant-picker | 0.00%
+4. PIN-004 | /products/renter-bathroom-upgrade-blueprint | 0.00%
+5. PIN-005 | /products/bathroom-plant-picks-upgrade | 0.00%
+6. PIN-006 | /hub/styling-mirrors-lighting-color | 0.00%
+7. PIN-007 | /hub/bathroom-plants-biophilic-vibe | 0.00%
+8. PIN-008 | /lead-magnets/plant-picker | 0.00%
+9. PIN-009 | /products/renter-bathroom-upgrade-blueprint | 0.00%
+10. PIN-010 | /products/bathroom-plant-picks-upgrade | 0.00%
 
 ## Top Hook Classes
 - BeforeAfter: 0.00%
@@ -32,8 +32,9 @@
 - Subscribe: 0.00%
 
 ## Destination Type Performance
-- start: 0.00%
 - hub: 0.00%
+- lead: 0.00%
+- product: 0.00%
 
 ## Recommendation
 - Shift 20% of next batch toward top 2 hook classes and top 2 intents.
