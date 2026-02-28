@@ -22,12 +22,12 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
         <section className="hero">
           <div className="hero-grid">
             <div>
-              <p className="eyebrow">Hub Path</p>
+              <p className="eyebrow">Area</p>
               <h1>{hub.title}</h1>
               <p>{hub.description}</p>
               <p className="home-hero-cta">Primary win: {hub.outcome}</p>
               <div className="pill-row" aria-label="Hub details">
-                <span className="pill">Pillar: {pillarLabel(hub.primaryPillar)}</span>
+                <span className="pill">Area: {pillarLabel(hub.primaryPillar)}</span>
                 <span className="pill">Budget-aware sequencing</span>
                 <span className="pill">Renter-safe by default</span>
               </div>
@@ -53,7 +53,7 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
 
         <section className="grid grid-2">
           <article className="card">
-            <h2>Related blog posts</h2>
+            <h2>Related reads</h2>
             {relatedBlogs.length > 0 ? (
               <ul>
                 {relatedBlogs.map((blog) => (
@@ -71,7 +71,7 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
           </article>
 
           <article className="card">
-            <h2>Micro-guides</h2>
+            <h2>Quick guides</h2>
             {microGuides.length > 0 ? (
               <ul>
                 {microGuides.map((guide) => (
@@ -87,8 +87,8 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
         </section>
 
         <section className="panel">
-          <h2>Next conversion step</h2>
-          <p>After your first hub win, choose one of these next moves:</p>
+          <h2>Keep exploring</h2>
+          <p>After your first win, choose one of these next moves:</p>
           <div className="cta-row">
             <Link href="/blog" className="btn btn-ghost">
               Browse blog library

@@ -6,56 +6,35 @@ export default function HubIndexPage() {
   return (
     <SiteShell>
       <div className="section-stack">
-        <section className="hero">
-          <div className="hero-grid">
-            <div>
-              <p className="eyebrow">Hub Directory</p>
-              <h1>Pick the hub that matches your bathroom constraint.</h1>
-              <p>
-                Each hub groups practical blog posts and micro-guides so Pinterest traffic lands on clear next steps, not
-                scattered ideas.
-              </p>
-              <div className="cta-row">
-                <Link href="/start-here" className="btn btn-primary">
-                  Use Start Here
-                </Link>
-                <Link href="/blog" className="btn btn-secondary">
-                  Browse blog posts
-                </Link>
-              </div>
-            </div>
-            <aside className="hero-card">
-              <h3>What to expect</h3>
-              <ol>
-                <li>One core outcome per hub.</li>
-                <li>Renter-safe defaults and budget-aware options.</li>
-                <li>Published destinations only for outbound sharing.</li>
-              </ol>
-            </aside>
+        <section className="panel areas-intro">
+          <p className="eyebrow areas-eyebrow">Areas</p>
+          <h1>Choose the bathroom area you want to improve first.</h1>
+          <p>
+            Pick one area, start small, and finish a real upgrade this week. Every path is built for real homes, real
+            routines, and practical budgets.
+          </p>
+          <div className="cta-row">
+            <Link href="/start-here" className="btn btn-accent">
+              Start with guidance
+            </Link>
+            <Link href="/blog" className="btn btn-ghost">
+              Read quick guides
+            </Link>
           </div>
         </section>
 
-        <section className="grid grid-3">
+        <section className="grid grid-3 areas-grid">
           {hubs.map((hub) => (
-            <article key={hub.slug} className="card card-soft path-card hub-card">
-              <p className="small">{pillarLabel(hub.primaryPillar)}</p>
+            <article key={hub.slug} className="card areas-card">
+              <p className="areas-pill">{pillarLabel(hub.primaryPillar)}</p>
               <h3>{hub.title}</h3>
               <p className="path-card-summary">{hub.description}</p>
-              <p className="benefit-highlight">Outcome: {hub.outcome}</p>
+              <p className="benefit-highlight">Win today: {hub.outcome}</p>
               <Link href={`/hub/${hub.slug}`} className="btn btn-accent">
-                Open hub path
+                Explore {hub.title}
               </Link>
             </article>
           ))}
-        </section>
-
-        <section className="panel">
-          <h2>Publishing guardrails</h2>
-          <ul>
-            <li>Pins should link only to published destinations.</li>
-            <li>Routing and copy stay renter-first and budget-first.</li>
-            <li>Posting remains assisted and policy-safe, not unofficially automated.</li>
-          </ul>
         </section>
       </div>
     </SiteShell>
