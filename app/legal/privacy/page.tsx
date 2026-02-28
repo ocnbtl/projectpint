@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { SiteShell } from "../../../components/SiteShell";
 
 export default function PrivacyPage() {
@@ -40,13 +39,6 @@ export default function PrivacyPage() {
               <li>Measure which content and offers perform best.</li>
             </ul>
           </article>
-        </section>
-
-        <section className="panel policy-links">
-          <p className="small">
-            Related policies: <Link href="/legal/terms">Terms of Use</Link> and{" "}
-            <Link href="/legal/affiliate-disclosure">Affiliate Disclosure</Link>.
-          </p>
         </section>
       </div>
     </SiteShell>

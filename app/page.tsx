@@ -41,10 +41,8 @@ export default function HomePage() {
               <p className="small">Quick win improvements that reduce clutter fast.</p>
             </div>
             <div className="metric">
-              <p className="metric-value">$75 / $150 / $300</p>
-              <p className="small">
-                Clear recommendation &amp; options for <strong>your</strong> budget.
-              </p>
+              <p className="metric-value">Budget-aware options</p>
+              <p className="small">Clear recommendation &amp; options for your budget.</p>
             </div>
             <div className="metric">
               <p className="metric-value">Style that fits you</p>
@@ -78,7 +76,7 @@ export default function HomePage() {
           <div className="grid grid-3">
             {blogs.map((blog) => (
               <article key={blog.Blog_ID} className="card">
-                <div className="tag-list">
+                <div className="tag-list tag-list-compact read-tags">
                   <span className="tag">{blog.Keyword_Target}</span>
                   <span className="tag">{pillarLabel(blog.Pillar)}</span>
                 </div>

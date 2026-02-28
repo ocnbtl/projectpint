@@ -264,17 +264,28 @@ a:hover {
 
 .hero-bullet-list {
   margin: 0;
-  padding-left: 1.35rem;
-  display: grid;
-  gap: 0.12rem;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.7rem;
 }
 
 .hero-bullet-list li {
   color: #f5fcfa;
   font-family: var(--font-display), serif;
-  font-size: clamp(1.35rem, 3.4vw, 2.8rem);
-  line-height: 1.06;
+  font-size: clamp(1.3rem, 2.7vw, 2.25rem);
+  line-height: 1.08;
   font-weight: 700;
+  white-space: nowrap;
+}
+
+.hero-bullet-list li + li::before {
+  content: "•";
+  margin-right: 0.72rem;
+  font-size: 0.82em;
+  color: rgba(255, 247, 233, 0.95);
 }
 
 .hero-cta-row {
@@ -450,8 +461,9 @@ a:hover {
 
 .home-hero-cta {
   margin: 0.1rem 0 0.7rem;
-  color: var(--accent);
-  font-weight: 800;
+  color: rgba(243, 251, 248, 0.96);
+  font-weight: 620;
+  font-size: 1.03rem;
 }
 
 .hub-card {
@@ -511,6 +523,21 @@ a:hover {
 
 .home-path-card {
   min-height: 258px;
+}
+
+.home-path-card .path-card-action {
+  margin-top: 0.82rem;
+  gap: 0.28rem;
+}
+
+.home-path-card .benefit-highlight {
+  font-size: 0.82rem;
+  padding: 0.38rem 0.5rem;
+}
+
+.home-path-card .path-card-action .btn {
+  font-size: 0.84rem;
+  padding: 0.48rem 0.84rem;
 }
 
 .start-here-title {
@@ -574,6 +601,8 @@ a:hover {
   position: relative;
   overflow: hidden;
   border-color: #b6ddd5;
+  display: flex;
+  flex-direction: column;
 }
 
 .promo-card::after {
@@ -585,6 +614,11 @@ a:hover {
   height: 220px;
   border-radius: 999px;
   opacity: 0.6;
+}
+
+.promo-card .btn {
+  margin-top: auto;
+  align-self: flex-start;
 }
 
 .promo-card-plant {
@@ -680,7 +714,7 @@ a:hover {
 }
 
 .blog-tag-list {
-  margin-bottom: 0.12rem;
+  margin-bottom: 0.42rem;
 }
 
 .about-panel {
@@ -712,6 +746,23 @@ a:hover {
   font-size: 0.78rem;
   padding: 0.24rem 0.58rem;
   border: 1px solid #b9d5ce;
+}
+
+.tag-list-compact {
+  gap: 0.3rem;
+}
+
+.tag-list-compact .tag {
+  font-size: 0.7rem;
+  padding: 0.16rem 0.42rem;
+  max-width: calc(50% - 0.2rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.read-tags {
+  margin-bottom: 0.58rem;
 }
 
 .about-tagline-right {
@@ -975,6 +1026,11 @@ td {
   }
 
   .hero-bullet-list {
-    padding-left: 1.05rem;
+    padding-left: 0;
+    gap: 0.18rem 0.45rem;
+  }
+
+  .hero-bullet-list li {
+    font-size: clamp(1.02rem, 6vw, 1.36rem);
   }
 }

@@ -85,8 +85,13 @@ export async function POST(request: Request) {
         const text = await response.text();
         console.error("Klaviyo error", response.status, text);
       } else {
-        const body = (await response.json()) as { data?: { id?: string } };
-        profileId = body?.data?.id ? `job:${body.data.id}` : `pending:${email}`;
+        const rawBody = await response.text();
+        if (rawBody.trim().length > 0) {
+          const body = JSON.parse(rawBody) as { data?: { id?: string } };
+          profileId = body?.data?.id ? `job:${body.data.id}` : `pending:${email}`;
+        } else {
+          profileId = `pending:${email}`;
+        }
       }
     } catch (error) {
       console.error("Klaviyo request failed", error);

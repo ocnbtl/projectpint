@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ConsentNote } from "./ConsentNote";
 
 interface EmailSignupFormProps {
@@ -70,8 +69,7 @@ export function EmailSignupForm({
       </button>
       <ConsentNote />
       <p className="small" style={{ marginBottom: 0 }}>
-        No spam. We respect your inbox. Use this with our <Link href="/legal/privacy">Privacy Policy</Link> and
-        unsubscribe anytime.
+        No spam. We respect your inbox and we don&apos;t sell your information.
       </p>
     </form>
   );

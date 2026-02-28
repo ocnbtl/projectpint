@@ -74,7 +74,7 @@ export function BlogIndexExplorer({ blogs, availableTags }: BlogIndexExplorerPro
               <h3>
                 <Link href={`/blog/${blog.slug}`}>{blog.title}</Link>
               </h3>
-              <div className="tag-list blog-tag-list">
+              <div className="tag-list blog-tag-list tag-list-compact">
                 {blog.tags.map((tag) => (
                   <span key={`${blog.id}-${tag}`} className="tag">
                     {tag}
