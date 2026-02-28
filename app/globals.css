@@ -105,13 +105,17 @@ a:hover {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 12px 0;
+  padding: 12px 0 14px;
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
   gap: 0.62rem;
+}
+
+.brand:hover {
+  text-decoration: none;
 }
 
 .brand-name {
@@ -134,12 +138,22 @@ a:hover {
   width: 38px;
   height: 38px;
   border-radius: 10px;
+  border: 1px solid #9bc5bb;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+  background:
+    radial-gradient(circle at 80% 16%, #ffdcb8 0%, transparent 40%),
+    radial-gradient(circle at 22% 74%, #d6f3eb 0%, transparent 36%),
+    linear-gradient(145deg, #1f7565 0%, #2f8a79 52%, #6db6a7 100%);
 }
 
 .brand-footer {
   display: flex;
   align-items: center;
   gap: 0.55rem;
+}
+
+.brand-footer-line {
+  margin: 0;
 }
 
 .brand-mark-footer {
@@ -160,7 +174,7 @@ a:hover {
   border-radius: 999px;
   color: var(--ink-700);
   font-size: 0.93rem;
-  transition: background-color 140ms ease;
+  transition: background-color 140ms ease, color 140ms ease;
 }
 
 .nav-link:hover {
@@ -180,6 +194,7 @@ a:hover {
 .nav-cta:hover {
   text-decoration: none;
   background: #0f4d41;
+  color: #fff;
 }
 
 .section-stack {
@@ -580,6 +595,10 @@ a:hover {
   padding-bottom: 1.4rem;
 }
 
+.footer-links {
+  margin: 0;
+}
+
 .notice-success {
   border: 1px solid #bcd8c5;
   background: #eef9f1;
@@ -591,6 +610,33 @@ a:hover {
 
 .cookie-note {
   margin-top: 0.9rem;
+}
+
+.cookie-card {
+  border-style: dashed;
+  background: #fffdf8;
+}
+
+.cookie-card p {
+  margin: 0;
+}
+
+.disclosure-card {
+  border-color: #efd6bc;
+  background: #fff6ea;
+}
+
+.disclosure-card p {
+  margin: 0;
+}
+
+.disclosure-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8b4f26;
+  margin-bottom: 0.2rem;
 }
 
 .table-wrap {
