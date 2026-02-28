@@ -30,7 +30,7 @@ export const hubs: HubDefinition[] = [
   {
     slug: "budget-diy-transformations",
     title: "Budget DIY Transformations",
-    description: "Low-cost projects that create clear before/after impact.",
+    description: "Low cost projects that have a noticeable before/after difference.",
     outcome: "Get a finished look without overspending.",
     primaryPillar: "BudgetDIY",
     keywordHints: ["budget", "under-75", "under", "refresh", "cheap"]
@@ -38,32 +38,32 @@ export const hubs: HubDefinition[] = [
   {
     slug: "small-bathroom-space-hacks",
     title: "Small Bathroom Space Hacks",
-    description: "Layout strategies and tiny-space optimization for better flow.",
-    outcome: "Stop bottlenecks around sink, mirror, and storage zones.",
+    description: "Layout strategies and tiny-space optimization for better bathroom flow.",
+    outcome: "Stop bottlenecks around sink, shower, and storage zones.",
     primaryPillar: "SmallSpace",
     keywordHints: ["small", "tiny", "layout", "space", "flow"]
   },
   {
     slug: "storage-and-clutter-to-calm",
-    title: "Storage + Clutter-to-Calm",
-    description: "Systems that keep counters clear and routines simple.",
-    outcome: "Save time every morning with fixed storage zones.",
+    title: "Keep the Kids Organized",
+    description: "Parent-friendly setups for bath toys, toothbrushes, and school-morning routines.",
+    outcome: "Cut bathroom chaos by giving each kid item a clear home.",
     primaryPillar: "StorageOrganization",
-    keywordHints: ["storage", "organ", "bin", "label", "clutter", "vanity"]
+    keywordHints: ["storage", "organ", "bin", "label", "clutter", "vanity", "kids", "family"]
   },
   {
     slug: "styling-mirrors-lighting-color",
     title: "Styling: Mirrors, Lighting, Color",
-    description: "Maximalist-but-budget styling frameworks for real bathrooms.",
-    outcome: "Get personality without adding visual chaos.",
+    description: "Mirror, lighting, and color ideas to make your bathroom feel brighter and cohesive.",
+    outcome: "Refresh your bathroom style with updates that fit your personal aesthetic.",
     primaryPillar: "Styling",
     keywordHints: ["color", "style", "mirror", "lighting", "backsplash", "texture"]
   },
   {
     slug: "bathroom-plants-biophilic-vibe",
-    title: "Bathroom Plants + Biophilic Vibe",
-    description: "Humidity-ready plant choices and renter-safe placement ideas.",
-    outcome: "Add life to low-light bathrooms with less plant failure.",
+    title: "Bathroom Plants",
+    description: "Plant choices for humid bathrooms with renter-safe placement ideas.",
+    outcome: "Add life to low light bathrooms with less plant failure.",
     primaryPillar: "PlantsBiophilic",
     keywordHints: ["plant", "humidity", "low-light", "biophilic", "shelf"]
   }

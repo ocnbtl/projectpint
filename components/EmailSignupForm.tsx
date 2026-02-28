@@ -70,7 +70,8 @@ export function EmailSignupForm({
       </button>
       <ConsentNote />
       <p className="small" style={{ marginBottom: 0 }}>
-        No spam. Use this with our <Link href="/legal/privacy">Privacy Policy</Link> and unsubscribe anytime.
+        No spam. We respect your inbox. Use this with our <Link href="/legal/privacy">Privacy Policy</Link> and
+        unsubscribe anytime.
       </p>
     </form>
   );

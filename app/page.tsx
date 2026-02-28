@@ -3,120 +3,107 @@ import { AdSlot } from "../components/AdSlot";
 import { EmailSignupForm } from "../components/EmailSignupForm";
 import { SiteShell } from "../components/SiteShell";
 import { excerptFromMarkdown } from "../lib/content-render";
-import { hubs, readBlogs } from "../lib/site-data";
+import { hubs, pillarLabel, readBlogs } from "../lib/site-data";
 
 export default function HomePage() {
-  const blogs = readBlogs().slice(0, 3);
+  const allBlogs = readBlogs();
+  const publishedBlogs = allBlogs.filter((blog) => blog.Status === "published");
+  const blogs = (publishedBlogs.length > 0 ? publishedBlogs : allBlogs).slice(0, 3);
 
   return (
     <SiteShell>
       <div className="section-stack">
-        <section className="hero">
-          <div className="hero-grid">
-            <div>
-              <p className="eyebrow">Diyesu Decor | DIY Bathroom Upgrades</p>
-              <h1>Practical bathroom upgrades for renters, small spaces, and tight budgets.</h1>
-              <p>
-                Make one upgrade that eases your daily routine, then stack the next move when you are ready. Every plan
-                is built for real rentals, real budgets, and normal toolkits.
-              </p>
-              <p className="home-hero-cta">Start with your current constraint and aim for one clear bathroom win today.</p>
-              <div className="pill-row" aria-label="Core benefits">
-                <span className="pill">Renter-safe options</span>
-                <span className="pill">Budget tiers under $75/$150/$300</span>
-                <span className="pill">Small-space ready</span>
-              </div>
-              <div className="cta-row">
-                <Link href="/start-here" className="btn btn-primary">
-                  Use Start Here
-                </Link>
-                <Link href="/lead-magnets/plant-picker" className="btn btn-secondary">
-                  Try free plant picker
-                </Link>
-              </div>
-            </div>
-            <div className="hero-card">
-              <h3>Start in 3 steps</h3>
-              <ol>
-                <li>Pick your main constraint (renter, budget, small-space, plants).</li>
-                <li>Follow one path with one anchor fix and one support layer.</li>
-                <li>Use weekly checklists so results last beyond day one.</li>
-              </ol>
-              <p className="small">If you are unsure where to begin, use Start Here and choose the closest situation.</p>
+        <section className="hero hero-home-compact">
+          <div className="hero-compact-wrap">
+            <p className="eyebrow hero-lead-in">Practical bathroom upgrades for:</p>
+            <ul className="hero-bullet-list">
+              <li>Renters</li>
+              <li>Small spaces</li>
+              <li>Tight budgets</li>
+            </ul>
+            <p className="home-hero-cta">Start with one area and finish one real bathroom upgrade today.</p>
+            <div className="cta-row hero-cta-row">
+              <Link href="/start-here" className="btn btn-accent">
+                Start here
+              </Link>
+              <Link href="/lead-magnets/plant-picker" className="btn btn-secondary">
+                Try free bathroom plant guide
+              </Link>
             </div>
           </div>
         </section>
 
         <section className="panel">
-          <h2>What changes first</h2>
+          <h2>The bathroom you&apos;ve always wanted</h2>
           <div className="metric-grid">
             <div className="metric">
-              <p className="metric-value">15-30 min</p>
-              <p className="small">Quick-win tasks that reduce visible clutter fast.</p>
+              <p className="metric-value">15-45 mins</p>
+              <p className="small">Quick win improvements that reduce clutter fast.</p>
             </div>
             <div className="metric">
               <p className="metric-value">$75 / $150 / $300</p>
-              <p className="small">Clear budget lanes so you stop second-guessing purchases.</p>
+              <p className="small">
+                Clear recommendation &amp; options for <strong>your</strong> budget.
+              </p>
             </div>
             <div className="metric">
-              <p className="metric-value">No-drill first</p>
-              <p className="small">Renter-safe defaults with drill-allowed alternatives when needed.</p>
+              <p className="metric-value">Style that fits you</p>
+              <p className="small">Explore mirror, lighting, and color options across different aesthetics.</p>
             </div>
           </div>
         </section>
 
         <section className="panel">
-          <h2>Choose your path hub</h2>
+          <h2>Choose your path</h2>
           <div className="grid grid-3">
             {hubs.map((hub) => (
               <article key={hub.slug} className="card card-soft path-card home-path-card">
-                <h3>{hub.title}</h3>
-                <p className="path-card-summary">{hub.description}</p>
-                <p className="benefit-highlight">Win today: {hub.outcome}</p>
-                <Link href={`/hub/${hub.slug}`} className="btn btn-accent">
-                  Open hub path
-                </Link>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="panel">
-          <h2>Read this week</h2>
-          <div className="grid grid-3">
-            {blogs.map((blog) => (
-              <article key={blog.Blog_ID} className="card">
-                <p className="small">{blog.Keyword_Target}</p>
-                <h3>
-                  <Link href={`/blog/${blog.Slug}`}>{blog.Title}</Link>
-                </h3>
-                <p>{excerptFromMarkdown(blog.Draft_Markdown, 150)}</p>
-                <div className="tag-list">
-                  <span className="tag">{blog.Pillar}</span>
-                  <span className="tag">{blog.Status}</span>
+                <div className="path-card-main">
+                  <h3>{hub.title}</h3>
+                  <p className="path-card-summary">{hub.description}</p>
+                </div>
+                <div className="path-card-action">
+                  <p className="benefit-highlight">Win today: {hub.outcome}</p>
+                  <Link href={`/hub/${hub.slug}`} className="btn btn-accent">
+                    Explore {hub.title}
+                  </Link>
                 </div>
               </article>
             ))}
           </div>
         </section>
 
+        <section className="panel">
+          <h2>Read in under 5 minutes</h2>
+          <div className="grid grid-3">
+            {blogs.map((blog) => (
+              <article key={blog.Blog_ID} className="card">
+                <div className="tag-list">
+                  <span className="tag">{blog.Keyword_Target}</span>
+                  <span className="tag">{pillarLabel(blog.Pillar)}</span>
+                </div>
+                <h3>
+                  <Link href={`/blog/${blog.Slug}`}>{blog.Title}</Link>
+                </h3>
+                <p>{excerptFromMarkdown(blog.Draft_Markdown, 150)}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section className="grid grid-2">
-          <article className="card card-accent">
-            <p className="eyebrow" style={{ color: "var(--brand-deep)" }}>
-              Free lead magnet
-            </p>
+          <article className="card card-accent promo-card promo-card-plant">
             <h3>Bathroom Plant Picker</h3>
             <p>Tell us your light, humidity, and space. Get practical plant matches and placement tips.</p>
             <Link href="/lead-magnets/plant-picker" className="btn btn-accent">
-              Get my free picks
+              Get free plant recommendations
             </Link>
           </article>
-          <article className="card card-accent">
-            <p className="eyebrow" style={{ color: "var(--brand-deep)" }}>
-              Paid system
-            </p>
-            <h3>Renter Bathroom Upgrade Blueprint</h3>
-            <p>Choose-your-path upgrade kit with checklists, decision trees, and budget-aligned plans.</p>
+          <article className="card card-accent promo-card promo-card-blueprint">
+            <h3>
+              Bathroomn Upgrade Blueprint <strong className="promo-subtitle">(for renters)</strong>
+            </h3>
+            <p>Personalized bathroom recommendations for your budget.</p>
             <Link href="/products/renter-bathroom-upgrade-blueprint" className="btn btn-accent">
               Preview blueprint
             </Link>
@@ -124,11 +111,7 @@ export default function HomePage() {
         </section>
 
         <section className="panel">
-          <h2>Get weekly renter-safe bathroom plans</h2>
-          <p>
-            Join the newsletter for actionable upgrades, not hype. You will get one practical sequence each week that you
-            can execute with a normal budget and schedule.
-          </p>
+          <h2>Get weekly bathroom inspiration &amp; upgrade plans</h2>
           <EmailSignupForm
             sourceUrl="/"
             buttonLabel="Send me weekly plans"

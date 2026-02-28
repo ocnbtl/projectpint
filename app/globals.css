@@ -243,6 +243,54 @@ a:hover {
   color: #f5fcfa;
 }
 
+.hero-home-compact {
+  padding: clamp(1rem, 2.2vw, 1.45rem);
+}
+
+.hero-compact-wrap {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.hero-lead-in {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 1.1rem;
+  color: #f5fcfa;
+  margin-bottom: 0.1rem;
+}
+
+.hero-bullet-list {
+  margin: 0;
+  padding-left: 1.35rem;
+  display: grid;
+  gap: 0.12rem;
+}
+
+.hero-bullet-list li {
+  color: #f5fcfa;
+  font-family: var(--font-display), serif;
+  font-size: clamp(1.35rem, 3.4vw, 2.8rem);
+  line-height: 1.06;
+  font-weight: 700;
+}
+
+.hero-cta-row {
+  margin-top: 0.15rem;
+}
+
+.hero-start-here {
+  padding: clamp(1rem, 2.2vw, 1.55rem);
+}
+
+.hero-start-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+}
+
 .eyebrow {
   font-size: 0.82rem;
   text-transform: uppercase;
@@ -394,6 +442,10 @@ a:hover {
   padding: 0.46rem 0.58rem;
   font-size: 0.88rem;
   font-weight: 700;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .home-hero-cta {
@@ -417,23 +469,44 @@ a:hover {
 .path-card {
   display: flex;
   flex-direction: column;
-  gap: 0.52rem;
-  min-height: 226px;
+  gap: 0.4rem;
+  min-height: 242px;
 }
 
 .path-card h3,
 .path-card h2 {
   margin-bottom: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .path-card-summary {
   margin-bottom: 0;
   font-size: 1.04rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.path-card .btn {
-  margin-top: auto;
+.path-card-main {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.path-card-action {
+  display: grid;
+  gap: 0.42rem;
+  margin-top: 0.36rem;
+}
+
+.path-card-action .btn {
   align-self: flex-start;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .home-path-card {
@@ -441,19 +514,12 @@ a:hover {
 }
 
 .start-here-title {
-  white-space: nowrap;
+  white-space: normal;
   font-size: clamp(1.85rem, 3.1vw, 2.75rem);
 }
 
 .start-here-title .line-break {
   display: inline;
-}
-
-.about-header {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  flex-wrap: wrap;
 }
 
 .about-mark {
@@ -504,6 +570,135 @@ a:hover {
   margin: 0;
 }
 
+.promo-card {
+  position: relative;
+  overflow: hidden;
+  border-color: #b6ddd5;
+}
+
+.promo-card::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  inset: -30% auto auto 62%;
+  width: 220px;
+  height: 220px;
+  border-radius: 999px;
+  opacity: 0.6;
+}
+
+.promo-card-plant {
+  background:
+    radial-gradient(circle at 85% 5%, rgba(179, 243, 219, 0.75), rgba(179, 243, 219, 0) 44%),
+    linear-gradient(180deg, #f8fffd 0%, #e8f6f0 100%);
+}
+
+.promo-card-blueprint {
+  background:
+    radial-gradient(circle at 86% 8%, rgba(255, 222, 176, 0.82), rgba(255, 222, 176, 0) 45%),
+    linear-gradient(180deg, #fffefb 0%, #f8eee4 100%);
+  border-color: #ead0ba;
+}
+
+.promo-subtitle {
+  font-size: 0.72em;
+  letter-spacing: 0;
+}
+
+.areas-intro {
+  border-color: #c7dbd6;
+  background:
+    linear-gradient(180deg, #f8fffc 0%, #eff6f4 100%);
+}
+
+.areas-eyebrow {
+  color: var(--brand-deep);
+}
+
+.areas-grid {
+  margin-top: 0.1rem;
+}
+
+.areas-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  background:
+    linear-gradient(140deg, #fdf9f0 0%, #f4f1e8 100%);
+}
+
+.areas-pill {
+  margin: 0;
+  align-self: flex-start;
+  border-radius: 999px;
+  background: #e0f1ec;
+  border: 1px solid #b6d5cc;
+  color: #1d5a4d;
+  padding: 0.2rem 0.58rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.areas-card .btn {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+.blog-hero {
+  border-color: #cfe2dd;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(255, 219, 176, 0.5), transparent 36%),
+    linear-gradient(180deg, #f6fffc 0%, #eef7f4 100%);
+}
+
+.blog-eyebrow {
+  color: var(--brand-deep);
+}
+
+.blog-explorer {
+  border-color: #d7d0c1;
+}
+
+.blog-search-row {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: minmax(0, 1.6fr) minmax(220px, 0.6fr);
+  margin-bottom: 1rem;
+}
+
+.blog-card {
+  display: grid;
+  gap: 0.48rem;
+}
+
+.blog-card-excerpt {
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.blog-tag-list {
+  margin-bottom: 0.12rem;
+}
+
+.about-panel {
+  text-align: center;
+}
+
+.about-headline-row {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.about-headline-row h1 {
+  margin: 0;
+}
+
 .tag-list {
   display: flex;
   flex-wrap: wrap;
@@ -517,6 +712,67 @@ a:hover {
   font-size: 0.78rem;
   padding: 0.24rem 0.58rem;
   border: 1px solid #b9d5ce;
+}
+
+.about-tagline-right {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.faq-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.faq-item {
+  border: 1px solid #d9d2c4;
+  border-radius: 10px;
+  background: #fffcf7;
+  padding: 0.66rem 0.76rem;
+}
+
+.faq-item summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.faq-item p {
+  margin: 0.6rem 0 0;
+}
+
+.product-hero {
+  border-color: #c9ddd8;
+  background:
+    radial-gradient(circle at 84% 12%, rgba(255, 223, 186, 0.62), transparent 42%),
+    linear-gradient(180deg, #fcfffe 0%, #eef6f3 100%);
+}
+
+.product-subtitle {
+  font-size: 0.48em;
+  vertical-align: middle;
+}
+
+.product-price {
+  display: inline-flex;
+  margin: 0 0 0.35rem;
+  border-radius: 999px;
+  background: #e9f5f1;
+  color: #1c6658;
+  border: 1px solid #bbddd4;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.22rem 0.68rem;
+}
+
+.product-grid .card p {
+  margin: 0;
+}
+
+.policy-links {
+  padding-top: 0.9rem;
+  padding-bottom: 0.9rem;
 }
 
 .form-grid {
@@ -670,6 +926,10 @@ td {
   .grid-3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .blog-search-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 720px) {
@@ -707,5 +967,14 @@ td {
 
   .path-card {
     min-height: auto;
+  }
+
+  .path-card h3,
+  .path-card h2 {
+    white-space: normal;
+  }
+
+  .hero-bullet-list {
+    padding-left: 1.05rem;
   }
 }

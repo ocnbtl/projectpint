@@ -19,19 +19,13 @@ export function SiteShell({ children }: { children: ReactNode }) {
               Start Here
             </Link>
             <Link href="/hub" className="nav-link">
-              Hubs
+              Areas
             </Link>
             <Link href="/blog" className="nav-link">
               Blog
             </Link>
             <Link href="/products/renter-bathroom-upgrade-blueprint" className="nav-link">
               Blueprint
-            </Link>
-            <Link href="/about" className="nav-link">
-              About
-            </Link>
-            <Link href="/legal/affiliate-disclosure" className="nav-link">
-              Disclosure
             </Link>
             <Link href="/lead-magnets/plant-picker" className="nav-link nav-cta">
               Free Plant Picker
@@ -52,8 +46,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
             </p>
           </div>
           <p>
-            Practical, renter-safe bathroom upgrades for budget-first households with clear constraints and no-hype
-            plans.
+            Personalized and practical bathroom improvements for renters, DIY enthusiasts, and budget-first households.
           </p>
           <p>
             Disclosure: some links may be affiliate links. Diyesu Decor may earn a commission at no additional cost to
