@@ -88,7 +88,7 @@ function hashtagsFor(pillar: string, hook: string): string[] {
   return [...base, ...(byPillar[pillar] ?? []), byHook];
 }
 
-export function seedUrlInventory(nowIso: string): UrlInventoryItem[] {
+export function seedUrlInventory(): UrlInventoryItem[] {
   return destinationPool.map((url, index) => ({
     URL_ID: `URL-${String(index + 1).padStart(3, "0")}`,
     URL: url,
@@ -186,7 +186,7 @@ export function seedPins(n: number, nowIso: string): PinDraft[] {
   });
 }
 
-export function seedBlogs(nowIso: string): BlogDraft[] {
+export function seedBlogs(): BlogDraft[] {
   const drafts: Array<Pick<BlogDraft, "Slug" | "Title" | "Pillar" | "Keyword_Target">> = [
     {
       Slug: "no-drill-bathroom-upgrades-under-150",

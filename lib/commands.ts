@@ -250,8 +250,8 @@ function seedPhaseOne(nPins: number, nBlogs: number): void {
 
   const now = todayIso();
   const pins = seedPins(nPins, now);
-  const blogs = seedBlogs(now).slice(0, nBlogs);
-  const urls = seedUrlInventory(now);
+  const blogs = seedBlogs().slice(0, nBlogs);
+  const urls = seedUrlInventory();
   const products = seedProducts(now);
   const ideas = seedProductIdeas(now.slice(0, 7));
   const assets = pins.map((pin, index) => ({
@@ -508,14 +508,14 @@ export function runCommand(argv: string[]): void {
       seedPhaseOne(getNumberArg(parsed, "nPins", 25), getNumberArg(parsed, "nBlogs", 3));
       break;
     case "init_url_inventory":
-      saveTab("URL_Inventory", seedUrlInventory(todayIso()));
+      saveTab("URL_Inventory", seedUrlInventory());
       break;
     case "generate_content_bible":
       writeGovernanceMirror();
       break;
     case "generate_blog_week": {
       const n = getNumberArg(parsed, "n", 3);
-      saveTab("Blog_Posts", seedBlogs(todayIso()).slice(0, n));
+      saveTab("Blog_Posts", seedBlogs().slice(0, n));
       writeBlogDraftFiles(loadTab<BlogDraft>("Blog_Posts"));
       break;
     }

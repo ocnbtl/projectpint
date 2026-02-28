@@ -101,7 +101,7 @@ export default function HomePage() {
           </article>
           <article className="card card-accent promo-card promo-card-blueprint">
             <h3>
-              Bathroomn Upgrade Blueprint <strong className="promo-subtitle">(for renters)</strong>
+              Bathroom Upgrade Blueprint <strong className="promo-subtitle">(for renters)</strong>
             </h3>
             <p>Personalized bathroom recommendations for your budget.</p>
             <Link href="/products/renter-bathroom-upgrade-blueprint" className="btn btn-accent">

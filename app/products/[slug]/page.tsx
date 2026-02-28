@@ -5,7 +5,7 @@ import { shouldShowAffiliateDisclosure } from "../../../lib/affiliate";
 
 const products = {
   "renter-bathroom-upgrade-blueprint": {
-    title: "Bathroomn Upgrade Blueprint",
+    title: "Bathroom Upgrade Blueprint",
     subtitle: "(for renters)",
     price: "$29",
     summary: "Personalized bathroom recommendations for your budget.",

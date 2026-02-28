@@ -1,9 +1,23 @@
 import { NextResponse } from "next/server";
 import { persistLead } from "../../../lib/lead-store";
+import { checkRateLimit, getClientAddress } from "../../../lib/rate-limit";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
+  const rate = checkRateLimit({
+    key: `subscribe:${getClientAddress(request.headers)}`,
+    limit: 12,
+    windowMs: 15 * 60 * 1000
+  });
+
+  if (!rate.allowed) {
+    return NextResponse.json(
+      { ok: false, error: "Too many signup attempts. Please try again shortly." },
+      { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+    );
+  }
+
   const formData = await request.formData();
   const email = String(formData.get("email") ?? "").trim();
   const sourceUrl = String(formData.get("sourceUrl") ?? "");
