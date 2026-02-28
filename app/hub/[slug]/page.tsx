@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteShell } from "../../../components/SiteShell";
-import { hubs } from "../../../lib/site-data";
+import { findMicroGuidesForHub, hubs, pillarLabel, readBlogs } from "../../../lib/site-data";
 
 export function generateStaticParams() {
   return hubs.map((hub) => ({ slug: hub.slug }));
@@ -11,20 +11,93 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
   const { slug } = await params;
   const hub = hubs.find((h) => h.slug === slug);
   if (!hub) return notFound();
+  const relatedBlogs = readBlogs()
+    .filter((blog) => blog.Pillar === hub.primaryPillar && blog.Status === "published")
+    .slice(0, 4);
+  const microGuides = findMicroGuidesForHub(hub, 4);
 
   return (
     <SiteShell>
-      <div className="card">
-        <h1>{hub.title}</h1>
-        <p>{hub.description}</p>
-        <p>
-          Lead magnet CTA: <Link href="/lead-magnets/plant-picker">Get the Plant Picker</Link>
-        </p>
-        <ul>
-          <li><Link href="/start-here">Start Here</Link></li>
-          <li><Link href="/blog">Related blog posts</Link></li>
-          <li><Link href="/products/renter-bathroom-upgrade-blueprint">Blueprint product page</Link></li>
-        </ul>
+      <div className="section-stack">
+        <section className="hero">
+          <div className="hero-grid">
+            <div>
+              <p className="eyebrow">Hub Path</p>
+              <h1>{hub.title}</h1>
+              <p>{hub.description}</p>
+              <p className="home-hero-cta">Primary win: {hub.outcome}</p>
+              <div className="pill-row" aria-label="Hub details">
+                <span className="pill">Pillar: {pillarLabel(hub.primaryPillar)}</span>
+                <span className="pill">Budget-aware sequencing</span>
+                <span className="pill">Renter-safe by default</span>
+              </div>
+              <div className="cta-row">
+                <Link href="/start-here" className="btn btn-primary">
+                  Compare paths
+                </Link>
+                <Link href="/lead-magnets/plant-picker" className="btn btn-secondary">
+                  Get free plant picker
+                </Link>
+              </div>
+            </div>
+            <aside className="hero-card">
+              <h3>Run this hub weekly</h3>
+              <ol>
+                <li>Choose one anchor fix for this week.</li>
+                <li>Add one support layer only after the anchor is done.</li>
+                <li>Track the routine impact before adding more tasks.</li>
+              </ol>
+            </aside>
+          </div>
+        </section>
+
+        <section className="grid grid-2">
+          <article className="card">
+            <h2>Related blog posts</h2>
+            {relatedBlogs.length > 0 ? (
+              <ul>
+                {relatedBlogs.map((blog) => (
+                  <li key={blog.Blog_ID}>
+                    <Link href={`/blog/${blog.Slug}`}>{blog.Title}</Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="small">
+                No published posts in this pillar yet. Use Start Here and browse available hubs while we publish more
+                coverage.
+              </p>
+            )}
+          </article>
+
+          <article className="card">
+            <h2>Micro-guides</h2>
+            {microGuides.length > 0 ? (
+              <ul>
+                {microGuides.map((guide) => (
+                  <li key={guide.slug}>
+                    <Link href={`/micro/${guide.slug}`}>{guide.title}</Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="small">Micro-guide pack for this hub is in progress. Check back soon.</p>
+            )}
+          </article>
+        </section>
+
+        <section className="panel">
+          <h2>Next conversion step</h2>
+          <p>After your first hub win, choose one of these next moves:</p>
+          <div className="cta-row">
+            <Link href="/blog" className="btn btn-ghost">
+              Browse blog library
+            </Link>
+            <Link href="/products/renter-bathroom-upgrade-blueprint" className="btn btn-accent">
+              Preview renter blueprint
+            </Link>
+          </div>
+        </section>
       </div>
     </SiteShell>
   );

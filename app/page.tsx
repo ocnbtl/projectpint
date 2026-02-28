@@ -28,7 +28,7 @@ export default function HomePage() {
               </div>
               <div className="cta-row">
                 <Link href="/start-here" className="btn btn-primary">
-                  Build my plan
+                  Use Start Here
                 </Link>
                 <Link href="/lead-magnets/plant-picker" className="btn btn-secondary">
                   Try free plant picker
@@ -65,17 +65,20 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="grid grid-3">
-          {hubs.map((hub) => (
-            <article key={hub.slug} className="card card-soft path-card home-path-card">
-              <h3>{hub.title}</h3>
-              <p className="path-card-summary">{hub.description}</p>
-              <p className="benefit-highlight">Win today: {hub.outcome}</p>
-              <Link href={`/hub/${hub.slug}`} className="btn btn-accent">
-                Open this path
-              </Link>
-            </article>
-          ))}
+        <section className="panel">
+          <h2>Choose your path hub</h2>
+          <div className="grid grid-3">
+            {hubs.map((hub) => (
+              <article key={hub.slug} className="card card-soft path-card home-path-card">
+                <h3>{hub.title}</h3>
+                <p className="path-card-summary">{hub.description}</p>
+                <p className="benefit-highlight">Win today: {hub.outcome}</p>
+                <Link href={`/hub/${hub.slug}`} className="btn btn-accent">
+                  Open hub path
+                </Link>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className="panel">
