@@ -1,72 +1,73 @@
-# Pin Production Workflow (Low-Cost, Human-or-AI)
+# Pin Production Workflow (Current: Manual Visuals + Automated Copy)
 
 ## Objective
-Produce Pinterest-ready pins with:
-- AI-generated image
-- required text overlay rendered onto image
-- title, description, hashtags, CTA
-- policy and quality checks
+Generate 25 Pinterest-ready pins with:
+- destination mapping (blog or guide)
+- prompt, caption, overlay, CTA, and UTM
+- manual visual generation and final polish
+- clean row tracking from draft to posted
 
-## Cost-Minimized Stack
-- Planning/metadata: existing CLI + local files (no additional cost).
-- Image generation: use one of:
-  - Local model pipeline (lowest recurring cost; highest setup effort).
-  - Low-cost API generation (pay-per-image, easier setup).
-- Overlay rendering: local open-source tooling (ImageMagick or Sharp).
-- Export: existing CSV/manual pack commands.
+## Where Work Happens
+- Admin command center: `/admin/pins`
+- Data tab: `Pins_Evergreen`
 
-## Base Creative Specs
-- Aspect ratio target: 2:3 vertical.
-- Keep overlay text inside safe margins (top and bottom clear zones).
+## Step-by-Step
 
-## Workflow
-1. Generate weekly planning content
-- `npm run weekly_ops_info`
-- Review `weekly_review.md` + `weekly_ops_info.md`.
+## 1) Generate a new batch
+In `/admin/pins`, click:
+- `Generate new pins`
 
-2. Generate pin metadata
-- `npm run generate_pin_week --n=25`
-- Each pin has hook class, intent, overlays, CTA, description with hashtags.
+This fills:
+- `Pin_ID`
+- `Pin_Publish_Date`
+- `Pin_Publish_Time`
+- `Content_Area`
+- `Destination`
+- `Blog_ID`
+- `Media_Prompt`
+- `Pin_Caption`
+- `UTM_URL`
 
-3. Create images (human or AI)
-- Use each pin's `Image_Prompt` and `Visual_Preset`.
-- Save image paths in `Assets` tab (`Drive_URL` or `Local_Path`).
+Left blank intentionally:
+- `Media_URL`
+- `Pin_Overlay`
+- `Pin_CTA`
+- `Pin_URL`
 
-4. Render text overlay onto final image
-- Required before approval/export.
-- Generate command book: `npm run prepare_overlay_jobs`
-- Overlay text source:
-  - `Overlay_1` = primary stop-scroll headline
-  - `Overlay_2` = secondary qualifier
-- Keep high contrast and safe margins.
+## 2) Generate overlay and CTA
+Click:
+- `Generate overlay and CTA`
 
-5. QA gates
-- Copy QA: banned phrases, naturalness, CTA pressure, specificity.
-- Visual QA: no logos/people/artifacts, readable overlays, realistic geometry.
+This fills `Pin_Overlay` and `Pin_CTA` for the latest 25 rows.
 
-6. Approval
-- Human approves pin rows.
+## 3) Generate visuals manually
+For each pin row:
+1. Copy `Media_Prompt`.
+2. Paste into Nano Banana.
+3. Finalize style in Canva.
+4. Upload final image to Drive.
+5. Paste link into `Media_URL`.
 
-7. Export
-- Bulk CSV: `npm run export_pinterest_bulk_csv`
-- Manual pack: `npm run export_manual_post_pack`
+## 4) Publish pins
+After posting each pin on Pinterest:
+- Paste live post URL into `Pin_URL`.
 
-## Role Separation (Critical)
-- Overlay text: hook promise for visual stop-scroll.
-- Title: search/discovery relevance.
-- Description + hashtags: context + indexing + CTA.
-- CTA: one explicit next action aligned to destination intent.
+## 5) Save and verify
+- Click `Save changes`.
+- Spot-check that each posted row has:
+  - `Media_URL`
+  - `Pin_URL`
+  - correct `UTM_URL`
 
-## Minimum QA Acceptance Criteria
-- `Has_Text_Overlay = true`
-- Overlay lengths in policy bounds
-- No banned phrase flags
-- `Quality_Score >= 80`
-- No blocking visual risk flags
+## Copy Rules (Enforced by Strategy)
+- Caption sounds human and natural.
+- No hashtags in evergreen pin captions.
+- No dash characters in generated copy style.
+- Caption target length: roughly 150 to 300 characters.
 
-## Human-Only Fallback
-If image automation fails:
-1. Use the same `Overlay_1`/`Overlay_2` text manually in your editor.
-2. Keep exact filename matching `Content_ID`.
-3. Upload to Drive and update `Assets` row.
-4. Proceed with normal export flow.
+## Suggested QA Before Posting
+- Hook is strong in first line.
+- Overlay text is readable at mobile size.
+- CTA matches destination type (guide vs blog).
+- UTM URL opens correct destination.
+- Image and caption both match the selected content area.

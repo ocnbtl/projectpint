@@ -47,7 +47,7 @@ Verify on the preview URL:
 - `/`
 - `/start-here`
 - `/hub`
-- `/hub/renter-friendly-upgrades`
+- `/hub/renter`
 - `/about`
 - `/legal/privacy`
 - `/legal/terms`

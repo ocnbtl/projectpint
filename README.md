@@ -1,106 +1,113 @@
 # Project Pint (`projectpint`)
 
-Internal codename: **Project Pint**
-Public brand: **Diyesu Decor**
+Public brand: **Diyesu Decor**  
 Tagline: **DIY Bathroom Upgrades**
-Website (planned): **https://diyesu.com**
-Social handles (planned): **@diyesu** (preferred), **@diyesudecor** (fallback)
 
-Flow: **Pinterest -> Next.js site -> Klaviyo signup -> monetization (ads + affiliate + digital products)**
+Project Pint runs a Pinterest-first growth system:
 
-## Current State
-- Foundations, governance, schema, and scheduling guardrails are implemented.
-- Public site + admin scaffold are in place.
-- Assisted mode is enforced for publish/export actions.
-- Weekly/monthly/yearly review outputs are generated.
+**Pinterest pin -> blog/guide destination -> email signup -> product path**
 
-## Guardrails Enforced
-- AI-generated visuals only (no real people, no brand-photo imitation).
-- Human approval required for blog publishing and pin export.
-- URL cooldown rule: no duplicate destination URL inside rolling 24h.
-- Pins can only target `Status=published` URLs.
-- Global disclosures + page-level affiliate disclosures when affiliate links are detected.
+## Current Product Surfaces
+- Public site (customer-facing): landing pages, areas, blog, lead magnet, product pages, legal pages.
+- Admin command center (password protected): `/admin`
+  - Home
+  - Pins
+  - Blogs
+  - Guides
+  - Emails
+  - Users
+  - Products
 
-## Setup (Quick)
-1. `npm install`
-2. `cp .env.example .env.local`
-3. Set `ADMIN_PASSWORD` in `.env.local`
-4. Seed + generate outputs:
-- `npm run init_project`
+## Content Areas (Current Strategy)
+- Plants
+- Mirror
+- Storage
+- Lighting
+- Shower
+- Renter
+- DIY
+- ExtremeBudget
+
+## Admin Command Center Data Model
+The command center stores evergreen datasets in Google Sheets/local JSON using these tabs:
+- `Pins_Evergreen`
+- `Blogs_Evergreen`
+- `Guides_Evergreen`
+- `Emails_Evergreen`
+- `Customers_Evergreen`
+- `Products_Evergreen`
+
+Legacy operational tabs are still retained for CLI/governance compatibility:
+- `Content_Pins`, `Blog_Posts`, `URL_Inventory`, `Assets`, `Experiments`, `Metrics_Weekly`, `Leads`, `Products`, `Product_Ideas`, `Governance`
+
+## Quick Start
+1. Install deps:
+- `npm install`
+
+2. Configure env:
+- `cp .env.example .env.local`
+- Set `ADMIN_PASSWORD` (required for `/admin`)
+- Set Sheets/Klaviyo vars as needed
+
+3. Validate build/tests:
+- `npm run build`
+- `npm test`
+
+4. Start local app:
+- `npm run dev -- -p 3001 -H localhost`
+
+5. Open:
+- Public site: `http://localhost:3001`
+- Admin login: `http://localhost:3001/admin/login`
+
+## Weekly Ops Flow (Current)
+1. In admin `/admin/blogs`:
+- Generate new blogs by area.
+- Generate blog titles and keywords.
+
+2. In admin `/admin/guides`:
+- Generate new guides by area.
+- Generate guide titles and keywords.
+
+3. In admin `/admin/pins`:
+- Generate new pins (25 rows).
+- Generate overlay + CTA for latest 25.
+- Manually add `Media_URL` (Nano Banana image link) and later `Pin_URL`.
+
+4. In admin `/admin/emails`:
+- Generate promotional emails by area count.
+- Generate email subjects.
+
+5. In admin `/admin/customers`:
+- Verify new subscribers and area preferences are being logged.
+
+6. In admin `/admin/products`:
+- Run update stats and verify product linkages/revenue columns.
+
+## Manual Visual Workflow (Current)
+- Image generation is manual by design right now.
+- Use each pin row's `Media_Prompt` in Nano Banana.
+- Finalize visual in Canva.
+- Upload image to Drive and paste URL into `Media_URL`.
+
+## Security + Access
+- Admin password value is never hardcoded.
+- Set/change it via `ADMIN_PASSWORD` in `.env.local` (local) and Vercel environment variables (hosted).
+
+## Core CLI Commands (Still Supported)
 - `npm run init_sheets`
+- `npm run generate_blog_week -- --n=3`
+- `npm run generate_pin_week -- --n=25`
+- `npm run build_schedule_plan`
+- `npm run render_review`
 - `npm run weekly_ops_info`
-5. Run tests: `npm test`
-6. Start app: `npm run dev`
-
-## Primary CLI Commands
-- `init_project`
-- `init_sheets`
-- `generate_content_bible`
-- `generate_blog_week --n=3`
-- `generate_pin_week --n=25`
-- `generate_micro_destinations --n=10`
-- `build_schedule_plan`
-- `weekly_review`
-- `weekly_ops_info`
-- `monthly_review`
-- `yearly_review`
-- `export_pinterest_bulk_csv --max=200`
-- `export_manual_post_pack`
-- `prepare_overlay_jobs`
-- `product_opportunity_report`
-
-Legacy aliases are still supported: `weekly_operating_packet`, `monthly_digest`.
-
-## Standard Output Artifacts
-Generated at repo root:
-- `review_pack.html`
-- `weekly_review.md`
-- `weekly_ops_info.md`
-- `weekly_ops_info.zip`
-- `pins_export.csv`
-- `monthly_review.md`
-- `yearly_review.md`
-
-Generated content folders:
-- `content_packets/`
-- `blog_drafts/`
-- `micro_guides/`
-- `outputs/weekly/`
-- `outputs/monthly/`
-- `outputs/yearly/`
-
-## Source-of-Truth Data
-Google-Sheets-compatible tab files are generated in:
-- `data/sheets/*.csv`
-- `data/sheets/*.json`
-
-Tabs:
-1. Content_Pins
-2. Blog_Posts
-3. URL_Inventory
-4. Assets
-5. Experiments
-6. Metrics_Weekly
-7. Leads
-8. Products
-9. Product_Ideas
-10. Governance
-
-## Scheduler
-Workflow file:
-- `.github/workflows/projectpint-automation.yml`
-
-Runs:
-- Weekly: Monday 14:00 UTC
-- Monthly: Day 1, 15:00 UTC
-- Yearly: Jan 2, 16:00 UTC
+- `npm run monthly_review`
+- `npm run yearly_review`
 
 ## Docs
 - Setup: `docs/setup-guide.md`
-- Schema: `docs/sheets-schema.md`
-- Governance log usage: `docs/governance-changelog-template.md`
 - System explainer: `docs/system-explainer.md`
-- Pin production workflow: `docs/pin-production-workflow.md`
-- Research notes: `docs/research-notes.md`
-- Style calibration: `docs/style-calibration.md`
-- Current execution checklist: `docs/current-phase-execution-checklist.md`
+- Sheet schemas: `docs/sheets-schema.md`
+- Pin workflow: `docs/pin-production-workflow.md`
+- Current checklist: `docs/current-phase-execution-checklist.md`
+- Vercel preview runbook: `docs/vercel-preview-runbook.md`

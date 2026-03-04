@@ -1,120 +1,82 @@
-# Current Phase Execution Checklist (Reality to Revenue)
+# Current Phase Execution Checklist
 
-## Scope
-This checklist covers the immediate execution phase after repo setup: credential wiring, first validated run, first assisted publish cycle, and weekly loop activation.
+## Goal
+Stabilize and operationalize the new admin command-center workflow for pins, blogs, guides, emails, customers, and products.
 
-## Ownership Legend
-- `Codex`: tasks I can execute in-repo.
-- `You`: tasks requiring account access, browser actions, billing, or external approvals.
+## A. Platform Setup
+1. Confirm local build/test:
+- `npm run build`
+- `npm test`
 
-## A. Credential and Platform Setup (You)
-1. Create a Google Sheet for Project Pint source-of-truth.
-- Name suggestion: `Project Pint - Source of Truth`.
-- Create tabs exactly: `Content_Pins`, `Blog_Posts`, `URL_Inventory`, `Assets`, `Experiments`, `Metrics_Weekly`, `Leads`, `Products`, `Product_Ideas`, `Governance`.
+2. Confirm environment values:
+- `ADMIN_PASSWORD`
+- `NEXT_PUBLIC_SITE_URL`
+- `SHEETS_MODE`
+- Google Sheets vars (if `SHEETS_MODE=google`)
+- Klaviyo vars (if live sync)
 
-2. Create a Google Cloud service account.
-- Google Cloud Console -> Service Accounts -> Create account.
-- Generate JSON key (download once).
+3. Confirm admin access:
+- open `/admin/login`
+- log in with `ADMIN_PASSWORD`
 
-3. Share the Google Sheet with service-account email.
-- Role: Editor.
-- This is mandatory for `SHEETS_MODE=google` writes.
+## B. Command-Center Validation
+1. `/admin/blogs`
+- Generate blogs by area.
+- Generate blog titles and keywords.
+- Save and verify rows.
 
-4. Add Google env vars in local `.env`.
-- `SHEETS_MODE=google`
-- `GOOGLE_SHEETS_ID=<sheet_id_from_url>`
-- `GOOGLE_SERVICE_ACCOUNT_EMAIL=<service-account-email>`
-- `GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"`
-- Important: keep escaped `\n` line breaks in `.env`.
+2. `/admin/guides`
+- Generate guides by area.
+- Generate guide titles and keywords.
+- Update related pins.
+- Save and verify rows.
 
-5. Create/confirm Klaviyo list and private API key.
-- Create one list for lead capture.
-- Capture:
-  - `KLAVIYO_PRIVATE_API_KEY`
-  - `KLAVIYO_LIST_ID`
+3. `/admin/pins`
+- Generate 25 pins.
+- Generate overlay and CTA.
+- Save.
 
-6. Add remaining env vars in local `.env`.
-- `ADMIN_PASSWORD=<strong_password>`
-- `NEXT_PUBLIC_SITE_URL=https://diyesu.com` (or temporary Vercel URL until domain points live)
-- plus Klaviyo vars from step 5.
+4. `/admin/emails`
+- Generate promotional emails by area counts.
+- Generate email subjects.
+- Save.
 
-Brand account handles to reserve:
-- Preferred: `@diyesu`
-- Fallback: `@diyesudecor`
+5. `/admin/customers`
+- Submit test signup on public site.
+- Confirm row appears in `Customers_Evergreen`.
 
-7. Add same env vars in Vercel project settings.
-- Vercel -> Project -> Settings -> Environment Variables.
-- Add to Production + Preview as needed.
+6. `/admin/products`
+- Run `Update stats`.
+- Confirm sales/revenue/blog/guide linkage fields update.
 
-## B. In-Repo Validation Run (Codex + You)
-1. Install dependencies.
-- Command: `npm install`
-- Owner: You (one-time machine setup).
+## C. Manual Visual + Posting Pass
+1. For each pin row:
+- Copy `Media_Prompt` -> generate image in Nano Banana.
+- Polish image in Canva.
+- Upload to Drive and fill `Media_URL`.
 
-2. Seed and generate operating artifacts.
-- Commands:
-  - `npm run init_sheets`
-  - `npm run weekly_ops_info`
-  - `npm run monthly_review`
-  - `npm run yearly_review`
-- Owner: Codex can run these once env is ready.
+2. Publish pins and paste `Pin_URL`.
 
-3. Run test suite.
-- Command: `npm test`
-- Owner: Codex.
+3. Save final table state.
 
-4. Validate Google mode read/write.
-- Command sequence:
-  - `SHEETS_MODE=google npm run init_sheets`
-  - `SHEETS_MODE=google npm run weekly_ops_info`
-- Owner: Codex (after your credentials are present).
+## D. Production Readiness
+1. Run pre-deploy checks:
+- `git status -sb`
+- `npm run build`
+- `npm test`
 
-## C. First Assisted Publishing Week (You)
-1. Review packet and approve selected rows.
-- Open `review_pack.html`.
-- Approve 3 blog drafts and 25 pins (or your chosen subset).
+2. Deploy preview and smoke test:
+- `/`
+- `/start-here`
+- `/hub`
+- `/blog`
+- `/admin/login`
+- `/legal/privacy`, `/legal/terms`, `/legal/affiliate-disclosure`
 
-2. Publish blogs.
-- Use CLI approval/publish commands or site/admin workflow.
-- Confirm published pages are live and have legal/disclosure compliance.
+3. Confirm compliance copy and disclosures are intact.
 
-3. Prepare and post pins.
-- Run export workflow:
-  - `npm run prepare_overlay_jobs`
-  - execute generated overlay script on raw images
-  - `npm run export_pinterest_bulk_csv`
-- Upload via Pinterest bulk uploader or manual posting pack.
-
-4. Enforce hard constraints manually during first cycle.
-- Never post same destination URL inside 24h.
-- Never post pins pointing to draft/unpublished URLs.
-- Keep assisted approval gate active.
-
-## D. Metrics and Feedback Loop (You + Codex)
-1. Export Pinterest metrics weekly and ingest.
-- Command: `npm run ingest_pinterest_metrics_csv -- --file=<path_to_csv>`
-
-2. Generate winner analysis and next packet.
-- Commands:
-  - `npm run analyze_winners`
-  - `npm run weekly_ops_info`
-
-3. Apply recommendations to next week before posting.
-- Use `weekly_review.md` + `weekly_ops_info.md` as the operating source.
-
-## E. Automation Activation (Codex + You)
-1. Enable GitHub Actions in repo settings.
-- Owner: You.
-
-2. Add secrets for workflows (if needed).
-- Owner: You.
-
-3. Confirm weekly/monthly/yearly workflow runs produce artifacts.
-- Owner: Codex validates outputs in repo; You confirm GitHub Actions run health.
-
-## Fast Completion Criteria
-- Google + Klaviyo + Vercel envs set.
-- `npm test` passes.
-- `weekly_ops_info.md` and packet files regenerate cleanly.
-- First 25-pin week published with no URL cooldown violations.
-- Metrics imported and at least one winner-analysis loop completed.
+## Completion Criteria
+- Admin command center fully usable for weekly operations.
+- 8 content areas live in strategy and hub surfaces.
+- Signup writes to leads and customers evergreen.
+- One full end-to-end batch generated and QA-checked.
