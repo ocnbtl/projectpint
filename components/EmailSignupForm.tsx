@@ -1,10 +1,13 @@
 import { ConsentNote } from "./ConsentNote";
+import { COMMAND_CENTER_CONTENT_AREAS } from "../lib/constants";
 
 interface EmailSignupFormProps {
   sourceUrl: string;
   buttonLabel: string;
   consentText: string;
   pillarInterest?: string;
+  defaultContentAreas?: string[];
+  showContentAreaChecklist?: boolean;
   includePlantFields?: boolean;
   plantDefaults?: {
     light: "low" | "medium" | "bright";
@@ -18,10 +21,32 @@ export function EmailSignupForm({
   buttonLabel,
   consentText,
   pillarInterest,
+  defaultContentAreas,
+  showContentAreaChecklist = true,
   includePlantFields = false,
   plantDefaults = { light: "low", humidity: "high", space: "tiny" }
 }: EmailSignupFormProps) {
   const safeSource = sourceUrl.replace(/[^a-z0-9_-]/gi, "-");
+  const mappedFromPillar =
+    pillarInterest === "RenterFriendly"
+      ? "Renter"
+      : pillarInterest === "BudgetDIY"
+        ? "DIY"
+        : pillarInterest === "SmallSpace"
+          ? "Shower"
+          : pillarInterest === "StorageOrganization"
+            ? "Storage"
+            : pillarInterest === "Styling"
+              ? "Mirror"
+              : pillarInterest === "PlantsBiophilic"
+                ? "Plants"
+                : pillarInterest ?? "";
+
+  const defaultSet = new Set(
+    (defaultContentAreas ?? [])
+      .concat(mappedFromPillar ? [mappedFromPillar] : [])
+      .filter((value): value is string => COMMAND_CENTER_CONTENT_AREAS.includes(value as (typeof COMMAND_CENTER_CONTENT_AREAS)[number]))
+  );
 
   return (
     <form action="/api/subscribe" method="post" className="form-grid">
@@ -58,6 +83,20 @@ export function EmailSignupForm({
             </select>
           </div>
         </>
+      ) : null}
+
+      {showContentAreaChecklist ? (
+        <fieldset className="field fieldset-group">
+          <legend>Email topics you want</legend>
+          <div className="checkbox-grid">
+            {COMMAND_CENTER_CONTENT_AREAS.map((area) => (
+              <label key={area} className="checkbox-item">
+                <input type="checkbox" name="contentAreas" value={area} defaultChecked={defaultSet.has(area)} />
+                <span>{area}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
       ) : null}
 
       <input type="hidden" name="sourceUrl" value={sourceUrl} />

@@ -56,6 +56,8 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <Link href="/about">About</Link> |{" "}
             <Link href="/legal/privacy">Privacy</Link> | <Link href="/legal/terms">Terms</Link> |{" "}
             <Link href="/legal/affiliate-disclosure">Affiliate Disclosure</Link>
+            {" | "}
+            <Link href="/admin">Admin</Link>
           </p>
         </div>
       </footer>

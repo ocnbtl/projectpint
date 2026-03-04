@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { upsertCustomerFromSignup } from "../../../lib/command-center";
+import { COMMAND_CENTER_CONTENT_AREAS } from "../../../lib/constants";
 import { persistLead } from "../../../lib/lead-store";
 import { checkRateLimit, getClientAddress } from "../../../lib/rate-limit";
 
@@ -23,6 +25,10 @@ export async function POST(request: Request) {
   const sourceUrl = String(formData.get("sourceUrl") ?? "");
   const consentText = String(formData.get("consentText") ?? "");
   const pillarInterest = String(formData.get("pillarInterest") ?? "");
+  const contentAreas = formData
+    .getAll("contentAreas")
+    .map((value) => String(value).trim())
+    .filter((value) => COMMAND_CENTER_CONTENT_AREAS.includes(value as (typeof COMMAND_CENTER_CONTENT_AREAS)[number]));
   const plantLight = String(formData.get("plantLight") ?? "");
   const plantHumidity = String(formData.get("plantHumidity") ?? "");
   const plantSpace = String(formData.get("plantSpace") ?? "");
@@ -33,6 +39,8 @@ export async function POST(request: Request) {
 
   const klaviyoPrivateKey = process.env.KLAVIYO_PRIVATE_API_KEY;
   const klaviyoListId = process.env.KLAVIYO_LIST_ID;
+
+  const createdAtIso = new Date().toISOString();
 
   let profileId = "";
   if (klaviyoPrivateKey && klaviyoListId) {
@@ -102,12 +110,24 @@ export async function POST(request: Request) {
     email,
     sourceUrl,
     consentText,
-    pillarInterest,
+    pillarInterest: contentAreas.length > 0 ? contentAreas.join(", ") : pillarInterest,
+    contentAreas,
     plantLight,
     plantHumidity,
     plantSpace,
-    klaviyoProfileId: profileId
+    klaviyoProfileId: profileId,
+    createdAtIso
   });
+
+  try {
+    upsertCustomerFromSignup({
+      email,
+      contentAreas,
+      createdAtIso
+    });
+  } catch (error) {
+    console.error("Customer evergreen upsert failed", error);
+  }
 
   return NextResponse.redirect(new URL("/start-here?subscribed=1", request.url));
 }

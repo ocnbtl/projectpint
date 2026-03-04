@@ -1,5 +1,16 @@
 import type { DestinationIntent, HookClass, Pillar } from "./types.ts";
 
+export const COMMAND_CENTER_CONTENT_AREAS = [
+  "Plants",
+  "Mirror",
+  "Storage",
+  "Lighting",
+  "Shower",
+  "Renter",
+  "DIY",
+  "ExtremeBudget"
+] as const;
+
 export const HOOK_CLASSES: HookClass[] = [
   "BeforeAfter",
   "Checklist",
@@ -162,5 +173,61 @@ export const TAB_HEADERS: Record<string, string[]> = {
     "Recommended",
     "Human_Approved"
   ],
-  Governance: ["Entry_ID", "Timestamp", "Version", "Section", "Change_Summary", "Reason", "Approved_By", "Content_Bible_Snapshot"]
+  Governance: ["Entry_ID", "Timestamp", "Version", "Section", "Change_Summary", "Reason", "Approved_By", "Content_Bible_Snapshot"],
+  Pins_Evergreen: [
+    "Pin_ID",
+    "Pin_Publish_Date",
+    "Pin_Publish_Time",
+    "Content_Area",
+    "Destination",
+    "Blog_ID",
+    "Media_Prompt",
+    "Media_URL",
+    "Pin_Overlay",
+    "Pin_Caption",
+    "Pin_CTA",
+    "Pin_URL",
+    "UTM_URL"
+  ],
+  Blogs_Evergreen: [
+    "Blog_ID",
+    "Blog_Publish_Date",
+    "Blog_Publish_Time",
+    "Content_Area",
+    "Blog_URL",
+    "Blog_Title",
+    "Blog_Keywords",
+    "Blog_Content",
+    "Related_Pins"
+  ],
+  Guides_Evergreen: [
+    "Guide_ID",
+    "Guide_Publish_Date",
+    "Guide_Publish_Time",
+    "Content_Area",
+    "Blog_ID",
+    "Guide_URL",
+    "Guide_Title",
+    "Guide_Keywords",
+    "Guide_Content",
+    "Related_Pins"
+  ],
+  Emails_Evergreen: [
+    "Email_ID",
+    "Email_Publish_Date",
+    "Email_Publish_Time",
+    "Content_Area",
+    "Blog_ID",
+    "Email_Subject",
+    "Email_Content"
+  ],
+  Customers_Evergreen: [
+    "User_ID",
+    "User_Email",
+    "User_Date_Email",
+    "User_Time_Email",
+    "Content_Area",
+    "Purchases"
+  ],
+  Products_Evergreen: ["Product_ID", "Product_Date", "Product_Sales", "Product_Revenue", "Product_Link", "Blog_ID", "Guide_ID"]
 };

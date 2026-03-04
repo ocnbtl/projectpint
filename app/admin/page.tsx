@@ -1,106 +1,66 @@
-import fs from "node:fs";
-import path from "node:path";
 import Link from "next/link";
+import { AdminFrame } from "../../components/admin/AdminFrame";
+import { OpsButton } from "../../components/admin/OpsButton";
+import { commandCenterKpis } from "../../lib/command-center";
 
-function readTab(tab: string): Record<string, unknown>[] {
-  const p = path.join(process.cwd(), "data", "sheets", `${tab}.json`);
-  if (!fs.existsSync(p)) return [];
-  return JSON.parse(fs.readFileSync(p, "utf8")) as Record<string, unknown>[];
-}
-
-const tabs = [
-  "Content_Pins",
-  "Blog_Posts",
-  "URL_Inventory",
-  "Assets",
-  "Experiments",
-  "Metrics_Weekly",
-  "Leads",
-  "Products",
-  "Product_Ideas",
-  "Governance"
-] as const;
+export const dynamic = "force-dynamic";
 
 export default function AdminPage() {
-  const pins = readTab("Content_Pins");
-  const urls = readTab("URL_Inventory");
-  const governance = readTab("Governance");
-  const publishedUrls = urls.filter((u) => u.Status === "published");
+  const kpis = commandCenterKpis();
 
   return (
-    <main className="container">
-      <div className="card">
-        <h1>Project Pint Admin Dashboard (V2 Scaffold)</h1>
-        <p>Public brand: Diyesu Decor (DIY Bathroom Upgrades).</p>
-        <p>Assisted mode active: human approval required for publish and pin export.</p>
+    <AdminFrame>
+      <section className="admin-panel">
+        <p className="eyebrow admin-eyebrow">Command Center</p>
+        <h1>Diyesu Decor Operations</h1>
         <p>
-          API endpoints: <code>/api/admin/sheets/[tab]</code> (GET/POST, authenticated).
+          Use the left navigation to manage evergreen pins, blogs, guides, promotional emails, customers, and product
+          stats from one place.
         </p>
-        <p>
-          <Link href="/review_pack.html">Open review pack artifact</Link>
+      </section>
+
+      <section className="admin-kpi-grid" aria-label="Core KPIs">
+        <article className="admin-kpi-card">
+          <p className="small">Pins</p>
+          <h2>{kpis.totalPins}</h2>
+          <p className="small">Posted: {kpis.pinsPosted}</p>
+          <p className="small">Missing media URLs: {kpis.pinsMissingMedia}</p>
+        </article>
+
+        <article className="admin-kpi-card">
+          <p className="small">Blogs + Guides</p>
+          <h2>
+            {kpis.totalBlogs} / {kpis.totalGuides}
+          </h2>
+          <p className="small">Track related pins from each content record.</p>
+        </article>
+
+        <article className="admin-kpi-card">
+          <p className="small">Email + Customers</p>
+          <h2>
+            {kpis.totalEmails} / {kpis.totalCustomers}
+          </h2>
+          <p className="small">Customer table refreshes from signup leads.</p>
+        </article>
+
+        <article className="admin-kpi-card">
+          <p className="small">Products</p>
+          <h2>{kpis.totalProducts}</h2>
+          <p className="small">Revenue tracked: ${kpis.totalRevenue}</p>
+        </article>
+      </section>
+
+      <section className="admin-panel">
+        <h2>Quick Actions</h2>
+        <div className="admin-actions-inline">
+          <OpsButton action="refresh_customers" label="Refresh customers from leads" />
+          <OpsButton action="update_product_stats" label="Update product stats" />
+        </div>
+        <p className="small">Admin access code is controlled by the `ADMIN_PASSWORD` value in `.env.local`.</p>
+        <p className="small">
+          Need to validate content before posting? Open <Link href="/review_pack.html">review_pack.html</Link>.
         </p>
-      </div>
-
-      <div className="grid grid-3" style={{ marginTop: 16 }}>
-        <div className="card">
-          <h3>Strategy & Governance</h3>
-          <p>Entries: {governance.length}</p>
-          <p>Tracks content bible versions and decision log.</p>
-        </div>
-        <div className="card">
-          <h3>Schedule Planner</h3>
-          <p>Pins in queue: {pins.length}</p>
-          <p>Published URLs: {publishedUrls.length}</p>
-          <p>Enforced: published-only + 24h URL cooldown + daily intent mix flags.</p>
-        </div>
-        <div className="card">
-          <h3>Exports</h3>
-          <p>Manual post pack + Pinterest bulk CSV + weekly packet supported via CLI.</p>
-        </div>
-      </div>
-
-      <div className="card" style={{ marginTop: 16 }}>
-        <h2>Filters and Controls (Scaffold)</h2>
-        <p>Pillar | Status | Destination type | Hook class | Destination intent | Quality score | Winners</p>
-        <p>Batch generator targets: pins, blogs, product opportunities.</p>
-      </div>
-
-      <div className="card" style={{ marginTop: 16 }}>
-        <h2>Pin Preview (first 10)</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Content ID</th>
-              <th>Hook</th>
-              <th>Intent</th>
-              <th>Destination</th>
-              <th>Quality</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pins.slice(0, 10).map((pin) => (
-              <tr key={String(pin.Content_ID)}>
-                <td>{String(pin.Content_ID)}</td>
-                <td>{String(pin.Hook_Class)}</td>
-                <td>{String(pin.Destination_Intent)}</td>
-                <td>{String(pin.Destination_URL)}</td>
-                <td>{String(pin.Quality_Score)}</td>
-                <td>{String(pin.Status)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="card" style={{ marginTop: 16 }}>
-        <h2>Tabs</h2>
-        <ul>
-          {tabs.map((tab) => (
-            <li key={tab}>{tab}</li>
-          ))}
-        </ul>
-      </div>
-    </main>
+      </section>
+    </AdminFrame>
   );
 }
