@@ -4,10 +4,14 @@ import { hubs } from "../../lib/site-data";
 
 export default function StartHerePage() {
   const orderedSlugs = [
-    "renter-friendly-upgrades",
-    "small-bathroom-space-hacks",
-    "budget-diy-transformations",
-    "bathroom-plants-biophilic-vibe"
+    "renter",
+    "extreme-budget",
+    "storage",
+    "plants",
+    "mirror",
+    "lighting",
+    "shower",
+    "diy"
   ];
   const starterHubs = orderedSlugs
     .map((slug) => hubs.find((hub) => hub.slug === slug))

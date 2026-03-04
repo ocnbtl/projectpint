@@ -20,52 +20,68 @@ export interface MicroGuideItem {
 
 export const hubs: HubDefinition[] = [
   {
-    slug: "renter-friendly-upgrades",
-    title: "Renter-Friendly Upgrades",
-    description: "Temporary, removable, no-permit upgrades with visible improvement.",
-    outcome: "Protect your deposit while making the bathroom easier to use.",
-    primaryPillar: "RenterFriendly",
-    keywordHints: ["renter", "no-drill", "removable", "temporary", "deposit"]
-  },
-  {
-    slug: "budget-diy-transformations",
-    title: "Budget DIY Transformations",
-    description: "Low cost projects that have a noticeable before/after difference.",
-    outcome: "Get a finished look without overspending.",
-    primaryPillar: "BudgetDIY",
-    keywordHints: ["budget", "under-75", "under", "refresh", "cheap"]
-  },
-  {
-    slug: "small-bathroom-space-hacks",
-    title: "Small Bathroom Space Hacks",
-    description: "Layout strategies and tiny-space optimization for better bathroom flow.",
-    outcome: "Stop bottlenecks around sink, shower, and storage zones.",
-    primaryPillar: "SmallSpace",
-    keywordHints: ["small", "tiny", "layout", "space", "flow"]
-  },
-  {
-    slug: "storage-and-clutter-to-calm",
-    title: "Keep the Kids Organized",
-    description: "Parent-friendly setups for bath toys, toothbrushes, and school-morning routines.",
-    outcome: "Cut bathroom chaos by giving each kid item a clear home.",
-    primaryPillar: "StorageOrganization",
-    keywordHints: ["storage", "organ", "bin", "label", "clutter", "vanity", "kids", "family"]
-  },
-  {
-    slug: "styling-mirrors-lighting-color",
-    title: "Styling: Mirrors, Lighting, Color",
-    description: "Mirror, lighting, and color ideas to make your bathroom feel brighter and cohesive.",
-    outcome: "Refresh your bathroom style with updates that fit your personal aesthetic.",
-    primaryPillar: "Styling",
-    keywordHints: ["color", "style", "mirror", "lighting", "backsplash", "texture"]
-  },
-  {
-    slug: "bathroom-plants-biophilic-vibe",
-    title: "Bathroom Plants",
-    description: "Plant choices for humid bathrooms with renter-safe placement ideas.",
-    outcome: "Add life to low light bathrooms with less plant failure.",
+    slug: "plants",
+    title: "Plants",
+    description: "Plant choices for humid bathrooms with low-maintenance placement ideas.",
+    outcome: "Keep greenery alive in low light bathrooms with less trial and error.",
     primaryPillar: "PlantsBiophilic",
-    keywordHints: ["plant", "humidity", "low-light", "biophilic", "shelf"]
+    keywordHints: ["plant", "humidity", "bathroom plant", "low light", "shelf"]
+  },
+  {
+    slug: "mirror",
+    title: "Mirror",
+    description: "Mirror choices and placement tips that improve function and visual balance.",
+    outcome: "Improve lighting bounce and daily routines with one mirror upgrade.",
+    primaryPillar: "Styling",
+    keywordHints: ["mirror", "placement", "reflection", "vanity", "frame"]
+  },
+  {
+    slug: "storage",
+    title: "Storage",
+    description: "Storage systems that keep counters clear and routines simple.",
+    outcome: "Cut clutter by giving each daily item a clear home.",
+    primaryPillar: "StorageOrganization",
+    keywordHints: ["storage", "organization", "clutter", "counter", "caddy"]
+  },
+  {
+    slug: "lighting",
+    title: "Lighting",
+    description: "Bathroom lighting updates for better visibility and calmer style.",
+    outcome: "Remove dark zones and get cleaner light around sink and shower.",
+    primaryPillar: "Styling",
+    keywordHints: ["lighting", "vanity light", "brightness", "bulb", "glow"]
+  },
+  {
+    slug: "shower",
+    title: "Shower",
+    description: "Shower upgrades that improve comfort, flow, and cleanup.",
+    outcome: "Make showers easier to use with better layout and grab zones.",
+    primaryPillar: "SmallSpace",
+    keywordHints: ["shower", "caddy", "shower storage", "shower routine", "soap"]
+  },
+  {
+    slug: "renter",
+    title: "Renter",
+    description: "Renter safe upgrades that avoid permanent damage and permit issues.",
+    outcome: "Improve your bathroom while protecting your deposit.",
+    primaryPillar: "RenterFriendly",
+    keywordHints: ["renter", "no drill", "temporary", "removable", "deposit"]
+  },
+  {
+    slug: "diy",
+    title: "DIY",
+    description: "Step by step bathroom DIY projects for normal tools and schedules.",
+    outcome: "Finish one practical project this week without guesswork.",
+    primaryPillar: "BudgetDIY",
+    keywordHints: ["diy", "project", "weekend", "tools", "step by step"]
+  },
+  {
+    slug: "extreme-budget",
+    title: "Extreme Budget",
+    description: "Ultra low cost bathroom improvements with clear spending limits.",
+    outcome: "Get visible results while keeping total cost tight.",
+    primaryPillar: "BudgetDIY",
+    keywordHints: ["budget", "cheap", "under 75", "low cost", "save money"]
   }
 ];
 

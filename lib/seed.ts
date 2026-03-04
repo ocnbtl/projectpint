@@ -5,23 +5,19 @@ import type { BlogDraft, PinDraft, ProductIdea, ProductRow, UrlInventoryItem } f
 
 const baseSite = "https://projectpint.example.com";
 
-const destinationPool = [
+const coreDestinationPool = [
   "/start-here",
-  "/hub/renter-friendly-upgrades",
-  "/hub/budget-diy-transformations",
-  "/hub/small-bathroom-space-hacks",
-  "/hub/storage-and-clutter-to-calm",
-  "/hub/styling-mirrors-lighting-color",
-  "/hub/bathroom-plants-biophilic-vibe",
+  "/hub/plants",
+  "/hub/mirror",
+  "/hub/storage",
+  "/hub/lighting",
+  "/hub/shower",
+  "/hub/renter",
+  "/hub/diy",
+  "/hub/extreme-budget",
   "/lead-magnets/plant-picker",
   "/products/renter-bathroom-upgrade-blueprint",
   "/products/bathroom-plant-picks-upgrade",
-  "/blog/no-drill-towel-storage-renters",
-  "/blog/15-dollar-bathroom-upgrades",
-  "/blog/tiny-bathroom-layout-fixes",
-  "/blog/clutter-to-calm-bathroom-zones",
-  "/blog/budget-maximalist-bathroom-color-map",
-  "/blog/humidity-friendly-bathroom-plants",
   "/micro/no-drill-art-layout-guide",
   "/micro/under-75-color-refresh-plan",
   "/micro/tiny-vanity-top-organization-map",
@@ -32,6 +28,11 @@ const destinationPool = [
   "/micro/under-sink-bin-label-system",
   "/micro/one-hour-bathroom-reset"
 ];
+
+function destinationPool(): string[] {
+  const blogUrls = seedBlogs().map((blog) => `/blog/${blog.Slug}`);
+  return [...coreDestinationPool, ...blogUrls];
+}
 
 const CTA_BY_INTENT: Record<string, string[]> = {
   Inspire: ["Save this plan for later", "Click for the full setup", "Start with this quick reset"],
@@ -74,6 +75,22 @@ const PILLAR_LANGUAGE: Record<string, { pain: string; benefit: string; weekendWi
   }
 };
 
+const COMPOSITION_VARIANTS = [
+  "eye-level view with a clear sink zone focus",
+  "slight top-down angle highlighting vanity organization",
+  "wide corner composition showing full bathroom flow",
+  "tight crop centered on mirror + lighting area",
+  "shower-side perspective with storage context"
+];
+
+const MATERIAL_VARIANTS = [
+  "matte tile and brushed metal accents",
+  "warm neutral tile with clean grout lines",
+  "soft green accessories with light wood textures",
+  "white and clay palette with subtle contrast",
+  "minimal black hardware with bright natural tones"
+];
+
 function hashtagsFor(pillar: string, hook: string): string[] {
   const base = ["#bathroomdiy", "#rentersafe", "#budgetdecor"];
   const byPillar: Record<string, string[]> = {
@@ -89,7 +106,8 @@ function hashtagsFor(pillar: string, hook: string): string[] {
 }
 
 export function seedUrlInventory(): UrlInventoryItem[] {
-  return destinationPool.map((url, index) => ({
+  const pool = destinationPool();
+  return pool.map((url, index) => ({
     URL_ID: `URL-${String(index + 1).padStart(3, "0")}`,
     URL: url,
     Type: inferUrlType(url),
@@ -113,6 +131,7 @@ function inferUrlType(url: string): UrlInventoryItem["Type"] {
 }
 
 export function seedPins(n: number, nowIso: string): PinDraft[] {
+  const pool = destinationPool();
   return Array.from({ length: n }).map((_, index) => {
     const hook = HOOK_CLASSES[index % HOOK_CLASSES.length];
     const intent = DESTINATION_INTENTS[index % DESTINATION_INTENTS.length];
@@ -129,7 +148,17 @@ export function seedPins(n: number, nowIso: string): PinDraft[] {
     ];
     const hashtagSet = hashtagsFor(pillar, hook);
     const descriptionWithHashtags = `${captions[0]} ${captions[1]} ${captions[2]} ${hashtagSet.join(" ")}`;
-    const prompt = `AI-generated bathroom scene, no people, no logos, ${pillar} styling, matte tile textures, soft daylight, clean composition with text safe area`;
+    const composition = COMPOSITION_VARIANTS[index % COMPOSITION_VARIANTS.length];
+    const material = MATERIAL_VARIANTS[index % MATERIAL_VARIANTS.length];
+    const prompt = [
+      "Create a photorealistic vertical 2:3 Pinterest image for a bathroom DIY post.",
+      `Variant ID: ${contentId}.`,
+      `Style focus: ${pillar}. Hook style: ${hook}. Intent: ${intent}.`,
+      `Scene direction: ${composition}, ${material}.`,
+      `Story cue: ${language.weekendWin}`,
+      "No people, no faces, no logos, no watermarks, no on-image text.",
+      "Leave clear safe space at top and bottom for text overlays."
+    ].join(" ");
 
     const lint = lintPin(
       {
@@ -154,7 +183,7 @@ export function seedPins(n: number, nowIso: string): PinDraft[] {
       Destination_Intent: intent,
       Pillar: pillar,
       Topic: `${pillar.toLowerCase()}-${hook.toLowerCase()}-${index + 1}`,
-      Destination_URL: destinationPool[index % destinationPool.length],
+      Destination_URL: pool[index % pool.length],
       Title: title,
       Caption_1: captions[0],
       Caption_2: captions[1],
@@ -167,7 +196,7 @@ export function seedPins(n: number, nowIso: string): PinDraft[] {
       Visual_Preset: index % 2 === 0 ? "tiny_bathroom_scene_v1" : "bathroom_flatlay_v1",
       Image_Prompt: prompt,
       UTM_URL: buildUtmUrl({
-        destinationUrl: `${baseSite}${destinationPool[index % destinationPool.length]}`,
+        destinationUrl: `${baseSite}${pool[index % pool.length]}`,
         contentId,
         hookClass: hook,
         intent

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { SiteShell } from "../../components/SiteShell";
-import { hubs, pillarLabel } from "../../lib/site-data";
+import { hubs } from "../../lib/site-data";
 
 export default function HubIndexPage() {
   return (
@@ -26,7 +26,7 @@ export default function HubIndexPage() {
         <section className="grid grid-3 areas-grid">
           {hubs.map((hub) => (
             <article key={hub.slug} className="card areas-card">
-              <p className="areas-pill">{pillarLabel(hub.primaryPillar)}</p>
+              <p className="areas-pill">{hub.title} area</p>
               <h3>{hub.title}</h3>
               <p className="path-card-summary">{hub.description}</p>
               <p className="benefit-highlight">Win today: {hub.outcome}</p>

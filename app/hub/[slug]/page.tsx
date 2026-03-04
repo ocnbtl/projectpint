@@ -27,7 +27,8 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
               <p>{hub.description}</p>
               <p className="home-hero-cta">Primary win: {hub.outcome}</p>
               <div className="pill-row" aria-label="Hub details">
-                <span className="pill">Area: {pillarLabel(hub.primaryPillar)}</span>
+                <span className="pill">Area: {hub.title}</span>
+                <span className="pill">Pillar: {pillarLabel(hub.primaryPillar)}</span>
                 <span className="pill">Budget-aware sequencing</span>
                 <span className="pill">Renter-safe by default</span>
               </div>
