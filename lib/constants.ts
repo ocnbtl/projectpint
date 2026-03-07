@@ -1,6 +1,6 @@
-import type { DestinationIntent, HookClass, Pillar } from "./types.ts";
+import type { ContentArea, DestinationIntent, HookClass, Pillar } from "./types.ts";
 
-export const COMMAND_CENTER_CONTENT_AREAS = [
+export const COMMAND_CENTER_CONTENT_AREAS: ContentArea[] = [
   "Plants",
   "Mirror",
   "Storage",
@@ -36,6 +36,137 @@ export const PILLARS: Pillar[] = [
   "Styling",
   "PlantsBiophilic"
 ];
+
+const CONTENT_AREA_LABELS: Record<ContentArea, string> = {
+  Plants: "Plants",
+  Mirror: "Mirror",
+  Storage: "Storage",
+  Lighting: "Lighting",
+  Shower: "Shower",
+  Renter: "Renter",
+  DIY: "DIY",
+  ExtremeBudget: "Extreme Budget"
+};
+
+const LEGACY_PILLAR_LABELS: Record<Pillar, string> = {
+  RenterFriendly: "Renter-Friendly",
+  BudgetDIY: "Budget DIY",
+  SmallSpace: "Small Space",
+  StorageOrganization: "Storage & Organization",
+  Styling: "Styling",
+  PlantsBiophilic: "Plants & Biophilic"
+};
+
+export const CONTENT_AREA_TO_LEGACY_PILLARS = {
+  Plants: ["PlantsBiophilic"],
+  Mirror: ["Styling"],
+  Storage: ["StorageOrganization"],
+  Lighting: ["Styling"],
+  Shower: ["SmallSpace"],
+  Renter: ["RenterFriendly"],
+  DIY: ["BudgetDIY"],
+  ExtremeBudget: ["BudgetDIY"]
+} as const satisfies Record<ContentArea, readonly Pillar[]>;
+
+export const LEGACY_PILLAR_TO_CONTENT_AREAS = {
+  RenterFriendly: ["Renter"],
+  BudgetDIY: ["DIY", "ExtremeBudget"],
+  SmallSpace: ["Shower"],
+  StorageOrganization: ["Storage"],
+  Styling: ["Mirror", "Lighting"],
+  PlantsBiophilic: ["Plants"]
+} as const satisfies Record<Pillar, readonly ContentArea[]>;
+
+function taxonomyKey(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function buildAliasEntries(): Array<[string, ContentArea]> {
+  const entries: Array<[string, ContentArea]> = [];
+  for (const area of COMMAND_CENTER_CONTENT_AREAS) {
+    entries.push([taxonomyKey(area), area]);
+    entries.push([taxonomyKey(contentAreaLabel(area)), area]);
+    entries.push([taxonomyKey(contentAreaSlug(area)), area]);
+  }
+  for (const pillar of PILLARS) {
+    entries.push([taxonomyKey(pillar), primaryContentAreaForPillar(pillar)]);
+    entries.push([taxonomyKey(pillarLabel(pillar)), primaryContentAreaForPillar(pillar)]);
+  }
+  return entries;
+}
+
+const CONTENT_AREA_ALIASES = new Map<string, ContentArea>(buildAliasEntries());
+
+export function isContentArea(value: string): value is ContentArea {
+  return COMMAND_CENTER_CONTENT_AREAS.includes(value as ContentArea);
+}
+
+export function isLegacyPillar(value: string): value is Pillar {
+  return PILLARS.includes(value as Pillar);
+}
+
+export function contentAreaLabel(area: ContentArea): string {
+  return CONTENT_AREA_LABELS[area];
+}
+
+export function contentAreaSlug(area: ContentArea): string {
+  return area === "ExtremeBudget" ? "extreme-budget" : area.toLowerCase();
+}
+
+export function pillarLabel(pillar: Pillar): string {
+  return LEGACY_PILLAR_LABELS[pillar];
+}
+
+export function normalizeLegacyPillar(value: string): Pillar | null {
+  const normalized = taxonomyKey(value.trim());
+  if (!normalized) return null;
+  return (
+    PILLARS.find((pillar) => taxonomyKey(pillar) === normalized || taxonomyKey(pillarLabel(pillar)) === normalized) ?? null
+  );
+}
+
+export function contentAreasForPillar(pillar: Pillar | string): ContentArea[] {
+  const normalized = typeof pillar === "string" ? normalizeLegacyPillar(pillar) : pillar;
+  return normalized ? [...LEGACY_PILLAR_TO_CONTENT_AREAS[normalized]] : [];
+}
+
+export function primaryContentAreaForPillar(pillar: Pillar | string): ContentArea {
+  return contentAreasForPillar(pillar)[0] ?? "DIY";
+}
+
+export function legacyPillarsForArea(area: ContentArea | string): Pillar[] {
+  const normalized = typeof area === "string" ? normalizeContentArea(area) : area;
+  return normalized ? [...CONTENT_AREA_TO_LEGACY_PILLARS[normalized]] : [];
+}
+
+export function primaryLegacyPillarForArea(area: ContentArea | string): Pillar {
+  return legacyPillarsForArea(area)[0] ?? "BudgetDIY";
+}
+
+export function normalizeContentArea(value: string): ContentArea | null {
+  const normalized = taxonomyKey(value.trim());
+  if (!normalized) return null;
+  return CONTENT_AREA_ALIASES.get(normalized) ?? null;
+}
+
+export function normalizeContentAreas(values: Iterable<string>): ContentArea[] {
+  const normalized = new Set<ContentArea>();
+  for (const rawValue of values) {
+    for (const value of String(rawValue)
+      .split(/[;,]/)
+      .map((item) => item.trim())
+      .filter(Boolean)) {
+      const pillarAreas = contentAreasForPillar(value);
+      if (pillarAreas.length > 0) {
+        for (const area of pillarAreas) normalized.add(area);
+        continue;
+      }
+      const area = normalizeContentArea(value);
+      if (area) normalized.add(area);
+    }
+  }
+  return [...normalized];
+}
 
 export const TAB_HEADERS: Record<string, string[]> = {
   Content_Pins: [
@@ -179,6 +310,7 @@ export const TAB_HEADERS: Record<string, string[]> = {
     "Pin_Publish_Date",
     "Pin_Publish_Time",
     "Content_Area",
+    "Workflow_Status",
     "Destination",
     "Blog_ID",
     "Media_Prompt",
@@ -187,30 +319,35 @@ export const TAB_HEADERS: Record<string, string[]> = {
     "Pin_Caption",
     "Pin_CTA",
     "Pin_URL",
-    "UTM_URL"
+    "UTM_URL",
+    "Prepared_For_Export_At"
   ],
   Blogs_Evergreen: [
     "Blog_ID",
     "Blog_Publish_Date",
     "Blog_Publish_Time",
     "Content_Area",
+    "Workflow_Status",
     "Blog_URL",
     "Blog_Title",
     "Blog_Keywords",
     "Blog_Content",
-    "Related_Pins"
+    "Related_Pins",
+    "Published_To_Public_At"
   ],
   Guides_Evergreen: [
     "Guide_ID",
     "Guide_Publish_Date",
     "Guide_Publish_Time",
     "Content_Area",
+    "Workflow_Status",
     "Blog_ID",
     "Guide_URL",
     "Guide_Title",
     "Guide_Keywords",
     "Guide_Content",
-    "Related_Pins"
+    "Related_Pins",
+    "Published_To_Public_At"
   ],
   Emails_Evergreen: [
     "Email_ID",

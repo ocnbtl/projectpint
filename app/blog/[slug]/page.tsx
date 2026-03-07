@@ -5,13 +5,15 @@ import { SiteShell } from "../../../components/SiteShell";
 import { shouldShowAffiliateDisclosure } from "../../../lib/affiliate";
 import { readBlogs } from "../../../lib/site-data";
 
-export function generateStaticParams() {
-  return readBlogs().map((b) => ({ slug: b.Slug }));
+export async function generateStaticParams() {
+  const blogs = await readBlogs();
+  return blogs.map((b) => ({ slug: b.Slug }));
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const blog = readBlogs().find((b) => b.Slug === slug);
+  const blogs = await readBlogs();
+  const blog = blogs.find((b) => b.Slug === slug);
   if (!blog) return notFound();
   const showAffiliateDisclosure = shouldShowAffiliateDisclosure({
     explicitFlag: blog.Affiliate_Disclosure_Required,

@@ -1,6 +1,6 @@
 {
   "Content_ID": "PIN-008",
-  "Created_At": "2026-02-25T07:14:09.725Z",
+  "Created_At": "2026-03-02T19:31:56.014Z",
   "Status": "draft",
   "Hook_Class": "PlantPicker",
   "Destination_Intent": "Solve",
@@ -17,7 +17,7 @@
   "Has_Text_Overlay": true,
   "Primary_CTA": "Choose your best-fit path",
   "Visual_Preset": "bathroom_flatlay_v1",
-  "Image_Prompt": "AI-generated bathroom scene, no people, no logos, BudgetDIY styling, matte tile textures, soft daylight, clean composition with text safe area",
+  "Image_Prompt": "Create a photorealistic vertical 2:3 Pinterest image for a bathroom DIY post. Variant ID: PIN-008. Style focus: BudgetDIY. Hook style: PlantPicker. Intent: Solve. Scene direction: wide corner composition showing full bathroom flow, soft green accessories with light wood textures. Story cue: Use one anchor fix plus one support layer under a hard budget cap. No people, no faces, no logos, no watermarks, no on-image text. Leave clear safe space at top and bottom for text overlays.",
   "UTM_URL": "/lead-magnets/plant-picker?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-008_plantpicker_solve",
   "Quality_Score": 92,
   "Quality_Flags": [

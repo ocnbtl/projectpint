@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Missing action" }, { status: 400 });
   }
 
-  const result = runCommandCenterAction(body.action, body.payload);
+  const result = await runCommandCenterAction(body.action, body.payload);
   if (result.ok === false) {
     return NextResponse.json({ ok: false, action: body.action, error: result.error ?? "Action failed", result }, { status: 400 });
   }

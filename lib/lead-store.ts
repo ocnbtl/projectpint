@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { loadTab, saveTab } from "./store.ts";
+import { normalizeContentAreas } from "./constants.ts";
+import { loadRuntimeTab, saveRuntimeTab } from "./runtime-store.ts";
 
 interface LeadInput {
   email: string;
@@ -14,12 +15,11 @@ interface LeadInput {
   createdAtIso?: string;
 }
 
-export function persistLead(input: LeadInput): void {
-  const rows = loadTab<Record<string, unknown>>("Leads");
+export async function persistLead(input: LeadInput): Promise<void> {
+  const rows = await loadRuntimeTab<Record<string, unknown>>("Leads");
   const createdAt = input.createdAtIso ?? new Date().toISOString();
-  const pillarInterest =
-    input.pillarInterest ??
-    (input.contentAreas && input.contentAreas.length > 0 ? input.contentAreas.join(", ") : "");
+  const contentAreas = normalizeContentAreas([...(input.contentAreas ?? []), input.pillarInterest ?? ""]);
+  const pillarInterest = contentAreas.length > 0 ? contentAreas.join(", ") : input.pillarInterest ?? "";
 
   rows.push({
     Lead_ID: `LEAD-${randomUUID()}`,
@@ -34,5 +34,5 @@ export function persistLead(input: LeadInput): void {
     Consent_Text: input.consentText
   });
 
-  saveTab("Leads", rows);
+  await saveRuntimeTab("Leads", rows);
 }

@@ -7,6 +7,7 @@ import { flagIntentDominance, lintPin } from "./linter.ts";
 import { assignSchedule, validateIntentDailyMix, validateNo24hRepeats } from "./scheduler.ts";
 import { seedBlogs, seedPins, seedProductIdeas, seedProducts, seedUrlInventory } from "./seed.ts";
 import { loadTab, saveTab } from "./store.ts";
+import { buildUtmUrl } from "./utm.ts";
 import { generateMicroDestinations, writeMicroGuidesForInventory } from "./commands/content.ts";
 import { writeManualPackZip, writeOverlayRenderJobBook, writePinsExportCsv, writeWeeklyZip } from "./commands/exports.ts";
 import { analyzeWinners, writeMonthlyReview, writeQaReports, writeWeeklyOpsInfo, writeWeeklyReview, writeYearlyReview } from "./commands/reviews.ts";
@@ -21,6 +22,18 @@ interface ReviewPaths {
   outputWeekly: string;
   outputMonthly: string;
   outputYearly: string;
+}
+
+interface AssetRow {
+  Asset_ID: string;
+  Type: string;
+  Drive_URL: string;
+  Local_Path: string;
+  Prompt_Preset: string;
+  Prompt_Text: string;
+  Status: string;
+  Linked_Content_ID: string;
+  Quality_Notes: string;
 }
 
 const OUTPUT_WEEKLY = path.join(process.cwd(), "outputs", "weekly");
@@ -110,6 +123,80 @@ function ensureBaseArtifacts(): void {
   ensureDir(path.join(process.cwd(), "content_packets"));
   ensureDir(path.join(process.cwd(), "blog_drafts"));
   ensureDir(path.join(process.cwd(), "micro_guides"));
+}
+
+function toBlogUrl(slug: string): string {
+  return `/blog/${slug}`;
+}
+
+function asNumber(value: unknown, fallback: number): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function nextIdFromRows(rows: Array<{ Asset_ID?: string }>): number {
+  const maxId = rows.reduce((max, row) => {
+    const parsed = Number(String(row.Asset_ID ?? "").replace(/\D/g, ""));
+    return Number.isFinite(parsed) ? Math.max(max, parsed) : max;
+  }, 0);
+  return maxId + 1;
+}
+
+function syncAssetsForPins(existingAssets: AssetRow[], pins: PinDraft[]): AssetRow[] {
+  const preservedNonPinAssets = existingAssets.filter((asset) => asset.Type !== "pin_image");
+  const existingPinAssetByContentId = new Map(
+    existingAssets.filter((asset) => asset.Type === "pin_image" && asset.Linked_Content_ID).map((asset) => [asset.Linked_Content_ID, asset])
+  );
+
+  let nextId = nextIdFromRows(existingAssets);
+  const syncedPinAssets = pins.map((pin) => {
+    const existing = existingPinAssetByContentId.get(pin.Content_ID);
+    const assetId = existing?.Asset_ID || `ASSET-${String(nextId++).padStart(3, "0")}`;
+
+    return {
+      Asset_ID: assetId,
+      Type: "pin_image",
+      Drive_URL: existing?.Drive_URL ?? "",
+      Local_Path: existing?.Local_Path ?? "",
+      Prompt_Preset: pin.Visual_Preset,
+      Prompt_Text: pin.Image_Prompt,
+      Status: existing?.Status ?? "draft",
+      Linked_Content_ID: pin.Content_ID,
+      Quality_Notes: existing?.Quality_Notes ?? ""
+    };
+  });
+
+  return [...preservedNonPinAssets, ...syncedPinAssets];
+}
+
+function syncUrlInventoryWithBlogs(urls: UrlInventoryItem[], blogs: BlogDraft[]): UrlInventoryItem[] {
+  const byUrl = new Map(urls.map((row) => [row.URL, row]));
+  const blogRows = blogs.map((blog, index) => {
+    const blogUrl = toBlogUrl(blog.Slug);
+    const existing = byUrl.get(blogUrl);
+
+    return {
+      URL_ID: existing?.URL_ID ?? `URL-BLOG-${String(index + 1).padStart(3, "0")}`,
+      URL: blogUrl,
+      Type: "blog" as const,
+      Pillar: blog.Pillar,
+      Status: existing?.Status ?? "published",
+      Last_Posted_At: existing?.Last_Posted_At ?? "",
+      Cooldown_Hours: asNumber(existing?.Cooldown_Hours, 24),
+      Destination_Intent_Default: existing?.Destination_Intent_Default ?? "Teach",
+      Priority: asNumber(existing?.Priority, 90 - index)
+    };
+  });
+
+  const nonBlogRows = urls
+    .filter((row) => row.Type !== "blog")
+    .map((row) => ({
+      ...row,
+      Cooldown_Hours: asNumber(row.Cooldown_Hours, 24),
+      Priority: asNumber(row.Priority, 0)
+    }));
+
+  return [...nonBlogRows, ...blogRows].sort((a, b) => b.Priority - a.Priority);
 }
 
 function toReviewHtml(pins: PinDraft[], blogs: BlogDraft[], planText: string): string {
@@ -251,20 +338,10 @@ function seedPhaseOne(nPins: number, nBlogs: number): void {
   const now = todayIso();
   const pins = seedPins(nPins, now);
   const blogs = seedBlogs().slice(0, nBlogs);
-  const urls = seedUrlInventory();
+  const urls = syncUrlInventoryWithBlogs(seedUrlInventory(), blogs);
   const products = seedProducts(now);
   const ideas = seedProductIdeas(now.slice(0, 7));
-  const assets = pins.map((pin, index) => ({
-    Asset_ID: `ASSET-${String(index + 1).padStart(3, "0")}`,
-    Type: "pin_image",
-    Drive_URL: `https://drive.google.com/mock/${pin.Content_ID}.png`,
-    Local_Path: "",
-    Prompt_Preset: "tiny_bathroom_scene",
-    Prompt_Text: pin.Image_Prompt,
-    Status: "draft",
-    Linked_Content_ID: pin.Content_ID,
-    Quality_Notes: ""
-  }));
+  const assets = syncAssetsForPins([], pins);
 
   saveTab("Content_Pins", pins);
   saveTab("Blog_Posts", blogs);
@@ -287,8 +364,9 @@ function seedPhaseOne(nPins: number, nBlogs: number): void {
 function runScheduleBuild(): { plan: string; pins: PinDraft[]; blogs: BlogDraft[] } {
   const pins = loadTab<PinDraft>("Content_Pins");
   const blogs = loadTab<BlogDraft>("Blog_Posts");
-  const urls = loadTab<UrlInventoryItem>("URL_Inventory");
+  const urls = syncUrlInventoryWithBlogs(loadTab<UrlInventoryItem>("URL_Inventory"), blogs);
   const weekStart = startOfWeekIso(todayIso());
+  const siteBase = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://projectpint.example.com").replace(/\/+$/, "");
 
   const intentDominance = flagIntentDominance(pins.map((p) => p.Destination_Intent));
 
@@ -316,6 +394,15 @@ function runScheduleBuild(): { plan: string; pins: PinDraft[]; blogs: BlogDraft[
   }
 
   const scheduled = assignSchedule(pins, urls, weekStart);
+  for (const pin of scheduled.pins) {
+    if (!pin.Destination_URL) continue;
+    pin.UTM_URL = buildUtmUrl({
+      destinationUrl: `${siteBase}${pin.Destination_URL}`,
+      contentId: pin.Content_ID,
+      hookClass: pin.Hook_Class,
+      intent: pin.Destination_Intent
+    });
+  }
 
   const issues = [
     ...validateNo24hRepeats(scheduled.pins),
@@ -335,6 +422,7 @@ function runScheduleBuild(): { plan: string; pins: PinDraft[]; blogs: BlogDraft[
 
   saveTab("Content_Pins", scheduled.pins);
   saveTab("URL_Inventory", urls);
+  saveTab("Assets", syncAssetsForPins(loadTab<AssetRow>("Assets"), scheduled.pins));
   writeText(path.join(process.cwd(), "weekly_schedule.md"), plan);
   writeText(path.join(process.cwd(), "week_plan.md"), plan);
 
@@ -508,21 +596,24 @@ export function runCommand(argv: string[]): void {
       seedPhaseOne(getNumberArg(parsed, "nPins", 25), getNumberArg(parsed, "nBlogs", 3));
       break;
     case "init_url_inventory":
-      saveTab("URL_Inventory", seedUrlInventory());
+      saveTab("URL_Inventory", syncUrlInventoryWithBlogs(seedUrlInventory(), loadTab<BlogDraft>("Blog_Posts")));
       break;
     case "generate_content_bible":
       writeGovernanceMirror();
       break;
     case "generate_blog_week": {
       const n = getNumberArg(parsed, "n", 3);
-      saveTab("Blog_Posts", seedBlogs().slice(0, n));
-      writeBlogDraftFiles(loadTab<BlogDraft>("Blog_Posts"));
+      const blogs = seedBlogs().slice(0, n);
+      saveTab("Blog_Posts", blogs);
+      saveTab("URL_Inventory", syncUrlInventoryWithBlogs(loadTab<UrlInventoryItem>("URL_Inventory"), blogs));
+      writeBlogDraftFiles(blogs);
       break;
     }
     case "generate_pin_week": {
       const n = getNumberArg(parsed, "n", 25);
       const pins = seedPins(n, todayIso());
       saveTab("Content_Pins", pins);
+      saveTab("Assets", syncAssetsForPins(loadTab<AssetRow>("Assets"), pins));
       writeContentPackets(pins);
       break;
     }

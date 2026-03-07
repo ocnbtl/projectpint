@@ -1,16 +1,16 @@
 # Weekly Performance Metrics
 
 ## Winners (Outbound Clicks / Impressions)
-1. PIN-001 | /blog/no-drill-towel-storage-renters | 0.00%
-2. PIN-002 | /blog/15-dollar-bathroom-upgrades | 0.00%
-3. PIN-003 | /blog/tiny-bathroom-layout-fixes | 0.00%
-4. PIN-004 | /blog/clutter-to-calm-bathroom-zones | 0.00%
-5. PIN-005 | /blog/budget-maximalist-bathroom-color-map | 0.00%
-6. PIN-006 | /blog/no-drill-towel-storage-renters | 0.00%
-7. PIN-007 | /blog/15-dollar-bathroom-upgrades | 0.00%
-8. PIN-008 | /blog/tiny-bathroom-layout-fixes | 0.00%
-9. PIN-009 | /blog/clutter-to-calm-bathroom-zones | 0.00%
-10. PIN-010 | /blog/budget-maximalist-bathroom-color-map | 0.00%
+1. PIN-001 | /micro/no-drill-art-layout-guide | 0.00%
+2. PIN-002 | /micro/under-75-color-refresh-plan | 0.00%
+3. PIN-003 | /micro/tiny-vanity-top-organization-map | 0.00%
+4. PIN-004 | /micro/removable-lighting-upgrade-checklist | 0.00%
+5. PIN-005 | /micro/peel-stick-backsplash-cut-plan | 0.00%
+6. PIN-006 | /micro/no-drill-art-layout-guide | 0.00%
+7. PIN-007 | /micro/under-75-color-refresh-plan | 0.00%
+8. PIN-008 | /micro/tiny-vanity-top-organization-map | 0.00%
+9. PIN-009 | /micro/removable-lighting-upgrade-checklist | 0.00%
+10. PIN-010 | /micro/peel-stick-backsplash-cut-plan | 0.00%
 
 ## Top Hook Classes
 - BeforeAfter: 0.00%
@@ -32,7 +32,7 @@
 - Subscribe: 0.00%
 
 ## Destination Type Performance
-- blog: 0.00%
+- micro: 0.00%
 
 ## Recommendation
 - Shift 20% of next batch toward top 2 hook classes and top 2 intents.

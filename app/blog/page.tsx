@@ -1,10 +1,11 @@
 import { BlogIndexExplorer } from "../../components/BlogIndexExplorer";
 import { SiteShell } from "../../components/SiteShell";
+import { contentAreaLabel } from "../../lib/constants";
 import { excerptFromMarkdown } from "../../lib/content-render";
-import { pillarLabel, readBlogs } from "../../lib/site-data";
+import { contentAreaForBlog, readBlogs } from "../../lib/site-data";
 
-export default function BlogIndex() {
-  const rows = readBlogs();
+export default async function BlogIndex() {
+  const rows = await readBlogs();
   const published = rows.filter((row) => row.Status === "published");
   const source = published.length > 0 ? published : rows;
 
@@ -13,7 +14,7 @@ export default function BlogIndex() {
     slug: row.Slug,
     title: row.Title,
     excerpt: excerptFromMarkdown(row.Draft_Markdown, 160),
-    tags: [pillarLabel(row.Pillar), row.Keyword_Target],
+    tags: [contentAreaLabel(contentAreaForBlog(row)), row.Keyword_Target],
     keyword: row.Keyword_Target
   }));
   const availableTags = Array.from(new Set(blogs.flatMap((blog) => blog.tags))).sort();

@@ -6,17 +6,22 @@ import { loadEvergreenTab } from "../../../lib/command-center";
 
 export const dynamic = "force-dynamic";
 
-export default function AdminProductsPage() {
-  const rows = loadEvergreenTab("products");
+export default async function AdminProductsPage() {
+  const rows = await loadEvergreenTab("products");
 
   return (
     <AdminFrame>
-      <section className="admin-panel">
+      <section className="admin-panel admin-panel-hero">
+        <p className="eyebrow admin-eyebrow">Products</p>
         <h1>Products</h1>
         <p>
           Track product launch date, links, sales, revenue, and content associations. Use update stats to refresh sales
           and linked content IDs.
         </p>
+        <div className="admin-meta-row">
+          <span className="admin-meta-pill">Revenue tracking</span>
+          <span className="admin-meta-pill">Blog + guide linkage</span>
+        </div>
         <div className="admin-actions-inline">
           <OpsButton action="update_product_stats" label="Update stats" />
         </div>

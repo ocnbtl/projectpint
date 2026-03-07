@@ -9,6 +9,16 @@ interface OpsButtonProps {
   variant?: "accent" | "ghost";
 }
 
+function summarizeResult(result: Record<string, unknown> | undefined): string {
+  if (!result) return "Done.";
+  const entries = Object.entries(result).filter(([, value]) => value !== undefined && value !== "");
+  if (!entries.length) return "Done.";
+  return entries
+    .slice(0, 4)
+    .map(([key, value]) => `${key}: ${String(value)}`)
+    .join(" | ");
+}
+
 export function OpsButton({ action, label, payload, variant = "accent" }: OpsButtonProps) {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
@@ -27,8 +37,7 @@ export function OpsButton({ action, label, payload, variant = "accent" }: OpsBut
         setStatus(`Failed: ${body.error ?? "unknown error"}`);
         return;
       }
-      const resultSummary = body.result ? JSON.stringify(body.result) : "done";
-      setStatus(`Done: ${resultSummary}`);
+      setStatus(summarizeResult(body.result));
       window.location.reload();
     } catch {
       setStatus("Failed: network error.");
@@ -39,10 +48,15 @@ export function OpsButton({ action, label, payload, variant = "accent" }: OpsBut
 
   return (
     <div className="admin-action-block">
-      <button type="button" className={`btn ${variant === "accent" ? "btn-accent" : "btn-ghost"}`} onClick={run} disabled={loading}>
+      <button
+        type="button"
+        className={`btn ${variant === "accent" ? "btn-accent" : "btn-ghost"} admin-action-button`}
+        onClick={run}
+        disabled={loading}
+      >
         {loading ? "Running..." : label}
       </button>
-      {status ? <p className="small">{status}</p> : null}
+      {status ? <p className="small admin-inline-status">{status}</p> : null}
     </div>
   );
 }

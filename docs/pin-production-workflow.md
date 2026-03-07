@@ -40,7 +40,13 @@ Click:
 
 This fills `Pin_Overlay` and `Pin_CTA` for the latest 25 rows.
 
-## 3) Generate visuals manually
+## 3) Approve the row for export
+Before a pin enters the export queue:
+- verify destination is correct
+- verify copy is acceptable
+- set `Workflow_Status` to `approved`
+
+## 4) Generate visuals manually
 For each pin row:
 1. Copy `Media_Prompt`.
 2. Paste into Nano Banana.
@@ -48,16 +54,24 @@ For each pin row:
 4. Upload final image to Drive.
 5. Paste link into `Media_URL`.
 
-## 4) Publish pins
+## 5) Prepare approved pins for export
+Click:
+- `Prepare approved pins for export`
+
+This keeps approved rows in `Pins_Evergreen`, normalizes the live destination/UTM data, and stamps `Prepared_For_Export_At` for the export batch.
+
+## 6) Publish pins manually
 After posting each pin on Pinterest:
 - Paste live post URL into `Pin_URL`.
+- Optional: re-run `Prepare approved pins for export` so the queue reflects posted rows.
 
-## 5) Save and verify
-- Click `Save changes`.
+## 7) Save and verify
+- Wait for autosave or click `Save now`.
 - Spot-check that each posted row has:
   - `Media_URL`
   - `Pin_URL`
   - correct `UTM_URL`
+  - `Prepared_For_Export_At`
 
 ## Copy Rules (Enforced by Strategy)
 - Caption sounds human and natural.
@@ -71,3 +85,4 @@ After posting each pin on Pinterest:
 - CTA matches destination type (guide vs blog).
 - UTM URL opens correct destination.
 - Image and caption both match the selected content area.
+- `Workflow_Status` is `approved` before prep and `queued` or `posted` after prep.

@@ -241,7 +241,7 @@ export function writeMonthlyReview(paths: ReviewPaths): void {
 - Tighten banned phrase list for vague urgency language.
 
 ## SEO Cluster Health
-- Weak coverage: Styling and Plants clusters need more micro-destinations.
+- Weak coverage: Mirror, Lighting, and Plants areas need more micro-destinations.
 
 ## Monetization Review
 - Affiliate clicks trend: instrumented, insufficient data volume yet.

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { AdminNavLink } from "./AdminNavLink";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Home" },
@@ -22,18 +23,31 @@ export function AdminFrame({ children }: { children: ReactNode }) {
             <span className="admin-brand-sub">Command Center</span>
           </span>
         </Link>
+        <div className="admin-sidebar-note">
+          <p className="small">Private workspace</p>
+          <p>Assisted mode stays on. Human approval is still required before publish or export.</p>
+        </div>
         <nav className="admin-nav" aria-label="Admin navigation">
           {NAV_ITEMS.map((item) => (
-            <Link key={item.href} href={item.href} className="admin-nav-link">
-              {item.label}
-            </Link>
+            <AdminNavLink key={item.href} href={item.href} label={item.label} />
           ))}
         </nav>
         <div className="admin-sidebar-foot">
-          <p className="small">Use Save Changes after manual edits.</p>
-          <Link href="/" className="btn btn-ghost">
-            Open public site
-          </Link>
+          <div className="admin-sidebar-chip-row">
+            <span className="admin-chip">Manual visuals</span>
+            <span className="admin-chip">Evergreen ops</span>
+          </div>
+          <p className="small">Use Save Changes after manual edits. Publish and export remain intentional operator actions.</p>
+          <div className="admin-sidebar-actions">
+            <Link href="/" className="btn btn-ghost">
+              Open public site
+            </Link>
+            <form action="/api/admin/logout" method="post">
+              <button type="submit" className="btn btn-accent admin-logout-btn">
+                Log out
+              </button>
+            </form>
+          </div>
         </div>
       </aside>
       <main className="admin-main">{children}</main>

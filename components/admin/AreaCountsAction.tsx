@@ -9,6 +9,16 @@ interface AreaCountsActionProps {
   mode?: "counts" | "checkbox";
 }
 
+function summarizeResult(result: Record<string, unknown> | undefined): string {
+  if (!result) return "Done.";
+  const entries = Object.entries(result).filter(([, value]) => value !== undefined && value !== "");
+  if (!entries.length) return "Done.";
+  return entries
+    .slice(0, 4)
+    .map(([key, value]) => `${key}: ${String(value)}`)
+    .join(" | ");
+}
+
 export function AreaCountsAction({ action, label, mode = "counts" }: AreaCountsActionProps) {
   const [counts, setCounts] = useState<Record<string, number>>(
     Object.fromEntries(COMMAND_CENTER_CONTENT_AREAS.map((area) => [area, 0]))
@@ -39,8 +49,7 @@ export function AreaCountsAction({ action, label, mode = "counts" }: AreaCountsA
         setStatus(`Failed: ${body.error ?? "unknown error"}`);
         return;
       }
-      const resultSummary = body.result ? JSON.stringify(body.result) : "done";
-      setStatus(`Done: ${resultSummary}`);
+      setStatus(summarizeResult(body.result));
       window.location.reload();
     } catch {
       setStatus("Failed: network error.");
@@ -51,11 +60,18 @@ export function AreaCountsAction({ action, label, mode = "counts" }: AreaCountsA
 
   return (
     <div className="admin-area-action">
-      <h3>{label}</h3>
+      <div className="admin-area-action-head">
+        <h3>{label}</h3>
+        <p className="small">
+          {mode === "checkbox"
+            ? "Select the areas you want included in the next draft batch."
+            : "Set the number of rows you want generated for each area."}
+        </p>
+      </div>
       <div className="admin-area-grid">
         {COMMAND_CENTER_CONTENT_AREAS.map((area) => (
-          <label key={area} className="admin-inline-label">
-            {area}
+          <label key={area} className="admin-inline-label admin-area-card">
+            <span>{area}</span>
             {mode === "checkbox" ? (
               <input
                 type="checkbox"
@@ -77,7 +93,7 @@ export function AreaCountsAction({ action, label, mode = "counts" }: AreaCountsA
       <button type="button" className="btn btn-accent" onClick={submit} disabled={loading}>
         {loading ? "Running..." : label}
       </button>
-      {status ? <p className="small">{status}</p> : null}
+      {status ? <p className="small admin-inline-status">{status}</p> : null}
     </div>
   );
 }

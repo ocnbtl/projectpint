@@ -1,25 +1,35 @@
 import path from "node:path";
+import { COMMAND_CENTER_CONTENT_AREAS, normalizeContentArea, primaryLegacyPillarForArea } from "../constants.ts";
 import { ensureDir, writeText } from "../io.ts";
 import { loadTab, saveTab } from "../store.ts";
+import type { ContentArea } from "../types.ts";
 import type { UrlInventoryItem } from "../types.ts";
 
-export function renderMicroGuide(slug: string, pillar: string): string {
+const AREA_GUIDE_FRAMING: Record<ContentArea, string> = {
+  Plants: "This mini guide helps you add plants that survive real bathroom conditions.",
+  Mirror: "This mini guide helps you improve mirror placement, reflection, and daily flow.",
+  Storage: "This mini guide targets daily clutter loops that keep coming back.",
+  Lighting: "This mini guide helps you improve visibility without making the room feel harsh.",
+  Shower: "This mini guide helps when the shower area feels cramped or hard to maintain.",
+  Renter: "This mini guide is written for renters who want cleaner function without risking their deposit.",
+  DIY: "This mini guide is for anyone who wants a simple bathroom DIY win with clear steps.",
+  ExtremeBudget: "This mini guide is for anyone who needs visible progress on a strict budget."
+};
+
+function areaFromInput(value: string): ContentArea {
+  return normalizeContentArea(value) ?? "DIY";
+}
+
+export function renderMicroGuide(slug: string, areaOrPillar: string): string {
   const title = slug
     .replace("/micro/", "")
     .replace(/-/g, " ")
     .replace(/\b\w/g, (m) => m.toUpperCase());
-  const pillarLine: Record<string, string> = {
-    RenterFriendly: "This mini guide is written for renters who want cleaner function without risking their deposit.",
-    BudgetDIY: "This mini guide is for anyone who needs visual progress on a strict budget.",
-    SmallSpace: "This mini guide helps when your bathroom feels crowded even after cleaning.",
-    StorageOrganization: "This mini guide targets daily clutter loops that keep coming back.",
-    Styling: "This mini guide helps you add personality without making the room feel busier.",
-    PlantsBiophilic: "This mini guide helps you add plants that survive real bathroom conditions."
-  };
+  const area = areaFromInput(areaOrPillar);
 
   return `# ${title}
 
-${pillarLine[pillar] ?? pillarLine.BudgetDIY}
+${AREA_GUIDE_FRAMING[area]}
 
 ## Quick Framing
 Most people do too much at once and end up spending more without fixing daily friction. This guide keeps it simple: one pain point, one anchor fix, one support layer.
@@ -69,16 +79,19 @@ export function generateMicroDestinations(n: number): void {
   const inventory = loadTab<UrlInventoryItem>("URL_Inventory");
   const existing = new Set(inventory.map((u) => u.URL));
   let counter = 1;
+  let areaIndex = 0;
   while (n > 0) {
     const slug = `/micro/auto-generated-mini-guide-${counter}`;
     counter += 1;
     if (existing.has(slug)) continue;
+    const area = COMMAND_CENTER_CONTENT_AREAS[areaIndex % COMMAND_CENTER_CONTENT_AREAS.length];
+    areaIndex += 1;
 
     inventory.push({
       URL_ID: `URL-AUTO-${String(counter).padStart(3, "0")}`,
       URL: slug,
       Type: "micro",
-      Pillar: "BudgetDIY",
+      Pillar: primaryLegacyPillarForArea(area),
       Status: "published",
       Last_Posted_At: "",
       Cooldown_Hours: 24,
@@ -86,7 +99,7 @@ export function generateMicroDestinations(n: number): void {
       Priority: 40
     });
 
-    const content = renderMicroGuide(slug, "BudgetDIY");
+    const content = renderMicroGuide(slug, area);
     ensureDir(path.join(process.cwd(), "blog_drafts"));
     ensureDir(path.join(process.cwd(), "micro_guides"));
     writeText(path.join(process.cwd(), "blog_drafts", `${slug.replace("/micro/", "")}.md`), content);

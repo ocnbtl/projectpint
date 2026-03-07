@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { upsertCustomerFromSignup } from "../../../lib/command-center";
-import { COMMAND_CENTER_CONTENT_AREAS } from "../../../lib/constants";
+import { normalizeContentAreas } from "../../../lib/constants";
 import { persistLead } from "../../../lib/lead-store";
 import { checkRateLimit, getClientAddress } from "../../../lib/rate-limit";
 
@@ -25,10 +25,10 @@ export async function POST(request: Request) {
   const sourceUrl = String(formData.get("sourceUrl") ?? "");
   const consentText = String(formData.get("consentText") ?? "");
   const pillarInterest = String(formData.get("pillarInterest") ?? "");
-  const contentAreas = formData
-    .getAll("contentAreas")
-    .map((value) => String(value).trim())
-    .filter((value) => COMMAND_CENTER_CONTENT_AREAS.includes(value as (typeof COMMAND_CENTER_CONTENT_AREAS)[number]));
+  const contentAreas = normalizeContentAreas([
+    ...formData.getAll("contentAreas").map((value) => String(value).trim()),
+    pillarInterest
+  ]);
   const plantLight = String(formData.get("plantLight") ?? "");
   const plantHumidity = String(formData.get("plantHumidity") ?? "");
   const plantSpace = String(formData.get("plantSpace") ?? "");
@@ -106,7 +106,7 @@ export async function POST(request: Request) {
     }
   }
 
-  persistLead({
+  await persistLead({
     email,
     sourceUrl,
     consentText,
@@ -120,7 +120,7 @@ export async function POST(request: Request) {
   });
 
   try {
-    upsertCustomerFromSignup({
+    await upsertCustomerFromSignup({
       email,
       contentAreas,
       createdAtIso

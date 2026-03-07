@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteShell } from "../../../components/SiteShell";
-import { findMicroGuidesForHub, hubs, pillarLabel, readBlogs } from "../../../lib/site-data";
+import { contentAreaLabel } from "../../../lib/constants";
+import { blogMatchesArea, findGuidesForHub, hubs, readBlogs } from "../../../lib/site-data";
 
 export function generateStaticParams() {
   return hubs.map((hub) => ({ slug: hub.slug }));
@@ -11,10 +12,11 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
   const { slug } = await params;
   const hub = hubs.find((h) => h.slug === slug);
   if (!hub) return notFound();
-  const relatedBlogs = readBlogs()
-    .filter((blog) => blog.Pillar === hub.primaryPillar && blog.Status === "published")
+  const blogs = await readBlogs();
+  const relatedBlogs = blogs
+    .filter((blog) => blog.Status === "published" && blogMatchesArea(blog, hub.area))
     .slice(0, 4);
-  const microGuides = findMicroGuidesForHub(hub, 4);
+  const guides = await findGuidesForHub(hub, 4);
 
   return (
     <SiteShell>
@@ -27,8 +29,7 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
               <p>{hub.description}</p>
               <p className="home-hero-cta">Primary win: {hub.outcome}</p>
               <div className="pill-row" aria-label="Hub details">
-                <span className="pill">Area: {hub.title}</span>
-                <span className="pill">Pillar: {pillarLabel(hub.primaryPillar)}</span>
+                <span className="pill">Area: {contentAreaLabel(hub.area)}</span>
                 <span className="pill">Budget-aware sequencing</span>
                 <span className="pill">Renter-safe by default</span>
               </div>
@@ -65,7 +66,7 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
               </ul>
             ) : (
               <p className="small">
-                No published posts in this pillar yet. Use Start Here and browse available hubs while we publish more
+                No published posts in this area yet. Use Start Here and browse available hubs while we publish more
                 coverage.
               </p>
             )}
@@ -73,16 +74,16 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
 
           <article className="card">
             <h2>Quick guides</h2>
-            {microGuides.length > 0 ? (
+            {guides.length > 0 ? (
               <ul>
-                {microGuides.map((guide) => (
+                {guides.map((guide) => (
                   <li key={guide.slug}>
-                    <Link href={`/micro/${guide.slug}`}>{guide.title}</Link>
+                    <Link href={`/guides/${guide.slug}`}>{guide.title}</Link>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="small">Micro-guide pack for this hub is in progress. Check back soon.</p>
+              <p className="small">Guide pack for this area is in progress. Check back soon.</p>
             )}
           </article>
         </section>

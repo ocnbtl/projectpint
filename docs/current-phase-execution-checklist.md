@@ -10,9 +10,11 @@ Stabilize and operationalize the new admin command-center workflow for pins, blo
 
 2. Confirm environment values:
 - `ADMIN_PASSWORD`
+- `ADMIN_SESSION_SECRET`
+- `STORAGE_MODE=supabase`
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
 - `NEXT_PUBLIC_SITE_URL`
-- `SHEETS_MODE`
-- Google Sheets vars (if `SHEETS_MODE=google`)
 - Klaviyo vars (if live sync)
 
 3. Confirm admin access:
@@ -23,18 +25,25 @@ Stabilize and operationalize the new admin command-center workflow for pins, blo
 1. `/admin/blogs`
 - Generate blogs by area.
 - Generate blog titles and keywords.
+- Set `Workflow_Status=approved` on ready rows.
+- Publish approved blogs.
 - Save and verify rows.
 
 2. `/admin/guides`
 - Generate guides by area.
 - Generate guide titles and keywords.
 - Update related pins.
+- Set `Workflow_Status=approved` on ready rows.
+- Publish approved guides.
 - Save and verify rows.
 
 3. `/admin/pins`
 - Generate 25 pins.
 - Generate overlay and CTA.
-- Save.
+- Add media URLs after manual visual work.
+- Set `Workflow_Status=approved` on ready rows.
+- Prepare approved pins for export.
+- Download the approved pins CSV if needed.
 
 4. `/admin/emails`
 - Generate promotional emails by area counts.
@@ -43,7 +52,7 @@ Stabilize and operationalize the new admin command-center workflow for pins, blo
 
 5. `/admin/customers`
 - Submit test signup on public site.
-- Confirm row appears in `Customers_Evergreen`.
+- Confirm row appears in `customers_evergreen`.
 
 6. `/admin/products`
 - Run `Update stats`.
@@ -79,4 +88,4 @@ Stabilize and operationalize the new admin command-center workflow for pins, blo
 - Admin command center fully usable for weekly operations.
 - 8 content areas live in strategy and hub surfaces.
 - Signup writes to leads and customers evergreen.
-- One full end-to-end batch generated and QA-checked.
+- One full end-to-end batch generated, published from evergreen, exported, and QA-checked.

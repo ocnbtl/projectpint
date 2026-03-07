@@ -1,12 +1,12 @@
 {
   "Content_ID": "PIN-017",
-  "Created_At": "2026-02-25T07:14:09.725Z",
+  "Created_At": "2026-03-02T19:31:56.014Z",
   "Status": "draft",
   "Hook_Class": "BudgetBreakdown",
   "Destination_Intent": "Teach",
   "Pillar": "Styling",
   "Topic": "styling-budgetbreakdown-17",
-  "Destination_URL": "/micro/no-drill-art-layout-guide",
+  "Destination_URL": "/micro/mini-bath-plant-shelf-layout",
   "Title": "BudgetBreakdown for Styling: renter-safe update under $75",
   "Caption_1": "You want personality without making the room feel busier. This BudgetBreakdown plan stays under $75.",
   "Caption_2": "You get a bathroom that looks intentional, not expensive. Use one color rule and one texture layer for instant cohesion.",
@@ -17,8 +17,8 @@
   "Has_Text_Overlay": true,
   "Primary_CTA": "Use this exact checklist",
   "Visual_Preset": "tiny_bathroom_scene_v1",
-  "Image_Prompt": "AI-generated bathroom scene, no people, no logos, Styling styling, matte tile textures, soft daylight, clean composition with text safe area",
-  "UTM_URL": "/micro/no-drill-art-layout-guide?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-017_budgetbreakdown_teach",
+  "Image_Prompt": "Create a photorealistic vertical 2:3 Pinterest image for a bathroom DIY post. Variant ID: PIN-017. Style focus: Styling. Hook style: BudgetBreakdown. Intent: Teach. Scene direction: slight top-down angle highlighting vanity organization, warm neutral tile with clean grout lines. Story cue: Use one color rule and one texture layer for instant cohesion. No people, no faces, no logos, no watermarks, no on-image text. Leave clear safe space at top and bottom for text overlays.",
+  "UTM_URL": "/micro/mini-bath-plant-shelf-layout?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-017_budgetbreakdown_teach",
   "Quality_Score": 92,
   "Quality_Flags": [
     "non_blocking:benefit_framing_weak"

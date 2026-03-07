@@ -2,11 +2,12 @@ import Link from "next/link";
 import { AdSlot } from "../components/AdSlot";
 import { EmailSignupForm } from "../components/EmailSignupForm";
 import { SiteShell } from "../components/SiteShell";
+import { contentAreaLabel } from "../lib/constants";
 import { excerptFromMarkdown } from "../lib/content-render";
-import { hubs, pillarLabel, readBlogs } from "../lib/site-data";
+import { contentAreaForBlog, hubs, readBlogs } from "../lib/site-data";
 
-export default function HomePage() {
-  const allBlogs = readBlogs();
+export default async function HomePage() {
+  const allBlogs = await readBlogs();
   const publishedBlogs = allBlogs.filter((blog) => blog.Status === "published");
   const blogs = (publishedBlogs.length > 0 ? publishedBlogs : allBlogs).slice(0, 3);
 
@@ -78,7 +79,7 @@ export default function HomePage() {
               <article key={blog.Blog_ID} className="card">
                 <div className="tag-list tag-list-compact read-tags">
                   <span className="tag">{blog.Keyword_Target}</span>
-                  <span className="tag">{pillarLabel(blog.Pillar)}</span>
+                  <span className="tag">{contentAreaLabel(contentAreaForBlog(blog))}</span>
                 </div>
                 <h3>
                   <Link href={`/blog/${blog.Slug}`}>{blog.Title}</Link>

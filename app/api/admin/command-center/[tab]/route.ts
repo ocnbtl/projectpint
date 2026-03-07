@@ -22,7 +22,7 @@ export async function GET(_: Request, context: RouteContext) {
     return NextResponse.json({ ok: false, error: "Invalid tab" }, { status: 400 });
   }
 
-  const rows = loadEvergreenTab(tab);
+  const rows = await loadEvergreenTab(tab);
   return NextResponse.json({ ok: true, rows });
 }
 
@@ -38,6 +38,6 @@ export async function POST(request: Request, context: RouteContext) {
 
   const body = (await request.json()) as { rows?: Record<string, unknown>[] };
   const rows = Array.isArray(body.rows) ? body.rows : [];
-  saveEvergreenTab(tab, rows);
+  await saveEvergreenTab(tab, rows);
   return NextResponse.json({ ok: true, saved: rows.length });
 }

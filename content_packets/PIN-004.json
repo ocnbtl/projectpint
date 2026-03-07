@@ -1,6 +1,6 @@
 {
   "Content_ID": "PIN-004",
-  "Created_At": "2026-02-25T07:14:09.725Z",
+  "Created_At": "2026-03-02T19:31:56.014Z",
   "Status": "draft",
   "Hook_Class": "QuickWin",
   "Destination_Intent": "Shop",
@@ -17,7 +17,7 @@
   "Has_Text_Overlay": true,
   "Primary_CTA": "Compare picks by budget",
   "Visual_Preset": "bathroom_flatlay_v1",
-  "Image_Prompt": "AI-generated bathroom scene, no people, no logos, StorageOrganization styling, matte tile textures, soft daylight, clean composition with text safe area",
+  "Image_Prompt": "Create a photorealistic vertical 2:3 Pinterest image for a bathroom DIY post. Variant ID: PIN-004. Style focus: StorageOrganization. Hook style: QuickWin. Intent: Shop. Scene direction: tight crop centered on mirror + lighting area, white and clay palette with subtle contrast. Story cue: Build a simple category system that survives real daily use. No people, no faces, no logos, no watermarks, no on-image text. Leave clear safe space at top and bottom for text overlays.",
   "UTM_URL": "/hub/small-bathroom-space-hacks?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-004_quickwin_shop",
   "Quality_Score": 100,
   "Quality_Flags": [],

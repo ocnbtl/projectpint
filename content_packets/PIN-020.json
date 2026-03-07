@@ -1,12 +1,12 @@
 {
   "Content_ID": "PIN-020",
-  "Created_At": "2026-02-25T07:14:09.725Z",
+  "Created_At": "2026-03-02T19:31:56.014Z",
   "Status": "draft",
   "Hook_Class": "PlantPicker",
   "Destination_Intent": "Subscribe",
   "Pillar": "BudgetDIY",
   "Topic": "budgetdiy-plantpicker-20",
-  "Destination_URL": "/micro/removable-lighting-upgrade-checklist",
+  "Destination_URL": "/blog/no-drill-bathroom-upgrades-under-150",
   "Title": "PlantPicker for BudgetDIY: renter-safe update under $300",
   "Caption_1": "You want visible change but every home project feels expensive. This PlantPicker plan stays under $300.",
   "Caption_2": "You get high-impact updates without blowing your monthly budget. Use one anchor fix plus one support layer under a hard budget cap.",
@@ -17,8 +17,8 @@
   "Has_Text_Overlay": true,
   "Primary_CTA": "Join weekly bathroom plans",
   "Visual_Preset": "bathroom_flatlay_v1",
-  "Image_Prompt": "AI-generated bathroom scene, no people, no logos, BudgetDIY styling, matte tile textures, soft daylight, clean composition with text safe area",
-  "UTM_URL": "/micro/removable-lighting-upgrade-checklist?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-020_plantpicker_subscribe",
+  "Image_Prompt": "Create a photorealistic vertical 2:3 Pinterest image for a bathroom DIY post. Variant ID: PIN-020. Style focus: BudgetDIY. Hook style: PlantPicker. Intent: Subscribe. Scene direction: shower-side perspective with storage context, minimal black hardware with bright natural tones. Story cue: Use one anchor fix plus one support layer under a hard budget cap. No people, no faces, no logos, no watermarks, no on-image text. Leave clear safe space at top and bottom for text overlays.",
+  "UTM_URL": "/blog/no-drill-bathroom-upgrades-under-150?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-020_plantpicker_subscribe",
   "Quality_Score": 92,
   "Quality_Flags": [
     "non_blocking:benefit_framing_weak"

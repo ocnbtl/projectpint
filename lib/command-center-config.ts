@@ -4,6 +4,7 @@ export const COMMAND_CENTER_COLUMNS = {
     "Pin_Publish_Date",
     "Pin_Publish_Time",
     "Content_Area",
+    "Workflow_Status",
     "Destination",
     "Blog_ID",
     "Media_Prompt",
@@ -12,30 +13,35 @@ export const COMMAND_CENTER_COLUMNS = {
     "Pin_Caption",
     "Pin_CTA",
     "Pin_URL",
-    "UTM_URL"
+    "UTM_URL",
+    "Prepared_For_Export_At"
   ],
   blogs: [
     "Blog_ID",
     "Blog_Publish_Date",
     "Blog_Publish_Time",
     "Content_Area",
+    "Workflow_Status",
     "Blog_URL",
     "Blog_Title",
     "Blog_Keywords",
     "Blog_Content",
-    "Related_Pins"
+    "Related_Pins",
+    "Published_To_Public_At"
   ],
   guides: [
     "Guide_ID",
     "Guide_Publish_Date",
     "Guide_Publish_Time",
     "Content_Area",
+    "Workflow_Status",
     "Blog_ID",
     "Guide_URL",
     "Guide_Title",
     "Guide_Keywords",
     "Guide_Content",
-    "Related_Pins"
+    "Related_Pins",
+    "Published_To_Public_At"
   ],
   emails: [
     "Email_ID",

@@ -1,7 +1,7 @@
 import { readBlogs } from "../../lib/site-data";
 
 export async function GET() {
-  const blogs = readBlogs();
+  const blogs = await readBlogs();
   const items = blogs
     .map(
       (b) => `<item><title>${b.Title}</title><link>https://projectpint.example.com/blog/${b.Slug}</link><guid>${b.Blog_ID}</guid></item>`

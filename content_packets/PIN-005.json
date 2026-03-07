@@ -1,6 +1,6 @@
 {
   "Content_ID": "PIN-005",
-  "Created_At": "2026-02-25T07:14:09.725Z",
+  "Created_At": "2026-03-02T19:31:56.014Z",
   "Status": "draft",
   "Hook_Class": "BudgetBreakdown",
   "Destination_Intent": "Subscribe",
@@ -17,7 +17,7 @@
   "Has_Text_Overlay": true,
   "Primary_CTA": "Join weekly bathroom plans",
   "Visual_Preset": "tiny_bathroom_scene_v1",
-  "Image_Prompt": "AI-generated bathroom scene, no people, no logos, Styling styling, matte tile textures, soft daylight, clean composition with text safe area",
+  "Image_Prompt": "Create a photorealistic vertical 2:3 Pinterest image for a bathroom DIY post. Variant ID: PIN-005. Style focus: Styling. Hook style: BudgetBreakdown. Intent: Subscribe. Scene direction: shower-side perspective with storage context, minimal black hardware with bright natural tones. Story cue: Use one color rule and one texture layer for instant cohesion. No people, no faces, no logos, no watermarks, no on-image text. Leave clear safe space at top and bottom for text overlays.",
   "UTM_URL": "/hub/storage-and-clutter-to-calm?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-005_budgetbreakdown_subscribe",
   "Quality_Score": 92,
   "Quality_Flags": [

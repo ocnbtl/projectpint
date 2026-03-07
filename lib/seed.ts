@@ -1,7 +1,13 @@
-import { DESTINATION_INTENTS, HOOK_CLASSES, PILLARS } from "./constants.ts";
+import {
+  COMMAND_CENTER_CONTENT_AREAS,
+  DESTINATION_INTENTS,
+  HOOK_CLASSES,
+  contentAreaLabel,
+  primaryLegacyPillarForArea
+} from "./constants.ts";
 import { lintPin } from "./linter.ts";
 import { buildUtmUrl } from "./utm.ts";
-import type { BlogDraft, PinDraft, ProductIdea, ProductRow, UrlInventoryItem } from "./types.ts";
+import type { BlogDraft, ContentArea, PinDraft, ProductIdea, ProductRow, UrlInventoryItem } from "./types.ts";
 
 const baseSite = "https://projectpint.example.com";
 
@@ -42,36 +48,46 @@ const CTA_BY_INTENT: Record<string, string[]> = {
   Subscribe: ["Get the free plant picker", "Join weekly bathroom plans", "Send me the free guide"]
 };
 
-const PILLAR_LANGUAGE: Record<string, { pain: string; benefit: string; weekendWin: string }> = {
-  RenterFriendly: {
+const AREA_LANGUAGE: Record<ContentArea, { pain: string; benefit: string; weekendWin: string }> = {
+  Plants: {
+    pain: "Plants keep failing in humid bathrooms with uneven light.",
+    benefit: "You get greenery that actually survives and softens the space.",
+    weekendWin: "Match plant placement to humidity and low light before styling."
+  },
+  Mirror: {
+    pain: "Mirror placement throws off light and makes routines feel awkward.",
+    benefit: "You get a mirror setup that improves light bounce and daily flow.",
+    weekendWin: "Fix height, spacing, and reflection lines before buying extras."
+  },
+  Storage: {
+    pain: "Counters and cabinets refill with clutter within days.",
+    benefit: "You save time each morning because everything has a predictable home.",
+    weekendWin: "Build a simple storage zone system that survives real daily use."
+  },
+  Lighting: {
+    pain: "Bathroom lighting still feels dim, uneven, or frustrating at the mirror.",
+    benefit: "You get brighter task lighting without making the room feel harsh.",
+    weekendWin: "Improve bulb choice and fixture placement before adding decor."
+  },
+  Shower: {
+    pain: "The shower area feels cramped and products never stay organized.",
+    benefit: "You get a shower setup that feels cleaner and easier to maintain.",
+    weekendWin: "Reset one slippery shower bottleneck with better placement and access."
+  },
+  Renter: {
     pain: "You want your deposit back and still want the bathroom to feel finished.",
     benefit: "You get a cleaner, calmer bathroom without permanent changes.",
     weekendWin: "Swap temporary hardware and reset high-traffic zones."
   },
-  BudgetDIY: {
+  DIY: {
+    pain: "You want a practical bathroom project, but the steps still feel unclear.",
+    benefit: "You get a simple DIY path you can finish this week without guesswork.",
+    weekendWin: "Use one anchor fix plus one support layer with a clear step order."
+  },
+  ExtremeBudget: {
     pain: "You want visible change but every home project feels expensive.",
     benefit: "You get high-impact updates without blowing your monthly budget.",
     weekendWin: "Use one anchor fix plus one support layer under a hard budget cap."
-  },
-  SmallSpace: {
-    pain: "Tiny layouts make daily routines feel cramped and frustrating.",
-    benefit: "You get smoother movement and less visual stress in tight spaces.",
-    weekendWin: "Re-route one clutter point and create one clear landing zone."
-  },
-  StorageOrganization: {
-    pain: "Counters and cabinets refill with clutter within days.",
-    benefit: "You save time each morning because everything has a predictable home.",
-    weekendWin: "Build a simple category system that survives real daily use."
-  },
-  Styling: {
-    pain: "You want personality without making the room feel busier.",
-    benefit: "You get a bathroom that looks intentional, not expensive.",
-    weekendWin: "Use one color rule and one texture layer for instant cohesion."
-  },
-  PlantsBiophilic: {
-    pain: "Plants die quickly in low-light, humid bathrooms.",
-    benefit: "You get greenery that actually survives and softens the space.",
-    weekendWin: "Match plants to light + humidity constraints before styling."
   }
 };
 
@@ -91,33 +107,42 @@ const MATERIAL_VARIANTS = [
   "minimal black hardware with bright natural tones"
 ];
 
-function hashtagsFor(pillar: string, hook: string): string[] {
+function areaTopicToken(area: ContentArea): string {
+  return area === "ExtremeBudget" ? "extreme-budget" : area.toLowerCase();
+}
+
+function hashtagsFor(area: ContentArea, hook: string): string[] {
   const base = ["#bathroomdiy", "#rentersafe", "#budgetdecor"];
-  const byPillar: Record<string, string[]> = {
-    RenterFriendly: ["#renterfriendly", "#nodrill", "#apartmentdecor"],
-    BudgetDIY: ["#budgetdiy", "#cheapdecor", "#diyhomeprojects"],
-    SmallSpace: ["#smallbathroom", "#smallspacehacks", "#tinybathroom"],
-    StorageOrganization: ["#bathroomstorage", "#organizingtips", "#declutterhome"],
-    Styling: ["#bathroomstyling", "#colorformula", "#maximalistdecor"],
-    PlantsBiophilic: ["#bathroomplants", "#biophilicdesign", "#plantstyling"]
+  const byArea: Record<ContentArea, string[]> = {
+    Plants: ["#bathroomplants", "#humidityplants", "#lowlightplants"],
+    Mirror: ["#bathroommirror", "#mirrorplacement", "#vanitymirror"],
+    Storage: ["#bathroomstorage", "#organizingtips", "#declutterhome"],
+    Lighting: ["#bathroomlighting", "#vanitylighting", "#lightingtips"],
+    Shower: ["#showerstorage", "#smallshower", "#showerroutine"],
+    Renter: ["#renterfriendly", "#nodrill", "#apartmentdecor"],
+    DIY: ["#budgetdiy", "#diyhomeprojects", "#weekendproject"],
+    ExtremeBudget: ["#budgetbathroom", "#cheapdecor", "#under75decor"]
   };
   const byHook = `#${hook.toLowerCase()}`;
-  return [...base, ...(byPillar[pillar] ?? []), byHook];
+  return [...base, ...(byArea[area] ?? []), byHook];
 }
 
 export function seedUrlInventory(): UrlInventoryItem[] {
   const pool = destinationPool();
-  return pool.map((url, index) => ({
-    URL_ID: `URL-${String(index + 1).padStart(3, "0")}`,
-    URL: url,
-    Type: inferUrlType(url),
-    Pillar: PILLARS[index % PILLARS.length],
-    Status: "published",
-    Last_Posted_At: "",
-    Cooldown_Hours: 24,
-    Destination_Intent_Default: DESTINATION_INTENTS[index % DESTINATION_INTENTS.length],
-    Priority: 100 - index
-  }));
+  return pool.map((url, index) => {
+    const area = COMMAND_CENTER_CONTENT_AREAS[index % COMMAND_CENTER_CONTENT_AREAS.length];
+    return {
+      URL_ID: `URL-${String(index + 1).padStart(3, "0")}`,
+      URL: url,
+      Type: inferUrlType(url),
+      Pillar: primaryLegacyPillarForArea(area),
+      Status: "published",
+      Last_Posted_At: "",
+      Cooldown_Hours: 24,
+      Destination_Intent_Default: DESTINATION_INTENTS[index % DESTINATION_INTENTS.length],
+      Priority: 100 - index
+    };
+  });
 }
 
 function inferUrlType(url: string): UrlInventoryItem["Type"] {
@@ -135,25 +160,26 @@ export function seedPins(n: number, nowIso: string): PinDraft[] {
   return Array.from({ length: n }).map((_, index) => {
     const hook = HOOK_CLASSES[index % HOOK_CLASSES.length];
     const intent = DESTINATION_INTENTS[index % DESTINATION_INTENTS.length];
-    const pillar = PILLARS[index % PILLARS.length];
+    const area = COMMAND_CENTER_CONTENT_AREAS[index % COMMAND_CENTER_CONTENT_AREAS.length];
+    const pillar = primaryLegacyPillarForArea(area);
     const contentId = `PIN-${String(index + 1).padStart(3, "0")}`;
     const ctaList = CTA_BY_INTENT[intent] ?? CTA_BY_INTENT.Inspire;
     const primaryCta = ctaList[index % ctaList.length];
-    const language = PILLAR_LANGUAGE[pillar];
-    const title = `${hook} for ${pillar}: renter-safe update under $${(index % 4) * 75 + 75}`;
+    const language = AREA_LANGUAGE[area];
+    const title = `${hook} for ${contentAreaLabel(area)}: renter safe update under $${(index % 4) * 75 + 75}`;
     const captions = [
       `${language.pain} This ${hook} plan stays under $${(index % 4) * 75 + 75}.`,
       `${language.benefit} ${language.weekendWin}`,
       `${primaryCta}.`
     ];
-    const hashtagSet = hashtagsFor(pillar, hook);
+    const hashtagSet = hashtagsFor(area, hook);
     const descriptionWithHashtags = `${captions[0]} ${captions[1]} ${captions[2]} ${hashtagSet.join(" ")}`;
     const composition = COMPOSITION_VARIANTS[index % COMPOSITION_VARIANTS.length];
     const material = MATERIAL_VARIANTS[index % MATERIAL_VARIANTS.length];
     const prompt = [
       "Create a photorealistic vertical 2:3 Pinterest image for a bathroom DIY post.",
       `Variant ID: ${contentId}.`,
-      `Style focus: ${pillar}. Hook style: ${hook}. Intent: ${intent}.`,
+      `Content area focus: ${contentAreaLabel(area)}. Hook style: ${hook}. Intent: ${intent}.`,
       `Scene direction: ${composition}, ${material}.`,
       `Story cue: ${language.weekendWin}`,
       "No people, no faces, no logos, no watermarks, no on-image text.",
@@ -182,7 +208,7 @@ export function seedPins(n: number, nowIso: string): PinDraft[] {
       Hook_Class: hook,
       Destination_Intent: intent,
       Pillar: pillar,
-      Topic: `${pillar.toLowerCase()}-${hook.toLowerCase()}-${index + 1}`,
+      Topic: `${areaTopicToken(area)}-${hook.toLowerCase()}-${index + 1}`,
       Destination_URL: pool[index % pool.length],
       Title: title,
       Caption_1: captions[0],
@@ -216,29 +242,29 @@ export function seedPins(n: number, nowIso: string): PinDraft[] {
 }
 
 export function seedBlogs(): BlogDraft[] {
-  const drafts: Array<Pick<BlogDraft, "Slug" | "Title" | "Pillar" | "Keyword_Target">> = [
+  const drafts: Array<Pick<BlogDraft, "Slug" | "Title" | "Keyword_Target"> & { Area: ContentArea }> = [
     {
       Slug: "no-drill-bathroom-upgrades-under-150",
       Title: "No-Drill Bathroom Upgrades Under $150 (Renter-Safe)",
-      Pillar: "RenterFriendly",
+      Area: "Renter",
       Keyword_Target: "no drill bathroom upgrades renters"
     },
     {
       Slug: "small-bathroom-storage-zones",
       Title: "Small Bathroom Storage Zones That Cut Daily Clutter",
-      Pillar: "StorageOrganization",
+      Area: "Storage",
       Keyword_Target: "small bathroom storage ideas renters"
     },
     {
       Slug: "bathroom-plants-low-light-humidity",
       Title: "Bathroom Plants for Low Light + Humidity: Practical Picks",
-      Pillar: "PlantsBiophilic",
+      Area: "Plants",
       Keyword_Target: "bathroom plants low light humidity"
     }
   ];
 
-  const buildDraft = (title: string, pillar: string) => {
-    const language = PILLAR_LANGUAGE[pillar] ?? PILLAR_LANGUAGE.BudgetDIY;
+  const buildDraft = (title: string, area: ContentArea) => {
+    const language = AREA_LANGUAGE[area] ?? AREA_LANGUAGE.DIY;
     return `# ${title}
 
 If you have ever looked at your bathroom and thought \"I just want this to feel easier and less chaotic,\" this is for you. ${language.pain}
@@ -307,10 +333,10 @@ For people who prefer a done-for-you worksheet system, the Renter Bathroom Upgra
     Blog_ID: `BLOG-${String(i + 1).padStart(3, "0")}`,
     Slug: item.Slug,
     Title: item.Title,
-    Pillar: item.Pillar,
+    Pillar: primaryLegacyPillarForArea(item.Area),
     Keyword_Target: item.Keyword_Target,
     Outline: "Problem framing -> quick constraints check -> step-by-step plan -> budget table -> CTA",
-    Draft_Markdown: buildDraft(item.Title, item.Pillar),
+    Draft_Markdown: buildDraft(item.Title, item.Area),
     Internal_Links: "/start-here, /lead-magnets/plant-picker, /products/renter-bathroom-upgrade-blueprint",
     CTA_Block: "Subscribe for weekly renter-safe bathroom plans.",
     Status: "draft",

@@ -1,12 +1,12 @@
 {
   "Content_ID": "PIN-011",
-  "Created_At": "2026-02-25T07:14:09.725Z",
+  "Created_At": "2026-03-02T19:31:56.014Z",
   "Status": "draft",
   "Hook_Class": "StylingFormula",
   "Destination_Intent": "Inspire",
   "Pillar": "Styling",
   "Topic": "styling-stylingformula-11",
-  "Destination_URL": "/blog/no-drill-towel-storage-renters",
+  "Destination_URL": "/micro/no-drill-art-layout-guide",
   "Title": "StylingFormula for Styling: renter-safe update under $225",
   "Caption_1": "You want personality without making the room feel busier. This StylingFormula plan stays under $225.",
   "Caption_2": "You get a bathroom that looks intentional, not expensive. Use one color rule and one texture layer for instant cohesion.",
@@ -17,8 +17,8 @@
   "Has_Text_Overlay": true,
   "Primary_CTA": "Click for the full setup",
   "Visual_Preset": "tiny_bathroom_scene_v1",
-  "Image_Prompt": "AI-generated bathroom scene, no people, no logos, Styling styling, matte tile textures, soft daylight, clean composition with text safe area",
-  "UTM_URL": "/blog/no-drill-towel-storage-renters?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-011_stylingformula_inspire",
+  "Image_Prompt": "Create a photorealistic vertical 2:3 Pinterest image for a bathroom DIY post. Variant ID: PIN-011. Style focus: Styling. Hook style: StylingFormula. Intent: Inspire. Scene direction: eye-level view with a clear sink zone focus, matte tile and brushed metal accents. Story cue: Use one color rule and one texture layer for instant cohesion. No people, no faces, no logos, no watermarks, no on-image text. Leave clear safe space at top and bottom for text overlays.",
+  "UTM_URL": "/micro/no-drill-art-layout-guide?utm_source=pinterest&utm_medium=organic&utm_campaign=week1_growth&utm_content=pin-011_stylingformula_inspire",
   "Quality_Score": 92,
   "Quality_Flags": [
     "non_blocking:benefit_framing_weak"

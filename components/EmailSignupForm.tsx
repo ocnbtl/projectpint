@@ -1,5 +1,5 @@
 import { ConsentNote } from "./ConsentNote";
-import { COMMAND_CENTER_CONTENT_AREAS } from "../lib/constants";
+import { COMMAND_CENTER_CONTENT_AREAS, normalizeContentAreas } from "../lib/constants";
 
 interface EmailSignupFormProps {
   sourceUrl: string;
@@ -27,26 +27,7 @@ export function EmailSignupForm({
   plantDefaults = { light: "low", humidity: "high", space: "tiny" }
 }: EmailSignupFormProps) {
   const safeSource = sourceUrl.replace(/[^a-z0-9_-]/gi, "-");
-  const mappedFromPillar =
-    pillarInterest === "RenterFriendly"
-      ? "Renter"
-      : pillarInterest === "BudgetDIY"
-        ? "DIY"
-        : pillarInterest === "SmallSpace"
-          ? "Shower"
-          : pillarInterest === "StorageOrganization"
-            ? "Storage"
-            : pillarInterest === "Styling"
-              ? "Mirror"
-              : pillarInterest === "PlantsBiophilic"
-                ? "Plants"
-                : pillarInterest ?? "";
-
-  const defaultSet = new Set(
-    (defaultContentAreas ?? [])
-      .concat(mappedFromPillar ? [mappedFromPillar] : [])
-      .filter((value): value is string => COMMAND_CENTER_CONTENT_AREAS.includes(value as (typeof COMMAND_CENTER_CONTENT_AREAS)[number]))
-  );
+  const defaultSet = new Set(normalizeContentAreas([...(defaultContentAreas ?? []), pillarInterest ?? ""]));
 
   return (
     <form action="/api/subscribe" method="post" className="form-grid">

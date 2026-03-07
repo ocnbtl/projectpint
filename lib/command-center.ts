@@ -1,14 +1,21 @@
 import { randomUUID } from "node:crypto";
-import { COMMAND_CENTER_CONTENT_AREAS } from "./constants.ts";
-import { loadTab, saveTab } from "./store.ts";
+import {
+  COMMAND_CENTER_CONTENT_AREAS,
+  contentAreaLabel,
+  normalizeContentArea,
+  normalizeContentAreas
+} from "./constants.ts";
+import { loadRuntimeTab, saveRuntimeTab } from "./runtime-store.ts";
 
 export type CommandCenterArea = (typeof COMMAND_CENTER_CONTENT_AREAS)[number];
+export type WorkflowStatus = "draft" | "approved" | "queued" | "published" | "posted";
 
 export interface PinEvergreenRow {
   Pin_ID: string;
   Pin_Publish_Date: string;
   Pin_Publish_Time: string;
   Content_Area: CommandCenterArea | string;
+  Workflow_Status: WorkflowStatus | string;
   Destination: string;
   Blog_ID: string;
   Media_Prompt: string;
@@ -18,6 +25,7 @@ export interface PinEvergreenRow {
   Pin_CTA: string;
   Pin_URL: string;
   UTM_URL: string;
+  Prepared_For_Export_At: string;
 }
 
 export interface BlogEvergreenRow {
@@ -25,11 +33,13 @@ export interface BlogEvergreenRow {
   Blog_Publish_Date: string;
   Blog_Publish_Time: string;
   Content_Area: CommandCenterArea | string;
+  Workflow_Status: WorkflowStatus | string;
   Blog_URL: string;
   Blog_Title: string;
   Blog_Keywords: string;
   Blog_Content: string;
   Related_Pins: string;
+  Published_To_Public_At: string;
 }
 
 export interface GuideEvergreenRow {
@@ -37,12 +47,14 @@ export interface GuideEvergreenRow {
   Guide_Publish_Date: string;
   Guide_Publish_Time: string;
   Content_Area: CommandCenterArea | string;
+  Workflow_Status: WorkflowStatus | string;
   Blog_ID: string;
   Guide_URL: string;
   Guide_Title: string;
   Guide_Keywords: string;
   Guide_Content: string;
   Related_Pins: string;
+  Published_To_Public_At: string;
 }
 
 export interface EmailEvergreenRow {
@@ -168,8 +180,7 @@ function noDashText(input: string): string {
 }
 
 function areaFromValue(value: string): CommandCenterArea {
-  const match = COMMAND_CENTER_CONTENT_AREAS.find((area) => area === value);
-  return match ?? "DIY";
+  return normalizeContentArea(value) ?? "DIY";
 }
 
 function areaPhrase(area: CommandCenterArea): string {
@@ -191,6 +202,70 @@ function toEasternDateTime(date: Date): { date: string; time: string } {
   return {
     date: `${lookup("month")}/${lookup("day")}/${lookup("year")}`,
     time: `${lookup("hour")}:${lookup("minute")}`
+  };
+}
+
+function workflowStatusFrom(value: string): WorkflowStatus {
+  const normalized = value.trim().toLowerCase().replace(/[^a-z]/g, "");
+  if (normalized === "approved" || normalized === "ready") return "approved";
+  if (normalized === "queued" || normalized === "synced") return "queued";
+  if (normalized === "posted" || normalized === "live") return "posted";
+  if (normalized === "published") return "published";
+  return "draft";
+}
+
+function isPublishableWorkflowStatus(value: string): boolean {
+  const status = workflowStatusFrom(value);
+  return status === "approved" || status === "published";
+}
+
+function isPinSyncableWorkflowStatus(value: string): boolean {
+  const status = workflowStatusFrom(value);
+  return status === "approved" || status === "queued" || status === "posted" || status === "published";
+}
+
+function slugify(value: string, fallback: string): string {
+  const slug = value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .slice(0, 80);
+  if (slug) return slug;
+  return fallback
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "content";
+}
+
+function parsePublishedAtIso(dateValue: string, timeValue: string): string {
+  const dateMatch = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(dateValue.trim());
+  const timeMatch = /^(\d{2}):(\d{2})$/.exec(timeValue.trim());
+  if (!dateMatch) return new Date().toISOString();
+  const [, mm, dd, yyyy] = dateMatch;
+  const hours = timeMatch?.[1] ?? "12";
+  const minutes = timeMatch?.[2] ?? "00";
+  const parsed = new Date(`${yyyy}-${mm}-${dd}T${hours}:${minutes}:00-05:00`);
+  return Number.isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
+}
+
+function overlayLines(overlay: string, area: CommandCenterArea): { line1: string; line2: string } {
+  const topMatch = /top:\s*([^.]*)/i.exec(overlay);
+  const bottomMatch = /bottom:\s*([^.]*)/i.exec(overlay);
+  if (topMatch || bottomMatch) {
+    return {
+      line1: noDashText(topMatch?.[1] ?? `${contentAreaLabel(area)} bathroom win`),
+      line2: noDashText(bottomMatch?.[1] ?? "Use one simple step today")
+    };
+  }
+
+  const parts = overlay
+    .split(/[.!?]/)
+    .map((part) => noDashText(part))
+    .filter(Boolean);
+  return {
+    line1: parts[0] ?? `${contentAreaLabel(area)} bathroom win`,
+    line2: parts[1] ?? "Use one simple step today"
   };
 }
 
@@ -223,31 +298,15 @@ function latestByArea<T extends { Content_Area?: string }>(rows: T[], area: Comm
 }
 
 function destinationPathForBlog(blog: BlogEvergreenRow): string {
-  if (blog.Blog_URL) return blog.Blog_URL;
-  if (blog.Blog_Title) {
-    const slug = blog.Blog_Title
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, "")
-      .trim()
-      .replace(/\s+/g, "-")
-      .slice(0, 80);
-    if (slug) return `/blog/${slug}`;
-  }
-  return `/blog/${blog.Blog_ID.toLowerCase()}`;
+  if (blog.Blog_URL?.startsWith("/blog/")) return blog.Blog_URL;
+  if (blog.Blog_URL) return `/blog/${slugify(blog.Blog_URL, blog.Blog_ID)}`;
+  return `/blog/${slugify(blog.Blog_Title || blog.Blog_ID, blog.Blog_ID)}`;
 }
 
 function destinationPathForGuide(guide: GuideEvergreenRow): string {
-  if (guide.Guide_URL) return guide.Guide_URL;
-  if (guide.Guide_Title) {
-    const slug = guide.Guide_Title
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, "")
-      .trim()
-      .replace(/\s+/g, "-")
-      .slice(0, 80);
-    if (slug) return `/guides/${slug}`;
-  }
-  return `/guides/${guide.Guide_ID.toLowerCase()}`;
+  if (guide.Guide_URL?.startsWith("/guides/")) return guide.Guide_URL;
+  if (guide.Guide_URL) return `/guides/${slugify(guide.Guide_URL, guide.Guide_ID)}`;
+  return `/guides/${slugify(guide.Guide_Title || guide.Guide_ID, guide.Guide_ID)}`;
 }
 
 function generatePinCaption(area: CommandCenterArea, mode: "free" | "cost" | "both" | "none", index: number): string {
@@ -366,19 +425,19 @@ function emailSubjectFor(area: CommandCenterArea, index: number): string {
   return noDashText(choices[area][index % choices[area].length]);
 }
 
-export function loadEvergreenTab(key: TabKey): Record<string, unknown>[] {
-  return loadTab<Record<string, unknown>>(TAB_MAP[key]);
+export async function loadEvergreenTab(key: TabKey): Promise<Record<string, unknown>[]> {
+  return loadRuntimeTab<Record<string, unknown>>(TAB_MAP[key]);
 }
 
-export function saveEvergreenTab(key: TabKey, rows: Record<string, unknown>[]): void {
-  saveTab(TAB_MAP[key], rows);
+export async function saveEvergreenTab(key: TabKey, rows: Record<string, unknown>[]): Promise<void> {
+  await saveRuntimeTab(TAB_MAP[key], rows);
 }
 
-export function bootstrapEvergreenProducts(): void {
-  const existing = loadTab<ProductEvergreenRow>(TAB_MAP.products);
+export async function bootstrapEvergreenProducts(): Promise<void> {
+  const existing = await loadRuntimeTab<ProductEvergreenRow>(TAB_MAP.products);
   if (existing.length > 0) return;
   const now = toEasternDateTime(new Date());
-  saveTab<ProductEvergreenRow>(TAB_MAP.products, [
+  await saveRuntimeTab<ProductEvergreenRow>(TAB_MAP.products, [
     {
       Product_ID: "PRODUCT_0001",
       Product_Date: now.date,
@@ -400,10 +459,10 @@ export function bootstrapEvergreenProducts(): void {
   ]);
 }
 
-export function generateNewPins(count = 25): { created: number } {
-  const pins = loadTab<PinEvergreenRow>(TAB_MAP.pins);
-  const blogs = loadTab<BlogEvergreenRow>(TAB_MAP.blogs);
-  const guides = loadTab<GuideEvergreenRow>(TAB_MAP.guides);
+export async function generateNewPins(count = 25): Promise<{ created: number }> {
+  const pins = await loadRuntimeTab<PinEvergreenRow>(TAB_MAP.pins);
+  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
+  const guides = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
 
   const latestStamp = new Date();
   const areas = cycleAreas(count);
@@ -435,6 +494,7 @@ export function generateNewPins(count = 25): { created: number } {
       Pin_Publish_Date: date,
       Pin_Publish_Time: time,
       Content_Area: area,
+      Workflow_Status: "draft",
       Destination: destination,
       Blog_ID: blogId,
       Media_Prompt: generatePinPrompt(area, destination || destinationPath, pinId, i),
@@ -443,16 +503,17 @@ export function generateNewPins(count = 25): { created: number } {
       Pin_Caption: generatePinCaption(area, pricingMode, i),
       Pin_CTA: "",
       Pin_URL: "",
-      UTM_URL: utm
+      UTM_URL: utm,
+      Prepared_For_Export_At: ""
     });
   }
 
-  saveTab<PinEvergreenRow>(TAB_MAP.pins, [...pins, ...newRows]);
+  await saveRuntimeTab<PinEvergreenRow>(TAB_MAP.pins, [...pins, ...newRows]);
   return { created: newRows.length };
 }
 
-export function generatePinOverlayAndCta(lastCount = 25): { updated: number } {
-  const pins = loadTab<PinEvergreenRow>(TAB_MAP.pins);
+export async function generatePinOverlayAndCta(lastCount = 25): Promise<{ updated: number }> {
+  const pins = await loadRuntimeTab<PinEvergreenRow>(TAB_MAP.pins);
   const target = pins.slice(-lastCount);
 
   for (const row of target) {
@@ -461,12 +522,12 @@ export function generatePinOverlayAndCta(lastCount = 25): { updated: number } {
     row.Pin_CTA = defaultPinCta(String(row.Destination), area);
   }
 
-  saveTab<PinEvergreenRow>(TAB_MAP.pins, pins);
+  await saveRuntimeTab<PinEvergreenRow>(TAB_MAP.pins, pins);
   return { updated: target.length };
 }
 
-export function generateNewBlogs(areaCounts?: Partial<Record<string, unknown>>): { created: number } {
-  const blogs = loadTab<BlogEvergreenRow>(TAB_MAP.blogs);
+export async function generateNewBlogs(areaCounts?: Partial<Record<string, unknown>>): Promise<{ created: number }> {
+  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
   const counts = parseAreaCounts(areaCounts);
   const now = new Date();
   const created: BlogEvergreenRow[] = [];
@@ -482,21 +543,23 @@ export function generateNewBlogs(areaCounts?: Partial<Record<string, unknown>>):
         Blog_Publish_Date: date,
         Blog_Publish_Time: time,
         Content_Area: area,
+        Workflow_Status: "draft",
         Blog_URL: "",
         Blog_Title: "",
         Blog_Keywords: "",
         Blog_Content: blogDraftContent(area),
-        Related_Pins: ""
+        Related_Pins: "",
+        Published_To_Public_At: ""
       });
     }
   }
 
-  saveTab<BlogEvergreenRow>(TAB_MAP.blogs, [...blogs, ...created]);
+  await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, [...blogs, ...created]);
   return { created: created.length };
 }
 
-export function generateBlogTitlesAndKeywords(): { updated: number } {
-  const blogs = loadTab<BlogEvergreenRow>(TAB_MAP.blogs);
+export async function generateBlogTitlesAndKeywords(): Promise<{ updated: number }> {
+  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
   let updated = 0;
 
   blogs.forEach((row, index) => {
@@ -510,13 +573,13 @@ export function generateBlogTitlesAndKeywords(): { updated: number } {
     }
   });
 
-  saveTab<BlogEvergreenRow>(TAB_MAP.blogs, blogs);
+  await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, blogs);
   return { updated };
 }
 
-export function updateBlogRelatedPins(): { updated: number } {
-  const blogs = loadTab<BlogEvergreenRow>(TAB_MAP.blogs);
-  const pins = loadTab<PinEvergreenRow>(TAB_MAP.pins);
+export async function updateBlogRelatedPins(): Promise<{ updated: number }> {
+  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
+  const pins = await loadRuntimeTab<PinEvergreenRow>(TAB_MAP.pins);
 
   blogs.forEach((blog) => {
     const related = pins
@@ -526,13 +589,13 @@ export function updateBlogRelatedPins(): { updated: number } {
     blog.Related_Pins = related;
   });
 
-  saveTab<BlogEvergreenRow>(TAB_MAP.blogs, blogs);
+  await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, blogs);
   return { updated: blogs.length };
 }
 
-export function generateNewGuides(areaCounts?: Partial<Record<string, unknown>>): { created: number } {
-  const guides = loadTab<GuideEvergreenRow>(TAB_MAP.guides);
-  const blogs = loadTab<BlogEvergreenRow>(TAB_MAP.blogs);
+export async function generateNewGuides(areaCounts?: Partial<Record<string, unknown>>): Promise<{ created: number }> {
+  const guides = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
+  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
   const counts = parseAreaCounts(areaCounts);
   const now = new Date();
   const created: GuideEvergreenRow[] = [];
@@ -551,22 +614,24 @@ export function generateNewGuides(areaCounts?: Partial<Record<string, unknown>>)
         Guide_Publish_Date: date,
         Guide_Publish_Time: time,
         Content_Area: area,
+        Workflow_Status: "draft",
         Blog_ID: linkedBlogId,
         Guide_URL: "",
         Guide_Title: "",
         Guide_Keywords: "",
         Guide_Content: guideDraftContent(area, linkedBlogId || "BLOG_0000"),
-        Related_Pins: ""
+        Related_Pins: "",
+        Published_To_Public_At: ""
       });
     }
   }
 
-  saveTab<GuideEvergreenRow>(TAB_MAP.guides, [...guides, ...created]);
+  await saveRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides, [...guides, ...created]);
   return { created: created.length };
 }
 
-export function generateGuideTitlesAndKeywords(): { updated: number } {
-  const guides = loadTab<GuideEvergreenRow>(TAB_MAP.guides);
+export async function generateGuideTitlesAndKeywords(): Promise<{ updated: number }> {
+  const guides = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
   let updated = 0;
 
   guides.forEach((row, index) => {
@@ -585,13 +650,13 @@ export function generateGuideTitlesAndKeywords(): { updated: number } {
     }
   });
 
-  saveTab<GuideEvergreenRow>(TAB_MAP.guides, guides);
+  await saveRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides, guides);
   return { updated };
 }
 
-export function updateGuideRelatedPins(): { updated: number } {
-  const guides = loadTab<GuideEvergreenRow>(TAB_MAP.guides);
-  const pins = loadTab<PinEvergreenRow>(TAB_MAP.pins);
+export async function updateGuideRelatedPins(): Promise<{ updated: number }> {
+  const guides = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
+  const pins = await loadRuntimeTab<PinEvergreenRow>(TAB_MAP.pins);
 
   guides.forEach((guide) => {
     const related = pins
@@ -601,13 +666,13 @@ export function updateGuideRelatedPins(): { updated: number } {
     guide.Related_Pins = related;
   });
 
-  saveTab<GuideEvergreenRow>(TAB_MAP.guides, guides);
+  await saveRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides, guides);
   return { updated: guides.length };
 }
 
-export function generateNewEmails(areaCounts?: Partial<Record<string, unknown>>): { created: number } {
-  const emails = loadTab<EmailEvergreenRow>(TAB_MAP.emails);
-  const blogs = loadTab<BlogEvergreenRow>(TAB_MAP.blogs);
+export async function generateNewEmails(areaCounts?: Partial<Record<string, unknown>>): Promise<{ created: number }> {
+  const emails = await loadRuntimeTab<EmailEvergreenRow>(TAB_MAP.emails);
+  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
   const counts = parseAreaCounts(areaCounts);
   const now = new Date();
   const created: EmailEvergreenRow[] = [];
@@ -633,12 +698,12 @@ export function generateNewEmails(areaCounts?: Partial<Record<string, unknown>>)
     }
   }
 
-  saveTab<EmailEvergreenRow>(TAB_MAP.emails, [...emails, ...created]);
+  await saveRuntimeTab<EmailEvergreenRow>(TAB_MAP.emails, [...emails, ...created]);
   return { created: created.length };
 }
 
-export function generateEmailSubjects(): { updated: number } {
-  const emails = loadTab<EmailEvergreenRow>(TAB_MAP.emails);
+export async function generateEmailSubjects(): Promise<{ updated: number }> {
+  const emails = await loadRuntimeTab<EmailEvergreenRow>(TAB_MAP.emails);
   let updated = 0;
 
   emails.forEach((row, index) => {
@@ -648,28 +713,244 @@ export function generateEmailSubjects(): { updated: number } {
     }
   });
 
-  saveTab<EmailEvergreenRow>(TAB_MAP.emails, emails);
+  await saveRuntimeTab<EmailEvergreenRow>(TAB_MAP.emails, emails);
   return { updated };
+}
+
+function publishedBlogById(blogs: BlogEvergreenRow[]): Map<string, BlogEvergreenRow> {
+  return new Map(blogs.map((blog) => [blog.Blog_ID, blog]));
+}
+
+function publishedGuideById(guides: GuideEvergreenRow[]): Map<string, GuideEvergreenRow> {
+  return new Map(guides.map((guide) => [guide.Guide_ID, guide]));
+}
+
+function resolvePinDestinationPath(pin: PinEvergreenRow, blogs: BlogEvergreenRow[], guides: GuideEvergreenRow[]): string {
+  if (pin.Destination.startsWith("/")) return pin.Destination;
+
+  const blog = publishedBlogById(blogs).get(pin.Destination) ?? publishedBlogById(blogs).get(pin.Blog_ID);
+  if (blog) return destinationPathForBlog(blog);
+
+  const guide = publishedGuideById(guides).get(pin.Destination);
+  if (guide?.Guide_URL) return destinationPathForGuide(guide);
+
+  if (pin.UTM_URL.startsWith("/")) return pin.UTM_URL.split("?")[0] ?? "";
+  return "";
+}
+
+function pinCaptionParts(pin: PinEvergreenRow, area: CommandCenterArea): { title: string; caption1: string; caption2: string; caption3: string } {
+  const sentences = noDashText(pin.Pin_Caption)
+    .split(/(?<=[.!?])\s+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const overlay = overlayLines(pin.Pin_Overlay, area);
+  const fallbackTitle = overlay.line1 || `${contentAreaLabel(area)} bathroom win`;
+
+  return {
+    title: fallbackTitle,
+    caption1: sentences[0] ?? `${contentAreaLabel(area)} bathroom update you can start today.`,
+    caption2: sentences[1] ?? overlay.line2,
+    caption3: noDashText(pin.Pin_CTA || sentences[2] || "Open the plan and start today.")
+  };
+}
+
+export async function publishApprovedBlogsToPublic(): Promise<Record<string, unknown>> {
+  const blogsEvergreen = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
+  const syncedAt = new Date().toISOString();
+  let published = 0;
+  let updated = 0;
+  let skipped = 0;
+
+  for (const row of blogsEvergreen) {
+    if (!isPublishableWorkflowStatus(String(row.Workflow_Status ?? ""))) {
+      skipped += 1;
+      continue;
+    }
+
+    const blogPath = destinationPathForBlog(row);
+    if (workflowStatusFrom(String(row.Workflow_Status ?? "")) === "published") updated += 1;
+    else published += 1;
+
+    row.Blog_URL = blogPath;
+    row.Workflow_Status = "published";
+    row.Published_To_Public_At = syncedAt;
+  }
+
+  await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, blogsEvergreen);
+  return { published, updated, skipped, totalPublicBlogs: blogsEvergreen.filter((blog) => workflowStatusFrom(String(blog.Workflow_Status)) === "published").length };
+}
+
+export async function publishApprovedGuidesToPublic(): Promise<Record<string, unknown>> {
+  const guidesEvergreen = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
+  const syncedAt = new Date().toISOString();
+  let published = 0;
+  let updated = 0;
+  let skipped = 0;
+
+  for (const row of guidesEvergreen) {
+    if (!isPublishableWorkflowStatus(String(row.Workflow_Status ?? ""))) {
+      skipped += 1;
+      continue;
+    }
+
+    const guidePath = destinationPathForGuide(row);
+    if (workflowStatusFrom(String(row.Workflow_Status ?? "")) === "published") updated += 1;
+    else published += 1;
+
+    row.Guide_URL = guidePath;
+    row.Workflow_Status = "published";
+    row.Published_To_Public_At = syncedAt;
+  }
+
+  await saveRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides, guidesEvergreen);
+  return {
+    published,
+    updated,
+    skipped,
+    totalPublicGuides: guidesEvergreen.filter((guide) => workflowStatusFrom(String(guide.Workflow_Status)) === "published").length
+  };
+}
+
+export async function syncApprovedPinsToLegacy(): Promise<Record<string, unknown>> {
+  const pinsEvergreen = await loadRuntimeTab<PinEvergreenRow>(TAB_MAP.pins);
+  const publicBlogs = (await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs)).filter(
+    (blog) => workflowStatusFrom(String(blog.Workflow_Status ?? "")) === "published"
+  );
+  const guidesEvergreen = (await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides)).filter((guide) => Boolean(guide.Guide_URL));
+  const syncedAt = new Date().toISOString();
+  let synced = 0;
+  let updated = 0;
+  let skipped = 0;
+  const unresolvedDestinations: string[] = [];
+
+  for (const row of pinsEvergreen) {
+    if (!isPinSyncableWorkflowStatus(String(row.Workflow_Status ?? ""))) {
+      skipped += 1;
+      continue;
+    }
+
+    const missingFields = ["Media_URL", "Pin_Caption", "Pin_Overlay", "Pin_CTA"].filter((field) => !String(row[field as keyof PinEvergreenRow] ?? "").trim());
+    if (missingFields.length > 0) {
+      unresolvedDestinations.push(`${row.Pin_ID}:missing_${missingFields.join(",")}`);
+      skipped += 1;
+      continue;
+    }
+
+    const area = areaFromValue(String(row.Content_Area ?? ""));
+    const destinationPath = resolvePinDestinationPath(row, publicBlogs, guidesEvergreen);
+    if (!destinationPath) {
+      unresolvedDestinations.push(row.Pin_ID);
+      skipped += 1;
+      continue;
+    }
+
+    const captions = pinCaptionParts(row, area);
+    const overlay = overlayLines(row.Pin_Overlay, area);
+    const utmUrl =
+      row.UTM_URL.startsWith(destinationPath) || row.UTM_URL.startsWith(`${destinationPath}?`)
+        ? row.UTM_URL
+        : `${destinationPath}?utm_source=pinterest&utm_medium=organic&utm_campaign=evergreen&utm_content=${row.Pin_ID.toLowerCase().replace(/_/g, "-")}`;
+
+    row.Destination = destinationPath;
+    row.Pin_Overlay = `${overlay.line1}\n${overlay.line2}`.trim();
+    row.Pin_Caption = noDashText(row.Pin_Caption || `${captions.caption1} ${captions.caption2}`);
+    row.Pin_CTA = captions.caption3;
+    row.UTM_URL = utmUrl;
+    row.Prepared_For_Export_At = syncedAt;
+    row.Workflow_Status = row.Pin_URL ? "posted" : "queued";
+    if (row.Pin_URL) updated += 1;
+    else synced += 1;
+  }
+
+  await saveRuntimeTab<PinEvergreenRow>(TAB_MAP.pins, pinsEvergreen);
+  return {
+    prepared: synced,
+    updated,
+    skipped,
+    unresolvedDestinations,
+    exportPath: "/api/admin/exports/pins"
+  };
+}
+
+export async function listApprovedPinsForExport(): Promise<
+  Array<{
+    Pin_ID: string;
+    Title: string;
+    "Media URL": string;
+    "Destination URL": string;
+    "Pin URL": string;
+    Description: string;
+    Board: string;
+    "Publish date": string;
+    Overlay: string;
+    CTA: string;
+    Prompt: string;
+    UTM_URL: string;
+  }>
+> {
+  const pinsEvergreen = await loadRuntimeTab<PinEvergreenRow>(TAB_MAP.pins);
+  const publicBlogs = (await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs)).filter(
+    (blog) => workflowStatusFrom(String(blog.Workflow_Status ?? "")) === "published"
+  );
+  const publicGuides = (await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides)).filter(
+    (guide) => workflowStatusFrom(String(guide.Workflow_Status ?? "")) === "published"
+  );
+
+  return pinsEvergreen
+    .filter((pin) => {
+      const status = workflowStatusFrom(String(pin.Workflow_Status ?? ""));
+      return status === "approved" || status === "queued" || status === "posted";
+    })
+    .map((pin) => {
+      const area = areaFromValue(String(pin.Content_Area ?? ""));
+      const destinationPath = resolvePinDestinationPath(pin, publicBlogs, publicGuides) || pin.Destination;
+      const captions = pinCaptionParts(pin, area);
+      const publishedAt = parsePublishedAtIso(pin.Pin_Publish_Date, pin.Pin_Publish_Time);
+      const utmUrl =
+        pin.UTM_URL.startsWith(destinationPath) || pin.UTM_URL.startsWith(`${destinationPath}?`)
+          ? pin.UTM_URL
+          : `${destinationPath}?utm_source=pinterest&utm_medium=organic&utm_campaign=evergreen&utm_content=${pin.Pin_ID.toLowerCase().replace(/_/g, "-")}`;
+
+      return {
+        Pin_ID: pin.Pin_ID,
+        Title: captions.title,
+        "Media URL": pin.Media_URL,
+        "Destination URL": destinationPath,
+        "Pin URL": pin.Pin_URL || utmUrl,
+        Description: noDashText(pin.Pin_Caption || `${captions.caption1} ${captions.caption2} ${captions.caption3}`),
+        Board: `Diyesu Decor ${contentAreaLabel(area)}`,
+        "Publish date": publishedAt,
+        Overlay: pin.Pin_Overlay,
+        CTA: pin.Pin_CTA || captions.caption3,
+        Prompt: pin.Media_Prompt,
+        UTM_URL: utmUrl
+      };
+    });
 }
 
 function nextCustomerId(existing: CustomerEvergreenRow[]): string {
   return nextSequentialId("USER_", 5, existing.map((row) => row.User_ID));
 }
 
-export function upsertCustomerFromSignup(input: { email: string; contentAreas: string[]; createdAtIso?: string }): CustomerEvergreenRow {
-  const rows = loadTab<CustomerEvergreenRow>(TAB_MAP.customers);
+export async function upsertCustomerFromSignup(input: {
+  email: string;
+  contentAreas: string[];
+  createdAtIso?: string;
+}): Promise<CustomerEvergreenRow> {
+  const rows = await loadRuntimeTab<CustomerEvergreenRow>(TAB_MAP.customers);
   const createdAt = input.createdAtIso ? new Date(input.createdAtIso) : new Date();
   const when = toEasternDateTime(createdAt);
   const normalizedEmail = input.email.trim().toLowerCase();
+  const normalizedAreas = normalizeContentAreas(input.contentAreas);
 
   const existing = rows.find((row) => row.User_Email.trim().toLowerCase() === normalizedEmail);
-  const content = input.contentAreas.filter(Boolean).join(", ");
+  const content = normalizedAreas.join(", ");
 
   if (existing) {
     existing.User_Date_Email = when.date;
     existing.User_Time_Email = when.time;
     existing.Content_Area = content || existing.Content_Area;
-    saveTab<CustomerEvergreenRow>(TAB_MAP.customers, rows);
+    await saveRuntimeTab<CustomerEvergreenRow>(TAB_MAP.customers, rows);
     return existing;
   }
 
@@ -681,13 +962,13 @@ export function upsertCustomerFromSignup(input: { email: string; contentAreas: s
     Content_Area: content,
     Purchases: ""
   };
-  saveTab<CustomerEvergreenRow>(TAB_MAP.customers, [...rows, created]);
+  await saveRuntimeTab<CustomerEvergreenRow>(TAB_MAP.customers, [...rows, created]);
   return created;
 }
 
-export function refreshCustomersFromLeads(): { added: number } {
-  const leads = loadTab<Record<string, string>>("Leads");
-  const customers = loadTab<CustomerEvergreenRow>(TAB_MAP.customers);
+export async function refreshCustomersFromLeads(): Promise<{ added: number }> {
+  const leads = await loadRuntimeTab<Record<string, string>>("Leads");
+  const customers = await loadRuntimeTab<CustomerEvergreenRow>(TAB_MAP.customers);
   let nextRows = [...customers];
   let added = 0;
 
@@ -697,15 +978,12 @@ export function refreshCustomersFromLeads(): { added: number } {
     const exists = nextRows.some((row) => row.User_Email.trim().toLowerCase() === email.toLowerCase());
     if (exists) continue;
 
-    const created = upsertCustomerFromSignup({
+    const created = await upsertCustomerFromSignup({
       email,
       createdAtIso: String(lead.Created_At ?? "") || undefined,
-      contentAreas: String(lead.Pillar_Interest ?? "")
-        .split(/[;,]/)
-        .map((item) => item.trim())
-        .filter(Boolean)
+      contentAreas: normalizeContentAreas([String(lead.Pillar_Interest ?? "")])
     });
-    nextRows = loadTab<CustomerEvergreenRow>(TAB_MAP.customers);
+    nextRows = await loadRuntimeTab<CustomerEvergreenRow>(TAB_MAP.customers);
     if (created) added += 1;
   }
 
@@ -725,12 +1003,12 @@ function inferProductLinks(productId: string, blogs: BlogEvergreenRow[], guides:
   return { blogIds, guideIds };
 }
 
-export function updateProductStats(): { updated: number } {
-  bootstrapEvergreenProducts();
-  const products = loadTab<ProductEvergreenRow>(TAB_MAP.products);
-  const customers = loadTab<CustomerEvergreenRow>(TAB_MAP.customers);
-  const blogs = loadTab<BlogEvergreenRow>(TAB_MAP.blogs);
-  const guides = loadTab<GuideEvergreenRow>(TAB_MAP.guides);
+export async function updateProductStats(): Promise<{ updated: number }> {
+  await bootstrapEvergreenProducts();
+  const products = await loadRuntimeTab<ProductEvergreenRow>(TAB_MAP.products);
+  const customers = await loadRuntimeTab<CustomerEvergreenRow>(TAB_MAP.customers);
+  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
+  const guides = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
 
   products.forEach((product) => {
     const sales = customers.reduce((sum, customer) => {
@@ -752,11 +1030,11 @@ export function updateProductStats(): { updated: number } {
     if (!product.Product_Date) product.Product_Date = toEasternDateTime(new Date()).date;
   });
 
-  saveTab<ProductEvergreenRow>(TAB_MAP.products, products);
+  await saveRuntimeTab<ProductEvergreenRow>(TAB_MAP.products, products);
   return { updated: products.length };
 }
 
-export function runCommandCenterAction(action: string, payload?: Record<string, unknown>): Record<string, unknown> {
+export async function runCommandCenterAction(action: string, payload?: Record<string, unknown>): Promise<Record<string, unknown>> {
   switch (action) {
     case "generate_new_pins":
       return generateNewPins(Number(payload?.count ?? 25));
@@ -768,16 +1046,22 @@ export function runCommandCenterAction(action: string, payload?: Record<string, 
       return generateBlogTitlesAndKeywords();
     case "update_blog_related_pins":
       return updateBlogRelatedPins();
+    case "publish_approved_blogs":
+      return publishApprovedBlogsToPublic();
     case "generate_new_guides":
       return generateNewGuides(payload?.areaCounts as Partial<Record<string, unknown>>);
     case "generate_guide_titles_keywords":
       return generateGuideTitlesAndKeywords();
     case "update_guide_related_pins":
       return updateGuideRelatedPins();
+    case "publish_approved_guides":
+      return publishApprovedGuidesToPublic();
     case "generate_new_emails":
       return generateNewEmails(payload?.areaCounts as Partial<Record<string, unknown>>);
     case "generate_email_subjects":
       return generateEmailSubjects();
+    case "prepare_approved_pins_for_export":
+      return syncApprovedPinsToLegacy();
     case "refresh_customers":
       return refreshCustomersFromLeads();
     case "update_product_stats":
@@ -787,13 +1071,13 @@ export function runCommandCenterAction(action: string, payload?: Record<string, 
   }
 }
 
-export function commandCenterKpis(): Record<string, number> {
-  const pins = loadTab<PinEvergreenRow>(TAB_MAP.pins);
-  const blogs = loadTab<BlogEvergreenRow>(TAB_MAP.blogs);
-  const guides = loadTab<GuideEvergreenRow>(TAB_MAP.guides);
-  const emails = loadTab<EmailEvergreenRow>(TAB_MAP.emails);
-  const customers = loadTab<CustomerEvergreenRow>(TAB_MAP.customers);
-  const products = loadTab<ProductEvergreenRow>(TAB_MAP.products);
+export async function commandCenterKpis(): Promise<Record<string, number>> {
+  const pins = await loadRuntimeTab<PinEvergreenRow>(TAB_MAP.pins);
+  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
+  const guides = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
+  const emails = await loadRuntimeTab<EmailEvergreenRow>(TAB_MAP.emails);
+  const customers = await loadRuntimeTab<CustomerEvergreenRow>(TAB_MAP.customers);
+  const products = await loadRuntimeTab<ProductEvergreenRow>(TAB_MAP.products);
 
   const revenue = products.reduce((sum, product) => sum + (Number(product.Product_Revenue) || 0), 0);
 
@@ -801,8 +1085,11 @@ export function commandCenterKpis(): Record<string, number> {
     totalPins: pins.length,
     pinsMissingMedia: pins.filter((pin) => !pin.Media_URL).length,
     pinsPosted: pins.filter((pin) => Boolean(pin.Pin_URL)).length,
+    pinsReadyToSync: pins.filter((pin) => workflowStatusFrom(String(pin.Workflow_Status ?? "")) === "approved").length,
     totalBlogs: blogs.length,
+    blogsReadyToPublish: blogs.filter((blog) => workflowStatusFrom(String(blog.Workflow_Status ?? "")) === "approved").length,
     totalGuides: guides.length,
+    guidesReadyToPublish: guides.filter((guide) => workflowStatusFrom(String(guide.Workflow_Status ?? "")) === "approved").length,
     totalEmails: emails.length,
     totalCustomers: customers.length,
     totalProducts: products.length,

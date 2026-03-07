@@ -14,6 +14,8 @@ export type HookClass =
 
 export type DestinationIntent = "Inspire" | "Teach" | "Solve" | "Shop" | "Subscribe";
 
+export type ContentArea = "Plants" | "Mirror" | "Storage" | "Lighting" | "Shower" | "Renter" | "DIY" | "ExtremeBudget";
+
 export type Pillar =
   | "RenterFriendly"
   | "BudgetDIY"

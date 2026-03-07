@@ -58,8 +58,16 @@ function curlJson(method: "GET" | "POST" | "PUT", url: string, headers: string[]
   if (body !== undefined) args.push("-d", body);
   const out = execFileSync("curl", args, { encoding: "utf8" });
   try {
-    return JSON.parse(out);
-  } catch {
+    const parsed = JSON.parse(out) as { error?: { message?: string; status?: string; code?: number } };
+    if (parsed?.error) {
+      const code = parsed.error.code ? `code=${parsed.error.code} ` : "";
+      const status = parsed.error.status ? `status=${parsed.error.status} ` : "";
+      const message = parsed.error.message ?? "Unknown Google API error";
+      throw new Error(`Google API error (${code}${status}) for ${url}: ${message}`.trim());
+    }
+    return parsed;
+  } catch (error) {
+    if (error instanceof Error && error.message.startsWith("Google API error")) throw error;
     throw new Error(`curl returned non-JSON response from ${url}: ${out.slice(0, 200)}`);
   }
 }
