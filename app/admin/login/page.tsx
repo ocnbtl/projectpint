@@ -17,6 +17,8 @@ export default async function AdminLoginPage({ searchParams }: AdminLoginPagePro
   const errorMessage =
     params.error === "rate_limit"
       ? "Too many attempts. Wait a few minutes and try again."
+      : params.error === "config"
+        ? "Admin access is unavailable until the environment session settings are completed."
       : params.error === "1"
         ? "Access was not granted. Check the code and try again."
         : "";

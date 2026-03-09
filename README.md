@@ -44,12 +44,13 @@ Legacy CLI/governance references still exist in code, but they are no longer par
 
 ## Quick Start
 1. Install deps:
+- Use Node 22 LTS (the repo now declares `>=20.9 <25`, and local builds on Node 25 have shown unstable Next.js route-handler failures).
 - `npm install`
 
 2. Configure env:
 - `cp .env.example .env.local`
 - Set `ADMIN_PASSWORD` (required for `/admin`)
-- Set `ADMIN_SESSION_SECRET` (required for production-grade admin sessions)
+- Set `ADMIN_SESSION_SECRET` (required and must be different from `ADMIN_PASSWORD`)
 - Set `STORAGE_MODE=supabase` for hosted persistence
 - Set `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` (use a Supabase secret key if available)
 - Set Klaviyo vars if you want live signup sync

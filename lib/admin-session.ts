@@ -7,7 +7,13 @@ function getAdminPassword(): string {
 }
 
 function getAdminSessionSecret(): string {
-  return process.env.ADMIN_SESSION_SECRET?.trim() || getAdminPassword();
+  return process.env.ADMIN_SESSION_SECRET?.trim() ?? "";
+}
+
+function hasDistinctAdminSessionSecret(): boolean {
+  const password = getAdminPassword();
+  const secret = getAdminSessionSecret();
+  return Boolean(password && secret && secret !== password);
 }
 
 function toHex(bytes: Uint8Array): string {
@@ -39,7 +45,7 @@ async function signSessionPayload(payload: string): Promise<string> {
 }
 
 export function isAdminAuthConfigured(): boolean {
-  return Boolean(getAdminPassword());
+  return hasDistinctAdminSessionSecret();
 }
 
 export function getAdminSessionCookieName(): string {
@@ -70,6 +76,10 @@ export async function validateAdminPassword(password: string): Promise<boolean> 
 }
 
 export async function createAdminSessionToken(now = Date.now()): Promise<string> {
+  if (!hasDistinctAdminSessionSecret()) {
+    throw new Error("Admin session secret must be configured and distinct from the admin password.");
+  }
+
   const expiresAt = now + ADMIN_SESSION_TTL_SECONDS * 1000;
   const payload = [ADMIN_SESSION_VERSION, String(expiresAt), crypto.randomUUID()].join(".");
   const signature = await signSessionPayload(payload);
@@ -80,7 +90,7 @@ export async function createAdminSessionToken(now = Date.now()): Promise<string>
 }
 
 export async function verifyAdminSessionToken(token: string | undefined, now = Date.now()): Promise<boolean> {
-  if (!token) return false;
+  if (!token || !hasDistinctAdminSessionSecret()) return false;
 
   const parts = token.split(".");
   if (parts.length !== 4) return false;

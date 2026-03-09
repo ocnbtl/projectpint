@@ -6,6 +6,8 @@ cd "/Users/ocean/Documents/Project Pint"
 ```
 
 ## 2) Install dependencies
+Use Node 22 LTS for local work. The repo now expects `>=20.9 <25`, and Node 25 has produced unstable Next.js build failures in this project.
+
 ```bash
 npm install
 ```
@@ -16,7 +18,7 @@ cp .env.example .env.local
 ```
 Set these in `.env.local`:
 - `ADMIN_PASSWORD` (required for admin login)
-- `ADMIN_SESSION_SECRET` (required for signed admin sessions in preview/production)
+- `ADMIN_SESSION_SECRET` (required for signed admin sessions and must be different from `ADMIN_PASSWORD`)
 - `STORAGE_MODE` (`supabase` for hosted persistence, `local` for local fallback)
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
@@ -26,13 +28,13 @@ Set these in `.env.local`:
 ## 4) Change admin password (any time)
 1. Open `.env.local`
 2. Update `ADMIN_PASSWORD`
-3. Update `ADMIN_SESSION_SECRET` if you want to rotate all active admin sessions
+3. Update `ADMIN_SESSION_SECRET` too, and keep it distinct from `ADMIN_PASSWORD`
 3. Restart dev server
 
 ## 5) Create Supabase storage tables
 Open the Supabase SQL editor for `projectpint` and run the SQL from `supabase/schema.sql`.
 
-This creates the dedicated command-center tables plus the compatibility table used by transitional legacy publish/export flows.
+This creates the dedicated command-center tables used by the live website, admin command center, and signup flow.
 
 ## 6) Verify app health
 ```bash

@@ -23,7 +23,11 @@ export async function POST(request: Request) {
     return NextResponse.redirect(new URL("/admin/login?error=rate_limit", request.url), { status: 303 });
   }
 
-  if (!isAdminAuthConfigured() || !(await validateAdminPassword(password))) {
+  if (!isAdminAuthConfigured()) {
+    return NextResponse.redirect(new URL("/admin/login?error=config", request.url), { status: 303 });
+  }
+
+  if (!(await validateAdminPassword(password))) {
     return NextResponse.redirect(new URL("/admin/login?error=1", request.url), { status: 303 });
   }
 

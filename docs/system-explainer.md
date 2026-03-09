@@ -34,7 +34,7 @@ Auth model:
 - Login route: `/admin/login`
 - Cookie: `admin_session`
 - Password source: `ADMIN_PASSWORD` env var
-- Session signing secret: `ADMIN_SESSION_SECRET` env var (falls back to `ADMIN_PASSWORD` locally if not set)
+- Session signing secret: `ADMIN_SESSION_SECRET` env var (required and must stay separate from `ADMIN_PASSWORD`)
 - Middleware protects `/admin/*` (except login)
 - Sessions are signed, `httpOnly`, `sameSite=strict`, and time-limited
 - API routes also validate session server-side

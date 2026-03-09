@@ -8,6 +8,9 @@ const __dirname = path.dirname(__filename);
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   outputFileTracingRoot: __dirname,
+  experimental: {
+    webpackBuildWorker: false
+  },
   turbopack: {
     root: __dirname
   }

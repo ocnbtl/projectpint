@@ -30,3 +30,16 @@ test("admin session token rejects tampering and expiry", async () => {
   assert.equal(await verifyAdminSessionToken(tampered, now + 1000), false);
   assert.equal(await verifyAdminSessionToken(token, now + ADMIN_SESSION_TTL_SECONDS * 1000 + 1), false);
 });
+
+test("admin session token requires a distinct session secret", async () => {
+  process.env.ADMIN_PASSWORD = "bathroom-secret";
+  process.env.ADMIN_SESSION_SECRET = "bathroom-secret";
+
+  const now = Date.UTC(2026, 2, 5, 12, 0, 0);
+
+  await assert.rejects(
+    () => createAdminSessionToken(now),
+    /distinct from the admin password/
+  );
+  assert.equal(await verifyAdminSessionToken("v1.1.nonce.signature", now + 1000), false);
+});
