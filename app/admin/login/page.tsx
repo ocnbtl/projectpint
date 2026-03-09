@@ -36,11 +36,9 @@ export default async function AdminLoginPage({ searchParams }: AdminLoginPagePro
                 <span className="brand-tagline">DIY Bathroom Upgrades</span>
               </span>
             </Link>
-            <p className="eyebrow admin-login-eyebrow">Private Access</p>
-            <h1>Authorized operators only</h1>
+            <h1>Admin only</h1>
             <p>
-              This workspace is reserved for internal publishing and review. If you are looking for bathroom DIY ideas,
-              return to the main site.
+              This page is reserved for admin use. If you are looking for bathroom DIY ideas, return to the main site.
             </p>
           </div>
 

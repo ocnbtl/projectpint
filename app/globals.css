@@ -992,7 +992,7 @@ a:hover {
 .admin-login-panel {
   position: relative;
   z-index: 1;
-  width: min(520px, 100%);
+  width: min(560px, 100%);
   margin: 0 auto;
   border: 1px solid rgba(24, 74, 65, 0.12);
   border-radius: 28px;
@@ -1015,11 +1015,6 @@ a:hover {
   align-items: center;
 }
 
-.admin-login-eyebrow {
-  color: var(--brand-deep);
-  margin-bottom: 0;
-}
-
 .admin-login-form {
   display: grid;
   gap: 0.9rem;
@@ -1036,6 +1031,11 @@ a:hover {
 .admin-login-foot {
   display: grid;
   gap: 0.7rem;
+}
+
+.admin-login-foot .small {
+  margin: 0;
+  white-space: nowrap;
 }
 
 .admin-shell {
@@ -1208,9 +1208,17 @@ a:hover {
 
 .admin-actions-inline {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.65rem;
   align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  padding-bottom: 0.1rem;
+}
+
+.admin-actions-inline > * {
+  flex: 0 0 auto;
 }
 
 .admin-action-stack {
@@ -1268,6 +1276,7 @@ a:hover {
   gap: 0.35rem;
   font-size: 0.82rem;
   color: var(--ink-700);
+  flex: 0 0 auto;
 }
 
 .admin-inline-label input[type="number"],
@@ -1308,7 +1317,12 @@ a:hover {
 }
 
 .admin-search-label {
-  min-width: min(280px, 100%);
+  flex: 1 0 320px;
+  min-width: 320px;
+}
+
+.admin-filter-label {
+  min-width: 220px;
 }
 
 .admin-area-card {
@@ -1329,14 +1343,27 @@ a:hover {
 
 .admin-action-button {
   min-height: 44px;
+  white-space: nowrap;
 }
 
 .admin-panel-header {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 0.75rem;
-  align-items: flex-start;
-  justify-content: space-between;
+}
+
+.admin-datasheet-toolbar {
+  width: 100%;
+  align-items: flex-end;
+}
+
+.admin-datasheet-control {
+  align-self: stretch;
+}
+
+.admin-toolbar-button,
+.admin-actions-inline > a,
+.admin-actions-inline > .btn {
+  white-space: nowrap;
 }
 
 .admin-inline-status {
@@ -1358,7 +1385,9 @@ a:hover {
 }
 
 .admin-table {
-  min-width: 1080px;
+  width: max-content;
+  min-width: 100%;
+  table-layout: fixed;
 }
 
 .admin-table thead th {
@@ -1367,6 +1396,7 @@ a:hover {
   z-index: 1;
   background: #f4efe5;
   color: var(--ink-900);
+  padding: 0;
 }
 
 .admin-table tbody tr:nth-child(even) td {
@@ -1377,6 +1407,41 @@ a:hover {
 .admin-table textarea {
   width: 100%;
   font-size: 0.83rem;
+}
+
+.admin-table-header-cell {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 0.55rem;
+  min-height: 100%;
+}
+
+.admin-table-header-cell > span {
+  padding: 0.55rem;
+  overflow-wrap: anywhere;
+}
+
+.admin-column-resizer {
+  width: 14px;
+  min-width: 14px;
+  border: 0;
+  border-left: 1px solid rgba(170, 157, 137, 0.85);
+  background: linear-gradient(180deg, rgba(226, 218, 204, 0.94), rgba(210, 199, 180, 0.96));
+  cursor: col-resize;
+  padding: 0;
+}
+
+.admin-column-resizer:hover,
+.admin-column-resizer:focus-visible {
+  background: linear-gradient(180deg, rgba(212, 236, 229, 0.96), rgba(150, 195, 183, 0.96));
+  outline: none;
+}
+
+.admin-column-resizing,
+.admin-column-resizing * {
+  cursor: col-resize !important;
+  user-select: none;
 }
 
 .cookie-note {
@@ -1447,6 +1512,21 @@ td {
   .hero-grid,
   .article-layout {
     grid-template-columns: 1fr;
+  }
+
+  .admin-actions-inline {
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+
+  .admin-search-label,
+  .admin-filter-label {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .admin-login-foot .small {
+    white-space: normal;
   }
 
   .article-aside {
