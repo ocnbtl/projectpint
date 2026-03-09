@@ -57,10 +57,12 @@ Supported actions:
 - `prepare_approved_pins_for_export`
 - `generate_new_blogs`
 - `generate_blog_titles_keywords`
+- `refresh_blog_quality_checks`
 - `update_blog_related_pins`
 - `publish_approved_blogs`
 - `generate_new_guides`
 - `generate_guide_titles_keywords`
+- `refresh_guide_quality_checks`
 - `update_guide_related_pins`
 - `publish_approved_guides`
 - `generate_new_emails`
@@ -84,8 +86,12 @@ Supported actions:
 
 ## Evergreen -> Public Publish Bridge
 - `Blogs_Evergreen` is the working table for blog drafting and review.
+- Blog generation now stores the title, keyword plan, CTA target, and a copy and paste prompt pack directly in the row so drafting stays inside the command center.
+- The operator pastes the final article into `Blog_Content`, then runs QC before approval and publish.
 - `publish_approved_blogs` marks approved blog rows live for the public `/blog/*` routes.
 - `Guides_Evergreen` is the working table for short companion content.
+- Guide generation now stores the title, keyword plan, CTA target, and a copy and paste prompt pack directly in the row so drafting stays inside the command center.
+- The operator pastes the final guide into `Guide_Content`, then runs QC before approval and publish.
 - `publish_approved_guides` marks approved guide rows live for the public `/guides/*` routes.
 - `Pins_Evergreen` is the working table for pin drafting and manual visual prep.
 - `prepare_approved_pins_for_export` finalizes destination URLs and export metadata directly on evergreen rows.

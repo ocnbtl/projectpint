@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { MarkdownArticle } from "../../../components/MarkdownArticle";
 import { SiteShell } from "../../../components/SiteShell";
 import { markdownBlocks } from "../../../lib/content-render";
 import { findGuideBySlug, readGuides } from "../../../lib/site-data";
@@ -18,30 +19,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   return (
     <SiteShell>
       <article className="card prose-card">
-        {blocks.map((block, index) => {
-          if (block.type === "h1") return <h1 key={`${slug}-${index}`}>{block.text}</h1>;
-          if (block.type === "h2") return <h2 key={`${slug}-${index}`}>{block.text}</h2>;
-          if (block.type === "h3") return <h3 key={`${slug}-${index}`}>{block.text}</h3>;
-          if (block.type === "ul") {
-            return (
-              <ul key={`${slug}-${index}`}>
-                {block.items.map((item) => (
-                  <li key={`${slug}-${index}-${item}`}>{item}</li>
-                ))}
-              </ul>
-            );
-          }
-          if (block.type === "ol") {
-            return (
-              <ol key={`${slug}-${index}`}>
-                {block.items.map((item) => (
-                  <li key={`${slug}-${index}-${item}`}>{item}</li>
-                ))}
-              </ol>
-            );
-          }
-          return <p key={`${slug}-${index}`}>{block.text}</p>;
-        })}
+        <MarkdownArticle blocks={blocks} slug={slug} />
       </article>
     </SiteShell>
   );

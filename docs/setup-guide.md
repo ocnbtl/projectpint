@@ -29,7 +29,7 @@ Set these in `.env.local`:
 1. Open `.env.local`
 2. Update `ADMIN_PASSWORD`
 3. Update `ADMIN_SESSION_SECRET` too, and keep it distinct from `ADMIN_PASSWORD`
-3. Restart dev server
+4. Restart dev server
 
 ## 5) Create Supabase storage tables
 Open the Supabase SQL editor for `projectpint` and run the SQL from `supabase/schema.sql`.
@@ -52,11 +52,18 @@ Open:
 
 ## 8) First command-center run
 1. Go to `/admin/blogs` and generate new blogs by area.
-2. Go to `/admin/guides` and generate new guides by area.
-3. Go to `/admin/pins` and generate 25 new pins.
-4. Click `Generate overlay and CTA` for those pins.
-5. Go to `/admin/emails` and generate promotional emails.
-6. Generate email subjects.
+2. Run `Generate blog prompt packs` so the title, keywords, CTA target, and full copy and paste prompt pack are written into each row.
+3. Paste the ChatGPT output into `Blog_Content`.
+4. Run `Refresh blog QC`.
+5. Go to `/admin/guides` and generate new guides by area.
+6. Run `Generate guide prompt packs` so the title, keywords, CTA target, and full copy and paste prompt pack are written into each row.
+7. Paste the ChatGPT output into `Guide_Content`.
+8. Run `Refresh guide QC`.
+9. Use the table itself for edits and approval review.
+10. Go to `/admin/pins` and generate 25 new pins.
+11. Click `Generate overlay and CTA` for those pins.
+12. Go to `/admin/emails` and generate promotional emails.
+13. Generate email subjects.
 
 ## 9) Manual image workflow
 1. Copy `Media_Prompt` from each pin row.

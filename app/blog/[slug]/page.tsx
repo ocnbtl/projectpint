@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import { AdSlot } from "../../../components/AdSlot";
 import { AffiliateDisclosure } from "../../../components/AffiliateDisclosure";
+import { MarkdownArticle } from "../../../components/MarkdownArticle";
 import { SiteShell } from "../../../components/SiteShell";
 import { shouldShowAffiliateDisclosure } from "../../../lib/affiliate";
+import { markdownBlocks } from "../../../lib/content-render";
 import { readBlogs } from "../../../lib/site-data";
 
 export async function generateStaticParams() {
@@ -20,13 +22,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     containsAffiliateLinks: blog.Contains_Affiliate_Links,
     markdownOrText: blog.Draft_Markdown
   });
+  const blocks = markdownBlocks(blog.Draft_Markdown);
 
   return (
     <SiteShell>
-      <article className="card">
-        <h1>{blog.Title}</h1>
+      <article className="card prose-card">
         <p className="small">Status: {blog.Status}</p>
-        <pre style={{ whiteSpace: "pre-wrap" }}>{blog.Draft_Markdown}</pre>
+        <MarkdownArticle blocks={blocks} slug={slug} />
       </article>
       {showAffiliateDisclosure ? <AffiliateDisclosure /> : null}
       <AdSlot enabled={blog.Ad_Enabled} slotId={`blog-${blog.Blog_ID}`} />

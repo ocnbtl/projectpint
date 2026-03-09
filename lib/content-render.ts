@@ -1,8 +1,21 @@
+export interface MarkdownInlineTextToken {
+  type: "text";
+  text: string;
+}
+
+export interface MarkdownInlineLinkToken {
+  type: "link";
+  text: string;
+  href: string;
+}
+
+export type MarkdownInlineToken = MarkdownInlineTextToken | MarkdownInlineLinkToken;
+
 export type MarkdownBlock =
-  | { type: "h1" | "h2" | "h3"; text: string }
-  | { type: "p"; text: string }
-  | { type: "ul"; items: string[] }
-  | { type: "ol"; items: string[] };
+  | { type: "h1" | "h2" | "h3"; text: string; inline: MarkdownInlineToken[] }
+  | { type: "p"; text: string; inline: MarkdownInlineToken[] }
+  | { type: "ul"; items: Array<{ text: string; inline: MarkdownInlineToken[] }> }
+  | { type: "ol"; items: Array<{ text: string; inline: MarkdownInlineToken[] }> };
 
 function clean(text: string): string {
   return text
@@ -11,6 +24,31 @@ function clean(text: string): string {
     .replace(/`(.*?)`/g, "$1")
     .replace(/\[(.*?)\]\((.*?)\)/g, "$1")
     .trim();
+}
+
+export function markdownInlineTokens(text: string): MarkdownInlineToken[] {
+  const tokens: MarkdownInlineToken[] = [];
+  const pattern = /\[([^\]]+)\]\(([^)]+)\)/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null = null;
+
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      tokens.push({ type: "text", text: clean(text.slice(lastIndex, match.index)) });
+    }
+    tokens.push({
+      type: "link",
+      text: clean(match[1]),
+      href: match[2].trim()
+    });
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    tokens.push({ type: "text", text: clean(text.slice(lastIndex)) });
+  }
+
+  return tokens.filter((token) => token.text.trim().length > 0);
 }
 
 export function markdownBlocks(markdown: string): MarkdownBlock[] {
@@ -27,27 +65,31 @@ export function markdownBlocks(markdown: string): MarkdownBlock[] {
     }
 
     if (line.startsWith("### ")) {
-      blocks.push({ type: "h3", text: clean(line.slice(4)) });
+      const text = clean(line.slice(4));
+      blocks.push({ type: "h3", text, inline: markdownInlineTokens(line.slice(4)) });
       i += 1;
       continue;
     }
 
     if (line.startsWith("## ")) {
-      blocks.push({ type: "h2", text: clean(line.slice(3)) });
+      const text = clean(line.slice(3));
+      blocks.push({ type: "h2", text, inline: markdownInlineTokens(line.slice(3)) });
       i += 1;
       continue;
     }
 
     if (line.startsWith("# ")) {
-      blocks.push({ type: "h1", text: clean(line.slice(2)) });
+      const text = clean(line.slice(2));
+      blocks.push({ type: "h1", text, inline: markdownInlineTokens(line.slice(2)) });
       i += 1;
       continue;
     }
 
-    if (line.startsWith("- ")) {
-      const items: string[] = [];
-      while (i < lines.length && lines[i].trim().startsWith("- ")) {
-        items.push(clean(lines[i].trim().slice(2)));
+    if (line.startsWith("- ") || line.startsWith("• ")) {
+      const items: Array<{ text: string; inline: MarkdownInlineToken[] }> = [];
+      while (i < lines.length && (lines[i].trim().startsWith("- ") || lines[i].trim().startsWith("• "))) {
+        const itemText = lines[i].trim().slice(2);
+        items.push({ text: clean(itemText), inline: markdownInlineTokens(itemText) });
         i += 1;
       }
       blocks.push({ type: "ul", items });
@@ -55,9 +97,10 @@ export function markdownBlocks(markdown: string): MarkdownBlock[] {
     }
 
     if (/^\d+\)\s/.test(line) || /^\d+\.\s/.test(line)) {
-      const items: string[] = [];
+      const items: Array<{ text: string; inline: MarkdownInlineToken[] }> = [];
       while (i < lines.length && (/^\d+\)\s/.test(lines[i].trim()) || /^\d+\.\s/.test(lines[i].trim()))) {
-        items.push(clean(lines[i].trim().replace(/^\d+[\).]\s/, "")));
+        const itemText = lines[i].trim().replace(/^\d+[\).]\s/, "");
+        items.push({ text: clean(itemText), inline: markdownInlineTokens(itemText) });
         i += 1;
       }
       blocks.push({ type: "ol", items });
@@ -83,7 +126,8 @@ export function markdownBlocks(markdown: string): MarkdownBlock[] {
       i += 1;
     }
 
-    blocks.push({ type: "p", text: clean(paragraphLines.join(" ")) });
+    const joined = paragraphLines.join(" ");
+    blocks.push({ type: "p", text: clean(joined), inline: markdownInlineTokens(joined) });
   }
 
   return blocks;

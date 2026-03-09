@@ -79,11 +79,15 @@ Current implementation detail:
 ## Weekly Ops Flow (Current)
 1. In admin `/admin/blogs`:
 - Generate new blogs by area.
-- Generate blog titles and keywords.
+- Generate blog prompt packs.
+- Paste the ChatGPT output into `Blog_Content`.
+- Run blog QC.
 
 2. In admin `/admin/guides`:
 - Generate new guides by area.
-- Generate guide titles and keywords.
+- Generate guide prompt packs.
+- Paste the ChatGPT output into `Guide_Content`.
+- Run guide QC.
 
 3. In admin `/admin/pins`:
 - Generate new pins (25 rows).

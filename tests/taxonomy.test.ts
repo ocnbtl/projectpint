@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { contentAreasForPillar, normalizeContentAreas, primaryLegacyPillarForArea } from "../lib/constants.ts";
 import { blogMatchesArea, contentAreaForBlog } from "../lib/site-data.ts";
+import type { BlogDraft } from "../lib/types.ts";
 
 test("legacy BudgetDIY pillar expands to both budget areas", () => {
   assert.deepEqual(contentAreasForPillar("BudgetDIY"), ["DIY", "ExtremeBudget"]);
@@ -17,7 +18,7 @@ test("normalizeContentAreas accepts mixed current and legacy taxonomy values", (
 });
 
 test("contentAreaForBlog prefers keyword-matched area over shared legacy pillar fallback", () => {
-  const blog = {
+  const blog: Pick<BlogDraft, "Pillar" | "Slug" | "Title" | "Keyword_Target"> = {
     Pillar: "Styling",
     Slug: "bathroom-mirror-placement-fixes",
     Title: "Bathroom Mirror Placement Fixes",
@@ -30,7 +31,7 @@ test("contentAreaForBlog prefers keyword-matched area over shared legacy pillar 
 });
 
 test("blogMatchesArea keeps shared legacy bridge when no specific area keyword exists", () => {
-  const blog = {
+  const blog: Pick<BlogDraft, "Pillar" | "Slug" | "Title" | "Keyword_Target"> = {
     Pillar: "Styling",
     Slug: "intentional-bathroom-refresh",
     Title: "Intentional Bathroom Refresh",

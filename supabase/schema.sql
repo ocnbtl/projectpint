@@ -39,10 +39,19 @@ create table if not exists public.blogs_evergreen (
   "Blog_Title" text not null default '',
   "Blog_Keywords" text not null default '',
   "Blog_Content" text not null default '',
+  "Writer_Brief" text not null default '',
+  "CTA_Target" text not null default '',
+  "Quality_Score" text not null default '',
+  "Quality_Checks" text not null default '',
   "Related_Pins" text not null default '',
   "Published_To_Public_At" text not null default '',
   updated_at timestamptz not null default timezone('utc', now())
 );
+
+alter table public.blogs_evergreen add column if not exists "Writer_Brief" text not null default '';
+alter table public.blogs_evergreen add column if not exists "CTA_Target" text not null default '';
+alter table public.blogs_evergreen add column if not exists "Quality_Score" text not null default '';
+alter table public.blogs_evergreen add column if not exists "Quality_Checks" text not null default '';
 
 create table if not exists public.guides_evergreen (
   "Guide_ID" text primary key,
@@ -55,10 +64,19 @@ create table if not exists public.guides_evergreen (
   "Guide_Title" text not null default '',
   "Guide_Keywords" text not null default '',
   "Guide_Content" text not null default '',
+  "Writer_Brief" text not null default '',
+  "CTA_Target" text not null default '',
+  "Quality_Score" text not null default '',
+  "Quality_Checks" text not null default '',
   "Related_Pins" text not null default '',
   "Published_To_Public_At" text not null default '',
   updated_at timestamptz not null default timezone('utc', now())
 );
+
+alter table public.guides_evergreen add column if not exists "Writer_Brief" text not null default '';
+alter table public.guides_evergreen add column if not exists "CTA_Target" text not null default '';
+alter table public.guides_evergreen add column if not exists "Quality_Score" text not null default '';
+alter table public.guides_evergreen add column if not exists "Quality_Checks" text not null default '';
 
 create table if not exists public.emails_evergreen (
   "Email_ID" text primary key,

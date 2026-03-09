@@ -44,6 +44,10 @@ const DEDICATED_SUPABASE_TABLES: Record<string, DedicatedTableConfig> = {
       "Blog_Title",
       "Blog_Keywords",
       "Blog_Content",
+      "Writer_Brief",
+      "CTA_Target",
+      "Quality_Score",
+      "Quality_Checks",
       "Related_Pins",
       "Published_To_Public_At"
     ]
@@ -62,6 +66,10 @@ const DEDICATED_SUPABASE_TABLES: Record<string, DedicatedTableConfig> = {
       "Guide_Title",
       "Guide_Keywords",
       "Guide_Content",
+      "Writer_Brief",
+      "CTA_Target",
+      "Quality_Score",
+      "Quality_Checks",
       "Related_Pins",
       "Published_To_Public_At"
     ]

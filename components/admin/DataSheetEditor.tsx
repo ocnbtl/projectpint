@@ -137,7 +137,16 @@ export function DataSheetEditor({ tab, title, columns, initialRows, dateColumn }
   }, [dirty, rows, saveRows]);
 
   const isLongField = (column: string) =>
-    ["Pin_Caption", "Pin_Overlay", "Media_Prompt", "Blog_Content", "Guide_Content", "Email_Content"].includes(column);
+    [
+      "Pin_Caption",
+      "Pin_Overlay",
+      "Media_Prompt",
+      "Blog_Content",
+      "Guide_Content",
+      "Email_Content",
+      "Writer_Brief",
+      "Quality_Checks"
+    ].includes(column);
 
   return (
     <section className="admin-panel">

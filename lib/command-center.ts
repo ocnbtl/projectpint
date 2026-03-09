@@ -5,7 +5,14 @@ import {
   normalizeContentArea,
   normalizeContentAreas
 } from "./constants.ts";
+import { summarizeContentQuality } from "./content-quality.ts";
 import { loadRuntimeTab, saveRuntimeTab } from "./runtime-store.ts";
+import {
+  allowedCtaUrls,
+  buildBlogPromptPack,
+  buildGuidePromptPack,
+  formatWriterBrief
+} from "./writer-prompts.ts";
 
 export type CommandCenterArea = (typeof COMMAND_CENTER_CONTENT_AREAS)[number];
 export type WorkflowStatus = "draft" | "approved" | "queued" | "published" | "posted";
@@ -38,6 +45,10 @@ export interface BlogEvergreenRow {
   Blog_Title: string;
   Blog_Keywords: string;
   Blog_Content: string;
+  Writer_Brief: string;
+  CTA_Target: string;
+  Quality_Score: string;
+  Quality_Checks: string;
   Related_Pins: string;
   Published_To_Public_At: string;
 }
@@ -53,6 +64,10 @@ export interface GuideEvergreenRow {
   Guide_Title: string;
   Guide_Keywords: string;
   Guide_Content: string;
+  Writer_Brief: string;
+  CTA_Target: string;
+  Quality_Score: string;
+  Quality_Checks: string;
   Related_Pins: string;
   Published_To_Public_At: string;
 }
@@ -175,6 +190,191 @@ const PRODUCT_PRICES: Record<string, number> = {
   PRODUCT_0003: 19
 };
 
+interface EditorialProfile {
+  pain: string;
+  budgetRange: string;
+  lowBudgetThreshold: string;
+  installNote: string;
+  tools: string;
+  blogTime: string;
+  guideTime: string;
+  tradeoff: string;
+  quickWin: string;
+  blogTitles: string[];
+  guideTitles: string[];
+}
+
+const AREA_EDITORIAL_PROFILES: Record<CommandCenterArea, EditorialProfile> = {
+  Plants: {
+    pain: "bathroom plants keep yellowing, stretching, or looking tired",
+    budgetRange: "$15 to $60",
+    lowBudgetThreshold: "$25",
+    installNote: "Use removable trays, sealed risers, or shelf styling that stays reversible for renters.",
+    tools: "a microfiber cloth, basic scissors, a tray or saucer, and a measuring tape",
+    blogTime: "30 to 75 minutes for setup plus a one week placement check",
+    guideTime: "45 to 60 minutes",
+    tradeoff: "Higher humidity helps some plants, but low light can still slow growth and limit placement options.",
+    quickWin: "Move one plant out of direct shower spray and place it on the brightest consistent shelf or ledge first.",
+    blogTitles: [
+      "Low Light Bathroom Plants That Handle Humidity Without Fuss",
+      "Bathroom Plant Fixes That Make Small Spaces Feel Calmer",
+      "Simple Bathroom Plant Placement for Humid Rooms"
+    ],
+    guideTitles: [
+      "Low Light Bathroom Plant Reset in Under One Hour",
+      "Quick Bathroom Plant Placement Guide for Humid Spaces",
+      "Bathroom Plant Setup for Small Shelves and Ledges"
+    ]
+  },
+  Mirror: {
+    pain: "mirror glare, awkward height, or dead space makes the sink harder to use",
+    budgetRange: "$20 to $120",
+    lowBudgetThreshold: "$35",
+    installNote: "Start with renter safe frame changes, clip on lighting, or removable storage before drilling into tile.",
+    tools: "a measuring tape, level, microfiber cloth, and optional adhesive hooks",
+    blogTime: "45 to 90 minutes",
+    guideTime: "45 to 60 minutes",
+    tradeoff: "A larger mirror can bounce more light, but it can also show more splash and require steadier mounting.",
+    quickWin: "Measure the mirror centerline before buying anything so the new layout improves both reflection and reach.",
+    blogTitles: [
+      "Bathroom Mirror Fixes That Improve Light and Daily Flow",
+      "Mirror Placement Changes That Make Small Bathrooms Easier to Use",
+      "Better Bathroom Mirror Setups for Renter Friendly Updates"
+    ],
+    guideTitles: [
+      "Mirror Placement Reset for Better Bathroom Light",
+      "Quick Mirror Styling Guide for a Calmer Sink Area",
+      "One Hour Mirror Update for Small Bathroom Flow"
+    ]
+  },
+  Storage: {
+    pain: "counter clutter and crowded cabinets slow down your routine",
+    budgetRange: "$10 to $80",
+    lowBudgetThreshold: "$20",
+    installNote: "Favor no drill shelves, caddies, baskets, and removable hooks before permanent hardware.",
+    tools: "a measuring tape, basket or bin labels, a cleaning cloth, and optional adhesive strips",
+    blogTime: "30 to 90 minutes",
+    guideTime: "45 to 75 minutes",
+    tradeoff: "Closed storage looks calmer, but open storage is often faster to access during busy mornings.",
+    quickWin: "Clear one landing zone near the sink and rebuild it around only the items you use every day.",
+    blogTitles: [
+      "Small Bathroom Storage Fixes That Cut Counter Clutter",
+      "Bathroom Storage Changes That Save Time Every Morning",
+      "Storage Layout Fixes for Busy Bathrooms and Tight Spaces"
+    ],
+    guideTitles: [
+      "Bathroom Storage Reset You Can Finish in Under One Hour",
+      "Quick Small Bathroom Storage Guide for Daily Flow",
+      "Counter Clutter Reset for Busy Bathroom Routines"
+    ]
+  },
+  Lighting: {
+    pain: "dim light and shadowy corners make the bathroom feel harder to use",
+    budgetRange: "$15 to $90",
+    lowBudgetThreshold: "$25",
+    installNote: "Use bulb swaps, plug in options, or removable lighting before rewiring or changing permanent fixtures.",
+    tools: "a step stool, fresh bulbs, a microfiber cloth, and a measuring tape",
+    blogTime: "30 to 75 minutes",
+    guideTime: "45 to 60 minutes",
+    tradeoff: "Warmer light feels calmer, but cooler light can be better for grooming and mirror tasks.",
+    quickWin: "Test bulb color and brightness first because that is often enough to make the room feel easier to use.",
+    blogTitles: [
+      "Bathroom Lighting Fixes That Make Mornings Easier",
+      "Simple Lighting Upgrades for Better Mirror Routines",
+      "Bathroom Lighting Changes That Feel Brighter Without a Remodel"
+    ],
+    guideTitles: [
+      "Bathroom Lighting Reset for Clearer Mirror Routines",
+      "Quick Vanity Lighting Guide for Small Bathrooms",
+      "One Hour Bathroom Lighting Fix With Low Risk Installs"
+    ]
+  },
+  Shower: {
+    pain: "the shower zone feels crowded, messy, or harder to clean than it should",
+    budgetRange: "$12 to $75",
+    lowBudgetThreshold: "$20",
+    installNote: "Use tension rods, hanging caddies, and removable hooks before any permanent wall mount.",
+    tools: "a squeegee, measuring tape, removable hooks, and a cleaning cloth",
+    blogTime: "30 to 90 minutes",
+    guideTime: "45 to 75 minutes",
+    tradeoff: "More storage helps daily flow, but too many products can make cleanup slower and the space feel tighter.",
+    quickWin: "Remove anything you do not use every week before adding a new caddy or organizer.",
+    blogTitles: [
+      "Shower Storage Fixes That Make Cleanup Easier",
+      "Small Bathroom Shower Upgrades for Faster Daily Routines",
+      "Shower Organization Fixes That Reduce Visual Clutter"
+    ],
+    guideTitles: [
+      "Shower Storage Reset for Faster Cleanup",
+      "Quick Shower Guide for Small Bathroom Flow",
+      "One Hour Shower Organization Fix for Daily Routines"
+    ]
+  },
+  Renter: {
+    pain: "you want the bathroom to work better without risking your deposit",
+    budgetRange: "$20 to $100",
+    lowBudgetThreshold: "$30",
+    installNote: "Keep each change no drill, reversible, and landlord safe unless your lease clearly allows more.",
+    tools: "a measuring tape, adhesive strips, rubbing alcohol, scissors, and a cloth",
+    blogTime: "45 to 90 minutes",
+    guideTime: "45 to 75 minutes",
+    tradeoff: "Reversible upgrades are safer for your deposit, but they can be less durable than permanent hardware.",
+    quickWin: "Pick the one bottleneck that annoys you every day and solve it with the lowest risk reversible fix first.",
+    blogTitles: [
+      "Renter Safe Bathroom Upgrades That Protect Your Deposit",
+      "No Drill Bathroom Fixes That Still Feel Intentional",
+      "Landlord Safe Bathroom Changes for Better Daily Flow"
+    ],
+    guideTitles: [
+      "No Drill Bathroom Reset in Under One Hour",
+      "Renter Safe Bathroom Upgrade Guide for One Quick Win",
+      "Landlord Safe Bathroom Fix for Tighter Budgets"
+    ]
+  },
+  DIY: {
+    pain: "you want a practical DIY win but the order of operations feels fuzzy",
+    budgetRange: "$25 to $150",
+    lowBudgetThreshold: "$40",
+    installNote: "Choose projects that use common tools and low risk finishes before trying anything permanent.",
+    tools: "a screwdriver or drill, measuring tape, painter tape, and a cleaning cloth",
+    blogTime: "60 to 120 minutes",
+    guideTime: "45 to 90 minutes",
+    tradeoff: "DIY usually saves money, but it often costs more time on prep, measuring, and cleanup.",
+    quickWin: "Start with the change that improves function first so the styling choices are easier afterward.",
+    blogTitles: [
+      "DIY Bathroom Upgrades With Common Tools and a Clear Order",
+      "Practical Bathroom DIY Projects for One Weekend Win",
+      "Beginner Friendly Bathroom DIY Fixes That Actually Help"
+    ],
+    guideTitles: [
+      "DIY Bathroom Quick Win With Common Tools",
+      "One Hour Bathroom DIY Guide for Beginners",
+      "Weekend Bathroom Project Prep Guide for Better Results"
+    ]
+  },
+  ExtremeBudget: {
+    pain: "the bathroom needs help, but the budget is tight enough that every purchase matters",
+    budgetRange: "$5 to $40",
+    lowBudgetThreshold: "$15",
+    installNote: "Use reuse first swaps, thrifted pieces, and removable fixes before buying anything new.",
+    tools: "a measuring tape, small screwdriver, scissors, and a cleaning cloth",
+    blogTime: "30 to 75 minutes",
+    guideTime: "45 to 60 minutes",
+    tradeoff: "The lowest cost option can take longer to source, clean, or style well than a mid range fix.",
+    quickWin: "Clean the zone first and test one low cost change before stacking several cheap purchases.",
+    blogTitles: [
+      "Bathroom Fixes Under 40 Dollars That Still Feel Intentional",
+      "Extreme Budget Bathroom Changes That Make Daily Routines Easier",
+      "Low Cost Bathroom Upgrades for Small Spaces and Tight Budgets"
+    ],
+    guideTitles: [
+      "Bathroom Reset Under 40 Dollars and Under One Hour",
+      "Extreme Budget Bathroom Guide for Quick Wins",
+      "Low Cost Bathroom Fix You Can Finish Today"
+    ]
+  }
+};
+
 function noDashText(input: string): string {
   return input.replace(/[\u2013\u2014\-]/g, " ").replace(/\s{2,}/g, " ").trim();
 }
@@ -222,6 +422,23 @@ function isPublishableWorkflowStatus(value: string): boolean {
 function isPinSyncableWorkflowStatus(value: string): boolean {
   const status = workflowStatusFrom(value);
   return status === "approved" || status === "queued" || status === "posted" || status === "published";
+}
+
+function isReadyForManualPublish(params: {
+  title: string;
+  content: string;
+  qualityScore: string;
+  qualityChecks: string;
+}): boolean {
+  const title = params.title.trim();
+  const content = params.content.trim();
+  const qualityChecks = params.qualityChecks.trim();
+  const qualityScore = Number(params.qualityScore);
+  if (!title || !content) return false;
+  if (!Number.isFinite(qualityScore) || qualityScore < 80) return false;
+  if (/^BLOCK\b/m.test(qualityChecks)) return false;
+  if (/Awaiting pasted/i.test(qualityChecks)) return false;
+  return true;
 }
 
 function slugify(value: string, fallback: string): string {
@@ -354,23 +571,68 @@ function defaultPinCta(destination: string, area: CommandCenterArea): string {
   return "Open this plan now and start your next bathroom win.";
 }
 
-function blogDraftContent(area: CommandCenterArea): string {
-  const intro = `If your ${areaPhrase(area)} setup feels frustrating, this guide gives you a practical path you can follow right away.`;
-  const body =
-    "Start by choosing one problem that slows your daily routine. Map the exact constraint, then apply one focused improvement. Keep the scope small so you can finish and keep momentum.";
-  const steps =
-    "Use this sequence: identify one pain point, set a clear budget range, gather only needed tools, complete one anchor change, then run a seven day check for real impact.";
-  const close =
-    "This post is built for renters, practical DIY work, and budget first decisions that still look intentional.";
-  return noDashText(`${intro}\n\n${body}\n\n${steps}\n\n${close}`);
+function editorialProfileFor(area: CommandCenterArea): EditorialProfile {
+  return AREA_EDITORIAL_PROFILES[area];
 }
 
-function guideDraftContent(area: CommandCenterArea, blogId: string): string {
-  const intro = `This one hour ${areaPhrase(area)} guide is linked to ${blogId} and focuses on one clear improvement you can finish today.`;
-  const steps =
-    "Step one: gather materials in five minutes. Step two: prep the zone in ten minutes. Step three: complete one change in thirty minutes. Step four: cleanup and test in fifteen minutes.";
-  const close = "If this worked, return to the related blog for the full plan and the next best step.";
-  return noDashText(`${intro}\n\n${steps}\n\n${close}`);
+export function buildBlogDraftContent(area: CommandCenterArea): string {
+  const profile = editorialProfileFor(area);
+  return noDashText(
+    `# ${profile.blogTitles[0]}
+
+If your ${profile.pain}, you do not need a full remodel to make progress. Start with one change that saves time, creates less clutter, and makes the bathroom feel calmer during your daily routine.
+
+## What this post solves
+You are working with real constraints, not a blank check. This draft is meant for renters, small bathrooms, and budget first households that need a more functional setup without unnecessary risk.
+
+## Budget, install, and effort
+Budget range: ${profile.budgetRange}.
+Install note: ${profile.installNote}
+Time and tools: ${profile.blogTime}; ${profile.tools}.
+Tradeoff: ${profile.tradeoff}
+
+## Start with this order
+1. ${profile.quickWin}
+2. Clear one zone that causes the most friction and keep only daily use items there.
+3. Test the lowest risk option first so you can protect your deposit and avoid wasted spend.
+4. Add one style move only after the room feels easier to use and easier to clean.
+5. Check the setup after seven days and keep the version that reduces stress and supports a calmer routine.
+
+## Budget tiers
+1. Lowest spend: choose one improvement under ${profile.lowBudgetThreshold} that solves the main bottleneck first.
+2. Mid range: pair one functional fix with one visual fix so the bathroom feels intentional without adding clutter.
+3. Higher effort: only move to more permanent work if the durability gain is worth the extra install time.
+
+## Next step
+Use the matching guide in this area if you want a shorter 45 to 90 minute version. If you still need a broader bathroom reset path, continue with Start Here and keep any product purchases optional until the layout proves itself.`
+  );
+}
+
+export function buildGuideDraftContent(area: CommandCenterArea): string {
+  const profile = editorialProfileFor(area);
+  return noDashText(
+    `# ${profile.guideTitles[0]}
+
+Use this quick guide when you want one visible improvement without turning the whole bathroom upside down.
+
+## Quick brief
+Budget range: ${profile.budgetRange}.
+Install note: ${profile.installNote}
+Time and tools: ${profile.guideTime}; ${profile.tools}.
+Tradeoff: ${profile.tradeoff}
+
+## 45 to 90 minute plan
+1. Prep in 10 minutes: ${profile.quickWin}
+2. Main change in 20 to 45 minutes: apply one reversible fix that improves daily flow and creates less clutter.
+3. Reset in 10 minutes: put back only what you use every day so the room stays more functional.
+4. Test in 5 minutes: make sure the change feels easier to maintain, easier to clean, and calmer to look at.
+
+## Stop here if
+The space already feels more useful, you saved time during the next routine, and the fix stays renter safe enough for your current setup. If not, adjust the layout before buying anything else.
+
+## Next step
+If this quick win helps, move to the related blog for the broader order of operations and keep the next purchase optional until the result holds up for a full week.`
+  );
 }
 
 function emailDraftContent(area: CommandCenterArea, blogId: string): string {
@@ -382,29 +644,114 @@ function emailDraftContent(area: CommandCenterArea, blogId: string): string {
 }
 
 function blogTitleFor(area: CommandCenterArea, index: number): string {
-  const templates: Record<CommandCenterArea, string[]> = {
-    Plants: [
-      "Bathroom Plants That Handle Low Light and Humidity",
-      "Simple Plant Choices for Humid Bathrooms",
-      "Plant Placement for Bathrooms That Stay Alive"
-    ],
-    Mirror: ["Mirror Upgrades That Improve Bathroom Flow", "Mirror Placement Fixes for Better Light", "Bathroom Mirror Changes That Feel Intentional"],
-    Storage: ["Storage Zones That Cut Bathroom Clutter", "Bathroom Storage Moves That Save Time", "Simple Storage Layouts for Busy Bathrooms"],
-    Lighting: ["Bathroom Lighting Fixes for Clearer Routines", "Lighting Upgrades That Improve Mirror Use", "Practical Bathroom Lighting for Daily Tasks"],
-    Shower: ["Shower Setup Fixes for Cleaner Daily Flow", "Shower Storage That Stays Organized", "Shower Upgrades You Can Finish This Week"],
-    Renter: [
-      "Renter Safe Bathroom Upgrades You Can Start Today",
-      "No Drill Bathroom Improvements for Renters",
-      "Deposit Safe Bathroom Changes That Still Look Good"
-    ],
-    DIY: ["DIY Bathroom Upgrades with Clear Steps", "Weekend DIY Bathroom Plan for Beginners", "Practical DIY Bathroom Changes That Last"],
-    ExtremeBudget: [
-      "Bathroom Upgrades Under 75 Dollars That Work",
-      "Low Cost Bathroom Fixes with Real Impact",
-      "Extreme Budget Bathroom Changes You Can Finish Today"
-    ]
+  const templates = editorialProfileFor(area).blogTitles;
+  return noDashText(templates[index % templates.length]);
+}
+
+function guideTitleFor(area: CommandCenterArea, index: number): string {
+  const templates = editorialProfileFor(area).guideTitles;
+  return noDashText(templates[index % templates.length]);
+}
+
+function fallbackCtaForArea(area: CommandCenterArea): { label: string; url: string; reason: string } {
+  if (area === "Plants") {
+    return {
+      label: "See the plant picks upgrade",
+      url: "/products/bathroom-plant-picks-upgrade",
+      reason: "Plants topics map cleanly to the plant upgrade product."
+    };
+  }
+
+  if (area === "Renter") {
+    return {
+      label: "Preview the renter blueprint",
+      url: "/products/renter-bathroom-upgrade-blueprint",
+      reason: "Renter topics map directly to the blueprint product."
+    };
+  }
+
+  return {
+    label: "Start here for more bathroom tips",
+    url: "/start-here",
+    reason: "No stronger product fit was selected, so use the newsletter path."
   };
-  return noDashText(templates[area][index % templates[area].length]);
+}
+
+function serializeKeywords(primaryKeyword: string, secondaryKeywords: string[]): string {
+  return [primaryKeyword, ...secondaryKeywords].map((item) => item.trim()).filter(Boolean).join(" | ");
+}
+
+function existingTitlesForArea<T extends { Content_Area?: string; Blog_Title?: string; Guide_Title?: string }>(
+  rows: T[],
+  area: CommandCenterArea,
+  excludeTitle = ""
+): string[] {
+  return rows
+    .filter((row) => areaFromValue(String(row.Content_Area ?? "")) === area)
+    .map((row) => String(row.Blog_Title ?? row.Guide_Title ?? "").trim())
+    .filter((title) => Boolean(title) && title !== excludeTitle);
+}
+
+function existingKeywordsForArea<T extends { Content_Area?: string; Blog_Keywords?: string; Guide_Keywords?: string }>(
+  rows: T[],
+  area: CommandCenterArea
+): string[] {
+  return rows
+    .filter((row) => areaFromValue(String(row.Content_Area ?? "")) === area)
+    .map((row) => String(row.Blog_Keywords ?? row.Guide_Keywords ?? "").trim())
+    .filter(Boolean);
+}
+
+function recentAnglesForArea<T extends { Content_Area?: string; Blog_Title?: string; Guide_Title?: string }>(rows: T[], area: CommandCenterArea): string[] {
+  return rows
+    .filter((row) => areaFromValue(String(row.Content_Area ?? "")) === area)
+    .slice(-10)
+    .map((row) => String(row.Blog_Title ?? row.Guide_Title ?? "").trim())
+    .filter(Boolean);
+}
+
+function sanitizeVisibleMarkdownSegment(segment: string): string {
+  return segment
+    .replace(/(^|\n)-\s+/g, "$1• ")
+    .replace(/[\u2010-\u2015-]/g, " ")
+    .replace(/\s{2,}/g, " ");
+}
+
+function sanitizeMarkdownForDisplay(markdown: string): string {
+  const parts = markdown.split(/(\[[^\]]+\]\([^)]+\))/g);
+  return parts
+    .map((part) => {
+      const match = /^\[([^\]]+)\]\(([^)]+)\)$/.exec(part);
+      if (!match) return sanitizeVisibleMarkdownSegment(part);
+      const [, label, url] = match;
+      return `[${sanitizeVisibleMarkdownSegment(label).trim()}](${url.trim()})`;
+    })
+    .join("")
+    .replace(/\r/g, "")
+    .replace(/[ \t]+\n/g, "\n")
+    .trim();
+}
+
+function applySoftCta(content: string, label: string, url: string): string {
+  const linked = `[${sanitizeVisibleMarkdownSegment(label).trim()}](${url})`;
+  const closing = `If you want the next step, ${linked}.`;
+  if (content.includes(`](${url})`)) return content;
+  if (/^## Next step\b/m.test(content)) {
+    return content.replace(/^## Next step[\s\S]*$/m, `## Next step\n${closing}`).trim();
+  }
+  return `${content.trim()}\n\n## Next step\n${closing}`;
+}
+
+function fallbackBlogContent(area: CommandCenterArea, ctaLabel: string, ctaUrl: string): string {
+  const base = buildBlogDraftContent(area);
+  const bulletSection = `\n\n## Keep these checks in mind\n• Stay within a budget that feels realistic for this month.\n• Choose the lowest risk install path first.\n• Keep the room easier to clean after the change.\n• Stop when the routine feels calmer and more functional.`;
+  return applySoftCta(`${base}${bulletSection}`, ctaLabel, ctaUrl);
+}
+
+function fallbackGuideContent(area: CommandCenterArea, ctaLabel: string, ctaUrl: string): string {
+  const base = buildGuideDraftContent(area);
+  const bulletSection = `\n\n## Quick checks\n• Keep the setup renter safe.\n• Use the smallest useful budget first.\n• Make sure the change saves time or reduces clutter.`;
+  return applySoftCta(`${base}${bulletSection}`, ctaLabel, ctaUrl);
 }
 
 function keywordsFor(area: CommandCenterArea): string {
@@ -423,6 +770,200 @@ function emailSubjectFor(area: CommandCenterArea, index: number): string {
     ExtremeBudget: ["Bathroom upgrades under 75 dollars", "Extreme budget bathroom plan for this week", "Low cost bathroom wins you can start now"]
   };
   return noDashText(choices[area][index % choices[area].length]);
+}
+
+async function generateBlogDraftForRow(row: BlogEvergreenRow, blogs: BlogEvergreenRow[]): Promise<BlogEvergreenRow> {
+  const area = areaFromValue(String(row.Content_Area));
+  const ctaFallback = fallbackCtaForArea(area);
+  const visibleTitles = existingTitlesForArea(blogs, area, row.Blog_Title);
+  const visibleKeywords = existingKeywordsForArea(blogs, area);
+  const recentAngles = recentAnglesForArea(blogs, area);
+  const finalTitle = sanitizeVisibleMarkdownSegment(row.Blog_Title || blogTitleFor(area, visibleTitles.length)).trim();
+  const postType = "topic_based" as const;
+  const topicAngle = finalTitle;
+  const targetReader = "Budget first renter or small space household";
+  const primaryKeyword = AREA_KEYWORDS[area][0];
+  const secondaryKeywords = AREA_KEYWORDS[area].slice(1, 4);
+  const mainConstraint = editorialProfileFor(area).pain;
+  const desiredOutcome = "The reader should be able to act on the advice today.";
+  const currentContent = String(row.Blog_Content ?? "").trim();
+  const finalContent = currentContent ? sanitizeMarkdownForDisplay(currentContent) : "";
+  const quality = finalContent
+    ? summarizeContentQuality({
+        id: row.Blog_ID,
+        kind: "blog",
+        title: finalTitle,
+        content: finalContent,
+        ctaUrl: ctaFallback.url,
+        existingTitles: visibleTitles,
+        allowedCtaUrls: allowedCtaUrls(area)
+      })
+    : null;
+  const promptPack = buildBlogPromptPack({
+    area,
+    title: finalTitle,
+    topicAngle,
+    postType,
+    targetReader,
+    primaryKeyword,
+    secondaryKeywords,
+    mainConstraint,
+    desiredOutcome,
+    ctaUrl: ctaFallback.url,
+    ctaLabel: ctaFallback.label,
+    existingTitles: visibleTitles,
+    existingKeywords: visibleKeywords,
+    recentAngles
+  });
+
+  return {
+    ...row,
+    Blog_Title: finalTitle,
+    Blog_Keywords: serializeKeywords(
+      sanitizeVisibleMarkdownSegment(primaryKeyword).trim(),
+      secondaryKeywords.map((item) => sanitizeVisibleMarkdownSegment(item).trim())
+    ),
+    Blog_Content: finalContent,
+    Writer_Brief: `${formatWriterBrief({
+      area,
+      topicAngle: sanitizeVisibleMarkdownSegment(topicAngle).trim(),
+      postType,
+      targetReader: sanitizeVisibleMarkdownSegment(targetReader).trim(),
+      primaryKeyword: sanitizeVisibleMarkdownSegment(primaryKeyword).trim(),
+      secondaryKeywords: secondaryKeywords.map((item) => sanitizeVisibleMarkdownSegment(item).trim()),
+      mainConstraint: sanitizeVisibleMarkdownSegment(mainConstraint).trim(),
+      desiredOutcome: sanitizeVisibleMarkdownSegment(desiredOutcome).trim(),
+      ctaUrl: ctaFallback.url,
+      ctaLabel: sanitizeVisibleMarkdownSegment(ctaFallback.label).trim()
+    })}\n\nPrompt pack:\n${promptPack}`,
+    CTA_Target: ctaFallback.url,
+    Quality_Score: quality ? String(quality.score) : "",
+    Quality_Checks: quality
+      ? quality.notes
+      : `Awaiting pasted draft.\nPreferred CTA target: ${ctaFallback.url}\nNext step: paste the ChatGPT output into Blog_Content, then run Refresh blog QC.`
+  };
+}
+
+async function generateGuideDraftForRow(row: GuideEvergreenRow, guides: GuideEvergreenRow[], blogs: BlogEvergreenRow[]): Promise<GuideEvergreenRow> {
+  const area = areaFromValue(String(row.Content_Area));
+  const ctaFallback = fallbackCtaForArea(area);
+  const visibleTitles = existingTitlesForArea(guides, area, row.Guide_Title);
+  const visibleKeywords = existingKeywordsForArea(guides, area);
+  const parentBlog = blogs.find((blog) => blog.Blog_ID === row.Blog_ID);
+  const finalTitle = sanitizeVisibleMarkdownSegment(row.Guide_Title || guideTitleFor(area, visibleTitles.length)).trim();
+  const postType = "task_based" as const;
+  const topicAngle = finalTitle;
+  const targetReader = "Budget first renter or small space household";
+  const primaryKeyword = AREA_KEYWORDS[area][0];
+  const secondaryKeywords = AREA_KEYWORDS[area].slice(1, 4);
+  const mainConstraint = editorialProfileFor(area).pain;
+  const desiredOutcome = "The reader should finish one useful quick win in one sitting.";
+  const currentContent = String(row.Guide_Content ?? "").trim();
+  const finalContent = currentContent ? sanitizeMarkdownForDisplay(currentContent) : "";
+  const quality = finalContent
+    ? summarizeContentQuality({
+        id: row.Guide_ID,
+        kind: "guide",
+        title: finalTitle,
+        content: finalContent,
+        ctaUrl: ctaFallback.url,
+        existingTitles: visibleTitles,
+        allowedCtaUrls: allowedCtaUrls(area)
+      })
+    : null;
+  const promptPack = buildGuidePromptPack({
+    area,
+    title: finalTitle,
+    topicAngle,
+    postType,
+    targetReader,
+    primaryKeyword,
+    secondaryKeywords,
+    mainConstraint,
+    desiredOutcome,
+    ctaUrl: ctaFallback.url,
+    ctaLabel: ctaFallback.label,
+    existingTitles: visibleTitles,
+    existingKeywords: visibleKeywords,
+    linkedBlogTitle: parentBlog?.Blog_Title,
+    linkedBlogUrl: parentBlog?.Blog_URL || (parentBlog ? destinationPathForBlog(parentBlog) : ""),
+    linkedBlogSummary: parentBlog?.Blog_Content?.slice(0, 240)
+  });
+
+  return {
+    ...row,
+    Guide_Title: finalTitle,
+    Guide_Keywords: serializeKeywords(
+      sanitizeVisibleMarkdownSegment(primaryKeyword).trim(),
+      secondaryKeywords.map((item) => sanitizeVisibleMarkdownSegment(item).trim())
+    ),
+    Guide_Content: finalContent,
+    Writer_Brief: `${formatWriterBrief({
+      area,
+      topicAngle: sanitizeVisibleMarkdownSegment(topicAngle).trim(),
+      postType,
+      targetReader: sanitizeVisibleMarkdownSegment(targetReader).trim(),
+      primaryKeyword: sanitizeVisibleMarkdownSegment(primaryKeyword).trim(),
+      secondaryKeywords: secondaryKeywords.map((item) => sanitizeVisibleMarkdownSegment(item).trim()),
+      mainConstraint: sanitizeVisibleMarkdownSegment(mainConstraint).trim(),
+      desiredOutcome: sanitizeVisibleMarkdownSegment(desiredOutcome).trim(),
+      ctaUrl: ctaFallback.url,
+      ctaLabel: sanitizeVisibleMarkdownSegment(ctaFallback.label).trim()
+    })}\n\nPrompt pack:\n${promptPack}`,
+    CTA_Target: ctaFallback.url,
+    Quality_Score: quality ? String(quality.score) : "",
+    Quality_Checks: quality
+      ? quality.notes
+      : `Awaiting pasted guide.\nPreferred CTA target: ${ctaFallback.url}\nNext step: paste the ChatGPT output into Guide_Content, then run Refresh guide QC.`
+  };
+}
+
+export async function refreshBlogQualityChecks(): Promise<{ updated: number; belowThreshold: number }> {
+  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
+  let belowThreshold = 0;
+
+  for (const row of blogs) {
+    const area = areaFromValue(String(row.Content_Area));
+    const quality = summarizeContentQuality({
+      id: row.Blog_ID,
+      kind: "blog",
+      title: String(row.Blog_Title ?? ""),
+      content: String(row.Blog_Content ?? ""),
+      ctaUrl: String(row.CTA_Target ?? fallbackCtaForArea(area).url),
+      existingTitles: existingTitlesForArea(blogs, area, row.Blog_Title),
+      allowedCtaUrls: allowedCtaUrls(area)
+    });
+    row.Quality_Score = String(quality.score);
+    row.Quality_Checks = quality.notes;
+    if (quality.score < 80 || quality.blockingIssues.length > 0) belowThreshold += 1;
+  }
+
+  await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, blogs);
+  return { updated: blogs.length, belowThreshold };
+}
+
+export async function refreshGuideQualityChecks(): Promise<{ updated: number; belowThreshold: number }> {
+  const guides = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
+  let belowThreshold = 0;
+
+  for (const row of guides) {
+    const area = areaFromValue(String(row.Content_Area));
+    const quality = summarizeContentQuality({
+      id: row.Guide_ID,
+      kind: "guide",
+      title: String(row.Guide_Title ?? ""),
+      content: String(row.Guide_Content ?? ""),
+      ctaUrl: String(row.CTA_Target ?? fallbackCtaForArea(area).url),
+      existingTitles: existingTitlesForArea(guides, area, row.Guide_Title),
+      allowedCtaUrls: allowedCtaUrls(area)
+    });
+    row.Quality_Score = String(quality.score);
+    row.Quality_Checks = quality.notes;
+    if (quality.score < 80 || quality.blockingIssues.length > 0) belowThreshold += 1;
+  }
+
+  await saveRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides, guides);
+  return { updated: guides.length, belowThreshold };
 }
 
 export async function loadEvergreenTab(key: TabKey): Promise<Record<string, unknown>[]> {
@@ -547,7 +1088,11 @@ export async function generateNewBlogs(areaCounts?: Partial<Record<string, unkno
         Blog_URL: "",
         Blog_Title: "",
         Blog_Keywords: "",
-        Blog_Content: blogDraftContent(area),
+        Blog_Content: "",
+        Writer_Brief: "",
+        CTA_Target: "",
+        Quality_Score: "",
+        Quality_Checks: "",
         Related_Pins: "",
         Published_To_Public_At: ""
       });
@@ -561,19 +1106,23 @@ export async function generateNewBlogs(areaCounts?: Partial<Record<string, unkno
 export async function generateBlogTitlesAndKeywords(): Promise<{ updated: number }> {
   const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
   let updated = 0;
+  const nextBlogs = [...blogs];
 
-  blogs.forEach((row, index) => {
+  for (let index = 0; index < nextBlogs.length; index += 1) {
+    const row = nextBlogs[index];
+    if (row.Blog_Title && row.Blog_Keywords && row.Writer_Brief && row.CTA_Target) continue;
+
     const area = areaFromValue(String(row.Content_Area));
-    if (!row.Blog_Title) {
-      row.Blog_Title = blogTitleFor(area, index);
-      updated += 1;
-    }
-    if (!row.Blog_Keywords) {
-      row.Blog_Keywords = keywordsFor(area);
-    }
-  });
+    const generated = await generateBlogDraftForRow(row, nextBlogs);
+    nextBlogs[index] = generated;
+    updated += 1;
 
-  await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, blogs);
+    if (!generated.Blog_Title) generated.Blog_Title = blogTitleFor(area, index);
+    if (!generated.Blog_Keywords) generated.Blog_Keywords = keywordsFor(area);
+    if (!generated.CTA_Target) generated.CTA_Target = fallbackCtaForArea(area).url;
+  }
+
+  await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, nextBlogs);
   return { updated };
 }
 
@@ -619,7 +1168,11 @@ export async function generateNewGuides(areaCounts?: Partial<Record<string, unkn
         Guide_URL: "",
         Guide_Title: "",
         Guide_Keywords: "",
-        Guide_Content: guideDraftContent(area, linkedBlogId || "BLOG_0000"),
+        Guide_Content: "",
+        Writer_Brief: "",
+        CTA_Target: "",
+        Quality_Score: "",
+        Quality_Checks: "",
         Related_Pins: "",
         Published_To_Public_At: ""
       });
@@ -632,25 +1185,31 @@ export async function generateNewGuides(areaCounts?: Partial<Record<string, unkn
 
 export async function generateGuideTitlesAndKeywords(): Promise<{ updated: number }> {
   const guides = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
+  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
   let updated = 0;
+  const nextGuides = [...guides];
 
-  guides.forEach((row, index) => {
+  for (let index = 0; index < nextGuides.length; index += 1) {
+    const row = nextGuides[index];
     const area = areaFromValue(String(row.Content_Area));
-    if (!row.Guide_Title) {
-      row.Guide_Title = noDashText(`${area} quick guide you can finish in under one hour`);
-      updated += 1;
-    }
-    if (!row.Guide_Keywords) row.Guide_Keywords = keywordsFor(area);
-    if (!row.Guide_Content) row.Guide_Content = guideDraftContent(area, row.Blog_ID || "BLOG_0000");
-    if (!row.Guide_ID) row.Guide_ID = nextSequentialId("GUIDE_", 4, guides.map((x) => x.Guide_ID));
+    if (!row.Guide_ID) row.Guide_ID = nextSequentialId("GUIDE_", 4, nextGuides.map((x) => x.Guide_ID));
     if (!row.Guide_Publish_Date || !row.Guide_Publish_Time) {
       const { date, time } = toEasternDateTime(new Date(Date.now() + index * 60 * 60 * 1000));
       row.Guide_Publish_Date = date;
       row.Guide_Publish_Time = time;
     }
-  });
+    if (row.Guide_Title && row.Guide_Keywords && row.Writer_Brief && row.CTA_Target) continue;
 
-  await saveRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides, guides);
+    const generated = await generateGuideDraftForRow(row, nextGuides, blogs);
+    nextGuides[index] = generated;
+    updated += 1;
+
+    if (!generated.Guide_Title) generated.Guide_Title = guideTitleFor(area, index);
+    if (!generated.Guide_Keywords) generated.Guide_Keywords = keywordsFor(area);
+    if (!generated.CTA_Target) generated.CTA_Target = fallbackCtaForArea(area).url;
+  }
+
+  await saveRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides, nextGuides);
   return { updated };
 }
 
@@ -760,10 +1319,23 @@ export async function publishApprovedBlogsToPublic(): Promise<Record<string, unk
   let published = 0;
   let updated = 0;
   let skipped = 0;
+  let blocked = 0;
 
   for (const row of blogsEvergreen) {
     if (!isPublishableWorkflowStatus(String(row.Workflow_Status ?? ""))) {
       skipped += 1;
+      continue;
+    }
+
+    if (
+      !isReadyForManualPublish({
+        title: String(row.Blog_Title ?? ""),
+        content: String(row.Blog_Content ?? ""),
+        qualityScore: String(row.Quality_Score ?? ""),
+        qualityChecks: String(row.Quality_Checks ?? "")
+      })
+    ) {
+      blocked += 1;
       continue;
     }
 
@@ -777,7 +1349,13 @@ export async function publishApprovedBlogsToPublic(): Promise<Record<string, unk
   }
 
   await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, blogsEvergreen);
-  return { published, updated, skipped, totalPublicBlogs: blogsEvergreen.filter((blog) => workflowStatusFrom(String(blog.Workflow_Status)) === "published").length };
+  return {
+    published,
+    updated,
+    skipped,
+    blocked,
+    totalPublicBlogs: blogsEvergreen.filter((blog) => workflowStatusFrom(String(blog.Workflow_Status)) === "published").length
+  };
 }
 
 export async function publishApprovedGuidesToPublic(): Promise<Record<string, unknown>> {
@@ -786,10 +1364,23 @@ export async function publishApprovedGuidesToPublic(): Promise<Record<string, un
   let published = 0;
   let updated = 0;
   let skipped = 0;
+  let blocked = 0;
 
   for (const row of guidesEvergreen) {
     if (!isPublishableWorkflowStatus(String(row.Workflow_Status ?? ""))) {
       skipped += 1;
+      continue;
+    }
+
+    if (
+      !isReadyForManualPublish({
+        title: String(row.Guide_Title ?? ""),
+        content: String(row.Guide_Content ?? ""),
+        qualityScore: String(row.Quality_Score ?? ""),
+        qualityChecks: String(row.Quality_Checks ?? "")
+      })
+    ) {
+      blocked += 1;
       continue;
     }
 
@@ -807,6 +1398,7 @@ export async function publishApprovedGuidesToPublic(): Promise<Record<string, un
     published,
     updated,
     skipped,
+    blocked,
     totalPublicGuides: guidesEvergreen.filter((guide) => workflowStatusFrom(String(guide.Workflow_Status)) === "published").length
   };
 }
@@ -1044,6 +1636,8 @@ export async function runCommandCenterAction(action: string, payload?: Record<st
       return generateNewBlogs(payload?.areaCounts as Partial<Record<string, unknown>>);
     case "generate_blog_titles_keywords":
       return generateBlogTitlesAndKeywords();
+    case "refresh_blog_quality_checks":
+      return refreshBlogQualityChecks();
     case "update_blog_related_pins":
       return updateBlogRelatedPins();
     case "publish_approved_blogs":
@@ -1052,6 +1646,8 @@ export async function runCommandCenterAction(action: string, payload?: Record<st
       return generateNewGuides(payload?.areaCounts as Partial<Record<string, unknown>>);
     case "generate_guide_titles_keywords":
       return generateGuideTitlesAndKeywords();
+    case "refresh_guide_quality_checks":
+      return refreshGuideQualityChecks();
     case "update_guide_related_pins":
       return updateGuideRelatedPins();
     case "publish_approved_guides":
