@@ -23,21 +23,12 @@ export function AdminFrame({ children }: { children: ReactNode }) {
             <span className="admin-brand-sub">Command Center</span>
           </span>
         </Link>
-        <div className="admin-sidebar-note">
-          <p className="small">Private workspace</p>
-          <p>Assisted mode stays on. Human approval is still required before publish or export.</p>
-        </div>
         <nav className="admin-nav" aria-label="Admin navigation">
           {NAV_ITEMS.map((item) => (
             <AdminNavLink key={item.href} href={item.href} label={item.label} />
           ))}
         </nav>
         <div className="admin-sidebar-foot">
-          <div className="admin-sidebar-chip-row">
-            <span className="admin-chip">Manual visuals</span>
-            <span className="admin-chip">Evergreen ops</span>
-          </div>
-          <p className="small">Use Save Changes after manual edits. Publish and export remain intentional operator actions.</p>
           <div className="admin-sidebar-actions">
             <Link href="/" className="btn btn-ghost">
               Open public site

@@ -17,11 +17,6 @@ export default async function AdminPage() {
           Manage evergreen pins, blogs, guides, emails, customers, and products from one workspace without reviving the
           old artifact-heavy operator flow.
         </p>
-        <div className="admin-meta-row">
-          <span className="admin-meta-pill">Manual visuals stay external</span>
-          <span className="admin-meta-pill">Human approval before publish</span>
-          <span className="admin-meta-pill">8-area model active</span>
-        </div>
       </section>
 
       <section className="admin-kpi-grid" aria-label="Core KPIs">
@@ -58,22 +53,40 @@ export default async function AdminPage() {
 
       <section className="admin-panel">
         <h2>Quick Actions</h2>
-        <div className="admin-actions-inline">
-          <OpsButton action="publish_approved_blogs" label="Publish approved blogs" />
-          <OpsButton action="publish_approved_guides" label="Publish approved guides" variant="ghost" />
-          <OpsButton action="prepare_approved_pins_for_export" label="Prepare approved pins" variant="ghost" />
+        <div className="admin-quick-grid">
+          <article className="admin-quick-card">
+            <h3>Publish blogs</h3>
+            <p className="small">Push approved blog rows live after final review.</p>
+            <OpsButton action="publish_approved_blogs" label="Publish approved blogs" />
+          </article>
+          <article className="admin-quick-card">
+            <h3>Publish guides</h3>
+            <p className="small">Ship approved guide rows to the live guides route.</p>
+            <OpsButton action="publish_approved_guides" label="Publish approved guides" variant="ghost" />
+          </article>
+          <article className="admin-quick-card">
+            <h3>Prepare pins</h3>
+            <p className="small">Finalize approved pins for manual CSV export and posting.</p>
+            <OpsButton action="prepare_approved_pins_for_export" label="Prepare approved pins" variant="ghost" />
+          </article>
+          <article className="admin-quick-card">
+            <h3>Refresh customers</h3>
+            <p className="small">Pull new signups into the customers table before audience review.</p>
+            <OpsButton action="refresh_customers" label="Refresh customers from leads" />
+          </article>
+          <article className="admin-quick-card">
+            <h3>Update product stats</h3>
+            <p className="small">Refresh product links, sales, and revenue fields in one pass.</p>
+            <OpsButton action="update_product_stats" label="Update product stats" />
+          </article>
+          <article className="admin-quick-card admin-quick-card-link">
+            <h3>Review pack</h3>
+            <p className="small">Open the review pack when you want one more content quality pass before posting.</p>
+            <Link href="/review_pack.html" className="btn btn-ghost">
+              Open review pack
+            </Link>
+          </article>
         </div>
-        <div className="admin-actions-inline">
-          <OpsButton action="refresh_customers" label="Refresh customers from leads" />
-          <OpsButton action="update_product_stats" label="Update product stats" />
-        </div>
-        <p className="small">
-          Operator path: approve blogs, publish blogs, approve guides, publish guides, approve pins, prepare export,
-          then use the manual visual and posting workflow.
-        </p>
-        <p className="small">
-          Need to validate content before posting? Open <Link href="/review_pack.html">review_pack.html</Link>.
-        </p>
       </section>
     </AdminFrame>
   );

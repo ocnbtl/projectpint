@@ -2,6 +2,13 @@
 
 These prompts are the source of truth for the command center prompt pack workflow when blog and guide rows are prepared for manual ChatGPT drafting.
 
+Current live workflow:
+- Generate the row in the command center.
+- Enter the exact topic in `Blog_Title` or `Guide_Title`.
+- Add keywords manually only if you want them saved in the row.
+- Let `Writer_Brief` refresh from the saved title, then paste that prompt into ChatGPT.
+- Paste the finished Markdown back into `Blog_Content` or `Guide_Content`.
+
 The rules below follow the locked system direction:
 - 8 content areas only
 - practical renter aware tone
@@ -84,8 +91,8 @@ Write one Diyesu Decor blog post using the system instructions.
 Content area: {{AREA}}
 Requested topic or angle: {{TOPIC_OR_ANGLE}}
 Post type: {{TASK_BASED or TOPIC_BASED}}
-Primary keyword: {{PRIMARY_KEYWORD}}
-Secondary keywords: {{SECONDARY_KEYWORDS}}
+Primary keyword: {{PRIMARY_KEYWORD or leave blank}}
+Secondary keywords: {{SECONDARY_KEYWORDS or leave blank}}
 Target reader: {{TARGET_READER}}
 Main constraint to solve: {{MAIN_CONSTRAINT}}
 Desired outcome: {{DESIRED_OUTCOME}}
@@ -163,7 +170,7 @@ Parent blog title: {{PARENT_BLOG_TITLE}}
 Parent blog URL: {{PARENT_BLOG_URL}}
 Content area: {{AREA}}
 Guide topic: {{GUIDE_TOPIC}}
-Primary keyword: {{PRIMARY_KEYWORD}}
+Primary keyword: {{PRIMARY_KEYWORD or leave blank}}
 Target reader: {{TARGET_READER}}
 Main constraint to solve: {{MAIN_CONSTRAINT}}
 Desired outcome: {{DESIRED_OUTCOME}}

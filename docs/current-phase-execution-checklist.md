@@ -24,14 +24,22 @@ Stabilize and operationalize the new admin command-center workflow for pins, blo
 ## B. Command-Center Validation
 1. `/admin/blogs`
 - Generate blogs by area.
-- Generate blog titles and keywords.
+- Add a manual title in `Blog_Title`.
+- Add manual keywords in `Blog_Keywords` if desired.
+- Confirm `Writer_Brief` refreshes from the saved title.
+- Paste the ChatGPT draft into `Blog_Content`.
+- Run blog QC.
 - Set `Workflow_Status=approved` on ready rows.
 - Publish approved blogs.
 - Save and verify rows.
 
 2. `/admin/guides`
 - Generate guides by area.
-- Generate guide titles and keywords.
+- Add a manual title in `Guide_Title`.
+- Add manual keywords in `Guide_Keywords` if desired.
+- Confirm `Writer_Brief` refreshes from the saved title.
+- Paste the ChatGPT draft into `Guide_Content`.
+- Run guide QC.
 - Update related pins.
 - Set `Workflow_Status=approved` on ready rows.
 - Publish approved guides.

@@ -1,5 +1,5 @@
 import { AdminFrame } from "../../../components/admin/AdminFrame";
-import { DataSheetEditor } from "../../../components/admin/DataSheetEditor";
+import { AdminSheetWorkspace } from "../../../components/admin/AdminSheetWorkspace";
 import { OpsButton } from "../../../components/admin/OpsButton";
 import { COMMAND_CENTER_COLUMNS } from "../../../lib/command-center-config";
 import { loadEvergreenTab } from "../../../lib/command-center";
@@ -11,29 +11,24 @@ export default async function AdminProductsPage() {
 
   return (
     <AdminFrame>
-      <section className="admin-panel admin-panel-hero">
-        <p className="eyebrow admin-eyebrow">Products</p>
-        <h1>Products</h1>
-        <p>
-          Track product launch date, links, sales, revenue, and content associations. Use update stats to refresh sales
-          and linked content IDs.
-        </p>
-        <div className="admin-meta-row">
-          <span className="admin-meta-pill">Revenue tracking</span>
-          <span className="admin-meta-pill">Blog + guide linkage</span>
-        </div>
-        <div className="admin-actions-inline">
-          <OpsButton action="update_product_stats" label="Update stats" />
-        </div>
-      </section>
-
-      <DataSheetEditor
+      <AdminSheetWorkspace
         tab="products"
-        title="Products Evergreen"
+        heroTitle="Products"
+        heroDescription={
+          <p>
+            Track product launch date, links, sales, revenue, and content associations. Use update stats to refresh
+            sales and linked content IDs.
+          </p>
+        }
+        editorTitle="Products Evergreen"
         columns={[...COMMAND_CENTER_COLUMNS.products]}
         initialRows={rows}
         dateColumn="Product_Date"
-      />
+      >
+        <div className="admin-ops-grid">
+          <OpsButton action="update_product_stats" label="Update stats" />
+        </div>
+      </AdminSheetWorkspace>
     </AdminFrame>
   );
 }

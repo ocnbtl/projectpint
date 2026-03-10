@@ -115,15 +115,34 @@ export interface WriterBriefInput {
   ctaLabel: string;
 }
 
+function displayOrPlaceholder(value: string, placeholder: string): string {
+  const trimmed = value.trim();
+  return trimmed || placeholder;
+}
+
+function displaySecondaryKeywords(keywords: string[]): string {
+  const filtered = keywords.map((keyword) => keyword.trim()).filter(Boolean);
+  return filtered.length > 0 ? filtered.join(", ") : "Add these manually if you want extra SEO targeting.";
+}
+
+function displayWorkingTitle(title: string, kind: "blog" | "guide"): string {
+  return displayOrPlaceholder(
+    title,
+    kind === "blog"
+      ? 'Add your exact blog title in the row first. Example: "Top 10 shades of blue for your shower."'
+      : 'Add your exact guide title in the row first. Example: "Quick shower color checks before you buy tile."'
+  );
+}
+
 export function formatWriterBrief(input: WriterBriefInput): string {
   return `Area: ${contentAreaLabel(input.area)}
-Topic angle: ${input.topicAngle}
+Topic angle: ${displayOrPlaceholder(input.topicAngle, "Waiting for your manual title or topic focus.")}
 Post type: ${input.postType}
-Target reader: ${input.targetReader}
-Primary keyword: ${input.primaryKeyword}
-Secondary keywords: ${input.secondaryKeywords.join(", ")}
-Main constraint: ${input.mainConstraint}
-Desired outcome: ${input.desiredOutcome}
+Target reader: ${displayOrPlaceholder(input.targetReader, "Budget first renter or small space household")}
+Primary keyword: ${displayOrPlaceholder(input.primaryKeyword, "Add this manually if you want a specific SEO target.")}
+Secondary keywords: ${displaySecondaryKeywords(input.secondaryKeywords)}
+Main constraint: ${displayOrPlaceholder(input.mainConstraint, "Keep the advice practical, renter aware, and easy to act on today.")}
+Desired outcome: ${displayOrPlaceholder(input.desiredOutcome, "The reader should finish with a clear next step today.")}
 CTA target: ${input.ctaLabel} (${input.ctaUrl})`;
 }
 
@@ -150,14 +169,14 @@ ${BLOG_WRITER_SYSTEM_PROMPT}
 
 Use this exact brief for this run:
 Content area: ${contentAreaLabel(input.area)}
-Working title: ${input.title}
-Specific topic angle: ${input.topicAngle}
+Working title: ${displayWorkingTitle(input.title, "blog")}
+Specific topic angle: ${displayOrPlaceholder(input.topicAngle, "Use the exact row title as the topic focus once you add it.")}
 Post type: ${input.postType}
-Target reader: ${input.targetReader}
-Primary keyword: ${input.primaryKeyword}
-Secondary keywords: ${input.secondaryKeywords.join(", ")}
-Main constraint to solve: ${input.mainConstraint}
-Desired outcome: ${input.desiredOutcome}
+Target reader: ${displayOrPlaceholder(input.targetReader, "Budget first renter or small space household")}
+Primary keyword: ${displayOrPlaceholder(input.primaryKeyword, "Optional manual keyword. If none is set, keep the article naturally focused on the title topic.")}
+Secondary keywords: ${displaySecondaryKeywords(input.secondaryKeywords)}
+Main constraint to solve: ${displayOrPlaceholder(input.mainConstraint, "Start with the reader problem and keep the advice useful in a real bathroom.")}
+Desired outcome: ${displayOrPlaceholder(input.desiredOutcome, "The reader should understand exactly what to do next today.")}
 
 Existing titles to avoid:
 ${input.existingTitles.length > 0 ? input.existingTitles.join("\n") : "None provided"}
@@ -180,7 +199,7 @@ Return requirements:
 1. Return only the final blog post in Markdown.
 2. Do not return JSON.
 3. Do not return notes, explanations, or a checklist.
-4. Use the exact working title unless you must adjust it slightly to avoid duplication.
+4. If the working title still reads like a placeholder, stop and replace it with the exact row title before you draft.
 5. Keep visible prose free of dash characters.
 6. Use the bullet symbol • for bullet lists.
 7. End with one soft CTA only.`;
@@ -196,14 +215,14 @@ Content area: ${contentAreaLabel(input.area)}
 Parent blog title: ${input.linkedBlogTitle || "Use the linked blog row as parent context"}
 Parent blog URL: ${input.linkedBlogUrl || "Use the linked blog row URL if available"}
 Parent blog summary: ${input.linkedBlogSummary || "Narrow the parent blog into one quick win"}
-Working guide title: ${input.title}
-Specific guide angle: ${input.topicAngle}
+Working guide title: ${displayWorkingTitle(input.title, "guide")}
+Specific guide angle: ${displayOrPlaceholder(input.topicAngle, "Use the exact row title as the guide focus once you add it.")}
 Post type: ${input.postType}
-Target reader: ${input.targetReader}
-Primary keyword: ${input.primaryKeyword}
-Secondary keywords: ${input.secondaryKeywords.join(", ")}
-Main constraint to solve: ${input.mainConstraint}
-Desired outcome: ${input.desiredOutcome}
+Target reader: ${displayOrPlaceholder(input.targetReader, "Budget first renter or small space household")}
+Primary keyword: ${displayOrPlaceholder(input.primaryKeyword, "Optional manual keyword. If none is set, keep the guide naturally focused on the title topic.")}
+Secondary keywords: ${displaySecondaryKeywords(input.secondaryKeywords)}
+Main constraint to solve: ${displayOrPlaceholder(input.mainConstraint, "Keep the guide practical, narrow, and easy to finish in one sitting.")}
+Desired outcome: ${displayOrPlaceholder(input.desiredOutcome, "The reader should finish one useful action fast.")}
 
 Existing guide titles to avoid:
 ${input.existingTitles.length > 0 ? input.existingTitles.join("\n") : "None provided"}
@@ -223,7 +242,7 @@ Return requirements:
 1. Return only the final guide in Markdown.
 2. Do not return JSON.
 3. Do not return notes, explanations, or a checklist.
-4. Keep the guide under a 5 minute read.
+4. If the working guide title still reads like a placeholder, stop and replace it with the exact row title before you draft.
 5. Keep visible prose free of dash characters.
 6. Use the bullet symbol • for bullet lists.
 7. End with one soft CTA or a soft step back to the parent blog.`;

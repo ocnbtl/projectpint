@@ -38,6 +38,6 @@ export async function POST(request: Request, context: RouteContext) {
 
   const body = (await request.json()) as { rows?: Record<string, unknown>[] };
   const rows = Array.isArray(body.rows) ? body.rows : [];
-  await saveEvergreenTab(tab, rows);
-  return NextResponse.json({ ok: true, saved: rows.length });
+  const savedRows = await saveEvergreenTab(tab, rows);
+  return NextResponse.json({ ok: true, saved: savedRows.length, rows: savedRows });
 }

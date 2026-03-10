@@ -7,8 +7,7 @@ export default function HubIndexPage() {
     <SiteShell>
       <div className="section-stack">
         <section className="panel areas-intro">
-          <p className="eyebrow areas-eyebrow">Areas</p>
-          <h1>Choose the bathroom area you want to improve first.</h1>
+          <h1 className="areas-title">Choose the bathroom area you want to improve first.</h1>
           <p>
             Pick one area, start small, and finish a real upgrade this week. Every path is built for real homes, real
             routines, and practical budgets.
@@ -26,7 +25,6 @@ export default function HubIndexPage() {
         <section className="grid grid-3 areas-grid">
           {hubs.map((hub) => (
             <article key={hub.slug} className="card areas-card">
-              <p className="areas-pill">{hub.title} area</p>
               <h3>{hub.title}</h3>
               <p className="path-card-summary">{hub.description}</p>
               <p className="benefit-highlight">Win today: {hub.outcome}</p>

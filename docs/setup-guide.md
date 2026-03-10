@@ -52,18 +52,22 @@ Open:
 
 ## 8) First command-center run
 1. Go to `/admin/blogs` and generate new blogs by area.
-2. Run `Generate blog prompt packs` so the title, keywords, CTA target, and full copy and paste prompt pack are written into each row.
-3. Paste the ChatGPT output into `Blog_Content`.
-4. Run `Refresh blog QC`.
-5. Go to `/admin/guides` and generate new guides by area.
-6. Run `Generate guide prompt packs` so the title, keywords, CTA target, and full copy and paste prompt pack are written into each row.
-7. Paste the ChatGPT output into `Guide_Content`.
-8. Run `Refresh guide QC`.
-9. Use the table itself for edits and approval review.
-10. Go to `/admin/pins` and generate 25 new pins.
-11. Click `Generate overlay and CTA` for those pins.
-12. Go to `/admin/emails` and generate promotional emails.
-13. Generate email subjects.
+2. Type the exact blog topic into `Blog_Title`.
+3. Add `Blog_Keywords` manually if you want them stored in the row.
+4. Wait for autosave or run the prompt refresh action so `Writer_Brief` rebuilds around the current title.
+5. Paste the ChatGPT output into `Blog_Content`.
+6. Run `Refresh blog QC`.
+7. Go to `/admin/guides` and generate new guides by area.
+8. Type the exact guide topic into `Guide_Title`.
+9. Add `Guide_Keywords` manually if you want them stored in the row.
+10. Wait for autosave or run the prompt refresh action so `Writer_Brief` rebuilds around the current title.
+11. Paste the ChatGPT output into `Guide_Content`.
+12. Run `Refresh guide QC`.
+13. Use the table itself for edits and approval review.
+14. Go to `/admin/pins` and generate 25 new pins.
+15. Click `Generate overlay and CTA` for those pins.
+16. Go to `/admin/emails` and generate promotional emails.
+17. Generate email subjects.
 
 ## 9) Manual image workflow
 1. Copy `Media_Prompt` from each pin row.

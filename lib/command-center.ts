@@ -643,16 +643,6 @@ function emailDraftContent(area: CommandCenterArea, blogId: string): string {
   return noDashText(`${intro}\n\n${value}\n\n${close}`);
 }
 
-function blogTitleFor(area: CommandCenterArea, index: number): string {
-  const templates = editorialProfileFor(area).blogTitles;
-  return noDashText(templates[index % templates.length]);
-}
-
-function guideTitleFor(area: CommandCenterArea, index: number): string {
-  const templates = editorialProfileFor(area).guideTitles;
-  return noDashText(templates[index % templates.length]);
-}
-
 function fallbackCtaForArea(area: CommandCenterArea): { label: string; url: string; reason: string } {
   if (area === "Plants") {
     return {
@@ -677,8 +667,57 @@ function fallbackCtaForArea(area: CommandCenterArea): { label: string; url: stri
   };
 }
 
-function serializeKeywords(primaryKeyword: string, secondaryKeywords: string[]): string {
-  return [primaryKeyword, ...secondaryKeywords].map((item) => item.trim()).filter(Boolean).join(" | ");
+function ctaOptionForUrl(area: CommandCenterArea, value: string): { label: string; url: string; reason: string } {
+  const trimmed = value.trim();
+  if (!trimmed) return fallbackCtaForArea(area);
+  if (trimmed === "/products/bathroom-plant-picks-upgrade") {
+    return {
+      label: "See the plant picks upgrade",
+      url: trimmed,
+      reason: "Plants topics map cleanly to the plant upgrade product."
+    };
+  }
+  if (trimmed === "/products/renter-bathroom-upgrade-blueprint") {
+    return {
+      label: "Preview the renter blueprint",
+      url: trimmed,
+      reason: "Renter safe and broader bathroom planning topics fit the blueprint."
+    };
+  }
+  if (trimmed === "/lead-magnets/plant-picker") {
+    return {
+      label: "Get the free plant picker",
+      url: trimmed,
+      reason: "Plants content can softly close into the plant picker lead magnet."
+    };
+  }
+  if (trimmed === "/start-here") {
+    return {
+      label: "Start here for more bathroom tips",
+      url: trimmed,
+      reason: "General newsletter or path guidance is the clean fallback."
+    };
+  }
+  return fallbackCtaForArea(area);
+}
+
+function parseKeywordEntries(value: string): string[] {
+  return value
+    .split(/[|,\n;]/g)
+    .map((item) => sanitizeVisibleMarkdownSegment(item).trim())
+    .filter(Boolean);
+}
+
+function ensureRowId(rawValue: string, prefix: string, pad: number, usedIds: Set<string>): string {
+  const trimmed = rawValue.trim();
+  if (trimmed && !usedIds.has(trimmed)) {
+    usedIds.add(trimmed);
+    return trimmed;
+  }
+
+  const next = nextSequentialId(prefix, pad, Array.from(usedIds));
+  usedIds.add(next);
+  return next;
 }
 
 function existingTitlesForArea<T extends { Content_Area?: string; Blog_Title?: string; Guide_Title?: string }>(
@@ -754,8 +793,40 @@ function fallbackGuideContent(area: CommandCenterArea, ctaLabel: string, ctaUrl:
   return applySoftCta(`${base}${bulletSection}`, ctaLabel, ctaUrl);
 }
 
-function keywordsFor(area: CommandCenterArea): string {
-  return AREA_KEYWORDS[area].slice(0, 4).map((kw) => noDashText(kw)).join(" | ");
+function manualTopicPlaceholder(area: CommandCenterArea, kind: "blog" | "guide"): string {
+  const areaLabel = contentAreaLabel(area);
+  if (kind === "blog") {
+    return `Add your exact ${areaLabel} blog title in Blog_Title before you send this prompt to ChatGPT.`;
+  }
+  return `Add your exact ${areaLabel} guide title in Guide_Title before you send this prompt to ChatGPT.`;
+}
+
+function inferPostType(title: string, fallback: "task_based" | "topic_based"): "task_based" | "topic_based" {
+  const normalized = title.trim().toLowerCase();
+  if (!normalized) return fallback;
+  if (
+    /^(how to|steps|step by step|install|set up|setup|organize|build|paint|clean|fix|mount|hang|choose|place)\b/.test(normalized) ||
+    /\bwithout\b/.test(normalized)
+  ) {
+    return "task_based";
+  }
+  return "topic_based";
+}
+
+function writerKeywordPlan(rawKeywords: string): { primaryKeyword: string; secondaryKeywords: string[] } {
+  const parsed = parseKeywordEntries(rawKeywords);
+  return {
+    primaryKeyword: parsed[0] ?? "",
+    secondaryKeywords: parsed.slice(1, 4)
+  };
+}
+
+function pendingWriterChecks(kind: "blog" | "guide", title: string, ctaUrl: string): string {
+  const titleField = kind === "blog" ? "Blog_Title" : "Guide_Title";
+  const contentField = kind === "blog" ? "Blog_Content" : "Guide_Content";
+  const refreshLabel = kind === "blog" ? "Refresh blog QC" : "Refresh guide QC";
+  const waitingTitle = title.trim() ? "" : `Add your manual topic in ${titleField} and save to refresh the prompt.\n`;
+  return `${waitingTitle}Preferred CTA target: ${ctaUrl}\nNext step: paste the ChatGPT output into ${contentField}, then run ${refreshLabel}.`;
 }
 
 function emailSubjectFor(area: CommandCenterArea, index: number): string {
@@ -772,18 +843,17 @@ function emailSubjectFor(area: CommandCenterArea, index: number): string {
   return noDashText(choices[area][index % choices[area].length]);
 }
 
-async function generateBlogDraftForRow(row: BlogEvergreenRow, blogs: BlogEvergreenRow[]): Promise<BlogEvergreenRow> {
+export async function generateBlogDraftForRow(row: BlogEvergreenRow, blogs: BlogEvergreenRow[]): Promise<BlogEvergreenRow> {
   const area = areaFromValue(String(row.Content_Area));
-  const ctaFallback = fallbackCtaForArea(area);
+  const ctaFallback = ctaOptionForUrl(area, String(row.CTA_Target ?? ""));
   const visibleTitles = existingTitlesForArea(blogs, area, row.Blog_Title);
   const visibleKeywords = existingKeywordsForArea(blogs, area);
   const recentAngles = recentAnglesForArea(blogs, area);
-  const finalTitle = sanitizeVisibleMarkdownSegment(row.Blog_Title || blogTitleFor(area, visibleTitles.length)).trim();
-  const postType = "topic_based" as const;
-  const topicAngle = finalTitle;
+  const finalTitle = sanitizeVisibleMarkdownSegment(String(row.Blog_Title ?? "")).trim();
+  const postType = inferPostType(finalTitle, "topic_based");
+  const topicAngle = finalTitle || manualTopicPlaceholder(area, "blog");
   const targetReader = "Budget first renter or small space household";
-  const primaryKeyword = AREA_KEYWORDS[area][0];
-  const secondaryKeywords = AREA_KEYWORDS[area].slice(1, 4);
+  const { primaryKeyword, secondaryKeywords } = writerKeywordPlan(String(row.Blog_Keywords ?? ""));
   const mainConstraint = editorialProfileFor(area).pain;
   const desiredOutcome = "The reader should be able to act on the advice today.";
   const currentContent = String(row.Blog_Content ?? "").trim();
@@ -819,10 +889,7 @@ async function generateBlogDraftForRow(row: BlogEvergreenRow, blogs: BlogEvergre
   return {
     ...row,
     Blog_Title: finalTitle,
-    Blog_Keywords: serializeKeywords(
-      sanitizeVisibleMarkdownSegment(primaryKeyword).trim(),
-      secondaryKeywords.map((item) => sanitizeVisibleMarkdownSegment(item).trim())
-    ),
+    Blog_Keywords: sanitizeVisibleMarkdownSegment(String(row.Blog_Keywords ?? "")).trim(),
     Blog_Content: finalContent,
     Writer_Brief: `${formatWriterBrief({
       area,
@@ -840,22 +907,25 @@ async function generateBlogDraftForRow(row: BlogEvergreenRow, blogs: BlogEvergre
     Quality_Score: quality ? String(quality.score) : "",
     Quality_Checks: quality
       ? quality.notes
-      : `Awaiting pasted draft.\nPreferred CTA target: ${ctaFallback.url}\nNext step: paste the ChatGPT output into Blog_Content, then run Refresh blog QC.`
+      : pendingWriterChecks("blog", finalTitle, ctaFallback.url)
   };
 }
 
-async function generateGuideDraftForRow(row: GuideEvergreenRow, guides: GuideEvergreenRow[], blogs: BlogEvergreenRow[]): Promise<GuideEvergreenRow> {
+export async function generateGuideDraftForRow(
+  row: GuideEvergreenRow,
+  guides: GuideEvergreenRow[],
+  blogs: BlogEvergreenRow[]
+): Promise<GuideEvergreenRow> {
   const area = areaFromValue(String(row.Content_Area));
-  const ctaFallback = fallbackCtaForArea(area);
+  const ctaFallback = ctaOptionForUrl(area, String(row.CTA_Target ?? ""));
   const visibleTitles = existingTitlesForArea(guides, area, row.Guide_Title);
   const visibleKeywords = existingKeywordsForArea(guides, area);
   const parentBlog = blogs.find((blog) => blog.Blog_ID === row.Blog_ID);
-  const finalTitle = sanitizeVisibleMarkdownSegment(row.Guide_Title || guideTitleFor(area, visibleTitles.length)).trim();
-  const postType = "task_based" as const;
-  const topicAngle = finalTitle;
+  const finalTitle = sanitizeVisibleMarkdownSegment(String(row.Guide_Title ?? "")).trim();
+  const postType = inferPostType(finalTitle, "task_based");
+  const topicAngle = finalTitle || manualTopicPlaceholder(area, "guide");
   const targetReader = "Budget first renter or small space household";
-  const primaryKeyword = AREA_KEYWORDS[area][0];
-  const secondaryKeywords = AREA_KEYWORDS[area].slice(1, 4);
+  const { primaryKeyword, secondaryKeywords } = writerKeywordPlan(String(row.Guide_Keywords ?? ""));
   const mainConstraint = editorialProfileFor(area).pain;
   const desiredOutcome = "The reader should finish one useful quick win in one sitting.";
   const currentContent = String(row.Guide_Content ?? "").trim();
@@ -893,10 +963,7 @@ async function generateGuideDraftForRow(row: GuideEvergreenRow, guides: GuideEve
   return {
     ...row,
     Guide_Title: finalTitle,
-    Guide_Keywords: serializeKeywords(
-      sanitizeVisibleMarkdownSegment(primaryKeyword).trim(),
-      secondaryKeywords.map((item) => sanitizeVisibleMarkdownSegment(item).trim())
-    ),
+    Guide_Keywords: sanitizeVisibleMarkdownSegment(String(row.Guide_Keywords ?? "")).trim(),
     Guide_Content: finalContent,
     Writer_Brief: `${formatWriterBrief({
       area,
@@ -914,7 +981,7 @@ async function generateGuideDraftForRow(row: GuideEvergreenRow, guides: GuideEve
     Quality_Score: quality ? String(quality.score) : "",
     Quality_Checks: quality
       ? quality.notes
-      : `Awaiting pasted guide.\nPreferred CTA target: ${ctaFallback.url}\nNext step: paste the ChatGPT output into Guide_Content, then run Refresh guide QC.`
+      : pendingWriterChecks("guide", finalTitle, ctaFallback.url)
   };
 }
 
@@ -970,8 +1037,59 @@ export async function loadEvergreenTab(key: TabKey): Promise<Record<string, unkn
   return loadRuntimeTab<Record<string, unknown>>(TAB_MAP[key]);
 }
 
-export async function saveEvergreenTab(key: TabKey, rows: Record<string, unknown>[]): Promise<void> {
+export async function saveEvergreenTab(key: TabKey, rows: Record<string, unknown>[]): Promise<Record<string, unknown>[]> {
+  if (key === "blogs") {
+    const usedIds = new Set<string>();
+    const normalizedRows: BlogEvergreenRow[] = rows.map((row) => ({
+      Blog_ID: ensureRowId(String(row.Blog_ID ?? ""), "BLOG_", 4, usedIds),
+      Blog_Publish_Date: String(row.Blog_Publish_Date ?? ""),
+      Blog_Publish_Time: String(row.Blog_Publish_Time ?? ""),
+      Content_Area: areaFromValue(String(row.Content_Area ?? "")),
+      Workflow_Status: String(row.Workflow_Status ?? "draft"),
+      Blog_URL: String(row.Blog_URL ?? ""),
+      Blog_Title: String(row.Blog_Title ?? ""),
+      Blog_Keywords: String(row.Blog_Keywords ?? ""),
+      Blog_Content: String(row.Blog_Content ?? ""),
+      Writer_Brief: String(row.Writer_Brief ?? ""),
+      CTA_Target: String(row.CTA_Target ?? ""),
+      Quality_Score: String(row.Quality_Score ?? ""),
+      Quality_Checks: String(row.Quality_Checks ?? ""),
+      Related_Pins: String(row.Related_Pins ?? ""),
+      Published_To_Public_At: String(row.Published_To_Public_At ?? "")
+    }));
+    const nextRows = await Promise.all(normalizedRows.map((row) => generateBlogDraftForRow(row, normalizedRows)));
+    await saveRuntimeTab(TAB_MAP[key], nextRows);
+    return nextRows as unknown as Record<string, unknown>[];
+  }
+
+  if (key === "guides") {
+    const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
+    const usedIds = new Set<string>();
+    const normalizedRows: GuideEvergreenRow[] = rows.map((row) => ({
+      Guide_ID: ensureRowId(String(row.Guide_ID ?? ""), "GUIDE_", 4, usedIds),
+      Guide_Publish_Date: String(row.Guide_Publish_Date ?? ""),
+      Guide_Publish_Time: String(row.Guide_Publish_Time ?? ""),
+      Content_Area: areaFromValue(String(row.Content_Area ?? "")),
+      Workflow_Status: String(row.Workflow_Status ?? "draft"),
+      Blog_ID: String(row.Blog_ID ?? ""),
+      Guide_URL: String(row.Guide_URL ?? ""),
+      Guide_Title: String(row.Guide_Title ?? ""),
+      Guide_Keywords: String(row.Guide_Keywords ?? ""),
+      Guide_Content: String(row.Guide_Content ?? ""),
+      Writer_Brief: String(row.Writer_Brief ?? ""),
+      CTA_Target: String(row.CTA_Target ?? ""),
+      Quality_Score: String(row.Quality_Score ?? ""),
+      Quality_Checks: String(row.Quality_Checks ?? ""),
+      Related_Pins: String(row.Related_Pins ?? ""),
+      Published_To_Public_At: String(row.Published_To_Public_At ?? "")
+    }));
+    const nextRows = await Promise.all(normalizedRows.map((row) => generateGuideDraftForRow(row, normalizedRows, blogs)));
+    await saveRuntimeTab(TAB_MAP[key], nextRows);
+    return nextRows as unknown as Record<string, unknown>[];
+  }
+
   await saveRuntimeTab(TAB_MAP[key], rows);
+  return rows;
 }
 
 export async function bootstrapEvergreenProducts(): Promise<void> {
@@ -1099,7 +1217,9 @@ export async function generateNewBlogs(areaCounts?: Partial<Record<string, unkno
     }
   }
 
-  await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, [...blogs, ...created]);
+  const nextRows = [...blogs, ...created];
+  const hydrated = await Promise.all(nextRows.map((row) => generateBlogDraftForRow(row, nextRows)));
+  await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, hydrated);
   return { created: created.length };
 }
 
@@ -1110,16 +1230,9 @@ export async function generateBlogTitlesAndKeywords(): Promise<{ updated: number
 
   for (let index = 0; index < nextBlogs.length; index += 1) {
     const row = nextBlogs[index];
-    if (row.Blog_Title && row.Blog_Keywords && row.Writer_Brief && row.CTA_Target) continue;
-
-    const area = areaFromValue(String(row.Content_Area));
     const generated = await generateBlogDraftForRow(row, nextBlogs);
     nextBlogs[index] = generated;
     updated += 1;
-
-    if (!generated.Blog_Title) generated.Blog_Title = blogTitleFor(area, index);
-    if (!generated.Blog_Keywords) generated.Blog_Keywords = keywordsFor(area);
-    if (!generated.CTA_Target) generated.CTA_Target = fallbackCtaForArea(area).url;
   }
 
   await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, nextBlogs);
@@ -1179,7 +1292,9 @@ export async function generateNewGuides(areaCounts?: Partial<Record<string, unkn
     }
   }
 
-  await saveRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides, [...guides, ...created]);
+  const nextRows = [...guides, ...created];
+  const hydrated = await Promise.all(nextRows.map((row) => generateGuideDraftForRow(row, nextRows, blogs)));
+  await saveRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides, hydrated);
   return { created: created.length };
 }
 
@@ -1191,22 +1306,16 @@ export async function generateGuideTitlesAndKeywords(): Promise<{ updated: numbe
 
   for (let index = 0; index < nextGuides.length; index += 1) {
     const row = nextGuides[index];
-    const area = areaFromValue(String(row.Content_Area));
     if (!row.Guide_ID) row.Guide_ID = nextSequentialId("GUIDE_", 4, nextGuides.map((x) => x.Guide_ID));
     if (!row.Guide_Publish_Date || !row.Guide_Publish_Time) {
       const { date, time } = toEasternDateTime(new Date(Date.now() + index * 60 * 60 * 1000));
       row.Guide_Publish_Date = date;
       row.Guide_Publish_Time = time;
     }
-    if (row.Guide_Title && row.Guide_Keywords && row.Writer_Brief && row.CTA_Target) continue;
 
     const generated = await generateGuideDraftForRow(row, nextGuides, blogs);
     nextGuides[index] = generated;
     updated += 1;
-
-    if (!generated.Guide_Title) generated.Guide_Title = guideTitleFor(area, index);
-    if (!generated.Guide_Keywords) generated.Guide_Keywords = keywordsFor(area);
-    if (!generated.CTA_Target) generated.CTA_Target = fallbackCtaForArea(area).url;
   }
 
   await saveRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides, nextGuides);

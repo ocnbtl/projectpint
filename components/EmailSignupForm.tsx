@@ -67,13 +67,16 @@ export function EmailSignupForm({
       ) : null}
 
       {showContentAreaChecklist ? (
-        <fieldset className="field fieldset-group">
+        <fieldset className="field fieldset-group fieldset-newsletter-topics">
           <legend>Email topics you want</legend>
           <div className="checkbox-grid">
             {COMMAND_CENTER_CONTENT_AREAS.map((area) => (
               <label key={area} className="checkbox-item">
                 <input type="checkbox" name="contentAreas" value={area} defaultChecked={defaultSet.has(area)} />
-                <span>{area}</span>
+                <span className="checkbox-item-shell">
+                  <span className="checkbox-item-mark" aria-hidden="true" />
+                  <span className="checkbox-item-copy">{area}</span>
+                </span>
               </label>
             ))}
           </div>

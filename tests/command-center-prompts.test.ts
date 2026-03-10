@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildBlogDraftContent, buildGuideDraftContent } from "../lib/command-center.ts";
+import {
+  buildBlogDraftContent,
+  buildGuideDraftContent,
+  generateBlogDraftForRow,
+  generateGuideDraftForRow
+} from "../lib/command-center.ts";
 import { COMMAND_CENTER_CONTENT_AREAS } from "../lib/constants.ts";
 import { lintEditorialStyle } from "../lib/style-linter.ts";
 import { buildBlogPromptPack, buildGuidePromptPack } from "../lib/writer-prompts.ts";
@@ -88,4 +93,78 @@ test("guide prompt pack is ready for manual ChatGPT drafting", () => {
   assert.match(prompt, /Return only the final guide in Markdown/);
   assert.match(prompt, /Use \[See the plant picks upgrade\]\(\/products\/bathroom-plant-picks-upgrade\) only if it fits naturally/);
   assert.doesNotMatch(prompt, /Return strict JSON only/);
+});
+
+test("blog row prompt scaffolding is present even before a manual title is added", async () => {
+  const row = await generateBlogDraftForRow(
+    {
+      Blog_ID: "BLOG_9001",
+      Blog_Publish_Date: "03/09/2026",
+      Blog_Publish_Time: "09:00",
+      Content_Area: "Shower",
+      Workflow_Status: "draft",
+      Blog_URL: "",
+      Blog_Title: "",
+      Blog_Keywords: "",
+      Blog_Content: "",
+      Writer_Brief: "",
+      CTA_Target: "",
+      Quality_Score: "",
+      Quality_Checks: "",
+      Related_Pins: "",
+      Published_To_Public_At: ""
+    },
+    []
+  );
+
+  assert.match(row.Writer_Brief, /Prompt pack:/);
+  assert.match(row.Writer_Brief, /Add your exact Shower blog title in Blog_Title/);
+  assert.match(row.Quality_Checks, /Add your manual topic in Blog_Title/);
+});
+
+test("guide row prompt scaffolding follows the manual title workflow", async () => {
+  const row = await generateGuideDraftForRow(
+    {
+      Guide_ID: "GUIDE_9001",
+      Guide_Publish_Date: "03/09/2026",
+      Guide_Publish_Time: "10:00",
+      Content_Area: "Plants",
+      Workflow_Status: "draft",
+      Blog_ID: "BLOG_0001",
+      Guide_URL: "",
+      Guide_Title: "Bathroom plant shelf spacing for humid corners",
+      Guide_Keywords: "",
+      Guide_Content: "",
+      Writer_Brief: "",
+      CTA_Target: "",
+      Quality_Score: "",
+      Quality_Checks: "",
+      Related_Pins: "",
+      Published_To_Public_At: ""
+    },
+    [],
+    [
+      {
+        Blog_ID: "BLOG_0001",
+        Blog_Publish_Date: "03/09/2026",
+        Blog_Publish_Time: "08:00",
+        Content_Area: "Plants",
+        Workflow_Status: "draft",
+        Blog_URL: "/blog/humid-bathroom-plants",
+        Blog_Title: "Low light bathroom plants that handle humidity without fuss",
+        Blog_Keywords: "",
+        Blog_Content: "Helpful parent context.",
+        Writer_Brief: "",
+        CTA_Target: "",
+        Quality_Score: "",
+        Quality_Checks: "",
+        Related_Pins: "",
+        Published_To_Public_At: ""
+      }
+    ]
+  );
+
+  assert.match(row.Writer_Brief, /Working guide title: Bathroom plant shelf spacing for humid corners/);
+  assert.match(row.Writer_Brief, /Parent blog title: Low light bathroom plants that handle humidity without fuss/);
+  assert.match(row.Quality_Checks, /paste the ChatGPT output into Guide_Content/);
 });

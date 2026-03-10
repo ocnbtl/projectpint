@@ -86,11 +86,11 @@ Supported actions:
 
 ## Evergreen -> Public Publish Bridge
 - `Blogs_Evergreen` is the working table for blog drafting and review.
-- Blog generation now stores the title, keyword plan, CTA target, and a copy and paste prompt pack directly in the row so drafting stays inside the command center.
+- Blog generation now creates the row scaffold, and `Writer_Brief` is rebuilt from the current manual `Blog_Title` plus any manual `Blog_Keywords` saved in the row.
 - The operator pastes the final article into `Blog_Content`, then runs QC before approval and publish.
 - `publish_approved_blogs` marks approved blog rows live for the public `/blog/*` routes.
 - `Guides_Evergreen` is the working table for short companion content.
-- Guide generation now stores the title, keyword plan, CTA target, and a copy and paste prompt pack directly in the row so drafting stays inside the command center.
+- Guide generation now creates the row scaffold, and `Writer_Brief` is rebuilt from the current manual `Guide_Title` plus any manual `Guide_Keywords` saved in the row.
 - The operator pastes the final guide into `Guide_Content`, then runs QC before approval and publish.
 - `publish_approved_guides` marks approved guide rows live for the public `/guides/*` routes.
 - `Pins_Evergreen` is the working table for pin drafting and manual visual prep.

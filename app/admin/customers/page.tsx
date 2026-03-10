@@ -1,5 +1,5 @@
 import { AdminFrame } from "../../../components/admin/AdminFrame";
-import { DataSheetEditor } from "../../../components/admin/DataSheetEditor";
+import { AdminSheetWorkspace } from "../../../components/admin/AdminSheetWorkspace";
 import { COMMAND_CENTER_COLUMNS } from "../../../lib/command-center-config";
 import { loadEvergreenTab } from "../../../lib/command-center";
 
@@ -10,22 +10,16 @@ export default async function AdminCustomersPage() {
 
   return (
     <AdminFrame>
-      <section className="admin-panel admin-panel-hero">
-        <p className="eyebrow admin-eyebrow">Users</p>
-        <h1>Users</h1>
-        <p>
-          This table auto-syncs from signup leads and stores user email, signup date/time, selected content areas, and
-          purchase IDs.
-        </p>
-        <div className="admin-meta-row">
-          <span className="admin-meta-pill">Signup sync</span>
-          <span className="admin-meta-pill">8-area preferences</span>
-        </div>
-      </section>
-
-      <DataSheetEditor
+      <AdminSheetWorkspace
         tab="customers"
-        title="Customers Evergreen"
+        heroTitle="Users"
+        heroDescription={
+          <p>
+            This table auto syncs from signup leads and stores user email, signup date and time, selected content
+            areas, and purchase IDs.
+          </p>
+        }
+        editorTitle="Customers Evergreen"
         columns={[...COMMAND_CENTER_COLUMNS.customers]}
         initialRows={rows}
         dateColumn="User_Date_Email"

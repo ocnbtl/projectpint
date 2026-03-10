@@ -31,12 +31,12 @@ export default function StartHerePage() {
         <section className="panel">
           <div className="grid grid-2">
             {starterHubs.map((hub) => (
-              <article key={hub.slug} className="card card-soft path-card">
-                <div className="path-card-main">
+              <article key={hub.slug} className="card card-soft path-card start-path-card">
+                <div className="path-card-main start-path-card-main">
                   <h3>{hub.title}</h3>
                   <p className="path-card-summary">{hub.description}</p>
                 </div>
-                <div className="path-card-action">
+                <div className="path-card-action start-path-card-action">
                   <p className="benefit-highlight">First win: {hub.outcome}</p>
                   <Link href={`/hub/${hub.slug}`} className="btn btn-accent">
                     Explore {hub.title}

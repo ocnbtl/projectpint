@@ -8,6 +8,14 @@ interface DataSheetEditorProps {
   columns: string[];
   initialRows: Record<string, unknown>[];
   dateColumn?: string;
+  showSummary?: boolean;
+  onStatsChange?: (stats: DataSheetStats) => void;
+}
+
+export interface DataSheetStats {
+  totalRows: number;
+  visibleRows: number;
+  columnCount: number;
 }
 
 const LONG_FIELD_COLUMNS = new Set([
@@ -71,11 +79,23 @@ function toWeekLabel(value: string): string {
   return `Week of ${mm}/${dd}/${yyyy}`;
 }
 
-export function DataSheetEditor({ tab, title, columns, initialRows, dateColumn }: DataSheetEditorProps) {
+function normalizeRowsForColumns(columns: string[], sourceRows: Record<string, unknown>[]): Record<string, string>[] {
+  return sourceRows.map((row) =>
+    Object.fromEntries(columns.map((column) => [column, String(row[column] ?? "")]))
+  );
+}
+
+export function DataSheetEditor({
+  tab,
+  title,
+  columns,
+  initialRows,
+  dateColumn,
+  showSummary = true,
+  onStatsChange
+}: DataSheetEditorProps) {
   const [rows, setRows] = useState<Record<string, string>[]>(
-    initialRows.map((row) =>
-      Object.fromEntries(columns.map((column) => [column, String(row[column] ?? "")]))
-    )
+    normalizeRowsForColumns(columns, initialRows)
   );
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState("");
@@ -141,6 +161,14 @@ export function DataSheetEditor({ tab, title, columns, initialRows, dateColumn }
     [columnWidths, columns]
   );
 
+  useEffect(() => {
+    onStatsChange?.({
+      totalRows: rows.length,
+      visibleRows: visibleRows.length,
+      columnCount: columns.length
+    });
+  }, [columns.length, onStatsChange, rows.length, visibleRows.length]);
+
   function updateCell(rowIndex: number, column: string, value: string) {
     setRows((current) => {
       const next = [...current];
@@ -174,12 +202,17 @@ export function DataSheetEditor({ tab, title, columns, initialRows, dateColumn }
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rows: snapshot })
       });
-      const body = (await response.json()) as { ok?: boolean; error?: string; saved?: number };
+      const body = (await response.json()) as { ok?: boolean; error?: string; saved?: number; rows?: Record<string, unknown>[] };
       if (!response.ok || !body.ok) {
         setStatus(`Save failed: ${body.error ?? "unknown error"}`);
         return;
       }
       if (JSON.stringify(rowsRef.current) === snapshotKey) {
+        if (Array.isArray(body.rows)) {
+          const normalizedRows = normalizeRowsForColumns(columns, body.rows);
+          rowsRef.current = normalizedRows;
+          setRows(normalizedRows);
+        }
         setDirty(false);
         setStatus(`Saved ${body.saved ?? snapshot.length} rows.`);
       } else {
@@ -190,7 +223,7 @@ export function DataSheetEditor({ tab, title, columns, initialRows, dateColumn }
     } finally {
       setSaving(false);
     }
-  }, [tab]);
+  }, [columns, tab]);
 
   const handleResizeMove = useCallback((event: PointerEvent) => {
     const resizeState = resizeStateRef.current;
@@ -239,11 +272,13 @@ export function DataSheetEditor({ tab, title, columns, initialRows, dateColumn }
       <div className="admin-panel-header">
         <div>
           <h1>{title}</h1>
-          <div className="admin-meta-row">
-            <span className="admin-meta-pill">{rows.length} total rows</span>
-            <span className="admin-meta-pill">{visibleRows.length} visible</span>
-            <span className="admin-meta-pill">{columns.length} columns</span>
-          </div>
+          {showSummary ? (
+            <div className="admin-meta-row">
+              <span className="admin-meta-pill">{rows.length} total rows</span>
+              <span className="admin-meta-pill">{visibleRows.length} visible</span>
+              <span className="admin-meta-pill">{columns.length} columns</span>
+            </div>
+          ) : null}
         </div>
         <div className="admin-actions-inline admin-datasheet-toolbar">
           <label className="admin-inline-label admin-search-label admin-datasheet-control">

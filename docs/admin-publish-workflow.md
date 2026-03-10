@@ -17,7 +17,11 @@ Use the admin command center as the working surface, then push only human-approv
 ## 1) Blogs
 - Open `/admin/blogs`.
 - Generate blogs by area.
-- Edit `Blog_Title`, `Blog_Keywords`, and `Blog_Content`.
+- Add your exact topic in `Blog_Title`.
+- Add `Blog_Keywords` manually if you want them stored with the row.
+- Let autosave rebuild `Writer_Brief`, or run the prompt refresh action if you want to rebuild all blog prompts.
+- Copy `Writer_Brief` into ChatGPT and paste the finished draft into `Blog_Content`.
+- Run blog QC.
 - Set `Workflow_Status` to `approved` for rows ready to go live.
 - Click `Publish approved blogs`.
 
@@ -29,7 +33,11 @@ Result:
 ## 2) Guides
 - Open `/admin/guides`.
 - Generate guides by area.
-- Edit `Guide_Title`, `Guide_Keywords`, and `Guide_Content`.
+- Add your exact topic in `Guide_Title`.
+- Add `Guide_Keywords` manually if you want them stored with the row.
+- Let autosave rebuild `Writer_Brief`, or run the prompt refresh action if you want to rebuild all guide prompts.
+- Copy `Writer_Brief` into ChatGPT and paste the finished draft into `Guide_Content`.
+- Run guide QC.
 - Set `Workflow_Status` to `approved`.
 - Click `Publish approved guides`.
 
