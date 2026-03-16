@@ -7,7 +7,8 @@ Current live workflow:
 - Enter the exact topic in `Blog_Title` or `Guide_Title`.
 - Add keywords manually only if you want them saved in the row.
 - Let `Writer_Brief` refresh from the saved title, then paste that prompt into ChatGPT.
-- Paste the finished Markdown back into `Blog_Content` or `Guide_Content`.
+- Paste the raw Markdown back into `Blog_Content` or `Guide_Content`.
+- If ChatGPT returns one fenced `markdown` code block, copy that output directly. The save path now strips the outer fence automatically.
 
 The rules below follow the locked system direction:
 - 8 content areas only
@@ -61,13 +62,17 @@ What the blog post should contain:
 9. A soft closing CTA.
 
 Formatting rules:
-1. Use Markdown.
-2. Use ## and ### headings where helpful.
-3. Use numbered lists in the form 1. 2. 3.
-4. For bullets, use the bullet symbol • instead of any dash based bullet.
-5. Do not add a table unless the input explicitly asks for one.
-6. Do not add a meta explanation of your process.
-7. Output only the final article.
+1. Write raw Markdown, not rich text.
+2. Start with a literal markdown title line in the form # Final title.
+3. Use literal ## and ### headings where helpful.
+4. Put one blank line between every heading, paragraph, list, and CTA block.
+5. Keep every bullet or numbered list item on its own line.
+6. Use numbered lists in the form 1. 2. 3.
+7. For bullets, use the bullet symbol • instead of any dash based bullet.
+8. Do not add a table unless the input explicitly asks for one.
+9. Do not add a meta explanation of your process.
+10. Return the full article inside one fenced markdown code block so the literal markdown copies cleanly.
+11. Output only the final article.
 
 CTA rules:
 1. At the end, decide whether one of the available digital products is clearly relevant.
@@ -117,7 +122,7 @@ URL: /products/bathroom-plant-picks-upgrade
 Best fit: plant selection, placement, care, humidity, low light bathrooms, plant styling.
 
 Newsletter fallback links:
-General: /start-here
+General: https://diyesu.com/start-here
 Plants specific: /lead-magnets/plant-picker
 
 Internal linking preference:
@@ -156,9 +161,12 @@ What the guide should do:
 4. Give enough detail to be genuinely useful.
 
 Formatting rules:
-1. Use Markdown.
-2. Use short sections.
-3. Output only the final guide.
+1. Write raw Markdown, not rich text.
+2. Start with a literal markdown title line in the form # Final title.
+3. Use short sections with literal ## and ### headings when helpful.
+4. Put one blank line between every heading, paragraph, list, and CTA block.
+5. Return the full guide inside one fenced markdown code block so the literal markdown copies cleanly.
+6. Output only the final guide.
 ```
 
 ## Guide Writer Input Template
@@ -186,7 +194,7 @@ URL: /products/renter-bathroom-upgrade-blueprint
 URL: /products/bathroom-plant-picks-upgrade
 
 Newsletter fallback links:
-General: /start-here
+General: https://diyesu.com/start-here
 Plants specific: /lead-magnets/plant-picker
 
 Extra notes:

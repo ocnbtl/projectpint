@@ -32,7 +32,7 @@ If you want the next step, [Preview blueprint](/products/renter-bathroom-upgrade
     content,
     ctaUrl: "/products/renter-bathroom-upgrade-blueprint",
     existingTitles: [],
-    allowedCtaUrls: ["/products/renter-bathroom-upgrade-blueprint", "/start-here"]
+    allowedCtaUrls: ["/products/renter-bathroom-upgrade-blueprint", "https://diyesu.com/start-here", "/start-here"]
   });
 
   assert.ok(!result.blockingIssues.includes("visible_dash_characters"));
@@ -57,9 +57,9 @@ Tradeoff: bigger mirrors bounce more light, but they also show more splash.
 
 • Keep the counter calmer.
 • Make the routine easier.`,
-    ctaUrl: "/start-here",
+    ctaUrl: "https://diyesu.com/start-here",
     existingTitles: [],
-    allowedCtaUrls: ["/start-here"]
+    allowedCtaUrls: ["https://diyesu.com/start-here", "/start-here"]
   });
 
   assert.ok(result.blockingIssues.includes("visible_dash_characters"));

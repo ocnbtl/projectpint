@@ -668,6 +668,8 @@ a:hover {
 
 .areas-title {
   white-space: nowrap;
+  font-size: clamp(1.85rem, 3.1vw, 2.75rem);
+  line-height: 1.12;
 }
 
 .areas-card {
@@ -1349,7 +1351,8 @@ a:hover {
 .admin-ops-grid {
   display: grid;
   gap: 0.55rem;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: stretch;
 }
 
 .admin-ops-grid > * {
@@ -1359,6 +1362,13 @@ a:hover {
 .admin-ops-grid .btn,
 .admin-ops-grid .admin-action-block {
   width: 100%;
+}
+
+.admin-ops-grid .btn {
+  white-space: normal;
+  line-height: 1.2;
+  text-align: center;
+  text-wrap: balance;
 }
 
 .admin-kpi-grid {
@@ -1486,8 +1496,11 @@ a:hover {
 }
 
 .admin-action-button {
-  min-height: 40px;
-  white-space: nowrap;
+  min-height: 44px;
+  white-space: normal;
+  line-height: 1.2;
+  text-align: center;
+  text-wrap: balance;
   width: 100%;
 }
 
@@ -1595,9 +1608,22 @@ a:hover {
   min-height: 100%;
 }
 
+.admin-table-header-cell-static {
+  justify-content: center;
+}
+
 .admin-table-header-cell > span {
   padding: 0.55rem;
   overflow-wrap: anywhere;
+}
+
+.admin-table-row-heading .admin-table-header-cell > span,
+.admin-table-row-cell {
+  text-align: center;
+}
+
+.admin-table-row-cell .btn {
+  margin-inline: auto;
 }
 
 .admin-column-resizer {

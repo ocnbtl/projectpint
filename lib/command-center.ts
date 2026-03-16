@@ -11,7 +11,8 @@ import {
   allowedCtaUrls,
   buildBlogPromptPack,
   buildGuidePromptPack,
-  formatWriterBrief
+  formatWriterBrief,
+  NEWSLETTER_FALLBACKS
 } from "./writer-prompts.ts";
 
 export type CommandCenterArea = (typeof COMMAND_CENTER_CONTENT_AREAS)[number];
@@ -662,7 +663,7 @@ function fallbackCtaForArea(area: CommandCenterArea): { label: string; url: stri
 
   return {
     label: "Start here for more bathroom tips",
-    url: "/start-here",
+    url: NEWSLETTER_FALLBACKS.general,
     reason: "No stronger product fit was selected, so use the newsletter path."
   };
 }
@@ -691,10 +692,10 @@ function ctaOptionForUrl(area: CommandCenterArea, value: string): { label: strin
       reason: "Plants content can softly close into the plant picker lead magnet."
     };
   }
-  if (trimmed === "/start-here") {
+  if (trimmed === "/start-here" || trimmed === NEWSLETTER_FALLBACKS.general) {
     return {
       label: "Start here for more bathroom tips",
-      url: trimmed,
+      url: NEWSLETTER_FALLBACKS.general,
       reason: "General newsletter or path guidance is the clean fallback."
     };
   }
@@ -753,11 +754,17 @@ function sanitizeVisibleMarkdownSegment(segment: string): string {
   return segment
     .replace(/(^|\n)-\s+/g, "$1• ")
     .replace(/[\u2010-\u2015-]/g, " ")
-    .replace(/\s{2,}/g, " ");
+    .replace(/[ \t]{2,}/g, " ");
+}
+
+function unwrapMarkdownFence(markdown: string): string {
+  const trimmed = markdown.trim();
+  const fenced = /^```(?:markdown|md)?\s*\n?([\s\S]*?)\n?```$/i.exec(trimmed);
+  return fenced ? fenced[1].trim() : trimmed;
 }
 
 function sanitizeMarkdownForDisplay(markdown: string): string {
-  const parts = markdown.split(/(\[[^\]]+\]\([^)]+\))/g);
+  const parts = unwrapMarkdownFence(markdown).split(/(\[[^\]]+\]\([^)]+\))/g);
   return parts
     .map((part) => {
       const match = /^\[([^\]]+)\]\(([^)]+)\)$/.exec(part);
@@ -826,7 +833,12 @@ function pendingWriterChecks(kind: "blog" | "guide", title: string, ctaUrl: stri
   const contentField = kind === "blog" ? "Blog_Content" : "Guide_Content";
   const refreshLabel = kind === "blog" ? "Refresh blog QC" : "Refresh guide QC";
   const waitingTitle = title.trim() ? "" : `Add your manual topic in ${titleField} and save to refresh the prompt.\n`;
-  return `${waitingTitle}Preferred CTA target: ${ctaUrl}\nNext step: paste the ChatGPT output into ${contentField}, then run ${refreshLabel}.`;
+  return `${waitingTitle}Preferred CTA target: ${ctaUrl}\nNext step: paste the raw markdown from ChatGPT into ${contentField}, then run ${refreshLabel}.`;
+}
+
+function publishTimestamp(date: Date): string {
+  const when = toEasternDateTime(date);
+  return `${when.date} ${when.time} ET`;
 }
 
 function emailSubjectFor(area: CommandCenterArea, index: number): string {
@@ -1424,7 +1436,7 @@ function pinCaptionParts(pin: PinEvergreenRow, area: CommandCenterArea): { title
 
 export async function publishApprovedBlogsToPublic(): Promise<Record<string, unknown>> {
   const blogsEvergreen = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
-  const syncedAt = new Date().toISOString();
+  const syncedAt = publishTimestamp(new Date());
   let published = 0;
   let updated = 0;
   let skipped = 0;
@@ -1469,7 +1481,7 @@ export async function publishApprovedBlogsToPublic(): Promise<Record<string, unk
 
 export async function publishApprovedGuidesToPublic(): Promise<Record<string, unknown>> {
   const guidesEvergreen = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
-  const syncedAt = new Date().toISOString();
+  const syncedAt = publishTimestamp(new Date());
   let published = 0;
   let updated = 0;
   let skipped = 0;

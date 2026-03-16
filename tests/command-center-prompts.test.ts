@@ -63,7 +63,8 @@ test("blog prompt pack is ready for manual ChatGPT drafting", () => {
 
   assert.match(prompt, /Paste this full prompt into ChatGPT/);
   assert.match(prompt, /Working title: No Drill Bathroom Fixes That Still Feel Intentional/);
-  assert.match(prompt, /Return only the final blog post in Markdown/);
+  assert.match(prompt, /Return only one fenced markdown code block that contains the final blog post/);
+  assert.match(prompt, /The first line inside the code block must be a literal # title line/);
   assert.match(prompt, /Use \[Preview the renter blueprint\]\(\/products\/renter-bathroom-upgrade-blueprint\) only if it fits naturally/);
   assert.doesNotMatch(prompt, /Return strict JSON only/);
 });
@@ -90,7 +91,8 @@ test("guide prompt pack is ready for manual ChatGPT drafting", () => {
 
   assert.match(prompt, /Paste this full prompt into ChatGPT/);
   assert.match(prompt, /Parent blog title: Low Light Bathroom Plants That Handle Humidity Without Fuss/);
-  assert.match(prompt, /Return only the final guide in Markdown/);
+  assert.match(prompt, /Return only one fenced markdown code block that contains the final guide/);
+  assert.match(prompt, /The first line inside the code block must be a literal # title line/);
   assert.match(prompt, /Use \[See the plant picks upgrade\]\(\/products\/bathroom-plant-picks-upgrade\) only if it fits naturally/);
   assert.doesNotMatch(prompt, /Return strict JSON only/);
 });
@@ -120,6 +122,7 @@ test("blog row prompt scaffolding is present even before a manual title is added
   assert.match(row.Writer_Brief, /Prompt pack:/);
   assert.match(row.Writer_Brief, /Add your exact Shower blog title in Blog_Title/);
   assert.match(row.Quality_Checks, /Add your manual topic in Blog_Title/);
+  assert.match(row.Quality_Checks, /paste the raw markdown from ChatGPT into Blog_Content/);
 });
 
 test("guide row prompt scaffolding follows the manual title workflow", async () => {
@@ -166,5 +169,32 @@ test("guide row prompt scaffolding follows the manual title workflow", async () 
 
   assert.match(row.Writer_Brief, /Working guide title: Bathroom plant shelf spacing for humid corners/);
   assert.match(row.Writer_Brief, /Parent blog title: Low light bathroom plants that handle humidity without fuss/);
-  assert.match(row.Quality_Checks, /paste the ChatGPT output into Guide_Content/);
+  assert.match(row.Quality_Checks, /paste the raw markdown from ChatGPT into Guide_Content/);
+});
+
+test("blog row sanitization unwraps a fenced markdown response from ChatGPT", async () => {
+  const row = await generateBlogDraftForRow(
+    {
+      Blog_ID: "BLOG_9002",
+      Blog_Publish_Date: "03/10/2026",
+      Blog_Publish_Time: "11:00",
+      Content_Area: "Lighting",
+      Workflow_Status: "draft",
+      Blog_URL: "",
+      Blog_Title: "Bathroom lighting layers for one dark mirror wall",
+      Blog_Keywords: "bathroom lighting ideas",
+      Blog_Content: "```markdown\n# Bathroom lighting layers for one dark mirror wall\n\n## What to fix first\nUse one better bulb before you buy anything else.\n```",
+      Writer_Brief: "",
+      CTA_Target: "",
+      Quality_Score: "",
+      Quality_Checks: "",
+      Related_Pins: "",
+      Published_To_Public_At: ""
+    },
+    []
+  );
+
+  assert.doesNotMatch(row.Blog_Content, /```/);
+  assert.match(row.Blog_Content, /^# Bathroom lighting layers for one dark mirror wall/m);
+  assert.match(row.Blog_Content, /^## What to fix first/m);
 });

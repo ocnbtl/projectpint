@@ -345,7 +345,11 @@ export function DataSheetEditor({
                   </div>
                 </th>
               ))}
-              <th>Row</th>
+              <th className="admin-table-row-heading">
+                <div className="admin-table-header-cell admin-table-header-cell-static">
+                  <span>Row</span>
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -368,7 +372,7 @@ export function DataSheetEditor({
                     )}
                   </td>
                 ))}
-                <td>
+                <td className="admin-table-row-cell">
                   <button type="button" className="btn btn-ghost" onClick={() => deleteRow(absoluteIndex)}>
                     Delete
                   </button>

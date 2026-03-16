@@ -29,9 +29,9 @@ export default async function AdminPinsPage() {
         <div className="admin-ops-grid">
           <OpsButton action="generate_new_pins" label="Generate new pins" payload={{ count: 25 }} />
           <OpsButton action="generate_overlay_cta" label="Generate overlay and CTA" payload={{ count: 25 }} />
-          <OpsButton action="prepare_approved_pins_for_export" label="Prepare approved pins for export" variant="ghost" />
+          <OpsButton action="prepare_approved_pins_for_export" label="Prepare pins for export" variant="ghost" />
           <a className="btn btn-ghost" href="/api/admin/exports/pins">
-            Download approved pins CSV
+            Download pin CSV
           </a>
         </div>
       </AdminSheetWorkspace>

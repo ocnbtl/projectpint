@@ -82,7 +82,7 @@ Current implementation detail:
 - Add the exact blog topic into `Blog_Title`.
 - Add `Blog_Keywords` manually if you want a keyword plan saved in the row.
 - Let `Writer_Brief` update from the current row title, or run the prompt refresh action if you want to rebuild all briefs.
-- Paste the ChatGPT output into `Blog_Content`.
+- Paste the raw Markdown output from ChatGPT into `Blog_Content`.
 - Run blog QC.
 
 2. In admin `/admin/guides`:
@@ -90,7 +90,7 @@ Current implementation detail:
 - Add the exact guide topic into `Guide_Title`.
 - Add `Guide_Keywords` manually if you want a keyword plan saved in the row.
 - Let `Writer_Brief` update from the current row title, or run the prompt refresh action if you want to rebuild all briefs.
-- Paste the ChatGPT output into `Guide_Content`.
+- Paste the raw Markdown output from ChatGPT into `Guide_Content`.
 - Run guide QC.
 
 3. In admin `/admin/pins`:

@@ -21,7 +21,7 @@ export const WRITER_PRODUCTS: WriterProductOption[] = [
 ];
 
 export const NEWSLETTER_FALLBACKS = {
-  general: "/start-here",
+  general: "https://diyesu.com/start-here",
   plants: "/lead-magnets/plant-picker"
 } as const;
 
@@ -55,19 +55,24 @@ Hard rules:
 15. Whenever the topic is informational, still make it actionable with decision rules, examples, and clear next steps.
 
 Formatting rules:
-1. Use Markdown.
-2. Use ## and ### headings where helpful.
-3. Use numbered lists in the form 1. 2. 3.
-4. For bullets, use the bullet symbol • instead of any dash based bullet.
-5. Use only 1 or 2 natural internal links.
-6. Output only the final article.
+1. Write raw Markdown, not rich text.
+2. Start with a literal markdown title line in the form # Final title.
+3. Use literal ## and ### headings where helpful.
+4. Put one blank line between every heading, paragraph, list, and CTA block.
+5. Keep every bullet or numbered list item on its own line.
+6. Use numbered lists in the form 1. 2. 3.
+7. For bullets, use the bullet symbol • instead of any dash based bullet.
+8. Use only 1 or 2 natural internal links.
+9. Return the full article inside one fenced markdown code block so the literal markdown copies cleanly.
+10. Output only the final article.
 
 CTA rules:
 1. At the end, decide whether one of the available digital products is clearly relevant.
 2. Only mention a product if the fit is natural and specific to the post.
 3. Product mentions must be subtle, short, and helpful, not pushy.
 4. If no product clearly fits, end with a soft invitation to join the email list for more bathroom tips in that area.
-5. Use only the available links provided in the input. Do not invent products or URLs.`;
+5. Use only the available links provided in the input. Do not invent products or URLs.
+6. Render the final CTA as a standard markdown link.`;
 
 export const GUIDE_WRITER_SYSTEM_PROMPT = `You are the Diyesu Decor guide writer.
 
@@ -89,17 +94,25 @@ Hard rules:
 11. End with a soft next step back to the parent blog or a soft CTA, never a hard pitch.
 
 Formatting rules:
-1. Use Markdown.
-2. Use short sections.
-3. Use only 1 or 2 natural internal links.
-4. Output only the final guide.`;
+1. Write raw Markdown, not rich text.
+2. Start with a literal markdown title line in the form # Final title.
+3. Use short sections with literal ## and ### headings when helpful.
+4. Put one blank line between every heading, paragraph, list, and CTA block.
+5. Keep every bullet or numbered list item on its own line.
+6. Use only 1 or 2 natural internal links.
+7. Return the full guide inside one fenced markdown code block so the literal markdown copies cleanly.
+8. Output only the final guide.`;
 
 function preferredNewsletterUrl(area: ContentArea): string {
   return area === "Plants" ? NEWSLETTER_FALLBACKS.plants : NEWSLETTER_FALLBACKS.general;
 }
 
 export function allowedCtaUrls(area: ContentArea): string[] {
-  return [...WRITER_PRODUCTS.map((product) => product.url), preferredNewsletterUrl(area)];
+  const urls = [...WRITER_PRODUCTS.map((product) => product.url), preferredNewsletterUrl(area)];
+  if (area !== "Plants") {
+    urls.push("/start-here");
+  }
+  return urls;
 }
 
 export interface WriterBriefInput {
@@ -196,13 +209,15 @@ Plants newsletter fallback: ${NEWSLETTER_FALLBACKS.plants}
 General newsletter fallback: ${NEWSLETTER_FALLBACKS.general}
 
 Return requirements:
-1. Return only the final blog post in Markdown.
-2. Do not return JSON.
-3. Do not return notes, explanations, or a checklist.
-4. If the working title still reads like a placeholder, stop and replace it with the exact row title before you draft.
-5. Keep visible prose free of dash characters.
-6. Use the bullet symbol • for bullet lists.
-7. End with one soft CTA only.`;
+1. Return only one fenced markdown code block that contains the final blog post.
+2. The first line inside the code block must be a literal # title line.
+3. Keep literal markdown headings, blank lines, and list markers intact so the article can be pasted directly into Blog_Content.
+4. Do not return JSON.
+5. Do not return notes, explanations, or a checklist.
+6. If the working title still reads like a placeholder, stop and replace it with the exact row title before you draft.
+7. Keep visible prose free of dash characters.
+8. Use the bullet symbol • for bullet lists.
+9. End with one soft CTA only and render it as a markdown link.`;
 }
 
 export function buildGuidePromptPack(input: GuidePromptPackInput): string {
@@ -239,11 +254,13 @@ Plants newsletter fallback: ${NEWSLETTER_FALLBACKS.plants}
 General newsletter fallback: ${NEWSLETTER_FALLBACKS.general}
 
 Return requirements:
-1. Return only the final guide in Markdown.
-2. Do not return JSON.
-3. Do not return notes, explanations, or a checklist.
-4. If the working guide title still reads like a placeholder, stop and replace it with the exact row title before you draft.
-5. Keep visible prose free of dash characters.
-6. Use the bullet symbol • for bullet lists.
-7. End with one soft CTA or a soft step back to the parent blog.`;
+1. Return only one fenced markdown code block that contains the final guide.
+2. The first line inside the code block must be a literal # title line.
+3. Keep literal markdown headings, blank lines, and list markers intact so the guide can be pasted directly into Guide_Content.
+4. Do not return JSON.
+5. Do not return notes, explanations, or a checklist.
+6. If the working guide title still reads like a placeholder, stop and replace it with the exact row title before you draft.
+7. Keep visible prose free of dash characters.
+8. Use the bullet symbol • for bullet lists.
+9. End with one soft CTA or a soft step back to the parent blog and render any CTA as a markdown link.`;
 }
