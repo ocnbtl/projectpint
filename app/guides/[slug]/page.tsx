@@ -18,13 +18,12 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
 
   const blocks = markdownBlocks(guide.content);
   const readTimeMinutes = estimateReadTimeMinutes(guide.content);
+  const titleBlock = blocks[0]?.type === "h1" ? blocks[0] : null;
+  const contentBlocks = titleBlock ? blocks.slice(1) : blocks;
 
   return (
     <SiteShell>
       <article className="card prose-card">
-        <div className="article-meta-row small">
-          <span>{readTimeMinutes} min read</span>
-        </div>
         <div className="tag-list article-tag-list">
           {guide.tags.map((tag) => (
             <Link key={`${guide.Guide_ID}-${tag}`} href={tagPath(tag)} className="tag tag-link">
@@ -32,7 +31,12 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             </Link>
           ))}
         </div>
-        <MarkdownArticle blocks={blocks} slug={slug} />
+        {titleBlock ? <h1>{titleBlock.text}</h1> : null}
+        <div className="article-readtime-callout" aria-label={`${readTimeMinutes} minute read`}>
+          <span className="article-readtime-kicker">Quick read</span>
+          <strong>{readTimeMinutes} min read</strong>
+        </div>
+        <MarkdownArticle blocks={contentBlocks} slug={slug} />
       </article>
     </SiteShell>
   );

@@ -792,19 +792,31 @@ a:hover {
   margin-bottom: 0.85rem;
 }
 
-.article-meta-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 0.9rem;
-  align-items: center;
-  color: var(--ink-600);
-  margin-bottom: 0.72rem;
+.article-readtime-callout {
+  display: inline-grid;
+  gap: 0.08rem;
+  margin: 0 0 1rem;
+  padding: 0.48rem 0.8rem 0.54rem;
+  border-radius: 18px;
+  border: 1px solid #c8ddd7;
+  background:
+    radial-gradient(circle at 88% 18%, rgba(255, 221, 177, 0.72), rgba(255, 221, 177, 0) 46%),
+    linear-gradient(180deg, #f7fffc 0%, #edf7f3 100%);
+  box-shadow: 0 10px 24px rgba(28, 92, 78, 0.08);
+  color: var(--brand-deep);
 }
 
-.article-meta-row span {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
+.article-readtime-kicker {
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--ink-600);
+}
+
+.article-readtime-callout strong {
+  font-size: 0.98rem;
+  line-height: 1.1;
 }
 
 .about-tagline-right {

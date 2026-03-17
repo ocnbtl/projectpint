@@ -26,14 +26,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   });
   const blocks = markdownBlocks(blog.Draft_Markdown);
   const readTimeMinutes = estimateReadTimeMinutes(blog.Draft_Markdown);
+  const titleBlock = blocks[0]?.type === "h1" ? blocks[0] : null;
+  const contentBlocks = titleBlock ? blocks.slice(1) : blocks;
 
   return (
     <SiteShell>
       <article className="card prose-card">
-        <div className="article-meta-row small">
-          <span>Status: {blog.Status}</span>
-          <span>{readTimeMinutes} min read</span>
-        </div>
         <div className="tag-list article-tag-list">
           {tagsForBlog(blog).map((tag) => (
             <Link key={`${blog.Blog_ID}-${tag}`} href={tagPath(tag)} className="tag tag-link">
@@ -41,7 +39,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </Link>
           ))}
         </div>
-        <MarkdownArticle blocks={blocks} slug={slug} />
+        {titleBlock ? <h1>{titleBlock.text}</h1> : null}
+        <div className="article-readtime-callout" aria-label={`${readTimeMinutes} minute read`}>
+          <span className="article-readtime-kicker">Quick read</span>
+          <strong>{readTimeMinutes} min read</strong>
+        </div>
+        <MarkdownArticle blocks={contentBlocks} slug={slug} />
       </article>
       {showAffiliateDisclosure ? <AffiliateDisclosure /> : null}
       <AdSlot enabled={blog.Ad_Enabled} slotId={`blog-${blog.Blog_ID}`} />
