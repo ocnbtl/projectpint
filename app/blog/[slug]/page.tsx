@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { AdSlot } from "../../../components/AdSlot";
 import { AffiliateDisclosure } from "../../../components/AffiliateDisclosure";
 import { MarkdownArticle } from "../../../components/MarkdownArticle";
 import { SiteShell } from "../../../components/SiteShell";
 import { shouldShowAffiliateDisclosure } from "../../../lib/affiliate";
 import { markdownBlocks } from "../../../lib/content-render";
-import { readBlogs } from "../../../lib/site-data";
+import { readBlogs, tagsForBlog } from "../../../lib/site-data";
+import { tagPath } from "../../../lib/tags";
 
 export async function generateStaticParams() {
   const blogs = await readBlogs();
@@ -28,6 +30,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     <SiteShell>
       <article className="card prose-card">
         <p className="small">Status: {blog.Status}</p>
+        <div className="tag-list article-tag-list">
+          {tagsForBlog(blog).map((tag) => (
+            <Link key={`${blog.Blog_ID}-${tag}`} href={tagPath(tag)} className="tag tag-link">
+              {tag}
+            </Link>
+          ))}
+        </div>
         <MarkdownArticle blocks={blocks} slug={slug} />
       </article>
       {showAffiliateDisclosure ? <AffiliateDisclosure /> : null}

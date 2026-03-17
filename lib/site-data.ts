@@ -1,6 +1,7 @@
-import { contentAreasForPillar, primaryContentAreaForPillar, primaryLegacyPillarForArea } from "./constants.ts";
+import { contentAreaLabel, contentAreasForPillar, primaryContentAreaForPillar, primaryLegacyPillarForArea } from "./constants.ts";
 import { excerptFromMarkdown } from "./content-render.ts";
 import { loadRuntimeTab } from "./runtime-store.ts";
+import { mergeTags, parseKeywordTags, tagSlug } from "./tags.ts";
 import type { BlogDraft, ContentArea } from "./types.ts";
 
 interface BlogEvergreenShape {
@@ -48,8 +49,17 @@ export interface PublicGuideItem {
   summary: string;
   area: ContentArea;
   content: string;
+  keywords: string[];
+  tags: string[];
   relatedBlogId: string;
   status: string;
+}
+
+export interface TagArchive {
+  label: string;
+  slug: string;
+  blogs: BlogDraft[];
+  guides: PublicGuideItem[];
 }
 
 export const hubs: HubDefinition[] = [
@@ -169,10 +179,11 @@ function slugFromPathOrTitle(pathValue: string, fallback: string, id: string): s
 }
 
 function firstKeyword(value: string): string {
-  return value
-    .split(/[;,]/)
-    .map((item) => item.trim())
-    .find(Boolean) ?? "";
+  return parseKeywordTags(value)[0] ?? "";
+}
+
+export function tagsForBlog(blog: Pick<BlogDraft, "Pillar" | "Slug" | "Title" | "Keyword_Target">): string[] {
+  return mergeTags([contentAreaLabel(contentAreaForBlog(blog))], parseKeywordTags(blog.Keyword_Target));
 }
 
 function mapEvergreenBlogToPublic(row: BlogEvergreenShape): BlogDraft {
@@ -203,6 +214,7 @@ function mapEvergreenBlogToPublic(row: BlogEvergreenShape): BlogDraft {
 function mapEvergreenGuide(row: GuideEvergreenShape): PublicGuideItem {
   const area = (hubs.find((hub) => hub.area === row.Content_Area)?.area ?? "DIY") as ContentArea;
   const slug = slugFromPathOrTitle(row.Guide_URL, row.Guide_Title, row.Guide_ID);
+  const keywords = parseKeywordTags(row.Guide_Keywords);
   return {
     Guide_ID: row.Guide_ID,
     slug,
@@ -210,6 +222,8 @@ function mapEvergreenGuide(row: GuideEvergreenShape): PublicGuideItem {
     summary: excerptFromMarkdown(row.Guide_Content, 140),
     area,
     content: row.Guide_Content || `# ${row.Guide_Title || slug}\n\nThis guide is being prepared.`,
+    keywords,
+    tags: mergeTags([contentAreaLabel(area)], keywords),
     relatedBlogId: row.Blog_ID,
     status: row.Workflow_Status
   };
@@ -235,4 +249,46 @@ export async function findGuidesForHub(hub: HubDefinition, limit = 6): Promise<P
 export async function findGuideBySlug(slug: string): Promise<PublicGuideItem | undefined> {
   const guides = await readGuides();
   return guides.find((guide) => guide.slug === slug);
+}
+
+function publishedOrDraftBlogs(rows: BlogDraft[]): BlogDraft[] {
+  const published = rows.filter((row) => row.Status === "published");
+  return published.length > 0 ? published : rows;
+}
+
+function publishedOrDraftGuides(rows: PublicGuideItem[]): PublicGuideItem[] {
+  const published = rows.filter((row) => row.status.trim().toLowerCase() === "published");
+  return published.length > 0 ? published : rows;
+}
+
+export async function readAllTagArchives(): Promise<TagArchive[]> {
+  const blogs = publishedOrDraftBlogs(await readBlogs());
+  const guides = publishedOrDraftGuides(await readGuides());
+  const labels = new Map<string, string>();
+
+  for (const blog of blogs) {
+    for (const tag of tagsForBlog(blog)) {
+      labels.set(tagSlug(tag), tag);
+    }
+  }
+
+  for (const guide of guides) {
+    for (const tag of guide.tags) {
+      labels.set(tagSlug(tag), tag);
+    }
+  }
+
+  return Array.from(labels.entries())
+    .map(([slug, label]) => ({
+      slug,
+      label,
+      blogs: blogs.filter((blog) => tagsForBlog(blog).some((tag) => tagSlug(tag) === slug)),
+      guides: guides.filter((guide) => guide.tags.some((tag) => tagSlug(tag) === slug))
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+}
+
+export async function findTagArchiveBySlug(slug: string): Promise<TagArchive | undefined> {
+  const archives = await readAllTagArchives();
+  return archives.find((archive) => archive.slug === slug);
 }

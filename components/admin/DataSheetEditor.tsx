@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { parseKeywordTags } from "../../lib/tags";
 
 interface DataSheetEditorProps {
   tab: "pins" | "blogs" | "guides" | "emails" | "customers" | "products";
@@ -28,6 +29,8 @@ const LONG_FIELD_COLUMNS = new Set([
   "Writer_Brief",
   "Quality_Checks"
 ]);
+
+const KEYWORD_TOKEN_COLUMNS = new Set(["Blog_Keywords", "Guide_Keywords"]);
 
 const MIN_COLUMN_WIDTH = 140;
 const ROW_ACTION_COLUMN_WIDTH = 120;
@@ -82,6 +85,80 @@ function toWeekLabel(value: string): string {
 function normalizeRowsForColumns(columns: string[], sourceRows: Record<string, unknown>[]): Record<string, string>[] {
   return sourceRows.map((row) =>
     Object.fromEntries(columns.map((column) => [column, String(row[column] ?? "")]))
+  );
+}
+
+function serializeKeywordTags(tags: string[]): string {
+  return tags.join(", ");
+}
+
+function KeywordTokenField({
+  value,
+  onChange
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const [draft, setDraft] = useState("");
+  const tokens = useMemo(() => parseKeywordTags(value), [value]);
+
+  useEffect(() => {
+    setDraft("");
+  }, [value]);
+
+  function commit(rawValue: string) {
+    const nextTokens = parseKeywordTags(serializeKeywordTags([...tokens, ...parseKeywordTags(rawValue)]));
+    setDraft("");
+    if (serializeKeywordTags(nextTokens) !== serializeKeywordTags(tokens)) {
+      onChange(serializeKeywordTags(nextTokens));
+    }
+  }
+
+  function removeToken(index: number) {
+    const nextTokens = tokens.filter((_, tokenIndex) => tokenIndex !== index);
+    onChange(serializeKeywordTags(nextTokens));
+  }
+
+  return (
+    <div className="admin-token-field">
+      <div className="admin-token-list">
+        {tokens.map((token, index) => (
+          <button
+            key={`${token}-${index}`}
+            type="button"
+            className="admin-token-chip"
+            onClick={() => removeToken(index)}
+            title={`Remove ${token}`}
+          >
+            <span>{token}</span>
+            <span aria-hidden="true">×</span>
+          </button>
+        ))}
+        <input
+          value={draft}
+          onChange={(event) => setDraft(event.target.value)}
+          onBlur={() => {
+            if (draft.trim()) commit(draft);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Tab" || event.key === "Enter" || event.key === ",") {
+              if (draft.trim()) {
+                event.preventDefault();
+                commit(draft);
+              }
+              return;
+            }
+
+            if (event.key === "Backspace" && !draft && tokens.length > 0) {
+              event.preventDefault();
+              removeToken(tokens.length - 1);
+            }
+          }}
+          placeholder={tokens.length > 0 ? "Add keyword" : "Add keyword and press Tab"}
+          type="text"
+        />
+      </div>
+    </div>
   );
 }
 
@@ -357,7 +434,9 @@ export function DataSheetEditor({
               <tr key={`${tab}-row-${absoluteIndex}`}>
                 {columns.map((column) => (
                   <td key={`${tab}-${absoluteIndex}-${column}`}>
-                    {LONG_FIELD_COLUMNS.has(column) ? (
+                    {KEYWORD_TOKEN_COLUMNS.has(column) ? (
+                      <KeywordTokenField value={row[column] ?? ""} onChange={(value) => updateCell(absoluteIndex, column, value)} />
+                    ) : LONG_FIELD_COLUMNS.has(column) ? (
                       <textarea
                         value={row[column] ?? ""}
                         onChange={(event) => updateCell(absoluteIndex, column, event.target.value)}

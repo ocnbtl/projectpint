@@ -11,6 +11,10 @@ export interface ContentQualitySummary {
 const DASH_RE = /[\u2010-\u2015-]/;
 const HARD_SELL_RE = /\b(buy now|last chance|limited time|must buy|act fast|guaranteed|don't miss out)\b/i;
 const BANNED_STYLE_RE = /\bit is not\b.*\bit is\b/i;
+const PERSONA_FRAMING_RE = /\bthis (post|guide|article) is for (the )?person\b/i;
+const SOFT_VALIDATION_RE = /\b(?:that|this) is a (?:completely|totally|perfectly) reasonable (?:approach|choice|plan)\b/i;
+const CONTRACTION_RE = /\b(?:[A-Za-z]+n't|(?:i|you|we|they|he|she|it|that|there|here|what|who|where|when|how)'(?:re|ve|ll|d|m|s)|let's)\b/i;
+const COMMON_ACRONYMS = new Set(["DIY", "LED", "ET"]);
 
 function visibleText(markdown: string): string {
   return markdown
@@ -50,6 +54,15 @@ function hasTimeAndTools(text: string): boolean {
 
 function hasTradeoff(text: string): boolean {
   return /\btradeoff|trade off|but\b/i.test(text);
+}
+
+function unexplainedAcronyms(text: string): string[] {
+  const matches = text.match(/\b[A-Z]{2,5}\b/g) ?? [];
+  const unique = Array.from(new Set(matches));
+  return unique.filter((acronym) => {
+    if (COMMON_ACRONYMS.has(acronym)) return false;
+    return !text.includes(`${acronym} (`) && !text.includes(`(${acronym})`);
+  });
 }
 
 export function summarizeContentQuality(params: {
@@ -121,6 +134,25 @@ export function summarizeContentQuality(params: {
   if (bannedStyle) {
     blockingIssues.push("formulaic_contrast_phrasing");
     score -= 18;
+  }
+
+  const personaFraming = PERSONA_FRAMING_RE.test(visible);
+  notes.push(`${personaFraming ? "WARN" : "PASS"} no cheesy audience framing`);
+  if (personaFraming) score -= 10;
+
+  const softValidation = SOFT_VALIDATION_RE.test(visible);
+  notes.push(`${softValidation ? "WARN" : "PASS"} no soft validation phrasing`);
+  if (softValidation) score -= 8;
+
+  const hasContraction = CONTRACTION_RE.test(visible);
+  notes.push(`${hasContraction ? "PASS" : "WARN"} natural contraction mix`);
+  if (!hasContraction && words >= 500) score -= 5;
+
+  const unexplained = unexplainedAcronyms(params.content);
+  notes.push(`${unexplained.length === 0 ? "PASS" : "WARN"} acronym clarity`);
+  if (unexplained.length > 0) {
+    notes.push(`WARN explain on first use: ${unexplained.join(", ")}`);
+    score -= 6;
   }
 
   const ctaValid = params.allowedCtaUrls.includes(params.ctaUrl);

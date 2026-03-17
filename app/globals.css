@@ -755,6 +755,22 @@ a:hover {
   border: 1px solid #b9d5ce;
 }
 
+.tag-link {
+  transition:
+    transform 140ms ease,
+    border-color 140ms ease,
+    background-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.tag-link:hover {
+  text-decoration: none;
+  background: #edf7f3;
+  border-color: #8fc2b4;
+  box-shadow: 0 6px 16px rgba(30, 92, 78, 0.08);
+  transform: translateY(-1px);
+}
+
 .tag-list-compact {
   gap: 0.3rem;
 }
@@ -770,6 +786,10 @@ a:hover {
 
 .read-tags {
   margin-bottom: 0.58rem;
+}
+
+.article-tag-list {
+  margin-bottom: 0.85rem;
 }
 
 .about-tagline-right {
@@ -1451,6 +1471,58 @@ a:hover {
   outline: none;
   border-color: #7bb4a7;
   box-shadow: 0 0 0 4px rgba(123, 180, 167, 0.18);
+}
+
+.admin-token-field {
+  width: 100%;
+}
+
+.admin-token-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 42px;
+  border: 1px solid #cec4b5;
+  border-radius: 12px;
+  padding: 0.35rem 0.42rem;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: inset 0 1px 2px rgba(25, 31, 33, 0.04);
+}
+
+.admin-token-list:focus-within {
+  border-color: #7bb4a7;
+  box-shadow: 0 0 0 4px rgba(123, 180, 167, 0.18);
+}
+
+.admin-token-list input {
+  flex: 1 1 120px;
+  min-width: 110px;
+  border: 0;
+  box-shadow: none;
+  padding: 0.2rem 0.15rem;
+  background: transparent;
+}
+
+.admin-token-list input:focus {
+  box-shadow: none;
+}
+
+.admin-token-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid #bad9d0;
+  border-radius: 999px;
+  background: #ecf7f3;
+  color: var(--brand-deep);
+  padding: 0.18rem 0.5rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.admin-token-chip:hover {
+  background: #e1f2ec;
 }
 
 .admin-inline-label input[type="checkbox"] {

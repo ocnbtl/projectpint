@@ -1,8 +1,7 @@
 import { BlogIndexExplorer } from "../../components/BlogIndexExplorer";
 import { SiteShell } from "../../components/SiteShell";
-import { contentAreaLabel } from "../../lib/constants";
 import { excerptFromMarkdown } from "../../lib/content-render";
-import { contentAreaForBlog, readBlogs } from "../../lib/site-data";
+import { readBlogs, tagsForBlog } from "../../lib/site-data";
 
 export default async function BlogIndex() {
   const rows = await readBlogs();
@@ -14,7 +13,7 @@ export default async function BlogIndex() {
     slug: row.Slug,
     title: row.Title,
     excerpt: excerptFromMarkdown(row.Draft_Markdown, 160),
-    tags: [contentAreaLabel(contentAreaForBlog(row)), row.Keyword_Target],
+    tags: tagsForBlog(row),
     keyword: row.Keyword_Target
   }));
   const availableTags = Array.from(new Set(blogs.flatMap((blog) => blog.tags))).sort();

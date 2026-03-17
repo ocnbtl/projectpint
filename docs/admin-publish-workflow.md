@@ -18,7 +18,7 @@ Use the admin command center as the working surface, then push only human-approv
 - Open `/admin/blogs`.
 - Generate blogs by area.
 - Add your exact topic in `Blog_Title`.
-- Add `Blog_Keywords` manually if you want them stored with the row.
+- Add `Blog_Keywords` manually if you want them stored with the row. Use `Tab`, `Enter`, or `,` to add each keyword chip.
 - Let autosave rebuild `Writer_Brief`, or run the prompt refresh action if you want to rebuild all blog prompts.
 - Copy `Writer_Brief` into ChatGPT and paste the raw Markdown output into `Blog_Content`.
 - Run blog QC.
@@ -35,7 +35,7 @@ Result:
 - Open `/admin/guides`.
 - Generate guides by area.
 - Add your exact topic in `Guide_Title`.
-- Add `Guide_Keywords` manually if you want them stored with the row.
+- Add `Guide_Keywords` manually if you want them stored with the row. Use `Tab`, `Enter`, or `,` to add each keyword chip.
 - Let autosave rebuild `Writer_Brief`, or run the prompt refresh action if you want to rebuild all guide prompts.
 - Copy `Writer_Brief` into ChatGPT and paste the raw Markdown output into `Guide_Content`.
 - Run guide QC.

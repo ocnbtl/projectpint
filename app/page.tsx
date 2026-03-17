@@ -2,9 +2,9 @@ import Link from "next/link";
 import { AdSlot } from "../components/AdSlot";
 import { EmailSignupForm } from "../components/EmailSignupForm";
 import { SiteShell } from "../components/SiteShell";
-import { contentAreaLabel } from "../lib/constants";
 import { excerptFromMarkdown } from "../lib/content-render";
-import { contentAreaForBlog, hubs, readBlogs } from "../lib/site-data";
+import { hubs, readBlogs, tagsForBlog } from "../lib/site-data";
+import { tagPath } from "../lib/tags";
 
 export default async function HomePage() {
   const allBlogs = await readBlogs();
@@ -78,8 +78,13 @@ export default async function HomePage() {
             {blogs.map((blog) => (
               <article key={blog.Blog_ID} className="card">
                 <div className="tag-list tag-list-compact read-tags">
-                  <span className="tag">{blog.Keyword_Target}</span>
-                  <span className="tag">{contentAreaLabel(contentAreaForBlog(blog))}</span>
+                  {tagsForBlog(blog)
+                    .slice(0, 3)
+                    .map((tag) => (
+                      <Link key={`${blog.Blog_ID}-${tag}`} href={tagPath(tag)} className="tag tag-link">
+                        {tag}
+                      </Link>
+                    ))}
                 </div>
                 <h3>
                   <Link href={`/blog/${blog.Slug}`}>{blog.Title}</Link>

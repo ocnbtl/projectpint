@@ -64,3 +64,30 @@ Tradeoff: bigger mirrors bounce more light, but they also show more splash.
 
   assert.ok(result.blockingIssues.includes("visible_dash_characters"));
 });
+
+test("quality check warns on cheesy audience framing and unexplained acronyms", () => {
+  const result = summarizeContentQuality({
+    id: "BLOG_9002",
+    kind: "blog",
+    title: "Budget bathroom bulb upgrades",
+    content: `# Budget bathroom bulb upgrades
+
+This post is for the person who wants brighter lighting without wasting money.
+
+## What matters most
+CRI helps color, but many shoppers skip that detail.
+
+## Steps
+1. Check the bulb shape.
+2. Buy matching bulbs.
+
+• Keep the mirror area brighter.
+• Spend less upfront when you can.`,
+    ctaUrl: "https://diyesu.com/start-here",
+    existingTitles: [],
+    allowedCtaUrls: ["https://diyesu.com/start-here", "/start-here"]
+  });
+
+  assert.match(result.notes, /WARN no cheesy audience framing/);
+  assert.match(result.notes, /WARN explain on first use: CRI/);
+});

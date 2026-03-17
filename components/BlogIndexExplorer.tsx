@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { tagPath } from "../lib/tags";
 
 interface BlogItem {
   id: string;
@@ -76,9 +77,9 @@ export function BlogIndexExplorer({ blogs, availableTags }: BlogIndexExplorerPro
               </h3>
               <div className="tag-list blog-tag-list tag-list-compact">
                 {blog.tags.map((tag) => (
-                  <span key={`${blog.id}-${tag}`} className="tag">
+                  <Link key={`${blog.id}-${tag}`} href={tagPath(tag)} className="tag tag-link">
                     {tag}
-                  </span>
+                  </Link>
                 ))}
               </div>
               <p className="blog-card-excerpt">{blog.excerpt}...</p>

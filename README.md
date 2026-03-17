@@ -80,7 +80,7 @@ Current implementation detail:
 1. In admin `/admin/blogs`:
 - Generate new blogs by area.
 - Add the exact blog topic into `Blog_Title`.
-- Add `Blog_Keywords` manually if you want a keyword plan saved in the row.
+- Add `Blog_Keywords` manually if you want a keyword plan saved in the row. Use `Tab`, `Enter`, or `,` to add each keyword chip.
 - Let `Writer_Brief` update from the current row title, or run the prompt refresh action if you want to rebuild all briefs.
 - Paste the raw Markdown output from ChatGPT into `Blog_Content`.
 - Run blog QC.
@@ -88,7 +88,7 @@ Current implementation detail:
 2. In admin `/admin/guides`:
 - Generate new guides by area.
 - Add the exact guide topic into `Guide_Title`.
-- Add `Guide_Keywords` manually if you want a keyword plan saved in the row.
+- Add `Guide_Keywords` manually if you want a keyword plan saved in the row. Use `Tab`, `Enter`, or `,` to add each keyword chip.
 - Let `Writer_Brief` update from the current row title, or run the prompt refresh action if you want to rebuild all briefs.
 - Paste the raw Markdown output from ChatGPT into `Guide_Content`.
 - Run guide QC.

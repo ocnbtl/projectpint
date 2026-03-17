@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { contentAreasForPillar, normalizeContentAreas, primaryLegacyPillarForArea } from "../lib/constants.ts";
-import { blogMatchesArea, contentAreaForBlog } from "../lib/site-data.ts";
+import { blogMatchesArea, contentAreaForBlog, tagsForBlog } from "../lib/site-data.ts";
 import type { BlogDraft } from "../lib/types.ts";
 
 test("legacy BudgetDIY pillar expands to both budget areas", () => {
@@ -41,4 +41,15 @@ test("blogMatchesArea keeps shared legacy bridge when no specific area keyword e
   assert.equal(contentAreaForBlog(blog), "Mirror");
   assert.equal(blogMatchesArea(blog, "Mirror"), true);
   assert.equal(blogMatchesArea(blog, "Lighting"), true);
+});
+
+test("tagsForBlog expands comma separated keywords into clickable tag labels", () => {
+  const blog: Pick<BlogDraft, "Pillar" | "Slug" | "Title" | "Keyword_Target"> = {
+    Pillar: "BudgetDIY",
+    Slug: "budget-bathroom-lighting-fixes",
+    Title: "Budget bathroom lighting fixes",
+    Keyword_Target: "Lighting, Lightbulb, Budget"
+  };
+
+  assert.deepEqual(tagsForBlog(blog), ["Lighting", "Lightbulb", "Budget"]);
 });

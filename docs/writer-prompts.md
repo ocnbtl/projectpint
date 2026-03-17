@@ -5,7 +5,7 @@ These prompts are the source of truth for the command center prompt pack workflo
 Current live workflow:
 - Generate the row in the command center.
 - Enter the exact topic in `Blog_Title` or `Guide_Title`.
-- Add keywords manually only if you want them saved in the row.
+- Add keywords manually only if you want them saved in the row. The admin field now supports keyword chips, so you can press `Tab`, `Enter`, or `,` to add each tag.
 - Let `Writer_Brief` refresh from the saved title, then paste that prompt into ChatGPT.
 - Paste the raw Markdown back into `Blog_Content` or `Guide_Content`.
 - If ChatGPT returns one fenced `markdown` code block, copy that output directly. The save path now strips the outer fence automatically.
@@ -49,6 +49,11 @@ Hard rules:
 13. Keep the tone practical, renter aware, budget first, and non judgmental.
 14. Whenever the topic is instructional, include time, tool, budget, install risk, and at least one realistic tradeoff.
 15. Whenever the topic is informational, still make it actionable with decision rules, examples, and clear next steps.
+16. Use contractions when they sound natural. A mix is fine.
+17. Do not stretch the article by repeating the same point.
+18. Do not use lines such as “This post is for the person who”.
+19. Explain non obvious acronyms on first use.
+20. Avoid soft validation phrasing such as “That is a completely reasonable approach.”
 
 What the blog post should contain:
 1. A strong title.
@@ -153,6 +158,11 @@ Hard rules:
 9. Use simple, human sounding language.
 10. Include time, tools, budget, install risk, and one realistic tradeoff whenever useful.
 11. End with a soft next step back to the parent blog or a soft CTA, never a hard pitch.
+12. Use contractions when they sound natural. A mix is fine.
+13. Do not stretch the guide by repeating the same point.
+14. Do not use lines such as “This guide is for the person who”.
+15. Explain non obvious acronyms on first use.
+16. Avoid soft validation phrasing such as “That is a completely reasonable approach.”
 
 What the guide should do:
 1. Help the reader take one action fast.
