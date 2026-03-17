@@ -53,11 +53,12 @@ Hard rules:
 13. Keep the tone practical, renter aware, budget first, and non judgmental.
 14. Whenever the topic is instructional, include time, tool, budget, install risk, and at least one realistic tradeoff.
 15. Whenever the topic is informational, still make it actionable with decision rules, examples, and clear next steps.
-16. Use contractions when they sound natural. A mix is fine, but do not make the article sound stiff or overly formal.
+16. Prefer contractions in most conversational sentences where they sound natural. A mix is fine, but the article should not sound stiff or overly formal. Across the full article, contractions should appear regularly.
 17. Do not repeat the same point just to stretch the article. If you revisit a point, add a new angle, example, tradeoff, or next step.
 18. Do not use framing such as “this post is for the person who” or “this guide is for the person who”.
 19. If you use a non obvious acronym, explain it on first use.
 20. Avoid reader validation lines such as “that is a completely reasonable approach”.
+21. Use occasional parentheses when they genuinely help clarify an acronym, example, caveat, or quick side note. Do not force them into every section.
 
 Formatting rules:
 1. Write raw Markdown, not rich text.
@@ -97,11 +98,12 @@ Hard rules:
 9. Use simple, human sounding language.
 10. Include time, tools, budget, install risk, and one realistic tradeoff whenever useful.
 11. End with a soft next step back to the parent blog or a soft CTA, never a hard pitch.
-12. Use contractions when they sound natural. A mix is fine, but do not make the guide sound stiff or overly formal.
+12. Prefer contractions in most conversational sentences where they sound natural. A mix is fine, but the guide should not sound stiff or overly formal. Across the full guide, contractions should appear regularly.
 13. Do not repeat the same point just to stretch the guide. Add fresh value instead.
 14. Do not use framing such as “this post is for the person who” or “this guide is for the person who”.
 15. If you use a non obvious acronym, explain it on first use.
 16. Avoid reader validation lines such as “that is a completely reasonable approach”.
+17. Use occasional parentheses when they genuinely help clarify an acronym, example, caveat, or quick side note. Do not force them into every section.
 
 Formatting rules:
 1. Write raw Markdown, not rich text.

@@ -182,15 +182,17 @@ function firstKeyword(value: string): string {
   return parseKeywordTags(value)[0] ?? "";
 }
 
-export function tagsForBlog(blog: Pick<BlogDraft, "Pillar" | "Slug" | "Title" | "Keyword_Target">): string[] {
-  return mergeTags([contentAreaLabel(contentAreaForBlog(blog))], parseKeywordTags(blog.Keyword_Target));
+export function tagsForBlog(blog: Pick<BlogDraft, "Pillar" | "Slug" | "Title" | "Keyword_Target"> & { Keyword_Tags?: string[] }): string[] {
+  const keywordTags = Array.isArray(blog.Keyword_Tags) && blog.Keyword_Tags.length > 0 ? blog.Keyword_Tags : parseKeywordTags(blog.Keyword_Target);
+  return mergeTags([contentAreaLabel(contentAreaForBlog(blog))], keywordTags);
 }
 
 function mapEvergreenBlogToPublic(row: BlogEvergreenShape): BlogDraft {
   const area = (hubs.find((hub) => hub.area === row.Content_Area)?.area ?? "DIY") as ContentArea;
   const slug = slugFromPathOrTitle(row.Blog_URL, row.Blog_Title, row.Blog_ID);
   const title = row.Blog_Title || slug.replace(/-/g, " ");
-  const keyword = firstKeyword(row.Blog_Keywords);
+  const keywords = parseKeywordTags(row.Blog_Keywords);
+  const keyword = keywords[0] ?? "";
 
   return {
     Blog_ID: row.Blog_ID,
@@ -198,6 +200,7 @@ function mapEvergreenBlogToPublic(row: BlogEvergreenShape): BlogDraft {
     Title: title,
     Pillar: primaryLegacyPillarForArea(area),
     Keyword_Target: keyword,
+    Keyword_Tags: keywords,
     Outline: "Evergreen admin source",
     Draft_Markdown: row.Blog_Content || `# ${title}\n\nThis blog is being prepared.`,
     Internal_Links: "/start-here, /lead-magnets/plant-picker, /products/renter-bathroom-upgrade-blueprint",

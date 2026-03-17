@@ -91,3 +91,32 @@ CRI helps color, but many shoppers skip that detail.
   assert.match(result.notes, /WARN no cheesy audience framing/);
   assert.match(result.notes, /WARN explain on first use: CRI/);
 });
+
+test("quality check warns when long content sounds too stiff from low contraction use", () => {
+  const result = summarizeContentQuality({
+    id: "BLOG_9003",
+    kind: "blog",
+    title: "Bathroom bulb choices on a budget",
+    content: `# Bathroom bulb choices on a budget
+
+## Why people swap bulbs first
+You need a practical change that improves the room fast. You want better light in the mirror, cleaner visibility near the sink, and less frustration during early routines. The room feels dim, the fixture is basic, and the budget is limited.
+
+## Steps
+1. Check the fixture.
+2. Compare lumen output.
+3. Pick a better color temperature.
+
+• Budget range: $10 to $25.
+• Time and tools: 20 minutes; step stool, cloth.
+• Tradeoff: higher quality bulbs cost more up front but usually last longer.
+
+## What to remember
+You should test the light at night. You should keep the fixture clean. You should avoid buying the coldest bulb on the shelf when the room already feels stark. You should replace matching vanity bulbs together when possible.`,
+    ctaUrl: "https://diyesu.com/start-here",
+    existingTitles: [],
+    allowedCtaUrls: ["https://diyesu.com/start-here", "/start-here"]
+  });
+
+  assert.match(result.notes, /WARN natural contraction mix/);
+});

@@ -65,6 +65,7 @@ export interface BlogDraft {
   Title: string;
   Pillar: Pillar;
   Keyword_Target: string;
+  Keyword_Tags?: string[];
   Outline: string;
   Draft_Markdown: string;
   Internal_Links: string;

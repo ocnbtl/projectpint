@@ -792,6 +792,21 @@ a:hover {
   margin-bottom: 0.85rem;
 }
 
+.article-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.9rem;
+  align-items: center;
+  color: var(--ink-600);
+  margin-bottom: 0.72rem;
+}
+
+.article-meta-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .about-tagline-right {
   margin: 0;
   font-size: 0.72rem;

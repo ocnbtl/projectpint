@@ -65,9 +65,11 @@ test("blog prompt pack is ready for manual ChatGPT drafting", () => {
   assert.match(prompt, /Working title: No Drill Bathroom Fixes That Still Feel Intentional/);
   assert.match(prompt, /Return only one fenced markdown code block that contains the final blog post/);
   assert.match(prompt, /The first line inside the code block must be a literal # title line/);
-  assert.match(prompt, /Use contractions when they sound natural/);
+  assert.match(prompt, /Prefer contractions in most conversational sentences where they sound natural/);
+  assert.match(prompt, /Across the full article, contractions should appear regularly/);
   assert.match(prompt, /Do not repeat the same point just to stretch the article/);
   assert.match(prompt, /If you use a non obvious acronym, explain it on first use/);
+  assert.match(prompt, /Use occasional parentheses when they genuinely help clarify an acronym/);
   assert.match(prompt, /Use \[Preview the renter blueprint\]\(\/products\/renter-bathroom-upgrade-blueprint\) only if it fits naturally/);
   assert.doesNotMatch(prompt, /Return strict JSON only/);
 });
@@ -96,8 +98,10 @@ test("guide prompt pack is ready for manual ChatGPT drafting", () => {
   assert.match(prompt, /Parent blog title: Low Light Bathroom Plants That Handle Humidity Without Fuss/);
   assert.match(prompt, /Return only one fenced markdown code block that contains the final guide/);
   assert.match(prompt, /The first line inside the code block must be a literal # title line/);
-  assert.match(prompt, /Use contractions when they sound natural/);
+  assert.match(prompt, /Prefer contractions in most conversational sentences where they sound natural/);
+  assert.match(prompt, /Across the full guide, contractions should appear regularly/);
   assert.match(prompt, /Do not repeat the same point just to stretch the guide/);
+  assert.match(prompt, /Use occasional parentheses when they genuinely help clarify an acronym/);
   assert.match(prompt, /Use \[See the plant picks upgrade\]\(\/products\/bathroom-plant-picks-upgrade\) only if it fits naturally/);
   assert.doesNotMatch(prompt, /Return strict JSON only/);
 });

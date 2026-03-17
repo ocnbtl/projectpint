@@ -140,6 +140,26 @@ export function excerptFromMarkdown(markdown: string, maxChars = 165): string {
   return `${first.slice(0, maxChars).trimEnd()}...`;
 }
 
+export function plainTextFromMarkdown(markdown: string): string {
+  return markdownBlocks(markdown)
+    .map((block) => {
+      if (block.type === "ul" || block.type === "ol") {
+        return block.items.map((item) => item.text).join(" ");
+      }
+      return block.text;
+    })
+    .join(" ")
+    .trim();
+}
+
+export function estimateReadTimeMinutes(markdown: string, wordsPerMinute = 210): number {
+  const wordCount = plainTextFromMarkdown(markdown)
+    .split(/\s+/)
+    .map((part) => part.trim())
+    .filter(Boolean).length;
+  return Math.max(1, Math.ceil(wordCount / wordsPerMinute));
+}
+
 export function titleFromSlug(slug: string): string {
   return slug
     .split("-")

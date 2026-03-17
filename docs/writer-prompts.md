@@ -49,11 +49,12 @@ Hard rules:
 13. Keep the tone practical, renter aware, budget first, and non judgmental.
 14. Whenever the topic is instructional, include time, tool, budget, install risk, and at least one realistic tradeoff.
 15. Whenever the topic is informational, still make it actionable with decision rules, examples, and clear next steps.
-16. Use contractions when they sound natural. A mix is fine.
+16. Prefer contractions in most conversational sentences where they sound natural. A mix is fine, but the article should not sound stiff. Across the full article, contractions should appear regularly.
 17. Do not stretch the article by repeating the same point.
 18. Do not use lines such as “This post is for the person who”.
 19. Explain non obvious acronyms on first use.
 20. Avoid soft validation phrasing such as “That is a completely reasonable approach.”
+21. Use occasional parentheses when they genuinely help clarify an acronym, example, caveat, or side note.
 
 What the blog post should contain:
 1. A strong title.
@@ -158,11 +159,12 @@ Hard rules:
 9. Use simple, human sounding language.
 10. Include time, tools, budget, install risk, and one realistic tradeoff whenever useful.
 11. End with a soft next step back to the parent blog or a soft CTA, never a hard pitch.
-12. Use contractions when they sound natural. A mix is fine.
+12. Prefer contractions in most conversational sentences where they sound natural. A mix is fine, but the guide should not sound stiff. Across the full guide, contractions should appear regularly.
 13. Do not stretch the guide by repeating the same point.
 14. Do not use lines such as “This guide is for the person who”.
 15. Explain non obvious acronyms on first use.
 16. Avoid soft validation phrasing such as “That is a completely reasonable approach.”
+17. Use occasional parentheses when they genuinely help clarify an acronym, example, caveat, or side note.
 
 What the guide should do:
 1. Help the reader take one action fast.

@@ -5,7 +5,7 @@ import { AffiliateDisclosure } from "../../../components/AffiliateDisclosure";
 import { MarkdownArticle } from "../../../components/MarkdownArticle";
 import { SiteShell } from "../../../components/SiteShell";
 import { shouldShowAffiliateDisclosure } from "../../../lib/affiliate";
-import { markdownBlocks } from "../../../lib/content-render";
+import { estimateReadTimeMinutes, markdownBlocks } from "../../../lib/content-render";
 import { readBlogs, tagsForBlog } from "../../../lib/site-data";
 import { tagPath } from "../../../lib/tags";
 
@@ -25,11 +25,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     markdownOrText: blog.Draft_Markdown
   });
   const blocks = markdownBlocks(blog.Draft_Markdown);
+  const readTimeMinutes = estimateReadTimeMinutes(blog.Draft_Markdown);
 
   return (
     <SiteShell>
       <article className="card prose-card">
-        <p className="small">Status: {blog.Status}</p>
+        <div className="article-meta-row small">
+          <span>Status: {blog.Status}</span>
+          <span>{readTimeMinutes} min read</span>
+        </div>
         <div className="tag-list article-tag-list">
           {tagsForBlog(blog).map((tag) => (
             <Link key={`${blog.Blog_ID}-${tag}`} href={tagPath(tag)} className="tag tag-link">

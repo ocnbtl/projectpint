@@ -65,6 +65,10 @@ function unexplainedAcronyms(text: string): string[] {
   });
 }
 
+function contractionCount(text: string): number {
+  return text.match(new RegExp(CONTRACTION_RE.source, "gi"))?.length ?? 0;
+}
+
 export function summarizeContentQuality(params: {
   id: string;
   kind: ContentKind;
@@ -144,9 +148,11 @@ export function summarizeContentQuality(params: {
   notes.push(`${softValidation ? "WARN" : "PASS"} no soft validation phrasing`);
   if (softValidation) score -= 8;
 
-  const hasContraction = CONTRACTION_RE.test(visible);
-  notes.push(`${hasContraction ? "PASS" : "WARN"} natural contraction mix`);
-  if (!hasContraction && words >= 500) score -= 5;
+  const contractions = contractionCount(visible);
+  const recommendedContractions = params.kind === "blog" ? Math.max(3, Math.floor(words / 220)) : Math.max(2, Math.floor(words / 260));
+  const enoughContractions = contractions >= recommendedContractions;
+  notes.push(`${enoughContractions ? "PASS" : "WARN"} natural contraction mix (${contractions} found, target about ${recommendedContractions})`);
+  if (!enoughContractions && words >= 400) score -= 8;
 
   const unexplained = unexplainedAcronyms(params.content);
   notes.push(`${unexplained.length === 0 ? "PASS" : "WARN"} acronym clarity`);
