@@ -171,6 +171,28 @@ function supabaseTableUrl(tableName: string): string {
   return `${requireSupabaseEnv("SUPABASE_URL").replace(/\/+$/, "")}/rest/v1/${tableName}`;
 }
 
+function supabaseTimeoutMs(): number {
+  const parsed = Number(process.env.SUPABASE_FETCH_TIMEOUT_MS ?? "6000");
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 6000;
+}
+
+function isSupabaseLoadFallbackEnabled(): boolean {
+  return process.env.SUPABASE_LOAD_FALLBACK === "0" ? false : true;
+}
+
+async function supabaseFetch(input: string | URL, init: RequestInit): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), supabaseTimeoutMs());
+  try {
+    return await fetch(input, {
+      ...init,
+      signal: controller.signal
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function parseSupabaseResponse(response: Response): Promise<unknown> {
   const text = await response.text();
   if (!response.ok) {
@@ -191,7 +213,7 @@ async function supabaseLoadTab<T>(tabName: string): Promise<T[]> {
   url.searchParams.set("select", "*");
   url.searchParams.set("order", `${dedicated.primaryKey}.asc`);
 
-  const response = await fetch(url, {
+  const response = await supabaseFetch(url, {
     method: "GET",
     headers: supabaseHeaders(),
     cache: "no-store"
@@ -214,7 +236,7 @@ async function supabaseSaveTab<T>(tabName: string, rows: T[]): Promise<void> {
 
   const existingKeysUrl = new URL(supabaseTableUrl(dedicated.table));
   existingKeysUrl.searchParams.set("select", dedicated.primaryKey);
-  const existingKeysResponse = await fetch(existingKeysUrl, {
+  const existingKeysResponse = await supabaseFetch(existingKeysUrl, {
     method: "GET",
     headers: supabaseHeaders(),
     cache: "no-store"
@@ -225,7 +247,7 @@ async function supabaseSaveTab<T>(tabName: string, rows: T[]): Promise<void> {
   if (!normalizedRows.length) {
     const deleteAllUrl = new URL(supabaseTableUrl(dedicated.table));
     deleteAllUrl.searchParams.set(dedicated.primaryKey, "not.is.null");
-    const deleteAllResponse = await fetch(deleteAllUrl, {
+    const deleteAllResponse = await supabaseFetch(deleteAllUrl, {
       method: "DELETE",
       headers: {
         ...supabaseHeaders(),
@@ -237,7 +259,7 @@ async function supabaseSaveTab<T>(tabName: string, rows: T[]): Promise<void> {
     return;
   }
 
-  const insertResponse = await fetch(supabaseTableUrl(dedicated.table), {
+  const insertResponse = await supabaseFetch(supabaseTableUrl(dedicated.table), {
     method: "POST",
     headers: {
       ...supabaseHeaders(),
@@ -253,7 +275,7 @@ async function supabaseSaveTab<T>(tabName: string, rows: T[]): Promise<void> {
   for (const key of staleKeys) {
     const deleteUrl = new URL(supabaseTableUrl(dedicated.table));
     deleteUrl.searchParams.set(dedicated.primaryKey, `eq.${key}`);
-    const deleteResponse = await fetch(deleteUrl, {
+    const deleteResponse = await supabaseFetch(deleteUrl, {
       method: "DELETE",
       headers: {
         ...supabaseHeaders(),
@@ -271,7 +293,13 @@ export function getRuntimeStoreMode(): RuntimeStoreMode {
 
 export async function loadRuntimeTab<T>(tabName: string): Promise<T[]> {
   if (runtimeStoreMode() === "supabase") {
-    return supabaseLoadTab<T>(tabName);
+    try {
+      return await supabaseLoadTab<T>(tabName);
+    } catch (error) {
+      if (!isSupabaseLoadFallbackEnabled()) throw error;
+      console.warn(`Supabase load failed for ${tabName}; falling back to local data.`, error);
+      return localLoadTab<T>(tabName);
+    }
   }
   return localLoadTab<T>(tabName);
 }

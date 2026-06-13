@@ -1,38 +1,37 @@
 import Link from "next/link";
 import { SiteShell } from "../../components/SiteShell";
+import { areaVisuals } from "../../lib/redesign-data";
 import { hubs } from "../../lib/site-data";
 
 export default function HubIndexPage() {
   return (
     <SiteShell>
-      <div className="section-stack">
-        <section className="panel areas-intro">
-          <h1 className="areas-title">Choose the bathroom area you want to improve first.</h1>
+      <div className="container site-page">
+        <section className="soft-hero">
+          <p className="eyebrow blog-eyebrow">Areas</p>
+          <h1>Every part of your bathroom, covered.</h1>
           <p>
-            Pick one area, start small, and finish a real upgrade this week. Every path is built for real homes, real
-            routines, and practical budgets.
+            Eight focused paths keep every public article, guide, pin, and product offer aligned around real bathroom
+            problems.
           </p>
-          <div className="cta-row">
-            <Link href="/start-here" className="btn btn-accent">
-              Start with guidance
-            </Link>
-            <Link href="/blog" className="btn btn-ghost">
-              Read quick guides
-            </Link>
-          </div>
         </section>
 
-        <section className="grid grid-3 areas-grid">
-          {hubs.map((hub) => (
-            <article key={hub.slug} className="card areas-card">
-              <h3>{hub.title}</h3>
-              <p className="path-card-summary">{hub.description}</p>
-              <p className="benefit-highlight">Win today: {hub.outcome}</p>
-              <Link href={`/hub/${hub.slug}`} className="btn btn-accent">
-                Explore {hub.title}
-              </Link>
-            </article>
-          ))}
+        <section className="dd-section">
+          <div className="area-photo-grid area-photo-grid-large">
+            {hubs.map((hub) => {
+              const visual = areaVisuals[hub.area];
+              return (
+                <Link key={hub.slug} href={`/hub/${hub.slug}`} className="area-photo-card area-photo-card-tall">
+                  <img src={visual.image} alt="" />
+                  <span className="area-photo-card-shade" aria-hidden="true" />
+                  <span className="area-photo-card-copy">
+                    <strong>{hub.title}</strong>
+                    <span>{visual.tagline}</span>
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
         </section>
       </div>
     </SiteShell>

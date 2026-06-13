@@ -1,6 +1,6 @@
-import { PlantPickerTool } from "../../../components/PlantPickerTool";
-import { SiteShell } from "../../../components/SiteShell";
-import { redesignImages } from "../../../lib/redesign-data";
+import { PlantPickerTool } from "../../components/PlantPickerTool";
+import { SiteShell } from "../../components/SiteShell";
+import { redesignImages } from "../../lib/redesign-data";
 
 export default function PlantPickerPage() {
   return (

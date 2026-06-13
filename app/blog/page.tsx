@@ -1,7 +1,10 @@
 import { BlogIndexExplorer } from "../../components/BlogIndexExplorer";
 import { SiteShell } from "../../components/SiteShell";
 import { excerptFromMarkdown } from "../../lib/content-render";
-import { readBlogs, tagsForBlog } from "../../lib/site-data";
+import { areaVisuals } from "../../lib/redesign-data";
+import { contentAreaForBlog, readBlogs, tagsForBlog } from "../../lib/site-data";
+
+export const dynamic = "force-dynamic";
 
 export default async function BlogIndex() {
   const rows = await readBlogs();
@@ -14,17 +17,20 @@ export default async function BlogIndex() {
     title: row.Title,
     excerpt: excerptFromMarkdown(row.Draft_Markdown, 160),
     tags: tagsForBlog(row),
-    keyword: row.Keyword_Target
+    keyword: row.Keyword_Target,
+    image: areaVisuals[contentAreaForBlog(row)].image
   }));
   const availableTags = Array.from(new Set(blogs.flatMap((blog) => blog.tags))).sort();
 
   return (
     <SiteShell>
-      <div className="section-stack">
-        <section className="panel blog-hero">
-          <p className="eyebrow blog-eyebrow">Guides</p>
-          <h1>Diyesu Decor Blog</h1>
-          <p>Fast, practical reads that help you finish bathroom upgrades with less guesswork.</p>
+      <div className="container site-page">
+        <section className="soft-hero">
+          <p className="eyebrow blog-eyebrow">Blog</p>
+          <h1>Quick reads to upgrade your bathroom.</h1>
+          <p>
+            Practical articles from the live content system, grouped by area tags so every idea has a clear next step.
+          </p>
         </section>
         <BlogIndexExplorer blogs={blogs} availableTags={availableTags} />
       </div>

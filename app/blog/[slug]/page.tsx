@@ -6,19 +6,18 @@ import { MarkdownArticle } from "../../../components/MarkdownArticle";
 import { SiteShell } from "../../../components/SiteShell";
 import { shouldShowAffiliateDisclosure } from "../../../lib/affiliate";
 import { estimateReadTimeMinutes, markdownBlocks } from "../../../lib/content-render";
-import { readBlogs, tagsForBlog } from "../../../lib/site-data";
+import { areaVisuals } from "../../../lib/redesign-data";
+import { contentAreaForBlog, readBlogs, tagsForBlog } from "../../../lib/site-data";
 import { tagPath } from "../../../lib/tags";
 
-export async function generateStaticParams() {
-  const blogs = await readBlogs();
-  return blogs.map((b) => ({ slug: b.Slug }));
-}
+export const dynamic = "force-dynamic";
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const blogs = await readBlogs();
   const blog = blogs.find((b) => b.Slug === slug);
   if (!blog) return notFound();
+
   const showAffiliateDisclosure = shouldShowAffiliateDisclosure({
     explicitFlag: blog.Affiliate_Disclosure_Required,
     containsAffiliateLinks: blog.Contains_Affiliate_Links,
@@ -28,22 +27,30 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const readTimeMinutes = estimateReadTimeMinutes(blog.Draft_Markdown);
   const titleBlock = blocks[0]?.type === "h1" ? blocks[0] : null;
   const contentBlocks = titleBlock ? blocks.slice(1) : blocks;
+  const tags = tagsForBlog(blog);
+  const image = areaVisuals[contentAreaForBlog(blog)].image;
 
   return (
     <SiteShell>
-      <article className="card prose-card">
-        <div className="tag-list article-tag-list">
-          {tagsForBlog(blog).map((tag) => (
-            <Link key={`${blog.Blog_ID}-${tag}`} href={tagPath(tag)} className="tag tag-link">
-              {tag}
+      <section className="article-hero" style={{ backgroundImage: `url(${image})` }}>
+        <div className="article-hero-shade">
+          <div className="container article-hero-copy">
+            <Link href="/blog" className="back-link">
+              Back to Blog
             </Link>
-          ))}
+            <div className="tag-list article-tag-list">
+              {tags.map((tag) => (
+                <Link key={`${blog.Blog_ID}-${tag}`} href={tagPath(tag)} className="tag tag-link">
+                  {tag}
+                </Link>
+              ))}
+            </div>
+            <h1>{titleBlock?.text ?? blog.Title}</h1>
+            <p>{readTimeMinutes} min read</p>
+          </div>
         </div>
-        {titleBlock ? <h1>{titleBlock.text}</h1> : null}
-        <div className="article-readtime-callout" aria-label={`${readTimeMinutes} minute read`}>
-          <span className="article-readtime-kicker">Quick read</span>
-          <strong>{readTimeMinutes} min read</strong>
-        </div>
+      </section>
+      <article className="prose-card article-body-card">
         <MarkdownArticle blocks={contentBlocks} slug={slug} />
       </article>
       {showAffiliateDisclosure ? <AffiliateDisclosure /> : null}

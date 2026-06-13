@@ -1,6 +1,12 @@
-import { lintEditorialStyle } from "./style-linter.ts";
-
-export type ContentKind = "blog" | "guide";
+export interface ContentQualityInput {
+  id: string;
+  kind: "blog" | "guide";
+  title: string;
+  content: string;
+  ctaUrl: string;
+  existingTitles: string[];
+  allowedCtaUrls: string[];
+}
 
 export interface ContentQualitySummary {
   score: number;
@@ -8,187 +14,106 @@ export interface ContentQualitySummary {
   blockingIssues: string[];
 }
 
-const DASH_RE = /[\u2010-\u2015-]/;
-const HARD_SELL_RE = /\b(buy now|last chance|limited time|must buy|act fast|guaranteed|don't miss out)\b/i;
-const BANNED_STYLE_RE = /\bit is not\b.*\bit is\b/i;
-const PERSONA_FRAMING_RE = /\bthis (post|guide|article) is for (the )?person\b/i;
-const SOFT_VALIDATION_RE = /\b(?:that|this) is a (?:completely|totally|perfectly) reasonable (?:approach|choice|plan)\b/i;
-const CONTRACTION_RE = /\b(?:[A-Za-z]+n't|(?:i|you|we|they|he|she|it|that|there|here|what|who|where|when|how)'(?:re|ve|ll|d|m|s)|let's)\b/i;
-const COMMON_ACRONYMS = new Set(["DIY", "LED", "ET"]);
+const ACRONYM_ALLOWLIST = new Set(["DIY", "URL", "LED"]);
+const CONTRACTION_RE = /\b(?:it'?s|you'?re|you'?ll|you'?ve|don'?t|doesn'?t|can'?t|won'?t|isn'?t|aren'?t|that'?s|there'?s|we'?re|we'?ll|they'?re)\b/i;
+
+function stripMarkdownLinks(markdown: string): string {
+  return markdown.replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1");
+}
 
 function visibleText(markdown: string): string {
-  return markdown
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1")
-    .replace(/[*`#>]/g, "")
-    .replace(/\r/g, "")
-    .trim();
+  return stripMarkdownLinks(markdown)
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`[^`]*`/g, " ")
+    .replace(/[#*_>]/g, " ");
 }
 
-function wordCount(text: string): number {
-  return text
-    .split(/\s+/)
-    .map((part) => part.trim())
-    .filter(Boolean).length;
+function hasVisibleDash(markdown: string): boolean {
+  const text = visibleText(markdown);
+  return /[\u2010-\u2015-]/.test(text);
 }
 
-function similarityScore(a: string, b: string): number {
-  const tokensA = new Set(a.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean));
-  const tokensB = new Set(b.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean));
-  if (tokensA.size === 0 || tokensB.size === 0) return 0;
-  let overlap = 0;
-  for (const token of tokensA) {
-    if (tokensB.has(token)) overlap += 1;
-  }
-  return overlap / Math.max(tokensA.size, tokensB.size);
-}
-
-function hasConstraintLanguage(text: string): boolean {
-  return /\b(renter|no drill|reversible|landlord safe|temporary|deposit|small bathroom|budget)\b/i.test(text);
-}
-
-function hasTimeAndTools(text: string): boolean {
-  const hasTime = /\bminute|hour|minutes|hours\b/i.test(text);
-  const hasTools = /\btools?|measuring tape|screwdriver|drill|cloth|scissors|adhesive\b/i.test(text);
-  return hasTime && hasTools;
-}
-
-function hasTradeoff(text: string): boolean {
-  return /\btradeoff|trade off|but\b/i.test(text);
-}
-
-function unexplainedAcronyms(text: string): string[] {
-  const matches = text.match(/\b[A-Z]{2,5}\b/g) ?? [];
-  const unique = Array.from(new Set(matches));
-  return unique.filter((acronym) => {
-    if (COMMON_ACRONYMS.has(acronym)) return false;
-    return !text.includes(`${acronym} (`) && !text.includes(`(${acronym})`);
+function unexplainedAcronyms(markdown: string): string[] {
+  const text = visibleText(markdown);
+  const matches = text.match(/\b[A-Z]{2,}\b/g) ?? [];
+  const unique = Array.from(new Set(matches)).filter((value) => !ACRONYM_ALLOWLIST.has(value));
+  return unique.filter((value) => {
+    const first = text.indexOf(value);
+    if (first === -1) return false;
+    const before = text.slice(Math.max(0, first - 80), first);
+    const after = text.slice(first + value.length, first + value.length + 80);
+    return !/\([A-Z]{2,}\)/.test(after) && !/[A-Z][a-z]+(?:\s+[A-Z]?[a-z]+){1,6}\s*\($/.test(before);
   });
 }
 
-function contractionCount(text: string): number {
-  return text.match(new RegExp(CONTRACTION_RE.source, "gi"))?.length ?? 0;
+function normalizedTitle(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
-export function summarizeContentQuality(params: {
-  id: string;
-  kind: ContentKind;
-  title: string;
-  content: string;
-  ctaUrl: string;
-  existingTitles: string[];
-  allowedCtaUrls: string[];
-}): ContentQualitySummary {
-  const visible = visibleText(`${params.title}\n${params.content}`);
-  const words = wordCount(visible);
-  const style = lintEditorialStyle(params.id, params.kind === "blog" ? "blog" : "micro", visible);
-  const notes: string[] = [];
+export function summarizeContentQuality(input: ContentQualityInput): ContentQualitySummary {
   const blockingIssues: string[] = [];
+  const warnings: string[] = [];
   let score = 100;
+  const content = input.content.trim();
+  const text = visibleText(content);
 
-  const minWords = params.kind === "blog" ? 900 : 350;
-  const maxWords = params.kind === "blog" ? 2600 : 900;
-  const withinRange = words >= minWords && words <= maxWords;
-  notes.push(`${withinRange ? "PASS" : "WARN"} word count ${words} (${minWords} to ${maxWords} target)`);
-  if (!withinRange) score -= 10;
+  if (!input.title.trim()) {
+    blockingIssues.push("missing_title");
+    score -= 25;
+  }
 
-  const hasHeading = /^##?\s/m.test(params.content);
-  notes.push(`${hasHeading ? "PASS" : "WARN"} heading structure`);
-  if (!hasHeading) score -= 8;
+  if (!content) {
+    blockingIssues.push("missing_content");
+    score -= 35;
+  }
 
-  const hasOrdered = /^\d+\.\s/m.test(params.content);
-  notes.push(`${hasOrdered ? "PASS" : "WARN"} numbered list present`);
-  if (!hasOrdered) score -= 8;
-
-  const hasBullets = /^•\s/m.test(params.content);
-  notes.push(`${hasBullets ? "PASS" : "WARN"} bullet list present`);
-  if (!hasBullets) score -= 8;
-
-  const hasBudget = /(?:\$|\bunder\s+\d|\b\d+\s+dollars\b|\b\d+\s+usd\b)/i.test(visible);
-  notes.push(`${hasBudget ? "PASS" : "WARN"} budget detail present`);
-  if (!hasBudget) score -= 8;
-
-  const constraint = hasConstraintLanguage(visible);
-  notes.push(`${constraint ? "PASS" : "WARN"} constraint language present`);
-  if (!constraint) score -= 8;
-
-  const toolsAndTime = hasTimeAndTools(visible);
-  notes.push(`${toolsAndTime ? "PASS" : "WARN"} time and tools present`);
-  if (!toolsAndTime) score -= 8;
-
-  const tradeoff = hasTradeoff(visible);
-  notes.push(`${tradeoff ? "PASS" : "WARN"} realistic tradeoff present`);
-  if (!tradeoff) score -= 6;
-
-  const visibleHasDash = DASH_RE.test(visible);
-  notes.push(`${visibleHasDash ? "BLOCK" : "PASS"} no visible dash characters`);
-  if (visibleHasDash) {
+  if (hasVisibleDash(content)) {
     blockingIssues.push("visible_dash_characters");
     score -= 20;
   }
 
-  const hardSell = HARD_SELL_RE.test(visible);
-  notes.push(`${hardSell ? "BLOCK" : "PASS"} no hard sell language`);
-  if (hardSell) {
-    blockingIssues.push("hard_sell_language");
-    score -= 20;
+  if (input.ctaUrl.trim() && input.allowedCtaUrls.length > 0 && !input.allowedCtaUrls.includes(input.ctaUrl.trim())) {
+    blockingIssues.push("cta_url_not_allowed");
+    score -= 15;
   }
 
-  const bannedStyle = BANNED_STYLE_RE.test(visible);
-  notes.push(`${bannedStyle ? "BLOCK" : "PASS"} no formulaic contrast phrasing`);
-  if (bannedStyle) {
-    blockingIssues.push("formulaic_contrast_phrasing");
-    score -= 18;
+  const duplicateTitle = normalizedTitle(input.title);
+  if (duplicateTitle && input.existingTitles.some((title) => normalizedTitle(title) === duplicateTitle)) {
+    blockingIssues.push("duplicate_title");
+    score -= 15;
   }
 
-  const personaFraming = PERSONA_FRAMING_RE.test(visible);
-  notes.push(`${personaFraming ? "WARN" : "PASS"} no cheesy audience framing`);
-  if (personaFraming) score -= 10;
-
-  const softValidation = SOFT_VALIDATION_RE.test(visible);
-  notes.push(`${softValidation ? "WARN" : "PASS"} no soft validation phrasing`);
-  if (softValidation) score -= 8;
-
-  const contractions = contractionCount(visible);
-  const recommendedContractions = params.kind === "blog" ? Math.max(3, Math.floor(words / 220)) : Math.max(2, Math.floor(words / 260));
-  const enoughContractions = contractions >= recommendedContractions;
-  notes.push(`${enoughContractions ? "PASS" : "WARN"} natural contraction mix (${contractions} found, target about ${recommendedContractions})`);
-  if (!enoughContractions && words >= 400) score -= 8;
-
-  const unexplained = unexplainedAcronyms(params.content);
-  notes.push(`${unexplained.length === 0 ? "PASS" : "WARN"} acronym clarity`);
-  if (unexplained.length > 0) {
-    notes.push(`WARN explain on first use: ${unexplained.join(", ")}`);
-    score -= 6;
+  if (/\b(for the person who|for people who|for anyone who)\b/i.test(text)) {
+    warnings.push("WARN no cheesy audience framing");
+    score -= 5;
   }
 
-  const ctaValid = params.allowedCtaUrls.includes(params.ctaUrl);
-  notes.push(`${ctaValid ? "PASS" : "BLOCK"} CTA target is allowed`);
-  if (!ctaValid) {
-    blockingIssues.push("invalid_cta_target");
-    score -= 20;
+  const acronyms = unexplainedAcronyms(content);
+  if (acronyms.length > 0) {
+    warnings.push(`WARN explain on first use: ${acronyms.join(", ")}`);
+    score -= Math.min(10, acronyms.length * 3);
   }
 
-  const internalLinkCount = (params.content.match(/\[[^\]]+\]\((\/[^)]+)\)/g) ?? []).length;
-  notes.push(`${internalLinkCount <= 2 ? "PASS" : "WARN"} internal link count ${internalLinkCount}`);
-  if (internalLinkCount > 2) score -= 5;
-
-  const nearDuplicate = params.existingTitles.some((existing) => similarityScore(existing, params.title) >= 0.7);
-  notes.push(`${nearDuplicate ? "WARN" : "PASS"} title uniqueness`);
-  if (nearDuplicate) score -= 10;
-
-  notes.push(`PASS style score ${style.score}`);
-  score = Math.max(0, Math.min(100, Math.round((score + style.score) / 2)));
-  if (style.flags.some((flag) => flag.startsWith("hard_sell_language"))) {
-    blockingIssues.push("style_linter_hard_sell");
+  const wordCount = (text.match(/\b[\w']+\b/g) ?? []).length;
+  const contractionCount = (text.match(new RegExp(CONTRACTION_RE.source, "gi")) ?? []).length;
+  if (wordCount >= 90 && contractionCount === 0) {
+    warnings.push("WARN natural contraction mix");
+    score -= 5;
   }
-  if (style.flags.includes("benefit_framing_weak")) {
-    notes.push("WARN benefit framing is weak");
-    score -= 8;
-  }
+
+  const lines = [
+    ...blockingIssues.map((issue) => `BLOCK ${issue}`),
+    ...warnings,
+    blockingIssues.length === 0 ? "PASS no blocking quality issues" : ""
+  ].filter(Boolean);
 
   return {
-    score: Math.max(0, score),
-    notes: `Score: ${Math.max(0, score)}\n${notes.join("\n")}`,
+    score: Math.max(0, Math.min(100, score)),
+    notes: lines.join("\n"),
     blockingIssues
   };
 }

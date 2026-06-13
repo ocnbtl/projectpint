@@ -3,13 +3,14 @@ import type { ReactNode } from "react";
 import { AdminNavLink } from "./AdminNavLink";
 
 const NAV_ITEMS = [
-  { href: "/admin", label: "Home" },
-  { href: "/admin/pins", label: "Pins" },
-  { href: "/admin/blogs", label: "Blogs" },
-  { href: "/admin/guides", label: "Guides" },
-  { href: "/admin/emails", label: "Emails" },
-  { href: "/admin/customers", label: "Users" },
-  { href: "/admin/products", label: "Products" }
+  { href: "/admin", label: "Home", icon: "H" },
+  { href: "/admin/pins", label: "Pins", icon: "P" },
+  { href: "/admin/blogs", label: "Blogs", icon: "B" },
+  { href: "/admin/guides", label: "Guides", icon: "G" },
+  { href: "/admin/emails", label: "Emails", icon: "E" },
+  { href: "/admin/customers", label: "Users", icon: "U" },
+  { href: "/admin/products", label: "Products", icon: "D" },
+  { href: "/admin/analytics", label: "Analytics", icon: "A" }
 ];
 
 export function AdminFrame({ children }: { children: ReactNode }) {
@@ -25,10 +26,13 @@ export function AdminFrame({ children }: { children: ReactNode }) {
         </Link>
         <nav className="admin-nav" aria-label="Admin navigation">
           {NAV_ITEMS.map((item) => (
-            <AdminNavLink key={item.href} href={item.href} label={item.label} />
+            <AdminNavLink key={item.href} href={item.href} label={item.label} icon={item.icon} />
           ))}
         </nav>
         <div className="admin-sidebar-foot">
+          <p className="admin-sidebar-note">
+            Human approval stays required before any publish or Pinterest export.
+          </p>
           <div className="admin-sidebar-actions">
             <Link href="/" className="btn btn-ghost">
               Open public site

@@ -2,13 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteShell } from "../../../components/SiteShell";
 import { excerptFromMarkdown } from "../../../lib/content-render";
-import { findTagArchiveBySlug, readAllTagArchives, tagsForBlog } from "../../../lib/site-data";
+import { findTagArchiveBySlug, tagsForBlog } from "../../../lib/site-data";
 import { tagPath } from "../../../lib/tags";
 
-export async function generateStaticParams() {
-  const archives = await readAllTagArchives();
-  return archives.map((archive) => ({ slug: archive.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export default async function TagArchivePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

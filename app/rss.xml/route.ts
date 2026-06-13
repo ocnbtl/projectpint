@@ -1,5 +1,7 @@
 import { readBlogs } from "../../lib/site-data";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const blogs = await readBlogs();
   const items = blogs

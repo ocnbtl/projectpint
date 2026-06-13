@@ -3,8 +3,10 @@ import { AdSlot } from "../components/AdSlot";
 import { EmailSignupForm } from "../components/EmailSignupForm";
 import { SiteShell } from "../components/SiteShell";
 import { excerptFromMarkdown } from "../lib/content-render";
-import { hubs, readBlogs, tagsForBlog } from "../lib/site-data";
-import { tagPath } from "../lib/tags";
+import { areaVisuals, inspirationStyles, redesignImages } from "../lib/redesign-data";
+import { contentAreaForBlog, hubs, readBlogs, tagsForBlog } from "../lib/site-data";
+
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const allBlogs = await readBlogs();
@@ -13,109 +15,130 @@ export default async function HomePage() {
 
   return (
     <SiteShell>
-      <div className="section-stack">
-        <section className="hero hero-home-compact">
-          <div className="hero-compact-wrap">
-            <p className="eyebrow hero-lead-in">Practical bathroom upgrades for:</p>
-            <ul className="hero-bullet-list">
-              <li>Renters</li>
-              <li>Small spaces</li>
-              <li>Tight budgets</li>
-            </ul>
-            <p className="home-hero-cta">Start with one area and finish one real bathroom upgrade today.</p>
-            <div className="cta-row hero-cta-row">
+      <section className="home-photo-hero" style={{ backgroundImage: `url(${redesignImages.hero})` }}>
+        <div className="home-photo-hero-overlay">
+          <div className="container home-photo-hero-copy">
+            <h1>
+              Your bathroom deserves better.
+              <span>Your wallet says be smart.</span>
+            </h1>
+            <p>Practical upgrades for renters, small spaces, and tight budgets.</p>
+            <div className="cta-row">
               <Link href="/start-here" className="btn btn-accent">
-                Start here
+                Start Here
               </Link>
-              <Link href="/lead-magnets/plant-picker" className="btn btn-secondary">
-                Try free bathroom plant guide
+              <Link href="/hub" className="btn btn-secondary">
+                Browse Bathroom Areas
               </Link>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section className="panel">
-          <h2>The bathroom you&apos;ve always wanted</h2>
-          <div className="metric-grid">
-            <div className="metric">
-              <p className="metric-value">15-45 mins</p>
-              <p className="small">Quick win improvements that reduce clutter fast.</p>
+      <div className="container site-page">
+        <section className="dd-section">
+          <div className="dd-section-head">
+            <div>
+              <p className="eyebrow blog-eyebrow">Bathroom Areas</p>
+              <h2>Every small upgrade starts with one area.</h2>
             </div>
-            <div className="metric">
-              <p className="metric-value">Budget-aware options</p>
-              <p className="small">Clear recommendation &amp; options for your budget.</p>
-            </div>
-            <div className="metric">
-              <p className="metric-value">Style that fits you</p>
-              <p className="small">Explore mirror, lighting, and color options across different aesthetics.</p>
-            </div>
+            <Link href="/hub" className="btn btn-ghost">
+              View all areas
+            </Link>
+          </div>
+          <div className="area-photo-grid">
+            {hubs.map((hub) => {
+              const visual = areaVisuals[hub.area];
+              return (
+                <Link key={hub.slug} href={`/hub/${hub.slug}`} className="area-photo-card">
+                  <img src={visual.image} alt="" />
+                  <span className="area-photo-card-shade" aria-hidden="true" />
+                  <span className="area-photo-card-copy">
+                    <strong>{hub.title}</strong>
+                    <span>{visual.tagline}</span>
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
-        <section className="panel">
-          <h2>Choose your path</h2>
-          <div className="grid grid-3">
-            {hubs.map((hub) => (
-              <article key={hub.slug} className="card card-soft path-card home-path-card">
-                <div className="path-card-main">
-                  <h3>{hub.title}</h3>
-                  <p className="path-card-summary">{hub.description}</p>
-                </div>
-                <div className="path-card-action">
-                  <p className="benefit-highlight">Win today: {hub.outcome}</p>
-                  <Link href={`/hub/${hub.slug}`} className="btn btn-accent">
-                    Explore {hub.title}
-                  </Link>
-                </div>
-              </article>
+        <section className="dd-section split-feature">
+          <div>
+            <p className="eyebrow blog-eyebrow">Inspiration</p>
+            <h2>Beautiful bathrooms, attainable upgrades.</h2>
+            <p>
+              Browse style boards built around finishes, plants, lighting, and renter-safe details before choosing the
+              practical next step.
+            </p>
+            <Link href="/inspiration" className="btn btn-accent">
+              Browse inspiration
+            </Link>
+          </div>
+          <div className="inspo-strip">
+            {inspirationStyles.slice(0, 4).map((style) => (
+              <Link key={style.slug} href={`/inspiration/${style.slug}`} className="inspo-strip-card">
+                <img src={style.cover} alt="" />
+                <span>{style.name}</span>
+              </Link>
             ))}
           </div>
         </section>
 
-        <section className="panel">
-          <h2>Read in under 5 minutes</h2>
+        <section className="dd-section">
+          <div className="dd-section-head">
+            <div>
+              <p className="eyebrow blog-eyebrow">Quick Reads</p>
+              <h2>Upgrade ideas from the live content system.</h2>
+            </div>
+            <Link href="/blog" className="btn btn-ghost">
+              View all posts
+            </Link>
+          </div>
           <div className="grid grid-3">
-            {blogs.map((blog) => (
-              <article key={blog.Blog_ID} className="card">
-                <div className="tag-list tag-list-compact read-tags">
-                  {tagsForBlog(blog)
-                    .slice(0, 3)
-                    .map((tag) => (
-                      <Link key={`${blog.Blog_ID}-${tag}`} href={tagPath(tag)} className="tag tag-link">
-                        {tag}
-                      </Link>
-                    ))}
-                </div>
-                <h3>
-                  <Link href={`/blog/${blog.Slug}`}>{blog.Title}</Link>
-                </h3>
-                <p>{excerptFromMarkdown(blog.Draft_Markdown, 150)}</p>
-              </article>
-            ))}
+            {blogs.map((blog) => {
+              const image = areaVisuals[contentAreaForBlog(blog)].image;
+              return (
+                <article key={blog.Blog_ID} className="blog-image-card">
+                  <div className="blog-image-card-media">
+                    <img src={image} alt="" />
+                  </div>
+                  <div className="blog-image-card-copy">
+                    <div className="tag-list tag-list-compact">
+                      {tagsForBlog(blog)
+                        .slice(0, 2)
+                        .map((tag) => (
+                          <span key={`${blog.Blog_ID}-${tag}`} className="tag">
+                            {tag}
+                          </span>
+                        ))}
+                    </div>
+                    <h3>
+                      <Link href={`/blog/${blog.Slug}`}>{blog.Title}</Link>
+                    </h3>
+                    <p>{excerptFromMarkdown(blog.Draft_Markdown, 130)}</p>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </section>
 
-        <section className="grid grid-2">
-          <article className="card card-accent promo-card promo-card-plant">
-            <h3>Bathroom Plant Picker</h3>
-            <p>Tell us your light, humidity, and space. Get practical plant matches and placement tips.</p>
-            <Link href="/lead-magnets/plant-picker" className="btn btn-accent">
-              Get free plant recommendations
-            </Link>
-          </article>
-          <article className="card card-accent promo-card promo-card-blueprint">
-            <h3>
-              Bathroom Upgrade Blueprint <strong className="promo-subtitle">(for renters)</strong>
-            </h3>
-            <p>Personalized bathroom recommendations for your budget.</p>
-            <Link href="/products/renter-bathroom-upgrade-blueprint" className="btn btn-accent">
-              Preview blueprint
-            </Link>
-          </article>
+        <section className="dark-cta">
+          <div>
+            <p className="eyebrow">Free Tool</p>
+            <h2>Find bathroom plants that can actually survive your space.</h2>
+          </div>
+          <Link href="/plant-picker" className="btn btn-accent">
+            Free Plant Picker
+          </Link>
         </section>
 
-        <section className="panel">
-          <h2>Get weekly bathroom inspiration &amp; upgrade plans</h2>
+        <section className="newsletter-band">
+          <div>
+            <p className="eyebrow blog-eyebrow">Weekly Plan</p>
+            <h2>Bathroom inspiration with practical next steps.</h2>
+          </div>
           <EmailSignupForm
             sourceUrl="/"
             buttonLabel="Send me weekly plans"

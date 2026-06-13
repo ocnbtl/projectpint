@@ -2,89 +2,89 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { tagPath } from "../lib/tags";
 
-interface BlogItem {
+interface BlogCard {
   id: string;
   slug: string;
   title: string;
   excerpt: string;
   tags: string[];
   keyword: string;
+  image: string;
 }
 
 interface BlogIndexExplorerProps {
-  blogs: BlogItem[];
+  blogs: BlogCard[];
   availableTags: string[];
 }
 
 export function BlogIndexExplorer({ blogs, availableTags }: BlogIndexExplorerProps) {
   const [query, setQuery] = useState("");
-  const [selectedTag, setSelectedTag] = useState("all");
+  const [activeTag, setActiveTag] = useState("All");
 
-  const filtered = useMemo(() => {
+  const filteredBlogs = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
-
     return blogs.filter((blog) => {
-      const matchesTag = selectedTag === "all" || blog.tags.includes(selectedTag);
-      if (!matchesTag) return false;
-      if (!normalizedQuery) return true;
-
-      const haystack = `${blog.title} ${blog.excerpt} ${blog.keyword} ${blog.tags.join(" ")}`.toLowerCase();
-      return haystack.includes(normalizedQuery);
+      const matchesTag = activeTag === "All" || blog.tags.includes(activeTag);
+      const searchable = `${blog.title} ${blog.excerpt} ${blog.keyword} ${blog.tags.join(" ")}`.toLowerCase();
+      const matchesQuery = !normalizedQuery || searchable.includes(normalizedQuery);
+      return matchesTag && matchesQuery;
     });
-  }, [blogs, query, selectedTag]);
+  }, [activeTag, blogs, query]);
 
   return (
-    <section className="panel blog-explorer">
-      <div className="blog-search-row">
-        <div className="field">
-          <label htmlFor="blog-search">Search</label>
+    <section className="dd-section blog-explorer">
+      <div className="filter-panel">
+        <label>
+          <span>Search</span>
           <input
-            id="blog-search"
             type="search"
-            placeholder="Search by topic, title, or keyword"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search lighting, renters, plants..."
           />
-        </div>
-
-        <div className="field">
-          <label htmlFor="blog-tag-filter">Filter by tag</label>
-          <select
-            id="blog-tag-filter"
-            value={selectedTag}
-            onChange={(event) => setSelectedTag(event.target.value)}
-          >
-            <option value="all">All tags</option>
+        </label>
+        <label>
+          <span>Area</span>
+          <select value={activeTag} onChange={(event) => setActiveTag(event.target.value)}>
+            <option value="All">All areas</option>
             {availableTags.map((tag) => (
               <option key={tag} value={tag}>
                 {tag}
               </option>
             ))}
           </select>
-        </div>
+        </label>
       </div>
 
-      {filtered.length === 0 ? (
-        <p className="small">No posts match that search yet. Try another keyword or tag.</p>
-      ) : (
+      {filteredBlogs.length > 0 ? (
         <div className="grid grid-3">
-          {filtered.map((blog) => (
-            <article key={blog.id} className="card blog-card">
-              <h3>
-                <Link href={`/blog/${blog.slug}`}>{blog.title}</Link>
-              </h3>
-              <div className="tag-list blog-tag-list tag-list-compact">
-                {blog.tags.map((tag) => (
-                  <Link key={`${blog.id}-${tag}`} href={tagPath(tag)} className="tag tag-link">
-                    {tag}
-                  </Link>
-                ))}
+          {filteredBlogs.map((blog) => (
+            <article key={blog.id} className="blog-image-card">
+              <div className="blog-image-card-media">
+                <img src={blog.image} alt="" />
               </div>
-              <p className="blog-card-excerpt">{blog.excerpt}...</p>
+              <div className="blog-image-card-copy">
+                <div className="tag-list tag-list-compact">
+                  {blog.tags.slice(0, 3).map((tag) => (
+                    <span key={`${blog.id}-${tag}`} className="tag">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <h2>
+                  <Link href={`/blog/${blog.slug}`}>{blog.title}</Link>
+                </h2>
+                <p>{blog.excerpt}</p>
+              </div>
             </article>
           ))}
+        </div>
+      ) : (
+        <div className="empty-state">
+          <p className="eyebrow blog-eyebrow">No Matches</p>
+          <h2>Try a different area or search term.</h2>
+          <p>The live content library does not have a matching article for this filter yet.</p>
         </div>
       )}
     </section>

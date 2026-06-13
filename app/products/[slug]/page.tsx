@@ -1,22 +1,22 @@
 import { notFound } from "next/navigation";
 import { AffiliateDisclosure } from "../../../components/AffiliateDisclosure";
+import { BlueprintTool } from "../../../components/BlueprintTool";
 import { SiteShell } from "../../../components/SiteShell";
 import { shouldShowAffiliateDisclosure } from "../../../lib/affiliate";
+import { redesignImages } from "../../../lib/redesign-data";
 
 const products = {
   "renter-bathroom-upgrade-blueprint": {
     title: "Bathroom Upgrade Blueprint",
-    subtitle: "(for renters)",
+    subtitle: "for renters",
     price: "$29",
     summary: "Personalized bathroom recommendations for your budget.",
     bullets: [
       "Choose-your-path planner for renter-safe upgrades",
-      "Budget options: under $75 / $150 / $300",
-      "Mirror, lighting, and color recommendations by aesthetic",
+      "Budget options: under $75, under $150, and under $300",
+      "Mirror, lighting, storage, plants, and style recommendations",
       "Step-by-step checklists that prioritize quick wins first"
     ],
-    ctaLabel: "Join blueprint waitlist",
-    ctaNote: "Early access includes launch pricing and bonus templates.",
     outboundLinks: [] as string[]
   },
   "bathroom-plant-picks-upgrade": {
@@ -24,14 +24,7 @@ const products = {
     subtitle: "",
     price: "$19",
     summary: "Deeper plant recommendations for humid bathrooms and low light corners.",
-    bullets: [
-      "Expanded decision guide",
-      "Placement maps for tiny bathrooms",
-      "Care cheat-sheets",
-      "Renter-safe mounting notes"
-    ],
-    ctaLabel: "Join plant upgrade waitlist",
-    ctaNote: "Get updates when new plant recommendations are published.",
+    bullets: ["Expanded decision guide", "Placement maps for tiny bathrooms", "Care cheat-sheets", "Renter-safe mounting notes"],
     outboundLinks: [] as string[]
   }
 };
@@ -45,30 +38,35 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const product = products[slug as keyof typeof products];
   if (!product) return notFound();
   const showAffiliateDisclosure = shouldShowAffiliateDisclosure({ linkUrls: product.outboundLinks });
+  const isBlueprint = slug === "renter-bathroom-upgrade-blueprint";
 
   return (
     <SiteShell>
-      <div className="section-stack">
-        <section className="panel product-hero">
-          <h1>
-            {product.title}{" "}
-            {product.subtitle ? <strong className="promo-subtitle product-subtitle">{product.subtitle}</strong> : null}
-          </h1>
-          <p className="product-price">Starting at {product.price}</p>
-          <p>{product.summary}</p>
-          <button className="btn btn-accent" type="button">
-            {product.ctaLabel}
-          </button>
-          <p className="small">{product.ctaNote}</p>
-        </section>
+      <section className="article-hero" style={{ backgroundImage: `url(${redesignImages.hero})` }}>
+        <div className="article-hero-shade">
+          <div className="container article-hero-copy">
+            <p className="eyebrow">Blueprint</p>
+            <h1>{product.title}</h1>
+            <p>{product.summary}</p>
+            <p className="product-price">Starting at {product.price}</p>
+          </div>
+        </div>
+      </section>
 
-        <section className="grid grid-2 product-grid">
-          {product.bullets.map((bullet) => (
-            <article key={bullet} className="card card-soft">
-              <p>{bullet}</p>
-            </article>
-          ))}
-        </section>
+      <div className="container site-page">
+        {isBlueprint ? (
+          <BlueprintTool />
+        ) : (
+          <section className="dd-section">
+            <div className="grid grid-2 product-grid">
+              {product.bullets.map((bullet) => (
+                <article key={bullet} className="card card-soft">
+                  <p>{bullet}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
       {showAffiliateDisclosure ? <AffiliateDisclosure /> : null}
     </SiteShell>

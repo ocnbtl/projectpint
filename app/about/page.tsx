@@ -1,76 +1,69 @@
+import { EmailSignupForm } from "../../components/EmailSignupForm";
 import { SiteShell } from "../../components/SiteShell";
 
 export default function AboutPage() {
+  const values = [
+    ["Budget first", "Every recommendation starts with realistic spending lanes."],
+    ["Renter aware", "No-drill and removable options are prioritized before permanent changes."],
+    ["Human reviewed", "Public content and exports stay gated by operator review."]
+  ];
   const faqs = [
-    {
-      question: "What is Diyesu Decor?",
-      answer:
-        "Diyesu Decor is a practical bathroom upgrade brand focused on renters, small spaces, and budget-first households."
-    },
-    {
-      question: "Who are Diyesu Decor bathroom guides for?",
-      answer:
-        "Our guides are for renters, DIY beginners, busy parents, and anyone who wants bathroom improvements without a full renovation."
-    },
-    {
-      question: "Do I need to drill into walls for these upgrades?",
-      answer:
-        "Most recommendations start with renter-safe and no-drill options first, then include drill-allowed alternatives where helpful."
-    },
-    {
-      question: "How much do your bathroom upgrade plans cost?",
-      answer:
-        "Many upgrades are grouped into practical budget lanes, including under $75, under $150, and under $300 options."
-    },
-    {
-      question: "Do you share bathroom ideas for families with kids?",
-      answer:
-        "Yes. We include organization strategies and product recommendations for kid-focused bathroom routines and storage."
-    },
-    {
-      question: "Can your recommendations work in low light bathrooms?",
-      answer:
-        "Yes. We cover lighting, mirror, color, and bathroom plant recommendations for low light and humid spaces."
-    },
-    {
-      question: "How often do you send bathroom tips by email?",
-      answer:
-        "Subscribers get weekly bathroom inspiration and upgrade plans with clear steps and customer-friendly product suggestions."
-    },
-    {
-      question: "Do you use affiliate links?",
-      answer:
-        "Some pages may include affiliate links. When they do, disclosures are clearly shown so you can make informed decisions."
-    }
+    ["What is Diyesu Decor?", "A practical bathroom upgrade brand for renters, small spaces, and budget-first households."],
+    ["Is everything renter-friendly?", "Renter-safe options come first, with drill-allowed alternatives only where useful."],
+    ["What is the Blueprint?", "A guided plan that turns budget, space, focus area, and style into a bathroom upgrade brief."],
+    ["Do you use affiliate links?", "Some pages may include affiliate links, and disclosures are shown when they apply."]
   ];
 
   return (
     <SiteShell>
-      <div className="section-stack">
-        <section className="panel about-panel">
-          <div className="about-headline-row">
-            <span className="brand-mark about-mark" aria-hidden="true" />
-            <h1>About Diyesu Decor</h1>
-            <p className="about-tagline about-tagline-right">DIY Bathroom Upgrades</p>
-          </div>
+      <div className="container site-page">
+        <section className="soft-hero">
+          <p className="eyebrow blog-eyebrow">About Diyesu Decor</p>
+          <h1>Bathroom upgrades for real renters, small rooms, and practical budgets.</h1>
           <p>
-            We share personalized and practical bathroom improvements for renters, DIY enthusiasts, and budget-first
-            households.
+            Diyesu Decor starts with daily routines, then layers storage, lighting, plants, mirror placement, shower
+            details, and style.
           </p>
-
-          <p>Our goal is simple: help you finish real upgrades with less guesswork and less wasted spend.</p>
         </section>
 
-        <section className="panel">
-          <h2>Frequently Asked Questions</h2>
+        <section className="dd-section">
+          <div className="grid grid-3">
+            {values.map(([title, copy]) => (
+              <article key={title} className="step-card">
+                <h2>{title}</h2>
+                <p>{copy}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="dd-section">
+          <div className="dd-section-head">
+            <div>
+              <p className="eyebrow blog-eyebrow">FAQ</p>
+              <h2>Frequently asked questions</h2>
+            </div>
+          </div>
           <div className="faq-list">
-            {faqs.map((faq) => (
-              <details key={faq.question} className="faq-item">
-                <summary>{faq.question}</summary>
-                <p>{faq.answer}</p>
+            {faqs.map(([question, answer]) => (
+              <details key={question} className="faq-item">
+                <summary>{question}</summary>
+                <p>{answer}</p>
               </details>
             ))}
           </div>
+        </section>
+
+        <section className="newsletter-band">
+          <div>
+            <p className="eyebrow blog-eyebrow">Stay in the Loop</p>
+            <h2>Get weekly bathroom ideas with clear next steps.</h2>
+          </div>
+          <EmailSignupForm
+            sourceUrl="/about"
+            buttonLabel="Subscribe"
+            consentText="I agree to receive Diyesu Decor emails and understand I can unsubscribe anytime."
+          />
         </section>
       </div>
     </SiteShell>
