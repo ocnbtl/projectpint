@@ -1,18 +1,41 @@
 import Link from "next/link";
 import { AdminFrame } from "../../components/admin/AdminFrame";
 import { OpsButton } from "../../components/admin/OpsButton";
-import { commandCenterKpis } from "../../lib/command-center";
+import { commandCenterDashboardSnapshot, type CommandCenterActivity } from "../../lib/command-center";
 
 export const dynamic = "force-dynamic";
 
+function ActivityList({ title, items, emptyText }: { title: string; items: CommandCenterActivity[]; emptyText: string }) {
+  return (
+    <section className="admin-panel admin-activity-panel">
+      <h2>{title}</h2>
+      <div className="admin-activity-list">
+        {items.length > 0 ? (
+          items.map((item) => (
+            <article key={`${item.label}-${item.detail}`} className="admin-activity-row">
+              <span className={`admin-status-dot admin-status-${item.tone}`} aria-hidden="true" />
+              <div>
+                <h3>{item.label}</h3>
+                <p>{item.detail}</p>
+              </div>
+            </article>
+          ))
+        ) : (
+          <p className="small admin-empty-copy">{emptyText}</p>
+        )}
+      </div>
+    </section>
+  );
+}
+
 export default async function AdminPage() {
-  const kpis = await commandCenterKpis();
+  const { kpis, activity, attention } = await commandCenterDashboardSnapshot();
 
   return (
     <AdminFrame>
       <section className="admin-panel admin-panel-hero">
         <p className="eyebrow admin-eyebrow">Command Center</p>
-        <h1>Diyesu Decor Operations</h1>
+        <h1>Operations Dashboard</h1>
         <p>
           Manage evergreen pins, blogs, guides, emails, customers, and products from one workspace without reviving the
           old artifact-heavy operator flow.
@@ -23,25 +46,32 @@ export default async function AdminPage() {
         <article className="admin-kpi-card">
           <p className="small">Pins</p>
           <h2>{kpis.totalPins}</h2>
-          <p className="small">Posted: {kpis.pinsPosted}</p>
-          <p className="small">Missing media URLs: {kpis.pinsMissingMedia}</p>
-          <p className="small">Ready to export: {kpis.pinsReadyToSync}</p>
+          <p className="small">{kpis.pinsReadyToSync} ready to export</p>
+          <p className="small">{kpis.pinsMissingMedia} missing media URLs</p>
         </article>
 
         <article className="admin-kpi-card">
-          <p className="small">Blogs + Guides</p>
-          <h2>
-            {kpis.totalBlogs} / {kpis.totalGuides}
-          </h2>
-          <p className="small">Ready: {kpis.blogsReadyToPublish} blogs / {kpis.guidesReadyToPublish} guides</p>
+          <p className="small">Blogs</p>
+          <h2>{kpis.totalBlogs}</h2>
+          <p className="small">{kpis.blogsReadyToPublish} approved rows ready to publish</p>
         </article>
 
         <article className="admin-kpi-card">
-          <p className="small">Email + Customers</p>
-          <h2>
-            {kpis.totalEmails} / {kpis.totalCustomers}
-          </h2>
-          <p className="small">Customer table refreshes from signup leads.</p>
+          <p className="small">Guides</p>
+          <h2>{kpis.totalGuides}</h2>
+          <p className="small">{kpis.guidesReadyToPublish} approved rows ready to publish</p>
+        </article>
+
+        <article className="admin-kpi-card">
+          <p className="small">Emails</p>
+          <h2>{kpis.totalEmails}</h2>
+          <p className="small">Newsletter rows in the content engine</p>
+        </article>
+
+        <article className="admin-kpi-card">
+          <p className="small">Users</p>
+          <h2>{kpis.totalCustomers}</h2>
+          <p className="small">Signup leads available for review</p>
         </article>
 
         <article className="admin-kpi-card">
@@ -51,8 +81,22 @@ export default async function AdminPage() {
         </article>
       </section>
 
+      <div className="admin-dashboard-grid">
+        <ActivityList
+          title="Needs Attention"
+          items={attention}
+          emptyText="No urgent command-center items are waiting right now."
+        />
+        <ActivityList title="Recent Runtime Signals" items={activity} emptyText="No activity is available yet." />
+      </div>
+
       <section className="admin-panel">
-        <h2>Quick Actions</h2>
+        <div className="admin-section-head">
+          <div>
+            <h2>Quick Actions</h2>
+            <p className="small">These buttons still use the live command-center operations API and human approval gates.</p>
+          </div>
+        </div>
         <div className="admin-quick-grid">
           <article className="admin-quick-card">
             <h3>Publish blogs</h3>

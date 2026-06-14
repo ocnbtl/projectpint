@@ -92,6 +92,10 @@ function serializeKeywordTags(tags: string[]): string {
   return tags.join(", ");
 }
 
+function formatColumnLabel(column: string): string {
+  return column.replace(/_/g, " ");
+}
+
 function KeywordTokenField({
   value,
   onChange
@@ -179,6 +183,8 @@ export function DataSheetEditor({
   const [dirty, setDirty] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState("all");
   const [query, setQuery] = useState("");
+  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() => sanitizeColumnWidths(columns, null));
   const [columnWidthsReady, setColumnWidthsReady] = useState(false);
   const rowsRef = useRef(rows);
@@ -226,12 +232,21 @@ export function DataSheetEditor({
         : indexed.filter(({ row }) => toWeekLabel(row[dateColumn] ?? "") === selectedWeek);
 
     const normalizedQuery = query.trim().toLowerCase();
-    if (!normalizedQuery) return weekFiltered;
+    const filtered = !normalizedQuery
+      ? weekFiltered
+      : weekFiltered.filter(({ row }) =>
+          columns.some((column) => String(row[column] ?? "").toLowerCase().includes(normalizedQuery))
+        );
 
-    return weekFiltered.filter(({ row }) =>
-      columns.some((column) => String(row[column] ?? "").toLowerCase().includes(normalizedQuery))
-    );
-  }, [rows, dateColumn, selectedWeek, query, columns]);
+    if (!sortKey) return filtered;
+
+    return [...filtered].sort((a, b) => {
+      const aValue = a.row[sortKey] ?? "";
+      const bValue = b.row[sortKey] ?? "";
+      const comparison = aValue.localeCompare(bValue, undefined, { numeric: true, sensitivity: "base" });
+      return sortDir === "asc" ? comparison : -comparison;
+    });
+  }, [rows, dateColumn, selectedWeek, query, columns, sortDir, sortKey]);
 
   const tableMinWidth = useMemo(
     () => columns.reduce((total, column) => total + (columnWidths[column] ?? defaultColumnWidth(column)), 0) + ROW_ACTION_COLUMN_WIDTH,
@@ -267,6 +282,18 @@ export function DataSheetEditor({
     setRows((current) => current.filter((_, index) => index !== rowIndex));
     setDirty(true);
     setStatus("Changes pending...");
+  }
+
+  function toggleSort(column: string) {
+    setSortKey((current) => {
+      if (current === column) {
+        setSortDir((direction) => (direction === "asc" ? "desc" : "asc"));
+        return current;
+      }
+
+      setSortDir("asc");
+      return column;
+    });
   }
 
   const saveRows = useCallback(async (snapshot = rowsRef.current, mode: "manual" | "auto" = "manual") => {
@@ -411,7 +438,17 @@ export function DataSheetEditor({
               {columns.map((column) => (
                 <th key={column}>
                   <div className="admin-table-header-cell">
-                    <span>{column}</span>
+                    <button
+                      type="button"
+                      className="admin-sort-button"
+                      onClick={() => toggleSort(column)}
+                      aria-label={`Sort by ${column}`}
+                    >
+                      <span>{formatColumnLabel(column)}</span>
+                      <span className="admin-sort-indicator" aria-hidden="true">
+                        {sortKey === column ? (sortDir === "asc" ? "^" : "v") : ""}
+                      </span>
+                    </button>
                     <button
                       type="button"
                       className="admin-column-resizer"
@@ -430,36 +467,50 @@ export function DataSheetEditor({
             </tr>
           </thead>
           <tbody>
-            {visibleRows.map(({ row, index: absoluteIndex }) => (
-              <tr key={`${tab}-row-${absoluteIndex}`}>
-                {columns.map((column) => (
-                  <td key={`${tab}-${absoluteIndex}-${column}`}>
-                    {KEYWORD_TOKEN_COLUMNS.has(column) ? (
-                      <KeywordTokenField value={row[column] ?? ""} onChange={(value) => updateCell(absoluteIndex, column, value)} />
-                    ) : LONG_FIELD_COLUMNS.has(column) ? (
-                      <textarea
-                        value={row[column] ?? ""}
-                        onChange={(event) => updateCell(absoluteIndex, column, event.target.value)}
-                        rows={4}
-                      />
-                    ) : (
-                      <input
-                        value={row[column] ?? ""}
-                        onChange={(event) => updateCell(absoluteIndex, column, event.target.value)}
-                        type="text"
-                      />
-                    )}
-                  </td>
-                ))}
-                <td className="admin-table-row-cell">
-                  <button type="button" className="btn btn-ghost" onClick={() => deleteRow(absoluteIndex)}>
-                    Delete
-                  </button>
+            {visibleRows.length === 0 ? (
+              <tr>
+                <td className="admin-table-empty" colSpan={columns.length + 1}>
+                  No rows match the current search or week filter.
                 </td>
               </tr>
-            ))}
+            ) : (
+              visibleRows.map(({ row, index: absoluteIndex }) => (
+                <tr key={`${tab}-row-${absoluteIndex}`}>
+                  {columns.map((column) => (
+                    <td key={`${tab}-${absoluteIndex}-${column}`}>
+                      {KEYWORD_TOKEN_COLUMNS.has(column) ? (
+                        <KeywordTokenField value={row[column] ?? ""} onChange={(value) => updateCell(absoluteIndex, column, value)} />
+                      ) : LONG_FIELD_COLUMNS.has(column) ? (
+                        <textarea
+                          value={row[column] ?? ""}
+                          onChange={(event) => updateCell(absoluteIndex, column, event.target.value)}
+                          rows={4}
+                        />
+                      ) : (
+                        <input
+                          value={row[column] ?? ""}
+                          onChange={(event) => updateCell(absoluteIndex, column, event.target.value)}
+                          type="text"
+                        />
+                      )}
+                    </td>
+                  ))}
+                  <td className="admin-table-row-cell">
+                    <button type="button" className="btn btn-ghost" onClick={() => deleteRow(absoluteIndex)}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
+      </div>
+      <div className="admin-table-footer">
+        <span>
+          {visibleRows.length} of {rows.length} rows
+        </span>
+        <span>{dirty ? "Autosave pending" : "Saved state current"}</span>
       </div>
     </section>
   );

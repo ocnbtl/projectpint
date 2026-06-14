@@ -1788,7 +1788,60 @@ export async function runCommandCenterAction(action: string, payload?: Record<st
   }
 }
 
-export async function commandCenterKpis(): Promise<Record<string, number>> {
+export interface CommandCenterKpis {
+  totalPins: number;
+  pinsMissingMedia: number;
+  pinsPosted: number;
+  pinsReadyToSync: number;
+  totalBlogs: number;
+  blogsReadyToPublish: number;
+  totalGuides: number;
+  guidesReadyToPublish: number;
+  totalEmails: number;
+  totalCustomers: number;
+  totalProducts: number;
+  totalRevenue: number;
+}
+
+export interface CommandCenterActivity {
+  label: string;
+  detail: string;
+  tone: "green" | "gold" | "blue" | "red" | "neutral";
+}
+
+export interface CommandCenterDashboardSnapshot {
+  kpis: CommandCenterKpis;
+  activity: CommandCenterActivity[];
+  attention: CommandCenterActivity[];
+}
+
+function commandCenterKpisFromRows(params: {
+  pins: PinEvergreenRow[];
+  blogs: BlogEvergreenRow[];
+  guides: GuideEvergreenRow[];
+  emails: EmailEvergreenRow[];
+  customers: CustomerEvergreenRow[];
+  products: ProductEvergreenRow[];
+}): CommandCenterKpis {
+  const revenue = params.products.reduce((sum, product) => sum + (Number(product.Product_Revenue) || 0), 0);
+
+  return {
+    totalPins: params.pins.length,
+    pinsMissingMedia: params.pins.filter((pin) => !pin.Media_URL).length,
+    pinsPosted: params.pins.filter((pin) => Boolean(pin.Pin_URL)).length,
+    pinsReadyToSync: params.pins.filter((pin) => workflowStatusFrom(String(pin.Workflow_Status ?? "")) === "approved").length,
+    totalBlogs: params.blogs.length,
+    blogsReadyToPublish: params.blogs.filter((blog) => workflowStatusFrom(String(blog.Workflow_Status ?? "")) === "approved").length,
+    totalGuides: params.guides.length,
+    guidesReadyToPublish: params.guides.filter((guide) => workflowStatusFrom(String(guide.Workflow_Status ?? "")) === "approved").length,
+    totalEmails: params.emails.length,
+    totalCustomers: params.customers.length,
+    totalProducts: params.products.length,
+    totalRevenue: revenue
+  };
+}
+
+export async function commandCenterDashboardSnapshot(): Promise<CommandCenterDashboardSnapshot> {
   const pins = await loadRuntimeTab<PinEvergreenRow>(TAB_MAP.pins);
   const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
   const guides = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
@@ -1796,20 +1849,88 @@ export async function commandCenterKpis(): Promise<Record<string, number>> {
   const customers = await loadRuntimeTab<CustomerEvergreenRow>(TAB_MAP.customers);
   const products = await loadRuntimeTab<ProductEvergreenRow>(TAB_MAP.products);
 
-  const revenue = products.reduce((sum, product) => sum + (Number(product.Product_Revenue) || 0), 0);
+  const kpis = commandCenterKpisFromRows({ pins, blogs, guides, emails, customers, products });
 
-  return {
-    totalPins: pins.length,
-    pinsMissingMedia: pins.filter((pin) => !pin.Media_URL).length,
-    pinsPosted: pins.filter((pin) => Boolean(pin.Pin_URL)).length,
-    pinsReadyToSync: pins.filter((pin) => workflowStatusFrom(String(pin.Workflow_Status ?? "")) === "approved").length,
-    totalBlogs: blogs.length,
-    blogsReadyToPublish: blogs.filter((blog) => workflowStatusFrom(String(blog.Workflow_Status ?? "")) === "approved").length,
-    totalGuides: guides.length,
-    guidesReadyToPublish: guides.filter((guide) => workflowStatusFrom(String(guide.Workflow_Status ?? "")) === "approved").length,
-    totalEmails: emails.length,
-    totalCustomers: customers.length,
-    totalProducts: products.length,
-    totalRevenue: revenue
-  };
+  const attention: CommandCenterActivity[] = [
+    kpis.pinsMissingMedia > 0
+      ? {
+          label: "Pins need visuals",
+          detail: `${kpis.pinsMissingMedia} pin rows still need Media_URL before export.`,
+          tone: "red"
+        }
+      : null,
+    kpis.blogsReadyToPublish > 0
+      ? {
+          label: "Blogs ready for final publish",
+          detail: `${kpis.blogsReadyToPublish} approved blog rows can be pushed live after review.`,
+          tone: "green"
+        }
+      : null,
+    kpis.guidesReadyToPublish > 0
+      ? {
+          label: "Guides ready for final publish",
+          detail: `${kpis.guidesReadyToPublish} approved guide rows can be pushed live after review.`,
+          tone: "green"
+        }
+      : null,
+    kpis.pinsReadyToSync > 0
+      ? {
+          label: "Pins ready for export prep",
+          detail: `${kpis.pinsReadyToSync} approved pins are waiting for the manual export gate.`,
+          tone: "gold"
+        }
+      : null,
+    kpis.totalCustomers > 0
+      ? {
+          label: "Signup table has leads",
+          detail: `${kpis.totalCustomers} customer rows are available for audience review.`,
+          tone: "blue"
+        }
+      : null
+  ].filter(Boolean) as CommandCenterActivity[];
+
+  const latestPublishedBlog = [...blogs].reverse().find((blog) => workflowStatusFrom(String(blog.Workflow_Status ?? "")) === "published");
+  const latestPublishedGuide = [...guides].reverse().find((guide) => workflowStatusFrom(String(guide.Workflow_Status ?? "")) === "published");
+
+  const activity: CommandCenterActivity[] = [
+    latestPublishedBlog
+      ? {
+          label: "Latest blog published",
+          detail: latestPublishedBlog.Blog_Title || latestPublishedBlog.Blog_ID,
+          tone: "green"
+        }
+      : {
+          label: "Blog publishing queue",
+          detail: `${kpis.totalBlogs} blog rows are in the live command-center table.`,
+          tone: "neutral"
+        },
+    latestPublishedGuide
+      ? {
+          label: "Latest guide published",
+          detail: latestPublishedGuide.Guide_Title || latestPublishedGuide.Guide_ID,
+          tone: "green"
+        }
+      : {
+          label: "Guide publishing queue",
+          detail: `${kpis.totalGuides} guide rows are in the live command-center table.`,
+          tone: "neutral"
+        },
+    {
+      label: "Pinterest export status",
+      detail: `${kpis.pinsPosted} pins have public URLs; ${kpis.pinsReadyToSync} are approved for prep.`,
+      tone: kpis.pinsReadyToSync > 0 ? "gold" : "neutral"
+    },
+    {
+      label: "Product tracking",
+      detail: `$${kpis.totalRevenue} revenue tracked across ${kpis.totalProducts} products.`,
+      tone: kpis.totalRevenue > 0 ? "green" : "neutral"
+    }
+  ];
+
+  return { kpis, activity, attention };
+}
+
+export async function commandCenterKpis(): Promise<CommandCenterKpis> {
+  const snapshot = await commandCenterDashboardSnapshot();
+  return snapshot.kpis;
 }
