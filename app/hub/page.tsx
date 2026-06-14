@@ -1,37 +1,54 @@
 import Link from "next/link";
+import { AreaIcon } from "../../components/AreaIcon";
 import { SiteShell } from "../../components/SiteShell";
 import { areaVisuals } from "../../lib/redesign-data";
-import { hubs } from "../../lib/site-data";
+import { blogMatchesArea, hubs, readBlogs, readGuides } from "../../lib/site-data";
 
-export default function HubIndexPage() {
+export const dynamic = "force-dynamic";
+
+export default async function HubIndexPage() {
+  const [blogs, guides] = await Promise.all([readBlogs(), readGuides()]);
+  const publishedBlogs = blogs.filter((blog) => blog.Status === "published");
+  const blogSource = publishedBlogs.length > 0 ? publishedBlogs : blogs;
+  const publishedGuides = guides.filter((guide) => guide.status.trim().toLowerCase() === "published");
+  const guideSource = publishedGuides.length > 0 ? publishedGuides : guides;
+
   return (
     <SiteShell>
-      <div className="container site-page">
-        <section className="soft-hero">
-          <p className="eyebrow blog-eyebrow">Areas</p>
-          <h1>Every part of your bathroom, covered.</h1>
-          <p>
-            Eight focused paths keep every public article, guide, pin, and product offer aligned around real bathroom
-            problems.
-          </p>
-        </section>
+      <section className="areas-index-hero">
+        <div className="container areas-index-hero-inner">
+          <p className="areas-kicker">Browse by Area</p>
+          <h1>Every part of your bathroom, covered</h1>
+          <p>Pick an area to explore curated articles, product recommendations, upgrade plans, and tips tailored to your space + budget.</p>
+        </div>
+      </section>
 
-        <section className="dd-section">
-          <div className="area-photo-grid area-photo-grid-large">
+      <div className="container site-page areas-index-page">
+        <section className="areas-overview-grid" aria-label="Bathroom areas">
             {hubs.map((hub) => {
               const visual = areaVisuals[hub.area];
+              const resourceCount =
+                blogSource.filter((blog) => blogMatchesArea(blog, hub.area)).length +
+                guideSource.filter((guide) => guide.area === hub.area).length;
               return (
-                <Link key={hub.slug} href={`/hub/${hub.slug}`} className="area-photo-card area-photo-card-tall">
+                <Link key={hub.slug} href={`/hub/${hub.slug}`} className="area-overview-card">
                   <img src={visual.image} alt="" />
-                  <span className="area-photo-card-shade" aria-hidden="true" />
-                  <span className="area-photo-card-copy">
-                    <strong>{hub.title}</strong>
-                    <span>{visual.tagline}</span>
+                  <span className="area-overview-shade" aria-hidden="true" />
+                  <span className="area-overview-copy">
+                    <span className="area-overview-head">
+                      <span className="area-icon-bubble">
+                        <AreaIcon name={visual.icon} />
+                      </span>
+                      <span>
+                        <strong>{hub.title}</strong>
+                        <span>{visual.tagline}</span>
+                      </span>
+                    </span>
+                    <span className="area-resource-count">{resourceCount} resources</span>
                   </span>
                 </Link>
               );
             })}
-          </div>
         </section>
       </div>
     </SiteShell>
