@@ -1,20 +1,17 @@
 import { PlantPickerTool } from "../../components/PlantPickerTool";
 import { SiteShell } from "../../components/SiteShell";
-import { redesignImages } from "../../lib/redesign-data";
 
 export default function PlantPickerPage() {
   return (
     <SiteShell>
-      <section className="article-hero" style={{ backgroundImage: `url(${redesignImages.plants})` }}>
-        <div className="article-hero-shade">
-          <div className="container article-hero-copy">
-            <p className="eyebrow">Free Plant Picker</p>
-            <h1>Find plants that match your actual bathroom.</h1>
-            <p>Choose light, humidity, and available space. Get practical plant matches and placement notes.</p>
-          </div>
+      <section className="tool-page-hero tool-page-hero-green">
+        <div className="container tool-page-hero-inner">
+          <p className="tool-badge">Free Tool</p>
+          <h1>Find your perfect bathroom plant</h1>
+          <p>Answer 3 quick questions about your bathroom, and we&apos;ll match you with plants that will thrive in your space.</p>
         </div>
       </section>
-      <div className="container site-page">
+      <div className="container site-page tool-page-body">
         <PlantPickerTool />
       </div>
     </SiteShell>
