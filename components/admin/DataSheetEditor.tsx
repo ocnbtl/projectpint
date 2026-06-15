@@ -36,7 +36,56 @@ const KEYWORD_TOKEN_COLUMNS = new Set(["Blog_Keywords", "Guide_Keywords"]);
 const MIN_COLUMN_WIDTH = 140;
 const ROW_ACTION_COLUMN_WIDTH = 120;
 
+const DISPLAY_COLUMN_LABELS: Record<string, string> = {
+  Blog_Publish_Date: "Date",
+  Blog_Publish_Time: "Time",
+  Content_Area: "Area",
+  Workflow_Status: "Status",
+  Blog_Title: "Title",
+  Blog_URL: "URL",
+  Blog_Keywords: "Keywords",
+  Quality_Score: "QC",
+  Related_Pins: "Pins",
+  Published_To_Public_At: "Published",
+  Guide_Publish_Date: "Date",
+  Guide_Publish_Time: "Time",
+  Guide_Title: "Title",
+  Guide_URL: "URL",
+  Guide_Keywords: "Keywords",
+  Pin_ID: "Pin ID",
+  Pin_Publish_Date: "Date",
+  Pin_Publish_Time: "Time",
+  Media_Prompt: "Media Prompt",
+  Pin_Overlay: "Overlay",
+  Pin_Caption: "Caption",
+  Pin_CTA: "CTA",
+  Prepared_For_Export_At: "Prepared",
+  Email_ID: "Email ID",
+  Email_Publish_Date: "Date",
+  Email_Publish_Time: "Time",
+  Email_Subject: "Subject",
+  Email_Content: "Content",
+  User_ID: "User ID",
+  User_Email: "Email",
+  User_Date_Email: "Signup",
+  User_Time_Email: "Time",
+  Product_ID: "Product ID",
+  Product_Date: "Date",
+  Product_Sales: "Sales",
+  Product_Revenue: "Revenue",
+  Product_Link: "Link",
+};
+
 function defaultColumnWidth(column: string): number {
+  if (column === "Quality_Score") return 72;
+  if (column === "Related_Pins") return 72;
+  if (column === "Published_To_Public_At" || column === "Prepared_For_Export_At") return 128;
+  if (column === "Content_Area") return 118;
+  if (column === "Workflow_Status") return 132;
+  if (column === "Blog_Publish_Date" || column === "Guide_Publish_Date" || column === "Pin_Publish_Date" || column === "Email_Publish_Date" || column === "Product_Date" || column === "User_Date_Email") return 124;
+  if (column === "Blog_Title" || column === "Guide_Title") return 210;
+  if (column === "Blog_URL" || column === "Guide_URL") return 180;
+  if (column === "Blog_Keywords" || column === "Guide_Keywords") return 160;
   if (column === "Writer_Brief") return 500;
   if (column === "Blog_Content" || column === "Guide_Content") return 460;
   if (column === "Email_Content" || column === "Quality_Checks") return 380;
@@ -93,8 +142,10 @@ function serializeKeywordTags(tags: string[]): string {
   return tags.join(", ");
 }
 
-function formatColumnLabel(column: string): string {
-  return column.replace(/_/g, " ");
+function formatColumnLabel(column: string, tab?: DataSheetEditorProps["tab"]): string {
+  if (column === "Blog_ID") return tab === "blogs" ? "Blog ID" : "Blog";
+  if (column === "Guide_ID") return tab === "guides" ? "Guide ID" : "Guide";
+  return DISPLAY_COLUMN_LABELS[column] ?? column.replace(/_/g, " ");
 }
 
 function KeywordTokenField({
@@ -459,7 +510,7 @@ export function DataSheetEditor({
                       onClick={() => toggleSort(column)}
                       aria-label={`Sort by ${column}`}
                     >
-                      <span>{formatColumnLabel(column)}</span>
+                      <span>{formatColumnLabel(column, tab)}</span>
                       <span className="admin-sort-indicator" aria-hidden="true">
                         {sortKey === column ? (sortDir === "asc" ? "^" : "v") : ""}
                       </span>
@@ -525,7 +576,7 @@ export function DataSheetEditor({
         <span>
           {visibleRows.length} of {rows.length} rows
         </span>
-        <span>{sortKey ? `Sorted by ${formatColumnLabel(sortKey)}` : "No sort applied"}</span>
+        <span>{sortKey ? `Sorted by ${formatColumnLabel(sortKey, tab)}` : "No sort applied"}</span>
       </div>
     </section>
   );

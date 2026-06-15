@@ -1,7 +1,7 @@
 import { AdminFrame } from "../../../components/admin/AdminFrame";
 import { AdminSheetWorkspace } from "../../../components/admin/AdminSheetWorkspace";
 import { OpsButton } from "../../../components/admin/OpsButton";
-import { COMMAND_CENTER_COLUMNS } from "../../../lib/command-center-config";
+import { ADMIN_TABLE_COLUMNS } from "../../../lib/admin-table-view";
 import { loadEvergreenTab } from "../../../lib/command-center";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +18,7 @@ export default async function AdminPinsPage() {
           <p>Manage evergreen Pinterest pins for content distribution.</p>
         }
         editorTitle="Pins Evergreen"
-        columns={[...COMMAND_CENTER_COLUMNS.pins]}
+        columns={[...ADMIN_TABLE_COLUMNS.pins]}
         initialRows={rows}
         dateColumn="Pin_Publish_Date"
       >

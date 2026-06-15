@@ -3,7 +3,7 @@ import { AdminGenerateDisclosure } from "../../../components/admin/AdminGenerate
 import { AdminSheetWorkspace } from "../../../components/admin/AdminSheetWorkspace";
 import { AreaCountsAction } from "../../../components/admin/AreaCountsAction";
 import { OpsButton } from "../../../components/admin/OpsButton";
-import { COMMAND_CENTER_COLUMNS } from "../../../lib/command-center-config";
+import { ADMIN_TABLE_COLUMNS } from "../../../lib/admin-table-view";
 import { loadEvergreenTab } from "../../../lib/command-center";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +20,7 @@ export default async function AdminBlogsPage() {
           <p>Manage evergreen blog articles across all content areas.</p>
         }
         editorTitle="Blogs Evergreen"
-        columns={[...COMMAND_CENTER_COLUMNS.blogs]}
+        columns={[...ADMIN_TABLE_COLUMNS.blogs]}
         initialRows={rows}
         dateColumn="Blog_Publish_Date"
       >

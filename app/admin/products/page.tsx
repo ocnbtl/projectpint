@@ -2,7 +2,7 @@ import { AdminFrame } from "../../../components/admin/AdminFrame";
 import { AdminSheetWorkspace } from "../../../components/admin/AdminSheetWorkspace";
 import { OpsButton } from "../../../components/admin/OpsButton";
 import { formatMoney, sumNumberColumn } from "../../../lib/admin-table-stats";
-import { COMMAND_CENTER_COLUMNS } from "../../../lib/command-center-config";
+import { ADMIN_TABLE_COLUMNS } from "../../../lib/admin-table-view";
 import { loadEvergreenTab } from "../../../lib/command-center";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +24,7 @@ export default async function AdminProductsPage() {
           </p>
         }
         editorTitle="Products Evergreen"
-        columns={[...COMMAND_CENTER_COLUMNS.products]}
+        columns={[...ADMIN_TABLE_COLUMNS.products]}
         initialRows={rows}
         dateColumn="Product_Date"
         summaryCards={[

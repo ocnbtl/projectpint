@@ -3,7 +3,7 @@ import { AdminGenerateDisclosure } from "../../../components/admin/AdminGenerate
 import { AdminSheetWorkspace } from "../../../components/admin/AdminSheetWorkspace";
 import { AreaCountsAction } from "../../../components/admin/AreaCountsAction";
 import { OpsButton } from "../../../components/admin/OpsButton";
-import { COMMAND_CENTER_COLUMNS } from "../../../lib/command-center-config";
+import { ADMIN_TABLE_COLUMNS } from "../../../lib/admin-table-view";
 import { loadEvergreenTab } from "../../../lib/command-center";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +20,7 @@ export default async function AdminGuidesPage() {
           <p>Manage quick companion guides for every bathroom upgrade area.</p>
         }
         editorTitle="Guides Evergreen"
-        columns={[...COMMAND_CENTER_COLUMNS.guides]}
+        columns={[...ADMIN_TABLE_COLUMNS.guides]}
         initialRows={rows}
         dateColumn="Guide_Publish_Date"
       >

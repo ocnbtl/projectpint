@@ -1,6 +1,6 @@
 import { AdminFrame } from "../../../components/admin/AdminFrame";
 import { AdminSheetWorkspace } from "../../../components/admin/AdminSheetWorkspace";
-import { COMMAND_CENTER_COLUMNS } from "../../../lib/command-center-config";
+import { ADMIN_TABLE_COLUMNS } from "../../../lib/admin-table-view";
 import { loadEvergreenTab } from "../../../lib/command-center";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +20,7 @@ export default async function AdminCustomersPage() {
           </p>
         }
         editorTitle="Customers Evergreen"
-        columns={[...COMMAND_CENTER_COLUMNS.customers]}
+        columns={[...ADMIN_TABLE_COLUMNS.customers]}
         initialRows={rows}
         dateColumn="User_Date_Email"
       />
