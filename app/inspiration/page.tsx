@@ -1,30 +1,46 @@
 import Link from "next/link";
 import { SiteShell } from "../../components/SiteShell";
-import { inspirationStyles } from "../../lib/redesign-data";
+import { inspirationStyles, redesignImages } from "../../lib/redesign-data";
+
+const thumbImages = [redesignImages.plants, redesignImages.mirror, redesignImages.storage, redesignImages.lighting];
 
 export default function InspirationPage() {
   return (
     <SiteShell>
-      <div className="container site-page">
-        <section className="soft-hero">
-          <p className="eyebrow blog-eyebrow">Inspiration</p>
-          <h1>Bathroom looks you can translate into real upgrades.</h1>
-          <p>Browse visual directions first, then use the live areas and blueprint flow to turn the look into a plan.</p>
-        </section>
+      <section className="inspiration-figma-hero">
+        <div className="container">
+          <p className="eyebrow blog-eyebrow">Visual Inspiration</p>
+          <h1>Find your bathroom&apos;s style</h1>
+          <p>
+            Browse curated boards by style. Click any style to find more ideas, complete with visuals and the best
+            starting points to recreate them.
+          </p>
+        </div>
+      </section>
 
-        <section className="dd-section">
-          <div className="inspiration-grid">
-            {inspirationStyles.map((style) => (
-              <Link key={style.slug} href={`/inspiration/${style.slug}`} className="inspiration-card">
+      <div className="container site-page inspiration-figma-page">
+        <section className="inspiration-style-grid" aria-label="Bathroom inspiration styles">
+          {inspirationStyles.map((style, index) => {
+            const thumbs = [style.cover, thumbImages[index % thumbImages.length], thumbImages[(index + 1) % thumbImages.length]];
+            return (
+              <Link key={style.slug} href={`/inspiration/${style.slug}`} className="inspiration-style-tile">
                 <img src={style.cover} alt="" />
-                <span className="inspiration-card-copy">
-                  <span style={{ backgroundColor: style.accent }} aria-hidden="true" />
+                <span className="inspiration-style-shade" aria-hidden="true" />
+                <span className="inspiration-style-title">
+                  <i style={{ backgroundColor: style.accent }} />
                   <strong>{style.name}</strong>
-                  <small>{style.description}</small>
+                </span>
+                <span className="inspiration-style-preview">
+                  <span>
+                    {thumbs.map((src, thumbIndex) => (
+                      <img key={`${style.slug}-${thumbIndex}`} src={src} alt="" />
+                    ))}
+                  </span>
+                  <em>Explore board</em>
                 </span>
               </Link>
-            ))}
-          </div>
+            );
+          })}
         </section>
       </div>
     </SiteShell>

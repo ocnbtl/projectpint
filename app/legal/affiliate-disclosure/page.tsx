@@ -4,43 +4,47 @@ import { SiteShell } from "../../../components/SiteShell";
 export default function AffiliateDisclosurePage() {
   return (
     <SiteShell>
-      <div className="section-stack">
-        <section className="panel">
+      <section className="legal-figma-hero">
+        <div className="container">
           <h1>Affiliate Disclosure</h1>
+        </div>
+      </section>
+
+      <div className="container legal-figma-body">
+        <article className="legal-prose">
           <p>
-            Some links on this site are affiliate links. If you click and purchase, Diyesu Decor may earn a commission at
-            no additional cost to you.
+            <strong>Last updated:</strong> March 1, 2026
           </p>
-          <p className="small">Last updated: February 28, 2026.</p>
-        </section>
+          <p>
+            Diyesu Decor participates in affiliate marketing programs. This means that when we recommend products and
+            you make a purchase through our links, we may earn a small commission at no additional cost to you.
+          </p>
 
-        <section className="grid grid-2">
-          <article className="card">
-            <h2>How disclosures appear</h2>
-            <ul>
-              <li>A global disclosure is shown in the site footer.</li>
-              <li>Page-level disclosure blocks appear on pages with affiliate links.</li>
-              <li>Recommendations remain editorial and renter/budget aligned.</li>
-            </ul>
-          </article>
+          <h2>Our Commitment</h2>
+          <p>
+            We only recommend products we believe fit the editorial context. Affiliate partnerships never override
+            renter, budget, safety, or practicality considerations.
+          </p>
 
-          <article className="card">
-            <h2>What this means for you</h2>
-            <ul>
-              <li>Price to you does not increase because of an affiliate link.</li>
-              <li>You should still compare products and choose what fits your constraints.</li>
-              <li>We avoid unsupported claims and keep guidance practical.</li>
-            </ul>
-          </article>
-        </section>
+          <h2>How Disclosures Appear</h2>
+          <p>
+            A global disclosure appears in the site footer, and page-level disclosures appear where affiliate links are
+            present. Recommendations remain editorial and renter/budget aligned.
+          </p>
 
-        <section className="panel">
+          <h2>What This Means For You</h2>
+          <p>
+            The price to you does not increase because of an affiliate link. You should still compare products and choose
+            what fits your space, lease terms, budget, and comfort level.
+          </p>
+
+          <h2>Contact</h2>
           <p>
             Questions about partnerships or disclosures can be sent to{" "}
             <a href="mailto:support@diyesu.com">support@diyesu.com</a>. Related policies:{" "}
             <Link href="/legal/privacy">Privacy</Link> and <Link href="/legal/terms">Terms</Link>.
           </p>
-        </section>
+        </article>
       </div>
     </SiteShell>
   );

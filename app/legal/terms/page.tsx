@@ -4,44 +4,48 @@ import { SiteShell } from "../../../components/SiteShell";
 export default function TermsPage() {
   return (
     <SiteShell>
-      <div className="section-stack">
-        <section className="panel">
+      <section className="legal-figma-hero">
+        <div className="container">
           <h1>Terms of Use</h1>
+        </div>
+      </section>
+
+      <div className="container legal-figma-body">
+        <article className="legal-prose">
+          <p>
+            <strong>Last updated:</strong> March 1, 2026
+          </p>
+          <p>Welcome to Diyesu Decor. By accessing and using our website, you agree to these terms and conditions.</p>
+
+          <h2>Use of Content</h2>
           <p>
             Diyesu Decor content is educational and informational. It is not legal, financial, contractor, or licensed
-            professional advice.
+            professional advice. Use recommendations at your own discretion and risk.
           </p>
-          <p className="small">Last updated: February 28, 2026.</p>
-        </section>
 
-        <section className="grid grid-2">
-          <article className="card">
-            <h2>Use of content</h2>
-            <ul>
-              <li>Use recommendations at your own discretion and risk.</li>
-              <li>Always follow local building codes, lease terms, and product instructions.</li>
-              <li>Verify compatibility before purchasing tools, materials, or fixtures.</li>
-            </ul>
-          </article>
+          <h2>Product Recommendations</h2>
+          <p>
+            We may recommend products from third-party retailers. Prices and availability are subject to change. Always
+            verify current pricing, lease requirements, local building codes, and product compatibility before
+            purchasing or installing.
+          </p>
 
-          <article className="card">
-            <h2>Service expectations</h2>
-            <ul>
-              <li>Content, products, and lead magnets may change over time.</li>
-              <li>Availability of external links and third-party services is not guaranteed.</li>
-              <li>Some pages may include affiliate links with clear disclosure.</li>
-            </ul>
-          </article>
-        </section>
+          <h2>Service Expectations</h2>
+          <p>
+            Content, products, lead magnets, external links, and third-party services may change over time and are not
+            guaranteed to remain available.
+          </p>
 
-        <section className="panel">
+          <h2>Intellectual Property</h2>
+          <p>All content, design, and branding on Diyesu Decor is owned by us and protected by applicable laws.</p>
+
           <h2>Questions</h2>
           <p>
             If you have policy questions, contact <a href="mailto:support@diyesu.com">support@diyesu.com</a>. Also see
             the <Link href="/legal/privacy">Privacy Policy</Link> and{" "}
             <Link href="/legal/affiliate-disclosure">Affiliate Disclosure</Link>.
           </p>
-        </section>
+        </article>
       </div>
     </SiteShell>
   );

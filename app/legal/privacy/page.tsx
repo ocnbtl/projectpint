@@ -3,43 +3,47 @@ import { SiteShell } from "../../../components/SiteShell";
 export default function PrivacyPage() {
   return (
     <SiteShell>
-      <div className="section-stack">
-        <section className="panel">
+      <section className="legal-figma-hero">
+        <div className="container">
           <h1>Privacy Policy</h1>
+        </div>
+      </section>
+
+      <div className="container legal-figma-body">
+        <article className="legal-prose">
           <p>
-            Diyesu Decor collects only the information needed to deliver email updates, improve content quality, and
-            evaluate product fit.
+            <strong>Last updated:</strong> March 1, 2026
           </p>
           <p>
-            Signup data may be processed through Klaviyo and stored in Google for operations management. We retain data
-            only as long as needed for legitimate business and legal purposes.
+            Diyesu Decor respects your privacy and is committed to protecting your personal information. This Privacy
+            Policy explains how we collect, use, and share information when you visit our website.
           </p>
+
+          <h2>Information We Collect</h2>
+          <p>
+            We may collect information you provide directly, such as your email address when you sign up for our
+            newsletter or use the Plant Picker tool. Signup data may be processed through Klaviyo and stored in the live
+            command-center workflow for operations management.
+          </p>
+
+          <h2>How We Use Your Information</h2>
+          <p>
+            We use your information to send requested email content, improve recommendations, analyze content
+            performance, and communicate about products or updates.
+          </p>
+
+          <h2>Cookies</h2>
+          <p>
+            We use cookies and similar technologies for analytics purposes. You can control cookie preferences through
+            your browser settings.
+          </p>
+
+          <h2>Contact</h2>
           <p>
             We do not sell personal information. You can unsubscribe at any time from email messages. For questions,
-            contact <a href="mailto:support@diyesu.com">support@diyesu.com</a>.
+            contact <a href="mailto:support@diyesudecor.com">support@diyesudecor.com</a>.
           </p>
-          <p className="small">Last updated: February 28, 2026.</p>
-        </section>
-
-        <section className="grid grid-2">
-          <article className="card">
-            <h2>What we collect</h2>
-            <ul>
-              <li>Email address submitted through signup forms.</li>
-              <li>Optional preference fields (for example: plant light/humidity/space constraints).</li>
-              <li>Basic interaction analytics such as page pathing &amp; engagement.</li>
-            </ul>
-          </article>
-
-          <article className="card">
-            <h2>How we use it</h2>
-            <ul>
-              <li>Send requested email content and follow-up sequences.</li>
-              <li>Record leads and interest in campaign operations.</li>
-              <li>Measure which content and offers perform best.</li>
-            </ul>
-          </article>
-        </section>
+        </article>
       </div>
     </SiteShell>
   );
