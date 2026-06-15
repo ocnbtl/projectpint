@@ -372,10 +372,10 @@ export function DataSheetEditor({
   }, [dirty, rows, saveRows]);
 
   return (
-    <section className="admin-panel">
-      <div className="admin-panel-header">
-        <div>
-          <h1>{title}</h1>
+    <section className="admin-panel admin-datasheet-panel">
+      <div className="admin-panel-header admin-datasheet-head">
+        <div className="admin-datasheet-title">
+          <h2>{title}</h2>
           {showSummary ? (
             <div className="admin-meta-row">
               <span className="admin-meta-pill">{rows.length} total rows</span>
@@ -384,9 +384,9 @@ export function DataSheetEditor({
             </div>
           ) : null}
         </div>
-        <div className="admin-actions-inline admin-datasheet-toolbar">
+        <div className="admin-actions-inline admin-datasheet-toolbar" aria-label={`${title} controls`}>
           <label className="admin-inline-label admin-search-label admin-datasheet-control">
-            Search rows
+            <span>Search rows</span>
             <input
               type="search"
               value={query}
@@ -396,7 +396,7 @@ export function DataSheetEditor({
           </label>
           {dateColumn ? (
             <label className="admin-inline-label admin-filter-label admin-datasheet-control">
-              Week filter
+              <span>Week filter</span>
               <select value={selectedWeek} onChange={(event) => setSelectedWeek(event.target.value)}>
                 <option value="all">All weeks</option>
                 {weekOptions.map((option) => (
@@ -420,10 +420,13 @@ export function DataSheetEditor({
           </button>
         </div>
       </div>
-      <p className="small admin-table-note">
-        Long-form fields stay editable here for manual review and approval. Changes autosave after a short pause. Drag
-        a header edge to resize each column.
-      </p>
+      <div className="admin-table-status-row">
+        <p className="small admin-table-note">
+          Long-form fields stay editable here for manual review and approval. Changes autosave after a short pause. Drag
+          a header edge to resize each column.
+        </p>
+        <span className={`admin-save-pill${dirty ? " is-dirty" : ""}`}>{dirty ? "Autosave pending" : "Saved state current"}</span>
+      </div>
       {status ? <p className="small admin-inline-status">{status}</p> : null}
       <div className="admin-table-wrap">
         <table className="admin-table" style={{ minWidth: `${tableMinWidth}px` }}>
@@ -510,7 +513,7 @@ export function DataSheetEditor({
         <span>
           {visibleRows.length} of {rows.length} rows
         </span>
-        <span>{dirty ? "Autosave pending" : "Saved state current"}</span>
+        <span>{sortKey ? `Sorted by ${formatColumnLabel(sortKey)}` : "No sort applied"}</span>
       </div>
     </section>
   );

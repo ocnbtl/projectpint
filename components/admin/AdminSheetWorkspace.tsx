@@ -32,15 +32,17 @@ export function AdminSheetWorkspace({
 
   return (
     <>
-      <section className="admin-panel admin-panel-hero">
+      <section className="admin-panel admin-sheet-hero">
         <div className="admin-hero-head">
           <div className="admin-hero-copy">
             <h1>{heroTitle}</h1>
             <div className="admin-hero-description">{heroDescription}</div>
           </div>
-          <p className="small admin-hero-stats">
-            {stats.totalRows} total rows · {stats.visibleRows} visible · {stats.columnCount} columns
-          </p>
+          <div className="admin-sheet-stat-row" aria-label="Table summary">
+            <span>{stats.totalRows} rows</span>
+            <span>{stats.visibleRows} visible</span>
+            <span>{stats.columnCount} columns</span>
+          </div>
         </div>
         {children ? <div className="admin-hero-body">{children}</div> : null}
       </section>
