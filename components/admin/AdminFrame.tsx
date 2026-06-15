@@ -18,7 +18,12 @@ export function AdminFrame({ children }: { children: ReactNode }) {
     <div className="admin-shell">
       <aside className="admin-sidebar">
         <Link href="/admin" className="admin-brand">
-          <span className="brand-mark" aria-hidden="true" />
+          <span className="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M19.2 4.8c-6.8.4-11.5 3.1-14 8.2 2.2-.9 4.4-.9 6.7-.1-2.9 1.1-5.1 3-6.5 5.8 5.9-.2 10.3-2.1 13.1-5.8 1.5-2 1.7-4.7.7-8.1Z" />
+              <path d="M5.5 18.2c2.8-4.4 6.2-7.2 10.1-8.5" />
+            </svg>
+          </span>
           <span>
             <strong>Diyesu Decor</strong>
             <span className="admin-brand-sub">Command Center</span>
