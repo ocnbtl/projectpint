@@ -1,6 +1,7 @@
 import { AdminFrame } from "../../../components/admin/AdminFrame";
 import { AdminSheetWorkspace } from "../../../components/admin/AdminSheetWorkspace";
 import { OpsButton } from "../../../components/admin/OpsButton";
+import { countRowsMatching, countRowsWith, uniqueValueCount } from "../../../lib/admin-table-stats";
 import { COMMAND_CENTER_COLUMNS } from "../../../lib/command-center-config";
 import { loadEvergreenTab } from "../../../lib/command-center";
 
@@ -25,6 +26,12 @@ export default async function AdminPinsPage() {
         columns={[...COMMAND_CENTER_COLUMNS.pins]}
         initialRows={rows}
         dateColumn="Pin_Publish_Date"
+        summaryCards={[
+          { label: "Pins", value: rows.length.toLocaleString(), detail: "evergreen pin rows", tone: "green" },
+          { label: "Approved", value: countRowsMatching(rows, "Workflow_Status", "approved").toLocaleString(), detail: "ready for export prep", tone: "gold" },
+          { label: "Media URLs", value: countRowsWith(rows, "Media_URL").toLocaleString(), detail: "visuals attached", tone: "blue" },
+          { label: "Areas", value: uniqueValueCount(rows, "Content_Area").toLocaleString(), detail: "distribution coverage", tone: "brown" }
+        ]}
       >
         <div className="admin-ops-grid">
           <OpsButton action="generate_new_pins" label="Generate new pins" payload={{ count: 25 }} />

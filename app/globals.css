@@ -4853,6 +4853,94 @@ h4 {
   color: #c4936a;
 }
 
+.admin-sheet-summary-grid {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.admin-sheet-summary-card {
+  background: #fffdfa;
+  border: 1px solid rgba(44, 37, 32, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(44, 37, 32, 0.04);
+  display: grid;
+  gap: 0.22rem;
+  min-height: 96px;
+  overflow: hidden;
+  padding: 0.95rem 1rem;
+  position: relative;
+}
+
+.admin-sheet-summary-card::before {
+  border-radius: 999px;
+  content: "";
+  height: 4px;
+  left: 1rem;
+  position: absolute;
+  right: 1rem;
+  top: 0;
+}
+
+.admin-sheet-summary-card p {
+  color: #8a7e74;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.admin-sheet-summary-card strong {
+  color: #2c2520;
+  display: block;
+  font-size: 1.35rem;
+  line-height: 1.1;
+}
+
+.admin-sheet-summary-card span {
+  color: #b8a99a;
+  font-size: 0.72rem;
+  line-height: 1.3;
+}
+
+.admin-sheet-summary-green::before {
+  background: #5b8c6a;
+}
+
+.admin-sheet-summary-gold::before {
+  background: #c4936a;
+}
+
+.admin-sheet-summary-blue::before {
+  background: #4a7080;
+}
+
+.admin-sheet-summary-brown::before {
+  background: #8e7b6b;
+}
+
+.admin-hero-body {
+  background: #fffdfa;
+  border: 1px solid rgba(44, 37, 32, 0.08);
+  border-radius: 12px;
+  padding: 0.9rem;
+}
+
+.admin-hero-body .admin-ops-grid {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.admin-hero-body .admin-ops-grid .admin-action-block,
+.admin-hero-body .admin-ops-grid .btn {
+  width: auto;
+}
+
+.admin-hero-body .admin-ops-grid .btn {
+  min-height: 2.35rem;
+  padding-inline: 1rem;
+}
+
 .admin-datasheet-panel {
   padding: 0;
 }
@@ -5070,6 +5158,7 @@ h4 {
   .areas-overview-grid,
   .admin-kpi-grid,
   .admin-dashboard-grid,
+  .admin-sheet-summary-grid,
   .admin-quick-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -5152,6 +5241,7 @@ h4 {
   .step-grid,
   .admin-kpi-grid,
   .admin-dashboard-grid,
+  .admin-sheet-summary-grid,
   .admin-quick-grid,
   .footer-grid {
     grid-template-columns: 1fr;

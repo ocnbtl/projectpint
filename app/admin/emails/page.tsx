@@ -2,6 +2,7 @@ import { AdminFrame } from "../../../components/admin/AdminFrame";
 import { AdminSheetWorkspace } from "../../../components/admin/AdminSheetWorkspace";
 import { AreaCountsAction } from "../../../components/admin/AreaCountsAction";
 import { OpsButton } from "../../../components/admin/OpsButton";
+import { countRowsWith, uniqueValueCount } from "../../../lib/admin-table-stats";
 import { COMMAND_CENTER_COLUMNS } from "../../../lib/command-center-config";
 import { loadEvergreenTab } from "../../../lib/command-center";
 
@@ -22,6 +23,12 @@ export default async function AdminEmailsPage() {
         columns={[...COMMAND_CENTER_COLUMNS.emails]}
         initialRows={rows}
         dateColumn="Email_Publish_Date"
+        summaryCards={[
+          { label: "Emails", value: rows.length.toLocaleString(), detail: "campaign rows", tone: "green" },
+          { label: "Subjects", value: countRowsWith(rows, "Email_Subject").toLocaleString(), detail: "ready for review", tone: "gold" },
+          { label: "Linked Blogs", value: countRowsWith(rows, "Blog_ID").toLocaleString(), detail: "destination rows", tone: "blue" },
+          { label: "Areas", value: uniqueValueCount(rows, "Content_Area").toLocaleString(), detail: "content coverage", tone: "brown" }
+        ]}
       >
         <div className="admin-action-stack admin-hero-stack">
           <AreaCountsAction action="generate_new_emails" label="Generate new emails" mode="counts" />

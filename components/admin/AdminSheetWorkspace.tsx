@@ -11,7 +11,15 @@ interface AdminSheetWorkspaceProps {
   columns: string[];
   initialRows: Record<string, unknown>[];
   dateColumn?: string;
+  summaryCards?: AdminSheetSummaryCard[];
   children?: ReactNode;
+}
+
+export interface AdminSheetSummaryCard {
+  label: string;
+  value: ReactNode;
+  detail?: ReactNode;
+  tone?: "green" | "gold" | "blue" | "brown";
 }
 
 export function AdminSheetWorkspace({
@@ -22,6 +30,7 @@ export function AdminSheetWorkspace({
   columns,
   initialRows,
   dateColumn,
+  summaryCards = [],
   children
 }: AdminSheetWorkspaceProps) {
   const [stats, setStats] = useState<DataSheetStats>({
@@ -44,6 +53,17 @@ export function AdminSheetWorkspace({
             <span>{stats.columnCount} columns</span>
           </div>
         </div>
+        {summaryCards.length > 0 ? (
+          <div className="admin-sheet-summary-grid" aria-label={`${heroTitle} summary`}>
+            {summaryCards.map((card) => (
+              <article key={card.label} className={`admin-sheet-summary-card admin-sheet-summary-${card.tone ?? "green"}`}>
+                <p>{card.label}</p>
+                <strong>{card.value}</strong>
+                {card.detail ? <span>{card.detail}</span> : null}
+              </article>
+            ))}
+          </div>
+        ) : null}
         {children ? <div className="admin-hero-body">{children}</div> : null}
       </section>
 
