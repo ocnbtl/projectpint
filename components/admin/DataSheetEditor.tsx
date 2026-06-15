@@ -10,6 +10,7 @@ interface DataSheetEditorProps {
   initialRows: Record<string, unknown>[];
   dateColumn?: string;
   showSummary?: boolean;
+  showTitle?: boolean;
   onStatsChange?: (stats: DataSheetStats) => void;
 }
 
@@ -173,6 +174,7 @@ export function DataSheetEditor({
   initialRows,
   dateColumn,
   showSummary = true,
+  showTitle = true,
   onStatsChange
 }: DataSheetEditorProps) {
   const [rows, setRows] = useState<Record<string, string>[]>(
@@ -373,28 +375,30 @@ export function DataSheetEditor({
 
   return (
     <section className="admin-panel admin-datasheet-panel">
-      <div className="admin-panel-header admin-datasheet-head">
-        <div className="admin-datasheet-title">
-          <h2>{title}</h2>
-          {showSummary ? (
-            <div className="admin-meta-row">
-              <span className="admin-meta-pill">{rows.length} total rows</span>
-              <span className="admin-meta-pill">{visibleRows.length} visible</span>
-              <span className="admin-meta-pill">{columns.length} columns</span>
-            </div>
-          ) : null}
-        </div>
+      <div className={`admin-panel-header admin-datasheet-head${showTitle ? "" : " is-compact"}`}>
+        {showTitle ? (
+          <div className="admin-datasheet-title">
+            <h2>{title}</h2>
+            {showSummary ? (
+              <div className="admin-meta-row">
+                <span className="admin-meta-pill">{rows.length} total rows</span>
+                <span className="admin-meta-pill">{visibleRows.length} visible</span>
+                <span className="admin-meta-pill">{columns.length} columns</span>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
         <div className="admin-actions-inline admin-datasheet-toolbar" aria-label={`${title} controls`}>
           <label className="admin-inline-label admin-search-label admin-datasheet-control">
-            <span>Search rows</span>
+            <span className="admin-sr-only">Search rows</span>
             <input
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search any column"
+              placeholder="Search..."
             />
           </label>
-          {dateColumn ? (
+          {dateColumn && weekOptions.length > 0 ? (
             <label className="admin-inline-label admin-filter-label admin-datasheet-control">
               <span>Week filter</span>
               <select value={selectedWeek} onChange={(event) => setSelectedWeek(event.target.value)}>
@@ -420,13 +424,21 @@ export function DataSheetEditor({
           </button>
         </div>
       </div>
-      <div className="admin-table-status-row">
-        <p className="small admin-table-note">
-          Long-form fields stay editable here for manual review and approval. Changes autosave after a short pause. Drag
-          a header edge to resize each column.
-        </p>
-        <span className={`admin-save-pill${dirty ? " is-dirty" : ""}`}>{dirty ? "Autosave pending" : "Saved state current"}</span>
-      </div>
+      {showTitle ? (
+        <div className="admin-table-status-row">
+          <p className="small admin-table-note">
+            Long-form fields stay editable here for manual review and approval. Changes autosave after a short pause.
+            Drag a header edge to resize each column.
+          </p>
+          <span className={`admin-save-pill${dirty ? " is-dirty" : ""}`}>
+            {dirty ? "Autosave pending" : "Saved state current"}
+          </span>
+        </div>
+      ) : dirty ? (
+        <div className="admin-table-status-row admin-table-status-row-compact">
+          <span className="admin-save-pill is-dirty">Autosave pending</span>
+        </div>
+      ) : null}
       {status ? <p className="small admin-inline-status">{status}</p> : null}
       <div className="admin-table-wrap">
         <table className="admin-table" style={{ minWidth: `${tableMinWidth}px` }}>
