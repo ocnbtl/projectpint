@@ -3,14 +3,14 @@ import type { ReactNode } from "react";
 import { AdminNavLink } from "./AdminNavLink";
 
 const NAV_ITEMS = [
-  { href: "/admin", label: "Home", icon: "H" },
-  { href: "/admin/pins", label: "Pins", icon: "P" },
-  { href: "/admin/blogs", label: "Blogs", icon: "B" },
-  { href: "/admin/guides", label: "Guides", icon: "G" },
-  { href: "/admin/emails", label: "Emails", icon: "E" },
-  { href: "/admin/customers", label: "Users", icon: "U" },
-  { href: "/admin/products", label: "Products", icon: "D" },
-  { href: "/admin/analytics", label: "Analytics", icon: "A" }
+  { href: "/admin", label: "Home", icon: "dashboard" },
+  { href: "/admin/pins", label: "Pins", icon: "pin" },
+  { href: "/admin/blogs", label: "Blogs", icon: "file" },
+  { href: "/admin/guides", label: "Guides", icon: "book" },
+  { href: "/admin/emails", label: "Emails", icon: "mail" },
+  { href: "/admin/customers", label: "Users", icon: "users" },
+  { href: "/admin/products", label: "Products", icon: "package" },
+  { href: "/admin/analytics", label: "Analytics", icon: "chart" }
 ];
 
 export function AdminFrame({ children }: { children: ReactNode }) {
