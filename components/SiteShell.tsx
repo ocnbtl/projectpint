@@ -22,6 +22,14 @@ function LeafMark({ small = false }: { small?: boolean }) {
   );
 }
 
+function MenuIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 7h16M4 12h16M4 17h16" />
+    </svg>
+  );
+}
+
 export function SiteShell({ children }: { children: ReactNode }) {
   return (
     <div className="site-shell">
@@ -41,9 +49,26 @@ export function SiteShell({ children }: { children: ReactNode }) {
               </Link>
             ))}
             <Link href="/plant-picker" className="nav-link nav-cta">
+              <LeafMark small />
               Free Plant Picker
             </Link>
           </nav>
+          <details className="mobile-nav">
+            <summary aria-label="Open navigation">
+              <MenuIcon />
+            </summary>
+            <div className="mobile-nav-panel">
+              {navItems.map((item) => (
+                <Link key={item.href} href={item.href} className="nav-link">
+                  {item.label}
+                </Link>
+              ))}
+              <Link href="/plant-picker" className="nav-link nav-cta">
+                <LeafMark small />
+                Free Plant Picker
+              </Link>
+            </div>
+          </details>
         </div>
       </header>
       <main className="site-main">{children}</main>
