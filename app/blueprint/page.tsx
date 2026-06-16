@@ -8,8 +8,8 @@ export default function BlueprintPage() {
         <div className="container tool-page-hero-inner">
           <h1>Your personalized bathroom transformation plan.</h1>
           <p>
-            Tell us your budget, constraints, and priorities. We&apos;ll shape a complete upgrade brief tailored to your exact
-            bathroom.
+            Tell us your budget, constraints, and priorities. Within 48 hours we&apos;ll build a complete upgrade plan
+            tailored to your exact bathroom.
           </p>
         </div>
       </section>

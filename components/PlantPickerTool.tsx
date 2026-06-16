@@ -20,6 +20,7 @@ type PlantResult = {
   difficulty: "Easy" | "Intermediate";
   note: string;
   icon: string;
+  image: string;
 };
 
 const steps = ["Light", "Humidity", "Space", "Results"];
@@ -62,7 +63,9 @@ const plants: PlantResult[] = [
     placement: "Shelf, hanging planter, windowsill",
     difficulty: "Easy",
     note: "Trails from shelves, handles humidity, and forgives imperfect watering.",
-    icon: "leaf"
+    icon: "leaf",
+    image:
+      "https://images.unsplash.com/photo-1773431456773-50853cea57cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
     name: "Snake Plant",
@@ -72,7 +75,9 @@ const plants: PlantResult[] = [
     placement: "Floor corner, counter, windowsill",
     difficulty: "Easy",
     note: "Architectural, durable, and easy to place beside a vanity or toilet.",
-    icon: "tree"
+    icon: "tree",
+    image:
+      "https://images.unsplash.com/photo-1613498630970-f2a333cb4974?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
     name: "ZZ Plant",
@@ -82,7 +87,9 @@ const plants: PlantResult[] = [
     placement: "Floor, counter, shelf",
     difficulty: "Easy",
     note: "Slow growing, glossy, and tolerant of dry spells between watering.",
-    icon: "sprout"
+    icon: "sprout",
+    image:
+      "https://images.unsplash.com/photo-1555758826-ce21b7e51ccf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
     name: "Peace Lily",
@@ -92,7 +99,9 @@ const plants: PlantResult[] = [
     placement: "Counter, floor, shelf",
     difficulty: "Easy",
     note: "A softer option for humid bathrooms with indirect light.",
-    icon: "flower"
+    icon: "flower",
+    image:
+      "https://images.unsplash.com/photo-1567465645848-b765281eca3c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
     name: "Boston Fern",
@@ -102,7 +111,9 @@ const plants: PlantResult[] = [
     placement: "Hanging, high shelf, shower area",
     difficulty: "Intermediate",
     note: "Best near a shower or window where steam keeps the fronds lush.",
-    icon: "leaf"
+    icon: "leaf",
+    image:
+      "https://images.unsplash.com/photo-1704869727879-25ed3c235e7d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080"
   }
 ];
 
@@ -315,6 +326,7 @@ export function PlantPickerTool() {
                       <span className="plant-match-detail">Placement: {plant.placement}</span>
                       <span>{plant.note}</span>
                     </span>
+                    <span className="plant-match-photo" style={{ backgroundImage: `url(${plant.image})` }} aria-hidden="true" />
                   </article>
                 );
               })}
