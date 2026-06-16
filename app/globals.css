@@ -741,6 +741,36 @@ a:hover {
   text-align: left;
 }
 
+.tag-archive-hero {
+  padding-bottom: clamp(5.2rem, 9vw, 7rem);
+}
+
+.tag-archive-hero p:not(.eyebrow) {
+  color: #8a7e74;
+  font-size: clamp(1rem, 1.6vw, 1.16rem);
+  line-height: 1.6;
+  margin: 1rem auto 0;
+  max-width: 620px;
+}
+
+.tag-archive-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 1.3rem;
+}
+
+.tag-archive-stats span {
+  border: 1px solid rgba(44, 37, 32, 0.08);
+  border-radius: 999px;
+  background: #fffdfa;
+  box-shadow: 0 8px 20px rgba(44, 37, 32, 0.04);
+  color: #5a5048;
+  font-size: 0.82rem;
+  padding: 0.48rem 0.78rem;
+}
+
 .site-page-tight {
   margin-top: clamp(-4.2rem, -5vw, -2.75rem);
   padding-top: 0;
@@ -901,6 +931,39 @@ a:hover {
 
 .blog-tag-list {
   margin-bottom: 0.42rem;
+}
+
+.tag-archive-page {
+  display: grid;
+  gap: clamp(2.4rem, 5vw, 4rem);
+}
+
+.tag-archive-section {
+  padding: 0;
+}
+
+.section-heading-row {
+  align-items: flex-end;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: clamp(1.2rem, 3vw, 2rem);
+}
+
+.section-heading-row h2 {
+  color: #2c2520;
+  font-size: clamp(1.55rem, 3vw, 2.1rem);
+  line-height: 1.12;
+  margin: 0.25rem 0 0;
+}
+
+.tag-archive-back {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  justify-content: center;
+  padding: 0 0 clamp(1.5rem, 4vw, 2.5rem);
 }
 
 .about-panel {
