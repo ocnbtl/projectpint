@@ -463,6 +463,12 @@ export function DataSheetEditor({
             </label>
           ) : null}
           <button type="button" className="btn btn-ghost admin-toolbar-button" onClick={appendRow}>
+            <span className="admin-action-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 5v14" />
+                <path d="M5 12h14" />
+              </svg>
+            </span>
             Add row
           </button>
           <button
@@ -471,6 +477,11 @@ export function DataSheetEditor({
             onClick={() => void saveRows(rowsRef.current, "manual")}
             disabled={saving}
           >
+            <span className="admin-action-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M5 12.5 10 17l9-10" />
+              </svg>
+            </span>
             {saving ? "Saving..." : "Save now"}
           </button>
         </div>
@@ -526,8 +537,8 @@ export function DataSheetEditor({
                 </th>
               ))}
               <th className="admin-table-row-heading">
-                <div className="admin-table-header-cell admin-table-header-cell-static">
-                  <span>Row</span>
+                <div className="admin-table-header-cell admin-table-header-cell-static admin-row-action-heading">
+                  <span className="admin-sr-only">Row actions</span>
                 </div>
               </th>
             </tr>
@@ -562,8 +573,20 @@ export function DataSheetEditor({
                     </td>
                   ))}
                   <td className="admin-table-row-cell">
-                    <button type="button" className="btn btn-ghost" onClick={() => deleteRow(absoluteIndex)}>
-                      Delete
+                    <button
+                      type="button"
+                      className="admin-row-icon-button"
+                      onClick={() => deleteRow(absoluteIndex)}
+                      aria-label={`Delete row ${absoluteIndex + 1}`}
+                      title="Delete row"
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 6h18" />
+                        <path d="M8 6V4h8v2" />
+                        <path d="M10 11v6" />
+                        <path d="M14 11v6" />
+                        <path d="M6 6l1 14h10l1-14" />
+                      </svg>
                     </button>
                   </td>
                 </tr>
