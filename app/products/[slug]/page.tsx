@@ -3,7 +3,6 @@ import { AffiliateDisclosure } from "../../../components/AffiliateDisclosure";
 import { BlueprintTool } from "../../../components/BlueprintTool";
 import { SiteShell } from "../../../components/SiteShell";
 import { shouldShowAffiliateDisclosure } from "../../../lib/affiliate";
-import { redesignImages } from "../../../lib/redesign-data";
 
 const products = {
   "renter-bathroom-upgrade-blueprint": {
@@ -42,29 +41,40 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <SiteShell>
-      <section className="article-hero" style={{ backgroundImage: `url(${redesignImages.hero})` }}>
-        <div className="article-hero-shade">
-          <div className="container article-hero-copy">
-            <p className="eyebrow">Blueprint</p>
-            <h1>{product.title}</h1>
-            <p>{product.summary}</p>
-            <p className="product-price">Starting at {product.price}</p>
+      <section className={isBlueprint ? "product-offer-hero product-offer-hero-blueprint" : "product-offer-hero"}>
+        <div className="container product-offer-hero-inner">
+          <p className="product-offer-kicker">{isBlueprint ? "Personalized Plan" : "Expanded Upgrade"}</p>
+          <h1>
+            {product.title}
+            {product.subtitle ? <span>{product.subtitle}</span> : null}
+          </h1>
+          <p>{product.summary}</p>
+          <div className="product-offer-price-row">
+            <strong>Starting at {product.price}</strong>
+            <em>{isBlueprint ? "Delivered as a custom bathroom brief" : "Built for plant-forward bathrooms"}</em>
           </div>
         </div>
       </section>
 
-      <div className="container site-page">
+      <div className="container site-page product-offer-page">
+        <section className="product-offer-grid" aria-label={`${product.title} includes`}>
+          {product.bullets.map((bullet, index) => (
+            <article key={bullet} className="product-offer-card">
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <p>{bullet}</p>
+            </article>
+          ))}
+        </section>
+
         {isBlueprint ? (
           <BlueprintTool />
         ) : (
-          <section className="dd-section">
-            <div className="grid grid-2 product-grid">
-              {product.bullets.map((bullet) => (
-                <article key={bullet} className="card card-soft">
-                  <p>{bullet}</p>
-                </article>
-              ))}
-            </div>
+          <section className="product-offer-cta">
+            <h2>Want the quick version first?</h2>
+            <p>Use the free Plant Picker to get matched before deciding whether you need the expanded upgrade.</p>
+            <a className="btn btn-accent" href="/plant-picker">
+              Open Plant Picker
+            </a>
           </section>
         )}
       </div>
