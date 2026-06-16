@@ -234,7 +234,13 @@ function mapEvergreenGuide(row: GuideEvergreenShape): PublicGuideItem {
 
 export async function readBlogs(): Promise<BlogDraft[]> {
   const evergreen = await loadRuntimeTab<BlogEvergreenShape>("Blogs_Evergreen");
-  return evergreen.map(mapEvergreenBlogToPublic);
+  if (evergreen.length > 0) return evergreen.map(mapEvergreenBlogToPublic);
+
+  try {
+    return await loadRuntimeTab<BlogDraft>("Blog_Posts");
+  } catch {
+    return [];
+  }
 }
 
 export async function readGuides(): Promise<PublicGuideItem[]> {

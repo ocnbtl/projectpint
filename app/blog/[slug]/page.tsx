@@ -32,12 +32,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <SiteShell>
-      <section className="article-hero" style={{ backgroundImage: `url(${image})` }}>
-        <div className="article-hero-shade">
-          <div className="container article-hero-copy">
+      <section className="article-detail-hero">
+        <div className="container article-detail-hero-inner">
+          <div className="article-detail-copy">
             <Link href="/blog" className="back-link">
               Back to Blog
             </Link>
+            <p className="article-detail-kicker">Evergreen Article</p>
             <div className="tag-list article-tag-list">
               {tags.map((tag) => (
                 <Link key={`${blog.Blog_ID}-${tag}`} href={tagPath(tag)} className="tag tag-link">
@@ -46,11 +47,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               ))}
             </div>
             <h1>{titleBlock?.text ?? blog.Title}</h1>
-            <p>{readTimeMinutes} min read</p>
+            <span className="article-readtime-callout">
+              <span className="article-readtime-kicker">Reading time</span>
+              <strong>{readTimeMinutes} min read</strong>
+            </span>
           </div>
+          <div className="article-detail-media" style={{ backgroundImage: `url(${image})` }} aria-hidden="true" />
         </div>
       </section>
-      <article className="prose-card article-body-card">
+      <article className="article-body-card">
         <MarkdownArticle blocks={contentBlocks} slug={slug} />
       </article>
       {showAffiliateDisclosure ? <AffiliateDisclosure /> : null}

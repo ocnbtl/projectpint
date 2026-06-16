@@ -22,12 +22,13 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
 
   return (
     <SiteShell>
-      <section className="article-hero" style={{ backgroundImage: `url(${image})` }}>
-        <div className="article-hero-shade">
-          <div className="container article-hero-copy">
+      <section className="article-detail-hero">
+        <div className="container article-detail-hero-inner">
+          <div className="article-detail-copy">
             <Link href="/hub" className="back-link">
               Back to Areas
             </Link>
+            <p className="article-detail-kicker">Bathroom Guide</p>
             <div className="tag-list article-tag-list">
               {guide.tags.map((tag) => (
                 <Link key={`${guide.Guide_ID}-${tag}`} href={tagPath(tag)} className="tag tag-link">
@@ -36,11 +37,15 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               ))}
             </div>
             <h1>{titleBlock?.text ?? guide.title}</h1>
-            <p>{readTimeMinutes} min read</p>
+            <span className="article-readtime-callout">
+              <span className="article-readtime-kicker">Reading time</span>
+              <strong>{readTimeMinutes} min read</strong>
+            </span>
           </div>
+          <div className="article-detail-media" style={{ backgroundImage: `url(${image})` }} aria-hidden="true" />
         </div>
       </section>
-      <article className="prose-card article-body-card">
+      <article className="article-body-card">
         <MarkdownArticle blocks={contentBlocks} slug={slug} />
       </article>
     </SiteShell>
