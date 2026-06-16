@@ -1,5 +1,6 @@
 import { AdminFrame } from "../../../components/admin/AdminFrame";
 import { AdminSheetWorkspace } from "../../../components/admin/AdminSheetWorkspace";
+import { OpsButton } from "../../../components/admin/OpsButton";
 import { ADMIN_TABLE_COLUMNS } from "../../../lib/admin-table-view";
 import { loadEvergreenTab } from "../../../lib/command-center";
 
@@ -23,7 +24,13 @@ export default async function AdminCustomersPage() {
         columns={[...ADMIN_TABLE_COLUMNS.customers]}
         initialRows={rows}
         dateColumn="User_Date_Email"
-      />
+      >
+        <div className="admin-action-stack admin-figma-action-stack">
+          <div className="admin-ops-grid">
+            <OpsButton action="refresh_customers" label="Refresh Customers" icon="refresh" variant="ghost" />
+          </div>
+        </div>
+      </AdminSheetWorkspace>
     </AdminFrame>
   );
 }
