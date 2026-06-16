@@ -84,6 +84,13 @@ export function AdminNavLink({ href, label, icon }: AdminNavLinkProps) {
     <Link href={href} className={`admin-nav-link${isActive ? " is-active" : ""}`} aria-current={isActive ? "page" : undefined}>
       {icon ? <span className="admin-nav-icon" aria-hidden="true"><AdminNavIcon name={icon} /></span> : null}
       {label}
+      {isActive ? (
+        <span className="admin-nav-chevron" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="m9 18 6-6-6-6" />
+          </svg>
+        </span>
+      ) : null}
     </Link>
   );
 }

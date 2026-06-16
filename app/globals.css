@@ -4524,9 +4524,25 @@ h4 {
 }
 
 .admin-nav-link.is-active::after {
-  color: rgba(240, 235, 227, 0.5);
-  content: ">";
+  content: none;
+}
+
+.admin-nav-chevron {
+  color: rgba(240, 235, 227, 0.52);
+  display: inline-flex;
+  height: 1rem;
   margin-left: auto;
+  width: 1rem;
+}
+
+.admin-nav-chevron svg {
+  fill: none;
+  height: 100%;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+  width: 100%;
 }
 
 .admin-nav-icon {
@@ -4576,6 +4592,7 @@ h4 {
 }
 
 .admin-sidebar-actions .btn {
+  gap: 0.7rem;
   justify-content: flex-start;
 }
 

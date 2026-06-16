@@ -40,10 +40,24 @@ export function AdminFrame({ children }: { children: ReactNode }) {
           </p>
           <div className="admin-sidebar-actions">
             <Link href="/" className="btn btn-ghost">
+              <span className="admin-action-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6" />
+                  <path d="M10 14 21 3" />
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                </svg>
+              </span>
               Open public site
             </Link>
             <form action="/api/admin/logout" method="post">
               <button type="submit" className="btn btn-accent admin-logout-btn">
+                <span className="admin-action-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <path d="M16 17l5-5-5-5" />
+                    <path d="M21 12H9" />
+                  </svg>
+                </span>
                 Log out
               </button>
             </form>
