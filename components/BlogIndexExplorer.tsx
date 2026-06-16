@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 interface BlogCard {
   id: string;
   slug: string;
+  href?: string;
   title: string;
   excerpt: string;
   tags: string[];
@@ -83,7 +84,7 @@ export function BlogIndexExplorer({ blogs, availableTags, areaFilters, initialAr
       {filteredBlogs.length > 0 ? (
         <div className="grid grid-3">
           {filteredBlogs.map((blog) => (
-            <Link key={blog.id} href={`/blog/${blog.slug}`} className="blog-card-link">
+            <Link key={blog.id} href={blog.href ?? `/blog/${blog.slug}`} className="blog-card-link">
               <article className="blog-image-card">
                 <div className="blog-image-card-media">
                   <img src={blog.image} alt="" />

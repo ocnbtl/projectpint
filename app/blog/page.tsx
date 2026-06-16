@@ -33,7 +33,49 @@ export default async function BlogIndex({
       readTime: estimateReadTimeMinutes(row.Draft_Markdown)
     };
   });
-  const availableTags = Array.from(new Set(blogs.flatMap((blog) => blog.tags))).sort();
+  const fallbackBlogs = [
+    {
+      id: "fallback-plants",
+      slug: "plants",
+      href: "/hub/plants",
+      title: "The easiest plants for a small bathroom",
+      excerpt: "Start with resilient greenery that handles humidity, tight corners, and imperfect light.",
+      tags: ["Plants", "Low light"],
+      keyword: "bathroom plants",
+      image: areaVisuals.Plants.image,
+      areaLabel: "Plants",
+      areaSlug: "plants",
+      readTime: 4
+    },
+    {
+      id: "fallback-mirror",
+      slug: "mirror",
+      href: "/hub/mirror",
+      title: "Mirror upgrades that make a bathroom feel bigger",
+      excerpt: "Use shape, scale, and simple frame details to change the room without a full renovation.",
+      tags: ["Mirror", "Renter-safe"],
+      keyword: "bathroom mirror upgrade",
+      image: areaVisuals.Mirror.image,
+      areaLabel: "Mirror",
+      areaSlug: "mirror",
+      readTime: 5
+    },
+    {
+      id: "fallback-storage",
+      slug: "storage",
+      href: "/hub/storage",
+      title: "Storage fixes that calm bathroom clutter",
+      excerpt: "A practical starting point for shelves, bins, and vanity zones that stay usable.",
+      tags: ["Storage", "Small spaces"],
+      keyword: "bathroom storage",
+      image: areaVisuals.Storage.image,
+      areaLabel: "Storage",
+      areaSlug: "storage",
+      readTime: 5
+    }
+  ];
+  const blogCards = blogs.length > 0 ? blogs : fallbackBlogs;
+  const availableTags = Array.from(new Set(blogCards.flatMap((blog) => blog.tags))).sort();
   const areaFilters = hubs.map((hub) => ({ label: hub.title, slug: hub.slug }));
 
   return (
@@ -49,7 +91,7 @@ export default async function BlogIndex({
       </section>
       <div className="container site-page site-page-tight">
         <BlogIndexExplorer
-          blogs={blogs}
+          blogs={blogCards}
           availableTags={availableTags}
           areaFilters={areaFilters}
           initialArea={areaParam}

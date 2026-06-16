@@ -3944,6 +3944,244 @@ h4 {
   gap: 1rem;
 }
 
+.start-figma-hero {
+  background: linear-gradient(180deg, rgba(232, 240, 234, 0.5) 0%, #faf7f2 100%);
+  padding: clamp(3.5rem, 8vw, 5rem) 0;
+  text-align: center;
+}
+
+.start-figma-hero .container {
+  display: grid;
+  justify-items: center;
+}
+
+.start-figma-hero h1 {
+  color: #2c2520;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+  margin: 0 0 1rem;
+}
+
+.start-figma-hero p:not(.eyebrow) {
+  color: #8a7e74;
+  display: inline-grid;
+  font-size: 1rem;
+  gap: 0.1rem;
+  line-height: 1.65;
+  margin: 0;
+  text-align: left;
+}
+
+.start-figma-page {
+  padding: clamp(1.6rem, 3vw, 2rem) 0 clamp(3rem, 6vw, 4.5rem);
+}
+
+.start-figma-page > section + section {
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.start-section-head {
+  display: grid;
+  justify-items: center;
+  margin: 0 auto 1.8rem;
+  max-width: 48rem;
+  text-align: center;
+}
+
+.start-section-head h2 {
+  color: #2c2520;
+  font-size: clamp(1.35rem, 3vw, 2.25rem);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.start-section-head p:not(.eyebrow) {
+  color: #8a7e74;
+  font-size: 0.96rem;
+  line-height: 1.6;
+  margin: 0.5rem 0 0;
+}
+
+.start-step-grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-inline: auto;
+  max-width: 48rem;
+}
+
+.start-step-card {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.start-step-card > span {
+  align-items: center;
+  background: #e8f0ea;
+  border-radius: 999px;
+  color: #5b8c6a;
+  display: inline-flex;
+  height: 3.5rem;
+  justify-content: center;
+  margin: 0 0 1rem;
+  width: 3.5rem;
+}
+
+.start-step-card svg {
+  fill: none;
+  height: 1.5rem;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  width: 1.5rem;
+}
+
+.start-step-card h2 {
+  color: #2c2520;
+  font-size: 1.1rem;
+  line-height: 1.25;
+  margin: 0 0 0.45rem;
+}
+
+.start-step-card p {
+  color: #8a7e74;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.start-area-section {
+  background: #fffdfa;
+  margin-inline: calc((100vw - min(1400px, 100vw - 2.5rem)) / -2);
+  padding: clamp(2.5rem, 5vw, 3.5rem) calc((100vw - min(1400px, 100vw - 2.5rem)) / 2);
+}
+
+.start-area-list {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.start-area-card {
+  align-items: start;
+  background: #fffdfa;
+  border: 1px solid rgba(44, 37, 32, 0.08);
+  border-radius: 16px;
+  color: #2c2520;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: 1.25rem;
+  text-decoration: none;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.start-area-card:hover {
+  border-color: rgba(91, 140, 106, 0.28);
+  box-shadow: 0 16px 34px rgba(44, 37, 32, 0.08);
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+.start-area-icon {
+  align-items: center;
+  background: #e8f0ea;
+  border-radius: 12px;
+  color: #5b8c6a;
+  display: inline-flex;
+  height: 3rem;
+  justify-content: center;
+  width: 3rem;
+}
+
+.start-area-icon svg {
+  fill: none;
+  height: 1.35rem;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  width: 1.35rem;
+}
+
+.start-area-copy {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.start-area-copy > span {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.start-area-copy strong {
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.start-area-copy em {
+  background: #f0ebe3;
+  border-radius: 999px;
+  color: #8a7e74;
+  font-size: 0.74rem;
+  font-style: normal;
+  padding: 0.2rem 0.5rem;
+}
+
+.start-area-copy small {
+  color: #8a7e74;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.start-area-arrow {
+  align-items: center;
+  color: #b8a99a;
+  display: inline-flex;
+  margin-top: 0.15rem;
+}
+
+.start-area-arrow svg {
+  fill: none;
+  height: 1rem;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+  width: 1rem;
+}
+
+.start-picker-cta {
+  display: grid;
+  justify-items: center;
+  margin-inline: auto;
+  max-width: 36rem;
+  text-align: center;
+}
+
+.start-picker-cta h2 {
+  color: #2c2520;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1.2;
+  margin: 0 0 1rem;
+}
+
+.start-picker-cta p {
+  color: #8a7e74;
+  display: grid;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 1.5rem;
+}
+
 .unlock-form {
   border-top: 1px solid rgba(44, 37, 32, 0.1);
   padding-top: 1rem;
@@ -5729,6 +5967,26 @@ h4 {
 
   .home-section-head-center {
     align-items: center;
+  }
+
+  .start-figma-hero p:not(.eyebrow) {
+    text-align: center;
+  }
+
+  .start-step-grid,
+  .start-area-list {
+    grid-template-columns: 1fr;
+  }
+
+  .start-area-card {
+    gap: 0.85rem;
+    padding: 1rem;
+  }
+
+  .start-area-copy > span {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.35rem;
   }
 
   .areas-index-hero {
