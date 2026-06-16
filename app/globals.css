@@ -4496,7 +4496,8 @@ h4 {
 }
 
 .tool-page-body {
-  padding-top: clamp(1.5rem, 4vw, 2.25rem);
+  padding-bottom: clamp(2.5rem, 5vw, 3.5rem);
+  padding-top: clamp(2rem, 5vw, 3rem);
 }
 
 .tool-quiz-shell {
@@ -4507,7 +4508,11 @@ h4 {
 }
 
 .blueprint-quiz-shell {
-  max-width: 720px;
+  max-width: 672px;
+}
+
+.plant-picker-shell {
+  max-width: 576px;
 }
 
 .product-offer-page {
@@ -4584,8 +4589,8 @@ h4 {
 .quiz-progress {
   align-items: center;
   display: flex;
-  gap: 0.42rem;
   justify-content: center;
+  margin-bottom: 0.1rem;
 }
 
 .quiz-progress-item {
@@ -4606,10 +4611,17 @@ h4 {
   font-weight: 800;
   height: 2rem;
   justify-content: center;
+  transition: background 160ms ease, color 160ms ease;
   width: 2rem;
 }
 
 .quiz-progress-item span.is-active {
+  background: rgba(91, 140, 106, 0.2);
+  color: #5b8c6a;
+}
+
+.quiz-progress-item:last-child span.is-active,
+.quiz-progress-item:has(+ .quiz-progress-item span:not(.is-active)) span.is-active {
   background: #5b8c6a;
   color: #fffdfa;
 }
@@ -4626,10 +4638,10 @@ h4 {
 }
 
 .quiz-progress-item i {
-  background: #ede8e0;
+  background: rgba(44, 37, 32, 0.12);
   display: inline-block;
   height: 1px;
-  width: clamp(1.4rem, 5vw, 3.5rem);
+  width: 2rem;
 }
 
 .quiz-progress-item i.is-active {
@@ -4639,11 +4651,11 @@ h4 {
 .tool-quiz-card {
   background: #fffdfa;
   border: 1px solid rgba(44, 37, 32, 0.08);
-  border-radius: 14px;
+  border-radius: 12px;
   box-shadow: var(--shadow-soft);
   display: grid;
-  gap: 1.65rem;
-  padding: clamp(1.25rem, 4vw, 2.15rem);
+  gap: 1.5rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
 }
 
 .tool-quiz-step {
@@ -4653,7 +4665,7 @@ h4 {
 
 .tool-quiz-step h2 {
   color: #2c2520;
-  font-size: clamp(1.3rem, 3vw, 1.55rem);
+  font-size: clamp(1.25rem, 3vw, 1.38rem);
   line-height: 1.2;
   margin: 0;
   text-align: center;
@@ -4680,12 +4692,12 @@ h4 {
 
 .quiz-option-stack {
   display: grid;
-  gap: 0.85rem;
+  gap: 0.75rem;
 }
 
 .quiz-option-stack .quiz-option-card {
   align-items: center;
-  grid-template-columns: 2.6rem minmax(0, 1fr);
+  grid-template-columns: 2.5rem minmax(0, 1fr) auto;
   min-height: 0;
   padding: 1rem;
   text-align: left;
@@ -4715,6 +4727,14 @@ h4 {
   border-color: #5b8c6a;
 }
 
+.quiz-option-card em {
+  color: #5b8c6a;
+  font-size: 1.2rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+}
+
 .quiz-option-icon,
 .plant-match-icon,
 .tool-modal-icon,
@@ -4727,10 +4747,15 @@ h4 {
 
 .quiz-option-icon {
   background: #f5f1eb;
-  border-radius: 999px;
+  border-radius: 12px;
   height: 2.5rem;
   margin: 0 auto 0.1rem;
   width: 2.5rem;
+}
+
+.quiz-option-card.is-selected .quiz-option-icon {
+  background: #5b8c6a;
+  color: #fffdfa;
 }
 
 .quiz-option-stack .quiz-option-icon {
@@ -4750,19 +4775,27 @@ h4 {
   width: 1.65rem;
 }
 
-.quiz-option-card strong {
+.quiz-option-copy {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.quiz-option-card strong,
+.quiz-option-copy strong {
   color: #2c2520;
   font-size: 0.93rem;
   line-height: 1.25;
 }
 
-.quiz-option-card span:not(.quiz-option-icon) {
+.quiz-option-card > span:not(.quiz-option-icon):not(.quiz-option-copy),
+.quiz-option-copy span {
   color: #8a7e74;
   font-size: 0.78rem;
   line-height: 1.35;
 }
 
-.quiz-option-stack .quiz-option-card span:not(.quiz-option-icon) {
+.quiz-option-stack .quiz-option-card > span:not(.quiz-option-icon):not(.quiz-option-copy),
+.quiz-option-stack .quiz-option-copy {
   grid-column: 2;
 }
 
@@ -4774,6 +4807,35 @@ h4 {
 
 .tool-quiz-actions .btn {
   min-width: 120px;
+}
+
+.blueprint-quiz-shell .tool-quiz-actions .btn,
+.plant-picker-shell .tool-quiz-actions .btn {
+  flex: 1;
+}
+
+.blueprint-quiz-shell .tool-quiz-actions .btn-accent,
+.plant-picker-shell .tool-quiz-actions .btn-accent {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.35rem;
+  justify-content: center;
+}
+
+.plant-picker-shell .tool-quiz-card {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.plant-picker-shell .tool-quiz-step {
+  gap: 1.5rem;
+}
+
+.plant-picker-shell .tool-quiz-step h2 {
+  font-size: 1.38rem;
+  margin-bottom: 0.25rem;
 }
 
 .plant-match-list {

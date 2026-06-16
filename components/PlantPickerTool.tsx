@@ -273,7 +273,7 @@ export function PlantPickerTool() {
   };
 
   return (
-    <section className="tool-quiz-shell">
+    <section className="tool-quiz-shell plant-picker-shell">
       <ProgressSteps step={step} />
 
       <div className="tool-quiz-card">

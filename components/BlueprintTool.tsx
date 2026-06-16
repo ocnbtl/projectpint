@@ -168,8 +168,11 @@ function ChoiceCard({
       <span className="quiz-option-icon">
         <MiniIcon name={choice.icon} />
       </span>
-      <strong>{choice.label}</strong>
-      {!compact && choice.description ? <span>{choice.description}</span> : null}
+      <span className="quiz-option-copy">
+        <strong>{choice.label}</strong>
+        {!compact && choice.description ? <span>{choice.description}</span> : null}
+      </span>
+      {selected ? <em aria-hidden="true">✓</em> : null}
     </button>
   );
 }
@@ -359,7 +362,7 @@ export function BlueprintTool() {
               Back
             </button>
             <button type="button" className="btn btn-accent" onClick={() => setStep((current) => (current + 1) as BlueprintStep)} disabled={!canProceed}>
-              Continue
+              Continue <span aria-hidden="true">›</span>
             </button>
           </div>
         ) : null}
