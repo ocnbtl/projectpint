@@ -75,8 +75,42 @@ function ActivityList({ title, items, emptyText }: { title: string; items: Comma
   );
 }
 
+const QUICK_ACTIONS = [
+  {
+    action: "publish_approved_blogs",
+    label: "Publish Approved Blogs",
+    variant: "accent" as const,
+    icon: "play" as const
+  },
+  {
+    action: "publish_approved_guides",
+    label: "Publish Approved Guides",
+    variant: "accent" as const,
+    icon: "play" as const
+  },
+  {
+    action: "prepare_approved_pins_for_export",
+    label: "Prepare Pins",
+    variant: "ghost" as const,
+    icon: "play" as const
+  },
+  {
+    action: "refresh_customers",
+    label: "Refresh Customers",
+    variant: "ghost" as const,
+    icon: "refresh" as const
+  },
+  {
+    action: "update_product_stats",
+    label: "Update Product Stats",
+    variant: "ghost" as const,
+    icon: "refresh" as const
+  }
+];
+
 export default async function AdminPage() {
   const { kpis, activity, attention } = await commandCenterDashboardSnapshot();
+  const recentSignals = [...attention, ...activity].slice(0, 5);
   const metrics = [
     {
       label: "Pins",
@@ -123,88 +157,66 @@ export default async function AdminPage() {
       icon: "package",
       total: kpis.totalProducts,
       detail: `${kpis.totalRevenue} revenue`,
-      subdetail: "tracked in products",
+      subdetail: "tracked revenue",
       tone: "gold"
     }
   ];
 
   return (
     <AdminFrame>
-      <header className="admin-home-head">
-        <div>
-          <h1>Operations Dashboard</h1>
-          <p>Welcome back. Here&apos;s the current state of your content engine.</p>
-        </div>
-        <Link href="/review_pack.html" className="btn btn-ghost admin-review-link">
-          Review pack
-        </Link>
-      </header>
-
-      <section className="admin-kpi-grid" aria-label="Core KPIs">
-        {metrics.map((metric) => (
-          <article key={metric.label} className="admin-kpi-card">
-            <span className={`admin-kpi-icon admin-kpi-${metric.tone}`}>
-              <MetricIcon name={metric.icon} />
-            </span>
-            <h2>{metric.total}</h2>
-            <p className="admin-kpi-label">{metric.label}</p>
-            <p className={`admin-kpi-detail admin-kpi-text-${metric.tone}`}>{metric.detail}</p>
-            <p className="admin-kpi-subdetail">{metric.subdetail}</p>
-          </article>
-        ))}
-      </section>
-
-      <div className="admin-dashboard-grid">
-        <ActivityList
-          title="Needs Attention"
-          items={attention}
-          emptyText="No urgent command-center items are waiting right now."
-        />
-        <ActivityList title="Recent Runtime Signals" items={activity} emptyText="No activity is available yet." />
-      </div>
-
-      <section className="admin-panel">
-        <div className="admin-section-head">
+      <div className="admin-home-page">
+        <header className="admin-home-head">
           <div>
-            <h2>Quick Actions</h2>
-            <p className="small">These still use the live command-center operations API and human approval gates.</p>
+            <h1>Operations Dashboard</h1>
+            <p>Welcome back. Here&apos;s the current state of your content engine.</p>
           </div>
-        </div>
-        <div className="admin-quick-grid">
-          <article className="admin-quick-card">
-            <h3>Publish blogs</h3>
-            <p className="small">Push approved blog rows live after final review.</p>
-            <OpsButton action="publish_approved_blogs" label="Publish approved blogs" />
-          </article>
-          <article className="admin-quick-card">
-            <h3>Publish guides</h3>
-            <p className="small">Ship approved guide rows to the live guides route.</p>
-            <OpsButton action="publish_approved_guides" label="Publish approved guides" variant="ghost" />
-          </article>
-          <article className="admin-quick-card">
-            <h3>Prepare pins</h3>
-            <p className="small">Finalize approved pins for manual CSV export and posting.</p>
-            <OpsButton action="prepare_approved_pins_for_export" label="Prepare approved pins" variant="ghost" />
-          </article>
-          <article className="admin-quick-card">
-            <h3>Refresh customers</h3>
-            <p className="small">Pull new signups into the customers table before audience review.</p>
-            <OpsButton action="refresh_customers" label="Refresh customers from leads" />
-          </article>
-          <article className="admin-quick-card">
-            <h3>Update product stats</h3>
-            <p className="small">Refresh product links, sales, and revenue fields in one pass.</p>
-            <OpsButton action="update_product_stats" label="Update product stats" />
-          </article>
-          <article className="admin-quick-card admin-quick-card-link">
-            <h3>Review pack</h3>
-            <p className="small">Open the review pack when you want one more content quality pass before posting.</p>
-            <Link href="/review_pack.html" className="btn btn-ghost">
-              Open review pack
+        </header>
+
+        <section className="admin-kpi-grid" aria-label="Core KPIs">
+          {metrics.map((metric) => (
+            <article key={metric.label} className="admin-kpi-card">
+              <span className={`admin-kpi-icon admin-kpi-${metric.tone}`}>
+                <MetricIcon name={metric.icon} />
+              </span>
+              <p className="admin-kpi-number">{metric.total}</p>
+              <h2>{metric.label}</h2>
+              <p className={`admin-kpi-detail admin-kpi-text-${metric.tone}`}>{metric.detail}</p>
+              <p className="admin-kpi-subdetail">{metric.subdetail}</p>
+            </article>
+          ))}
+        </section>
+
+        <section className="admin-panel admin-home-actions-card">
+          <h2>Quick Actions</h2>
+          <div className="admin-home-actions-grid">
+            {QUICK_ACTIONS.map((action) => (
+              <OpsButton
+                key={action.action}
+                action={action.action}
+                label={action.label}
+                variant={action.variant}
+                icon={action.icon}
+              />
+            ))}
+            <Link href="/review_pack.html" className="btn btn-ghost admin-home-action-link">
+              <span className="admin-action-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 4v10" />
+                  <path d="m7 9 5 5 5-5" />
+                  <path d="M5 20h14" />
+                </svg>
+              </span>
+              Download Review Pack
             </Link>
-          </article>
-        </div>
-      </section>
+          </div>
+        </section>
+
+        <ActivityList
+          title="Recent Activity"
+          items={recentSignals}
+          emptyText="No activity is available yet."
+        />
+      </div>
     </AdminFrame>
   );
 }

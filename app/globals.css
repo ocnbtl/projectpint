@@ -4586,6 +4586,10 @@ h4 {
   width: 100%;
 }
 
+.admin-home-page {
+  max-width: 1200px;
+}
+
 .admin-home-head {
   align-items: flex-start;
   display: flex;
@@ -4622,8 +4626,8 @@ h4 {
   box-shadow: var(--shadow-soft);
   display: grid;
   justify-items: center;
-  min-height: 150px;
-  padding: 1rem 0.75rem;
+  min-height: 172px;
+  padding: 1.35rem 0.75rem 1.05rem;
   text-align: center;
 }
 
@@ -4657,17 +4661,21 @@ h4 {
   color: #8e7b6b;
 }
 
-.admin-kpi-card h2 {
+.admin-kpi-number {
   color: #2c2520;
-  font-size: 1.55rem;
+  font-size: 1.75rem;
   line-height: 1;
-  margin: 0;
+  margin: 0 0 0.4rem;
 }
 
+.admin-kpi-card h2,
 .admin-kpi-label {
   color: #8a7e74;
-  font-size: 0.75rem;
-  margin: 0.3rem 0 0;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0;
 }
 
 .admin-kpi-detail {
@@ -4705,7 +4713,7 @@ h4 {
   border: 1px solid rgba(44, 37, 32, 0.08);
   border-radius: 12px;
   box-shadow: var(--shadow-soft);
-  padding: 1rem;
+  padding: 1.5rem;
 }
 
 .admin-dashboard-grid {
@@ -4790,6 +4798,39 @@ h4 {
 
 .admin-quick-card .btn {
   justify-content: center;
+}
+
+.admin-home-actions-card {
+  margin-bottom: 2rem;
+}
+
+.admin-home-actions-card h2 {
+  color: #2c2520;
+  font-size: 1rem;
+  line-height: 1.25;
+  margin: 0 0 1rem;
+}
+
+.admin-home-actions-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.admin-home-actions-grid .admin-action-block,
+.admin-home-actions-grid .btn {
+  width: 100%;
+}
+
+.admin-home-actions-grid .btn {
+  justify-content: flex-start;
+  min-height: 2.75rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.admin-home-action-link {
+  text-decoration: none;
 }
 
 .admin-sheet-hero {
@@ -5261,6 +5302,7 @@ h4 {
   .admin-kpi-grid,
   .admin-dashboard-grid,
   .admin-sheet-summary-grid,
+  .admin-home-actions-grid,
   .admin-quick-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -5344,6 +5386,7 @@ h4 {
   .admin-kpi-grid,
   .admin-dashboard-grid,
   .admin-sheet-summary-grid,
+  .admin-home-actions-grid,
   .admin-quick-grid,
   .footer-grid {
     grid-template-columns: 1fr;
