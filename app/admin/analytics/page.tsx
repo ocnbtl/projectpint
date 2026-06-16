@@ -15,7 +15,7 @@ import type { ContentArea } from "../../../lib/types";
 
 export const dynamic = "force-dynamic";
 
-type Channel = "pins" | "blogs" | "emails" | "products";
+type Channel = "all" | "pins" | "blogs" | "emails" | "products";
 
 interface AnalyticsPageProps {
   searchParams: Promise<{ channel?: string | string[] }>;
@@ -36,6 +36,7 @@ interface PinMetric {
 }
 
 const CHANNELS: Array<{ key: Channel; label: string; icon: string }> = [
+  { key: "all", label: "All", icon: "all" },
   { key: "pins", label: "Pins", icon: "pin" },
   { key: "blogs", label: "Blogs", icon: "file" },
   { key: "emails", label: "Emails", icon: "mail" },
@@ -163,13 +164,17 @@ function AdminMetricCard({
   );
 }
 
+function OverviewKpiIcon({ label, tone }: { label: string; tone: string }) {
+  return <span className={`admin-analytics-icon admin-analytics-icon-${tone}`}>{label}</span>;
+}
+
 function ChannelTabs({ active }: { active: Channel }) {
   return (
     <nav className="admin-analytics-tabs" aria-label="Analytics channel">
       {CHANNELS.map((channel) => (
         <Link
           key={channel.key}
-          href={`/admin/analytics?channel=${channel.key}`}
+          href={channel.key === "all" ? "/admin/analytics" : `/admin/analytics?channel=${channel.key}`}
           className={channel.key === active ? "is-active" : ""}
           aria-current={channel.key === active ? "page" : undefined}
         >
@@ -178,6 +183,82 @@ function ChannelTabs({ active }: { active: Channel }) {
         </Link>
       ))}
     </nav>
+  );
+}
+
+function OverviewHeader({ active }: { active: Channel }) {
+  return (
+    <section className="admin-analytics-overview-hero">
+      <div>
+        <p className="admin-analytics-kicker">Analytics Dashboard</p>
+        <h1>Performance Overview</h1>
+        <p>
+          Live command-center metrics from the current backend. The Figma mock dashboard has been connected to real publish,
+          export, signup, and product rows.
+        </p>
+      </div>
+      <ChannelTabs active={active} />
+    </section>
+  );
+}
+
+function OverviewKpis({ kpis }: { kpis: CommandCenterKpis }) {
+  const items = [
+    {
+      label: "Pinterest Pins",
+      value: kpis.totalPins,
+      detail: `${kpis.pinsReadyToSync} approved, ${kpis.pinsMissingMedia} need media`,
+      icon: "P",
+      tone: "green"
+    },
+    {
+      label: "Blog Posts",
+      value: kpis.totalBlogs,
+      detail: `${kpis.blogsReadyToPublish} approved for human publish`,
+      icon: "B",
+      tone: "gold"
+    },
+    {
+      label: "Guides",
+      value: kpis.totalGuides,
+      detail: `${kpis.guidesReadyToPublish} guides ready for review`,
+      icon: "G",
+      tone: "blue"
+    },
+    {
+      label: "Email Queue",
+      value: kpis.totalEmails,
+      detail: `${kpis.totalEmails} email rows available`,
+      icon: "E",
+      tone: "brown"
+    },
+    {
+      label: "Users",
+      value: kpis.totalCustomers,
+      detail: `${kpis.totalCustomers} signup rows tracked`,
+      icon: "U",
+      tone: "green"
+    },
+    {
+      label: "Products",
+      value: kpis.totalProducts,
+      detail: `${formatCurrency(kpis.totalRevenue)} tracked revenue`,
+      icon: "$",
+      tone: "gold"
+    }
+  ];
+
+  return (
+    <section className="admin-analytics-kpi-grid" aria-label="Analytics overview KPIs">
+      {items.map((item) => (
+        <article key={item.label} className="admin-analytics-kpi">
+          <OverviewKpiIcon label={item.icon} tone={item.tone} />
+          <p>{item.label}</p>
+          <h2>{item.value}</h2>
+          <span>{item.detail}</span>
+        </article>
+      ))}
+    </section>
   );
 }
 
@@ -242,6 +323,15 @@ function AreaTrendChart({ data }: { data: Array<{ label: string; created: number
   );
 }
 
+function AnalyticsEmptyState({ label }: { label: string }) {
+  return (
+    <div className="admin-analytics-empty">
+      <span aria-hidden="true" />
+      <p>{label}</p>
+    </div>
+  );
+}
+
 function ScatterPlot({
   data,
   xKey,
@@ -255,6 +345,10 @@ function ScatterPlot({
   xLabel: string;
   yLabel: string;
 }) {
+  if (data.length === 0) {
+    return <AnalyticsEmptyState label="Performance points will appear after pin metrics are available." />;
+  }
+
   const xValues = data.map((item) => item[xKey]);
   const yValues = data.map((item) => item[yKey]);
   const minX = Math.min(...xValues, 0);
@@ -288,6 +382,10 @@ function ScatterPlot({
 }
 
 function RadarChart({ data }: { data: Array<{ area: ContentArea; saveRate: number; clickRate: number }> }) {
+  if (data.length === 0) {
+    return <AnalyticsEmptyState label="Area comparison will appear after pins are assigned to content areas." />;
+  }
+
   const center = 50;
   const radius = 32;
   const max = Math.max(...data.flatMap((item) => [item.saveRate, item.clickRate]), 1);
@@ -447,30 +545,32 @@ function PinsAnalytics({ rows, kpis }: { rows: Record<string, unknown>[]; kpis: 
       <article className="admin-analytics-panel">
         <h2>Area Performance Heatmap</h2>
         <p>Color intensity indicates relative performance. Darker = higher metric value.</p>
-        <div className="admin-analytics-table-wrap">
-          <table className="admin-analytics-table">
-            <thead>
-              <tr>
-                <th>Area</th>
-                <th>Pins</th>
-                <th>Avg Impressions</th>
-                <th>Save Rate</th>
-                <th>Click Rate</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...areaAgg].sort((a, b) => b.saveRate - a.saveRate).map((row) => (
-                <tr key={row.area}>
-                  <td><AreaPill area={row.area} /></td>
-                  <td>{row.pins}</td>
-                  <td><HeatCell value={formatNumber(row.avgImpressions)} intensity={row.avgImpressions / maxImpressions} tone="green" /></td>
-                  <td><HeatCell value={`${row.saveRate.toFixed(1)}%`} intensity={row.saveRate / maxSave} tone="gold" /></td>
-                  <td><HeatCell value={`${row.clickRate.toFixed(1)}%`} intensity={row.clickRate / maxClick} tone="brown" /></td>
+        {areaAgg.length > 0 ? (
+          <div className="admin-analytics-table-wrap">
+            <table className="admin-analytics-table">
+              <thead>
+                <tr>
+                  <th>Area</th>
+                  <th>Pins</th>
+                  <th>Avg Impressions</th>
+                  <th>Save Rate</th>
+                  <th>Click Rate</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {[...areaAgg].sort((a, b) => b.saveRate - a.saveRate).map((row) => (
+                  <tr key={row.area}>
+                    <td><AreaPill area={row.area} /></td>
+                    <td>{row.pins}</td>
+                    <td><HeatCell value={formatNumber(row.avgImpressions)} intensity={row.avgImpressions / maxImpressions} tone="green" /></td>
+                    <td><HeatCell value={`${row.saveRate.toFixed(1)}%`} intensity={row.saveRate / maxSave} tone="gold" /></td>
+                    <td><HeatCell value={`${row.clickRate.toFixed(1)}%`} intensity={row.clickRate / maxClick} tone="brown" /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : <AnalyticsEmptyState label="Area heatmap rows will appear once pin metrics exist." />}
       </article>
 
       <article className="admin-analytics-panel">
@@ -481,38 +581,40 @@ function PinsAnalytics({ rows, kpis }: { rows: Record<string, unknown>[]; kpis: 
           </div>
           <span className="admin-analytics-select">Sort by: Impressions</span>
         </div>
-        <div className="admin-analytics-table-wrap">
-          <table className="admin-analytics-table">
-            <thead>
-              <tr>
-                <th>Rank</th>
-                <th>Pin</th>
-                <th>Area</th>
-                <th>Impressions</th>
-                <th>Saves</th>
-                <th>Clicks</th>
-                <th>Save%</th>
-                <th>Click%</th>
-                <th>Eng. Score</th>
-              </tr>
-            </thead>
-            <tbody>
-              {leaderboard.map((pin, index) => (
-                <tr key={pin.id} className={index < 3 ? "is-top-row" : undefined}>
-                  <td><RankBadge rank={index + 1} /></td>
-                  <td><strong>{pin.id}</strong><span>{pin.title}</span></td>
-                  <td><AreaPill area={pin.area} /></td>
-                  <td>{formatNumber(pin.impressions)}</td>
-                  <td>{formatNumber(pin.saves)}</td>
-                  <td>{formatNumber(pin.outboundClicks)}</td>
-                  <td className="is-green">{pin.saveRate.toFixed(1)}%</td>
-                  <td className="is-gold">{pin.clickRate.toFixed(1)}%</td>
-                  <td><ScoreMeter value={pin.engagementScore} max={Math.max(...leaderboard.map((item) => item.engagementScore), 1)} /></td>
+        {leaderboard.length > 0 ? (
+          <div className="admin-analytics-table-wrap">
+            <table className="admin-analytics-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Pin</th>
+                  <th>Area</th>
+                  <th>Impressions</th>
+                  <th>Saves</th>
+                  <th>Clicks</th>
+                  <th>Save%</th>
+                  <th>Click%</th>
+                  <th>Eng. Score</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {leaderboard.map((pin, index) => (
+                  <tr key={pin.id} className={index < 3 ? "is-top-row" : undefined}>
+                    <td><RankBadge rank={index + 1} /></td>
+                    <td><strong>{pin.id}</strong><span>{pin.title}</span></td>
+                    <td><AreaPill area={pin.area} /></td>
+                    <td>{formatNumber(pin.impressions)}</td>
+                    <td>{formatNumber(pin.saves)}</td>
+                    <td>{formatNumber(pin.outboundClicks)}</td>
+                    <td className="is-green">{pin.saveRate.toFixed(1)}%</td>
+                    <td className="is-gold">{pin.clickRate.toFixed(1)}%</td>
+                    <td><ScoreMeter value={pin.engagementScore} max={Math.max(...leaderboard.map((item) => item.engagementScore), 1)} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : <AnalyticsEmptyState label="Pin leaderboard rows will appear after exported pins collect metrics." />}
       </article>
 
       <article className="admin-analytics-panel">
@@ -816,7 +918,7 @@ function RuntimePanels({
 export default async function AdminAnalyticsPage({ searchParams }: AnalyticsPageProps) {
   const params = await searchParams;
   const rawChannel = Array.isArray(params.channel) ? params.channel[0] : params.channel;
-  const activeChannel = CHANNELS.some((item) => item.key === rawChannel) ? (rawChannel as Channel) : "pins";
+  const activeChannel = CHANNELS.some((item) => item.key === rawChannel) ? (rawChannel as Channel) : "all";
   const [snapshot, pins, blogs, guides, emails, products] = await Promise.all([
     commandCenterDashboardSnapshot(),
     loadEvergreenTab("pins"),
@@ -825,25 +927,34 @@ export default async function AdminAnalyticsPage({ searchParams }: AnalyticsPage
     loadEvergreenTab("emails"),
     loadEvergreenTab("products")
   ]);
+  const runtimeKpis = { ...snapshot.kpis, totalGuides: guides.length };
 
   return (
     <AdminFrame>
       <div className="admin-analytics-page">
-        <header className="admin-page-heading admin-analytics-heading">
-          <div>
-            <h1>Analytics</h1>
-            <p>Performance insights across all content and product channels.</p>
-          </div>
-        </header>
+        {activeChannel === "all" ? (
+          <>
+            <OverviewHeader active={activeChannel} />
+            <OverviewKpis kpis={runtimeKpis} />
+            <RuntimePanels kpis={runtimeKpis} snapshot={snapshot} />
+          </>
+        ) : (
+          <>
+            <header className="admin-page-heading admin-analytics-heading">
+              <div>
+                <h1>Analytics</h1>
+                <p>Performance insights across all content and product channels.</p>
+              </div>
+            </header>
 
-        <ChannelTabs active={activeChannel} />
+            <ChannelTabs active={activeChannel} />
 
-        {activeChannel === "pins" ? <PinsAnalytics rows={pins} kpis={snapshot.kpis} /> : null}
-        {activeChannel === "blogs" ? <BlogAnalytics rows={blogs} /> : null}
-        {activeChannel === "emails" ? <EmailAnalytics rows={emails} /> : null}
-        {activeChannel === "products" ? <ProductAnalytics rows={products} /> : null}
-
-        <RuntimePanels kpis={{ ...snapshot.kpis, totalGuides: guides.length }} snapshot={snapshot} />
+            {activeChannel === "pins" ? <PinsAnalytics rows={pins} kpis={runtimeKpis} /> : null}
+            {activeChannel === "blogs" ? <BlogAnalytics rows={blogs} /> : null}
+            {activeChannel === "emails" ? <EmailAnalytics rows={emails} /> : null}
+            {activeChannel === "products" ? <ProductAnalytics rows={products} /> : null}
+          </>
+        )}
       </div>
     </AdminFrame>
   );

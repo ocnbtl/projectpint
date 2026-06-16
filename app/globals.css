@@ -5805,6 +5805,50 @@ h4 {
   box-shadow: 0 1px 2px rgba(44, 37, 32, 0.08);
 }
 
+.admin-analytics-overview-hero {
+  align-items: flex-start;
+  background: linear-gradient(135deg, #fffdfa 0%, #f4faf5 100%);
+  border: 1px solid rgba(91, 140, 106, 0.14);
+  border-radius: 12px;
+  box-shadow: 0 18px 44px rgba(44, 37, 32, 0.055);
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  padding: clamp(1.45rem, 2.75vw, 2.15rem);
+}
+
+.admin-analytics-overview-hero .admin-analytics-tabs {
+  align-self: start;
+  justify-self: start;
+  min-width: min(100%, 520px);
+}
+
+.admin-analytics-overview-hero h1 {
+  color: #2c2520;
+  font-family: var(--font-serif);
+  font-size: clamp(2.8rem, 5vw, 4.7rem);
+  line-height: 0.96;
+  margin: 0;
+}
+
+.admin-analytics-overview-hero p:not(.admin-analytics-kicker) {
+  color: #8a7e74;
+  font-size: clamp(1.15rem, 1.65vw, 1.55rem);
+  line-height: 1.45;
+  margin: 0.9rem 0 0;
+  max-width: 760px;
+}
+
+@media (min-width: 1500px) {
+  .admin-analytics-overview-hero {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .admin-analytics-overview-hero .admin-analytics-tabs {
+    justify-self: end;
+  }
+}
+
 .admin-analytics-kpi-grid {
   display: grid;
   gap: 1rem;
@@ -5832,6 +5876,26 @@ h4 {
   height: 2.25rem;
   justify-content: center;
   width: 2.25rem;
+}
+
+.admin-analytics-icon-green {
+  background: rgba(91, 140, 106, 0.12);
+  color: #5b8c6a;
+}
+
+.admin-analytics-icon-gold {
+  background: rgba(196, 147, 106, 0.14);
+  color: #c4936a;
+}
+
+.admin-analytics-icon-blue {
+  background: rgba(74, 112, 128, 0.13);
+  color: #4a7080;
+}
+
+.admin-analytics-icon-brown {
+  background: rgba(142, 123, 107, 0.13);
+  color: #8e7b6b;
 }
 
 .admin-analytics-kpi p {
@@ -6143,6 +6207,10 @@ h4 {
   width: 1rem;
 }
 
+.admin-analytics-tab-icon.icon-all {
+  clip-path: polygon(8% 8%, 42% 8%, 42% 42%, 8% 42%, 8% 8%, 58% 8%, 92% 8%, 92% 42%, 58% 42%, 58% 8%, 8% 58%, 42% 58%, 42% 92%, 8% 92%, 8% 58%, 58% 58%, 92% 58%, 92% 92%, 58% 92%, 58% 58%);
+}
+
 .admin-analytics-tab-icon.icon-pin {
   clip-path: polygon(48% 0, 100% 48%, 72% 58%, 54% 100%, 42% 88%, 52% 60%, 18% 72%, 0 54%, 42% 36%);
 }
@@ -6339,6 +6407,41 @@ h4 {
   margin-top: 1.1rem;
   min-height: 250px;
   position: relative;
+}
+
+.admin-analytics-empty {
+  align-items: center;
+  background:
+    linear-gradient(rgba(44, 37, 32, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(44, 37, 32, 0.03) 1px, transparent 1px),
+    #fffdfa;
+  background-size: 72px 72px;
+  border: 1px dashed rgba(44, 37, 32, 0.12);
+  border-radius: 10px;
+  color: #8a7e74;
+  display: grid;
+  gap: 0.7rem;
+  justify-items: center;
+  margin-top: 1rem;
+  min-height: 230px;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.admin-analytics-empty span {
+  background: rgba(91, 140, 106, 0.13);
+  border-radius: 999px;
+  box-shadow: 0 0 0 8px rgba(91, 140, 106, 0.06);
+  height: 0.75rem;
+  width: 0.75rem;
+}
+
+.admin-analytics-empty p {
+  color: #8a7e74;
+  font-size: 0.9rem;
+  font-weight: 800;
+  margin: 0;
+  max-width: 360px;
 }
 
 .admin-chart-bars {
@@ -6774,6 +6877,14 @@ h4 {
 }
 
 @media (max-width: 1240px) {
+  .admin-analytics-overview-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-analytics-overview-hero .admin-analytics-tabs {
+    justify-self: start;
+  }
+
   .admin-analytics-stat-grid.is-five {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -6787,6 +6898,18 @@ h4 {
 @media (max-width: 760px) {
   .admin-analytics-page {
     gap: 1rem;
+  }
+
+  .admin-analytics-overview-hero {
+    padding: 1.15rem;
+  }
+
+  .admin-analytics-overview-hero h1 {
+    font-size: clamp(2.1rem, 13vw, 3.2rem);
+  }
+
+  .admin-analytics-overview-hero p:not(.admin-analytics-kicker) {
+    font-size: 1rem;
   }
 
   .admin-analytics-tabs a {
