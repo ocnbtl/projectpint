@@ -5,7 +5,7 @@ import { AffiliateDisclosure } from "../../../components/AffiliateDisclosure";
 import { MarkdownArticle } from "../../../components/MarkdownArticle";
 import { SiteShell } from "../../../components/SiteShell";
 import { shouldShowAffiliateDisclosure } from "../../../lib/affiliate";
-import { estimateReadTimeMinutes, markdownBlocks } from "../../../lib/content-render";
+import { estimateReadTimeMinutes, excerptFromMarkdown, markdownBlocks } from "../../../lib/content-render";
 import { areaVisuals } from "../../../lib/redesign-data";
 import { contentAreaForBlog, readBlogs, tagsForBlog } from "../../../lib/site-data";
 import { tagPath } from "../../../lib/tags";
@@ -28,7 +28,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const titleBlock = blocks[0]?.type === "h1" ? blocks[0] : null;
   const contentBlocks = titleBlock ? blocks.slice(1) : blocks;
   const tags = tagsForBlog(blog);
-  const image = areaVisuals[contentAreaForBlog(blog)].image;
+  const area = contentAreaForBlog(blog);
+  const image = areaVisuals[area].image;
+  const publicBlogs = blogs.filter((row) => row.Status === "published");
+  const relatedSource = publicBlogs.length > 0 ? publicBlogs : blogs;
+  const related = relatedSource
+    .filter((row) => row.Blog_ID !== blog.Blog_ID)
+    .sort((a, b) => Number(contentAreaForBlog(b) === area) - Number(contentAreaForBlog(a) === area))
+    .slice(0, 2);
 
   return (
     <SiteShell>
@@ -58,6 +65,41 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <article className="article-body-card">
         <MarkdownArticle blocks={contentBlocks} slug={slug} />
       </article>
+      <section className="article-next-section">
+        <div className="article-blueprint-cta">
+          <div>
+            <h2>Want a personalized upgrade plan?</h2>
+            <p>The Bathroom Upgrade Blueprint turns your budget, constraints, and style into a step-by-step plan.</p>
+          </div>
+          <Link href="/blueprint" className="btn btn-accent">
+            Build My Blueprint
+          </Link>
+        </div>
+        {related.length > 0 ? (
+          <div className="article-related-block">
+            <div className="article-related-head">
+              <p className="areas-kicker">Keep Reading</p>
+              <h2>More from this area</h2>
+            </div>
+            <div className="article-related-grid">
+              {related.map((item) => {
+                const relatedArea = contentAreaForBlog(item);
+                return (
+                  <Link key={item.Blog_ID} href={`/blog/${item.Slug}`} className="article-related-card">
+                    <span className="article-related-media">
+                      <img src={areaVisuals[relatedArea].image} alt="" />
+                    </span>
+                    <span className="article-related-copy">
+                      <strong>{item.Title}</strong>
+                      <span>{excerptFromMarkdown(item.Draft_Markdown, 120)}</span>
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
+      </section>
       {showAffiliateDisclosure ? <AffiliateDisclosure /> : null}
       <AdSlot enabled={blog.Ad_Enabled} slotId={`blog-${blog.Blog_ID}`} />
     </SiteShell>
