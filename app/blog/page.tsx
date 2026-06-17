@@ -80,23 +80,12 @@ export default async function BlogIndex({
 
   return (
     <SiteShell>
-      <section className="blog-index-hero">
-        <div className="container blog-index-hero-inner">
-          <h1>Curated guides & articles to upgrade your bathroom</h1>
-          <ol className="blog-intro-steps">
-            <li>Find a relevant article and read in less than 10 minutes</li>
-            <li>Follow the upgrade steps and finish your first bathroom upgrade this weekend... or tonight</li>
-          </ol>
-        </div>
-      </section>
-      <div className="container site-page site-page-tight">
-        <BlogIndexExplorer
-          blogs={blogCards}
-          availableTags={availableTags}
-          areaFilters={areaFilters}
-          initialArea={areaParam}
-        />
-      </div>
+      <BlogIndexExplorer
+        blogs={blogCards}
+        availableTags={availableTags}
+        areaFilters={areaFilters}
+        initialArea={areaParam}
+      />
     </SiteShell>
   );
 }

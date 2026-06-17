@@ -61,16 +61,16 @@ export default async function HomePage() {
       <section className="home-photo-hero" style={{ backgroundImage: `url(${redesignImages.hero})` }}>
         <div className="home-photo-hero-overlay">
           <div className="container home-photo-hero-copy">
-            <h1>
-              <span className="hero-line hero-line-mobile">Your bathroom</span>
-              <span className="hero-line hero-line-mobile">deserves better.</span>
-              <span className="hero-line hero-line-desktop">Your bathroom deserves better.</span>
-              <span className="hero-line hero-line-wallet">Your wallet says be smart.</span>
+            <h1 aria-label="Your bathroom deserves better. Your wallet says be smart.">
+              <span className="hero-line hero-line-mobile" aria-hidden="true">Your bathroom</span>
+              <span className="hero-line hero-line-mobile" aria-hidden="true">deserves better.</span>
+              <span className="hero-line hero-line-desktop" aria-hidden="true">Your bathroom deserves better.</span>
+              <span className="hero-line hero-line-wallet" aria-hidden="true">Your wallet says be smart.</span>
             </h1>
-            <p>
-              <span className="hero-line hero-line-mobile">Practical upgrades for renters, small spaces,</span>
-              <span className="hero-line hero-line-mobile">and tight budgets.</span>
-              <span className="hero-line hero-line-desktop">Practical upgrades for renters, small spaces, and tight budgets.</span>
+            <p aria-label="Practical upgrades for renters, small spaces, and tight budgets.">
+              <span className="hero-line hero-line-mobile" aria-hidden="true">Practical upgrades for renters, small spaces,</span>
+              <span className="hero-line hero-line-mobile" aria-hidden="true">and tight budgets.</span>
+              <span className="hero-line hero-line-desktop" aria-hidden="true">Practical upgrades for renters, small spaces, and tight budgets.</span>
             </p>
             <div className="cta-row">
               <Link href="/start-here" className="btn btn-accent">

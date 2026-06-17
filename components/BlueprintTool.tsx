@@ -357,10 +357,12 @@ export function BlueprintTool() {
         ) : null}
 
         {step < 5 ? (
-          <div className="tool-quiz-actions">
-            <button type="button" className="btn btn-ghost" onClick={() => setStep((current) => Math.max(0, current - 1) as BlueprintStep)} disabled={step === 0}>
-              Back
-            </button>
+          <div className={step === 0 ? "tool-quiz-actions blueprint-first-actions" : "tool-quiz-actions"}>
+            {step > 0 ? (
+              <button type="button" className="btn btn-ghost" onClick={() => setStep((current) => Math.max(0, current - 1) as BlueprintStep)}>
+                Back
+              </button>
+            ) : null}
             <button type="button" className="btn btn-accent" onClick={() => setStep((current) => (current + 1) as BlueprintStep)} disabled={!canProceed}>
               Continue <span aria-hidden="true">›</span>
             </button>

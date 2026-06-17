@@ -49,78 +49,91 @@ export function BlogIndexExplorer({ blogs, availableTags, areaFilters, initialAr
   }, [activeArea, blogs, query]);
 
   return (
-    <section className="dd-section blog-explorer">
-      <div className="blog-filter-stack">
-        <label className="blog-hero-search">
-          <span className="screen-reader-text">Search articles</span>
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search articles..."
-          />
-        </label>
-        <div className="area-filter-chips" aria-label="Filter by area">
-          <button
-            type="button"
-            className={`area-filter-chip${activeArea === "all" ? " is-active" : ""}`}
-            onClick={() => setActiveArea("all")}
-          >
-            All
-          </button>
-          {areaFilters.map((area) => (
-            <button
-              key={area.slug}
-              type="button"
-              className={`area-filter-chip${activeArea === area.slug ? " is-active" : ""}`}
-              onClick={() => setActiveArea(area.slug)}
-            >
-              {area.label}
-            </button>
-          ))}
+    <>
+      <section className="blog-index-hero">
+        <div className="container blog-index-hero-inner">
+          <h1>Curated guides & articles to upgrade your bathroom</h1>
+          <ol className="blog-intro-steps">
+            <li>Find a relevant article and read in less than 10 minutes</li>
+            <li>Follow the upgrade steps and finish your first bathroom upgrade this weekend... or tonight</li>
+          </ol>
+          <label className="blog-hero-search">
+            <span className="screen-reader-text">Search articles</span>
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search articles..."
+            />
+          </label>
         </div>
-      </div>
+      </section>
+      <div className="container site-page blog-index-body">
+        <section className="blog-explorer">
+          <div className="blog-filter-stack">
+            <div className="area-filter-chips" aria-label="Filter by area">
+              <button
+                type="button"
+                className={`area-filter-chip${activeArea === "all" ? " is-active" : ""}`}
+                onClick={() => setActiveArea("all")}
+              >
+                All
+              </button>
+              {areaFilters.map((area) => (
+                <button
+                  key={area.slug}
+                  type="button"
+                  className={`area-filter-chip${activeArea === area.slug ? " is-active" : ""}`}
+                  onClick={() => setActiveArea(area.slug)}
+                >
+                  {area.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
-      {filteredBlogs.length > 0 ? (
-        <div className="grid grid-3">
-          {filteredBlogs.map((blog) => (
-            <Link key={blog.id} href={blog.href ?? `/blog/${blog.slug}`} className="blog-card-link">
-              <article className="blog-image-card">
-                <div className="blog-image-card-media">
-                  <img src={blog.image} alt="" />
-                </div>
-                <div className="blog-image-card-copy">
-                  <div className="blog-card-meta">
-                    <span className="tag">{blog.areaLabel}</span>
-                    <span className="blog-read-time">
-                      <ClockIcon />
-                      {blog.readTime} min
-                    </span>
-                  </div>
-                  <h2>{blog.title}</h2>
-                  <p>{blog.excerpt}</p>
-                  <div className="tag-list tag-list-compact">
-                    {blog.tags
-                      .filter((tag) => tag !== blog.areaLabel)
-                      .slice(0, 2)
-                      .map((tag) => (
-                        <span key={`${blog.id}-${tag}`} className="tag tag-muted">
-                          {tag}
+          {filteredBlogs.length > 0 ? (
+            <div className="grid grid-3">
+              {filteredBlogs.map((blog) => (
+                <Link key={blog.id} href={blog.href ?? `/blog/${blog.slug}`} className="blog-card-link">
+                  <article className="blog-image-card">
+                    <div className="blog-image-card-media">
+                      <img src={blog.image} alt="" />
+                    </div>
+                    <div className="blog-image-card-copy">
+                      <div className="blog-card-meta">
+                        <span className="tag">{blog.areaLabel}</span>
+                        <span className="blog-read-time">
+                          <ClockIcon />
+                          {blog.readTime} min
                         </span>
-                      ))}
-                  </div>
-                </div>
-              </article>
-            </Link>
-          ))}
-        </div>
-      ) : (
-        <div className="empty-state blog-empty">
-          <h2>No articles match your search.</h2>
-          <p>The live content library does not have a matching article for this filter yet.</p>
-          {availableTags.length > 0 ? <p className="small">Available tags: {availableTags.slice(0, 8).join(", ")}</p> : null}
-        </div>
-      )}
-    </section>
+                      </div>
+                      <h2>{blog.title}</h2>
+                      <p>{blog.excerpt}</p>
+                      <div className="tag-list tag-list-compact">
+                        {blog.tags
+                          .filter((tag) => tag !== blog.areaLabel)
+                          .slice(0, 2)
+                          .map((tag) => (
+                            <span key={`${blog.id}-${tag}`} className="tag tag-muted">
+                              {tag}
+                            </span>
+                          ))}
+                      </div>
+                    </div>
+                  </article>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-state blog-empty">
+              <h2>No articles match your search.</h2>
+              <p>The live content library does not have a matching article for this filter yet.</p>
+              {availableTags.length > 0 ? <p className="small">Available tags: {availableTags.slice(0, 8).join(", ")}</p> : null}
+            </div>
+          )}
+        </section>
+      </div>
+    </>
   );
 }

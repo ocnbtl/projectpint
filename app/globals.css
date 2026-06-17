@@ -713,7 +713,7 @@ a:hover {
 
 .blog-index-hero {
   background: linear-gradient(180deg, #f0ebe3 0%, #faf7f2 100%);
-  padding: clamp(3.5rem, 8vw, 5rem) 0 clamp(4.5rem, 9vw, 6.5rem);
+  padding: clamp(3.5rem, 8vw, 5rem) 0 clamp(1.8rem, 3vw, 2.6rem);
   text-align: center;
 }
 
@@ -739,6 +739,10 @@ a:hover {
   max-width: 680px;
   padding-left: 1.35rem;
   text-align: left;
+}
+
+.blog-index-hero .blog-hero-search {
+  margin-top: 1.45rem;
 }
 
 .tag-archive-hero {
@@ -774,6 +778,10 @@ a:hover {
 .site-page-tight {
   margin-top: clamp(-4.2rem, -5vw, -2.75rem);
   padding-top: 0;
+}
+
+.blog-index-body {
+  padding-top: clamp(1rem, 2vw, 1.5rem);
 }
 
 .blog-filter-stack {
@@ -2871,9 +2879,11 @@ a.dd-feature-card:hover {
   }
 
   .main-nav {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: 100%;
+    display: none;
+  }
+
+  .mobile-nav {
+    display: block;
   }
 
   .nav-link {
@@ -4500,6 +4510,10 @@ h4 {
   padding-top: clamp(2rem, 5vw, 3rem);
 }
 
+.site-page.tool-page-body {
+  padding-top: clamp(2rem, 5vw, 3rem);
+}
+
 .tool-quiz-shell {
   display: grid;
   gap: 1.9rem;
@@ -4635,6 +4649,14 @@ h4 {
 
 .quiz-progress-item strong.is-active {
   color: #2c2520;
+}
+
+.blueprint-progress .quiz-progress-item {
+  gap: 0;
+}
+
+.blueprint-progress .quiz-progress-item strong {
+  display: none;
 }
 
 .quiz-progress-item i {
@@ -4807,6 +4829,14 @@ h4 {
 
 .tool-quiz-actions .btn {
   min-width: 120px;
+}
+
+.blueprint-first-actions {
+  display: block;
+}
+
+.blueprint-first-actions .btn {
+  width: 100%;
 }
 
 .blueprint-quiz-shell .tool-quiz-actions .btn,
