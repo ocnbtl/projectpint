@@ -8,20 +8,34 @@ import { contentAreaForBlog, findTagArchiveBySlug, tagsForBlog } from "../../../
 
 export const dynamic = "force-dynamic";
 
+function displayTagLabel(label: string) {
+  return label
+    .split(/[\s_-]+/)
+    .filter(Boolean)
+    .map((word) => {
+      const lower = word.toLowerCase();
+      if (lower === "diy") return "DIY";
+      if (lower === "zz") return "ZZ";
+      return `${lower.charAt(0).toUpperCase()}${lower.slice(1)}`;
+    })
+    .join(" ");
+}
+
 export default async function TagArchivePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const archive = await findTagArchiveBySlug(slug);
   if (!archive) return notFound();
   const linkedArea = archive.blogs[0] ? contentAreaForBlog(archive.blogs[0]) : archive.guides[0]?.area ?? "DIY";
+  const archiveLabel = displayTagLabel(archive.label);
 
   return (
     <SiteShell>
       <section className="blog-index-hero tag-archive-hero">
         <div className="container blog-index-hero-inner">
           <p className="eyebrow">Tagged Articles</p>
-          <h1>{archive.label}</h1>
+          <h1>{archiveLabel}</h1>
           <p>
-            Browse every published blog and guide connected to {archive.label.toLowerCase()} bathroom upgrades.
+            Browse every published bathroom article and guide connected to this topic.
           </p>
           <div className="tag-archive-stats" aria-label="Archive counts">
             <span>{archive.blogs.length} blog posts</span>
@@ -36,7 +50,7 @@ export default async function TagArchivePage({ params }: { params: Promise<{ slu
             <div className="section-heading-row">
               <div>
                 <p className="eyebrow">Blog Posts</p>
-                <h2>Articles for {archive.label}</h2>
+                <h2>Articles for {archiveLabel}</h2>
               </div>
             </div>
             <div className="grid grid-3">
