@@ -8,6 +8,7 @@ interface EmailSignupFormProps {
   pillarInterest?: string;
   defaultContentAreas?: string[];
   showContentAreaChecklist?: boolean;
+  showConsentNote?: boolean;
   includePlantFields?: boolean;
   plantDefaults?: {
     light: "low" | "medium" | "bright";
@@ -23,6 +24,7 @@ export function EmailSignupForm({
   pillarInterest,
   defaultContentAreas,
   showContentAreaChecklist = true,
+  showConsentNote = true,
   includePlantFields = false,
   plantDefaults = { light: "low", humidity: "high", space: "tiny" }
 }: EmailSignupFormProps) {
@@ -90,7 +92,7 @@ export function EmailSignupForm({
       <button className="btn btn-accent" type="submit">
         {buttonLabel}
       </button>
-      <ConsentNote />
+      {showConsentNote ? <ConsentNote /> : null}
       <p className="small" style={{ marginBottom: 0 }}>
         No spam. We respect your inbox and we don&apos;t sell your information.
       </p>
