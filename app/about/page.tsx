@@ -1,17 +1,29 @@
 import Link from "next/link";
 import { EmailSignupForm } from "../../components/EmailSignupForm";
 import { SiteShell } from "../../components/SiteShell";
-import { hubs } from "../../lib/site-data";
+
+function AboutValueIcon({ name }: { name: "zap" | "user" | "heart" }) {
+  const paths = {
+    zap: "M13 2 4 14h7l-1 8 9-12h-7l1-8Z",
+    user: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4.5 21a7.5 7.5 0 0 1 15 0",
+    heart: "M20.5 8.5c0 5-8.5 10-8.5 10s-8.5-5-8.5-10A4.6 4.6 0 0 1 12 5.8a4.6 4.6 0 0 1 8.5 2.7Z"
+  };
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d={paths[name]} />
+    </svg>
+  );
+}
 
 export default function AboutPage() {
   const values = [
-    ["Small Wins", "Big transformations start with one smart upgrade at a time.", "01"],
+    ["Small Wins", "Big transformations start with one smart upgrade at a time.", "zap"],
     [
       "Real People",
       "We design for renters, beginners, DIYers, budget-first households, and anyone improving a bathroom they actually use.",
-      "02"
+      "user"
     ],
-    ["Step By Step", "Every recommendation is actionable, affordable, and crafted with care.", "03"]
+    ["Step By Step", "Every recommendation is actionable, affordable, and crafted with care.", "heart"]
   ];
   const faqs = [
     [
@@ -63,22 +75,13 @@ export default function AboutPage() {
         <section className="about-value-grid" aria-label="Diyesu Decor values">
           {values.map(([title, copy, marker]) => (
             <article key={title} className="about-value-card">
-              <span>{marker}</span>
+              <span>
+                <AboutValueIcon name={marker as "zap" | "user" | "heart"} />
+              </span>
               <h2>{title}</h2>
               <p>{copy}</p>
             </article>
           ))}
-        </section>
-
-        <section className="about-area-strip" aria-label="Bathroom areas">
-          <p>Start where your bathroom feels most stuck.</p>
-          <div>
-            {hubs.map((hub) => (
-              <Link key={hub.slug} href={`/hub/${hub.slug}`}>
-                {hub.title}
-              </Link>
-            ))}
-          </div>
         </section>
 
         <section className="about-faq-panel">
@@ -110,7 +113,7 @@ export default function AboutPage() {
               sourceUrl="/about"
               buttonLabel="Join"
               consentText="I agree to receive Diyesu Decor emails and understand I can unsubscribe anytime."
-              showContentAreaChecklist={true}
+              showContentAreaChecklist={false}
               defaultContentAreas={["Plants", "Storage", "Renter"]}
             />
           </div>

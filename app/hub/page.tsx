@@ -44,7 +44,9 @@ export default async function HubIndexPage() {
                         <span>{visual.tagline}</span>
                       </span>
                     </span>
-                    <span className="area-resource-count">{resourceCount} resources</span>
+                    <span className="area-resource-count">
+                      {resourceCount} {resourceCount === 1 ? "article" : "articles"}
+                    </span>
                   </span>
                 </Link>
               );

@@ -2,7 +2,9 @@ import Link from "next/link";
 import { AreaIcon } from "../../components/AreaIcon";
 import { SiteShell } from "../../components/SiteShell";
 import { areaVisuals } from "../../lib/redesign-data";
-import { hubs } from "../../lib/site-data";
+import { blogMatchesArea, hubs, readBlogs, readGuides } from "../../lib/site-data";
+
+export const dynamic = "force-dynamic";
 
 function StepIcon({ name }: { name: "target" | "sparkles" | "hammer" }) {
   const paths = {
@@ -36,7 +38,12 @@ function StepIcon({ name }: { name: "target" | "sparkles" | "hammer" }) {
   );
 }
 
-export default function StartHerePage() {
+export default async function StartHerePage() {
+  const [blogs, guides] = await Promise.all([readBlogs(), readGuides()]);
+  const publishedBlogs = blogs.filter((blog) => blog.Status === "published");
+  const blogSource = publishedBlogs.length > 0 ? publishedBlogs : blogs;
+  const publishedGuides = guides.filter((guide) => guide.status.trim().toLowerCase() === "published");
+  const guideSource = publishedGuides.length > 0 ? publishedGuides : guides;
   const steps = [
     ["target", "Pick an area", "Choose the part of your bathroom that bugs you the most."],
     ["sparkles", "Browse ideas", "Find specific guides and product recommendations for that area."],
@@ -78,7 +85,6 @@ export default function StartHerePage() {
         <section className="start-area-section">
           <div className="start-section-head">
             <div>
-              <p className="eyebrow blog-eyebrow">Choose Your Lane</p>
               <h2>Choose the first area you want to upgrade</h2>
               <p>Each area has curated articles, product recommendations, and quick-start guides.</p>
             </div>
@@ -86,6 +92,9 @@ export default function StartHerePage() {
           <div className="start-area-list">
             {hubs.map((hub) => {
               const visual = areaVisuals[hub.area];
+              const articleCount =
+                blogSource.filter((blog) => blogMatchesArea(blog, hub.area)).length +
+                guideSource.filter((guide) => guide.area === hub.area).length;
               return (
                 <Link key={hub.slug} href={`/hub/${hub.slug}`} className="start-area-card">
                   <span className="start-area-icon">
@@ -94,7 +103,9 @@ export default function StartHerePage() {
                   <span className="start-area-copy">
                     <span>
                       <strong>{hub.title}</strong>
-                      <em>{hub.outcome}</em>
+                      <em>
+                        {articleCount} {articleCount === 1 ? "article" : "articles"}
+                      </em>
                     </span>
                     <small>{visual.tagline}</small>
                   </span>
@@ -120,6 +131,10 @@ export default function StartHerePage() {
           </div>
           <Link href="/plant-picker" className="btn btn-accent">
             Try the Plant Picker
+            <svg className="btn-leaf-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 19c9.5 0 14-5.6 14-14-8.4 0-14 4.5-14 14Z" />
+              <path d="M5 19c3-5 6.7-8 11-10" />
+            </svg>
           </Link>
         </section>
       </div>

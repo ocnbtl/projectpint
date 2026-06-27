@@ -105,21 +105,11 @@ export function BlogIndexExplorer({ blogs, availableTags, areaFilters, initialAr
                         <span className="tag">{blog.areaLabel}</span>
                         <span className="blog-read-time">
                           <ClockIcon />
-                          {blog.readTime} min
+                          {blog.readTime} min read
                         </span>
                       </div>
                       <h2>{blog.title}</h2>
                       <p>{blog.excerpt}</p>
-                      <div className="tag-list tag-list-compact">
-                        {blog.tags
-                          .filter((tag) => tag !== blog.areaLabel)
-                          .slice(0, 2)
-                          .map((tag) => (
-                            <span key={`${blog.id}-${tag}`} className="tag tag-muted">
-                              {tag}
-                            </span>
-                          ))}
-                      </div>
                     </div>
                   </article>
                 </Link>
