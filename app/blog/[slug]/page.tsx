@@ -39,7 +39,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <SiteShell>
-      <section className="article-detail-hero">
+      <section className="article-detail-hero article-detail-photo-hero" style={{ backgroundImage: `url(${image})` }}>
         <div className="container article-detail-hero-inner">
           <div className="article-detail-copy">
             <Link href="/blog" className="back-link">
@@ -59,7 +59,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <strong>{readTimeMinutes} min read</strong>
             </span>
           </div>
-          <div className="article-detail-media" style={{ backgroundImage: `url(${image})` }} aria-hidden="true" />
         </div>
       </section>
       <article className="article-body-card">

@@ -48,7 +48,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
 
   return (
     <SiteShell>
-      <section className="article-detail-hero">
+      <section className="article-detail-hero article-detail-photo-hero" style={{ backgroundImage: `url(${image})` }}>
         <div className="container article-detail-hero-inner">
           <div className="article-detail-copy">
             <Link href="/hub" className="back-link">
@@ -68,7 +68,6 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               <strong>{readTimeMinutes} min read</strong>
             </span>
           </div>
-          <div className="article-detail-media" style={{ backgroundImage: `url(${image})` }} aria-hidden="true" />
         </div>
       </section>
       <article className="article-body-card">
