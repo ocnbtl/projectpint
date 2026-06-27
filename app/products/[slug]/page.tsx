@@ -39,11 +39,31 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const showAffiliateDisclosure = shouldShowAffiliateDisclosure({ linkUrls: product.outboundLinks });
   const isBlueprint = slug === "renter-bathroom-upgrade-blueprint";
 
+  if (isBlueprint) {
+    return (
+      <SiteShell>
+        <section className="tool-page-hero">
+          <div className="container tool-page-hero-inner">
+            <h1>Your personalized bathroom transformation plan.</h1>
+            <p>
+              Tell us your budget, constraints, and priorities. Within 48 hours we&apos;ll build a complete upgrade plan
+              tailored to your exact bathroom.
+            </p>
+          </div>
+        </section>
+        <div className="container site-page tool-page-body">
+          <BlueprintTool />
+        </div>
+        {showAffiliateDisclosure ? <AffiliateDisclosure /> : null}
+      </SiteShell>
+    );
+  }
+
   return (
     <SiteShell>
-      <section className={isBlueprint ? "product-offer-hero product-offer-hero-blueprint" : "product-offer-hero"}>
+      <section className="product-offer-hero">
         <div className="container product-offer-hero-inner">
-          <p className="product-offer-kicker">{isBlueprint ? "Personalized Plan" : "Expanded Upgrade"}</p>
+          <p className="product-offer-kicker">Expanded Upgrade</p>
           <h1>
             {product.title}
             {product.subtitle ? <span>{product.subtitle}</span> : null}
@@ -51,7 +71,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <p>{product.summary}</p>
           <div className="product-offer-price-row">
             <strong>Starting at {product.price}</strong>
-            <em>{isBlueprint ? "Delivered as a custom bathroom brief" : "Built for plant-forward bathrooms"}</em>
+            <em>Built for plant-forward bathrooms</em>
           </div>
         </div>
       </section>
@@ -66,17 +86,13 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           ))}
         </section>
 
-        {isBlueprint ? (
-          <BlueprintTool />
-        ) : (
-          <section className="product-offer-cta">
-            <h2>Want the quick version first?</h2>
-            <p>Use the free Plant Picker to get matched before deciding whether you need the expanded upgrade.</p>
-            <a className="btn btn-accent" href="/plant-picker">
-              Open Plant Picker
-            </a>
-          </section>
-        )}
+        <section className="product-offer-cta">
+          <h2>Want the quick version first?</h2>
+          <p>Use the free Plant Picker to get matched before deciding whether you need the expanded upgrade.</p>
+          <a className="btn btn-accent" href="/plant-picker">
+            Open Plant Picker
+          </a>
+        </section>
       </div>
       {showAffiliateDisclosure ? <AffiliateDisclosure /> : null}
     </SiteShell>
