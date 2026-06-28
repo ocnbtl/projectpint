@@ -8552,6 +8552,11 @@ h4 {
   padding-top: clamp(3rem, 6vw, 5rem);
 }
 
+.about-figma-hero-inner {
+  padding-bottom: clamp(2.5rem, 4.5vw, 3.5rem);
+  padding-top: clamp(2.5rem, 4.5vw, 3.5rem);
+}
+
 .about-figma-hero-inner,
 .inspiration-figma-hero {
   text-align: center;
@@ -8613,7 +8618,7 @@ h4 {
   display: grid;
   gap: 2rem;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: 0 auto clamp(2.4rem, 5vw, 4rem);
+  margin: 0 auto clamp(2.1rem, 4vw, 3rem);
   max-width: 760px;
 }
 
@@ -8701,8 +8706,9 @@ h4 {
 }
 
 .about-faq-panel {
-  margin: 0 auto clamp(2.4rem, 5vw, 4rem);
+  margin: 0 auto clamp(2.25rem, 4vw, 3rem);
   max-width: 760px;
+  width: min(100%, 42rem);
 }
 
 .about-section-head {
@@ -9212,6 +9218,11 @@ h4 {
   .legal-figma-hero .container {
     padding-bottom: 3rem;
     padding-top: 3rem;
+  }
+
+  .about-figma-hero-inner {
+    padding-bottom: 2.5rem;
+    padding-top: 2.5rem;
   }
 
   .about-callout {
