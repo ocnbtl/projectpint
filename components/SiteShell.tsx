@@ -72,10 +72,10 @@ export function SiteShell({ children }: { children: ReactNode }) {
         </div>
       </header>
       <main className="site-main">{children}</main>
-      <div className="container cookie-note">
-        <CookieNotice />
-      </div>
       <footer className="site-footer">
+        <div className="container footer-cookie">
+          <CookieNotice />
+        </div>
         <div className="container footer-grid">
           <div className="footer-brand-block">
             <Link href="/" className="brand brand-footer" aria-label="Diyesu Decor home">

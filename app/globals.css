@@ -2136,6 +2136,10 @@ a:hover {
   margin-top: 0;
 }
 
+.footer-cookie {
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
+}
+
 .cookie-card {
   width: min(1120px, 100%);
   border: 1px solid rgba(44, 37, 32, 0.08);
@@ -2157,6 +2161,21 @@ a:hover {
 .cookie-card a {
   color: #5b8c6a;
   font-weight: 800;
+}
+
+.site-footer .cookie-card {
+  background: rgba(255, 248, 234, 0.06);
+  border-color: rgba(255, 248, 234, 0.12);
+  box-shadow: none;
+  margin: 0;
+}
+
+.site-footer .cookie-card p {
+  color: rgba(255, 248, 234, 0.7);
+}
+
+.site-footer .cookie-card a {
+  color: #f6c36f;
 }
 
 .ad-slot,
@@ -8557,6 +8576,11 @@ h4 {
   padding-top: clamp(2.5rem, 4.5vw, 3.5rem);
 }
 
+.legal-figma-hero .container {
+  padding-bottom: clamp(4rem, 7vw, 6rem);
+  padding-top: clamp(4rem, 7vw, 6rem);
+}
+
 .about-figma-hero-inner,
 .inspiration-figma-hero {
   text-align: center;
@@ -8578,6 +8602,10 @@ h4 {
   line-height: 1.65;
   margin: 0.2rem auto 0;
   max-width: 760px;
+}
+
+.legal-figma-hero h1 {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
 }
 
 .about-callout {
