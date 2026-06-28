@@ -37,7 +37,7 @@ export default async function HomePage() {
   const fallbackBlogCards = [
     {
       id: "fallback-plants",
-      href: "/hub/plants",
+      href: "/areas/plants",
       image: areaVisuals.Plants.image,
       tags: ["Plants", "Low light"],
       title: "The easiest plants for a small bathroom",
@@ -45,7 +45,7 @@ export default async function HomePage() {
     },
     {
       id: "fallback-mirror",
-      href: "/hub/mirror",
+      href: "/areas/mirror",
       image: areaVisuals.Mirror.image,
       tags: ["Mirror", "Renter-safe"],
       title: "Mirror upgrades that make a bathroom feel bigger",
@@ -53,7 +53,7 @@ export default async function HomePage() {
     },
     {
       id: "fallback-storage",
-      href: "/hub/storage",
+      href: "/areas/storage",
       image: areaVisuals.Storage.image,
       tags: ["Storage", "Small spaces"],
       title: "Storage fixes that calm bathroom clutter",
@@ -82,7 +82,7 @@ export default async function HomePage() {
                 <span>Start Here</span>
                 <HouseSmokeIcon />
               </Link>
-              <Link href="/hub" className="btn btn-secondary">
+              <Link href="/areas" className="btn btn-secondary">
                 Browse Bathroom Areas
               </Link>
             </div>
@@ -105,7 +105,7 @@ export default async function HomePage() {
                 blogSource.filter((blog) => blogMatchesArea(blog, hub.area)).length +
                 guideSource.filter((guide) => guide.area === hub.area).length;
               return (
-                <Link key={hub.slug} href={`/hub/${hub.slug}`} className="area-photo-card">
+                <Link key={hub.slug} href={`/areas/${hub.slug}`} className="area-photo-card">
                   <img src={visual.image} alt="" />
                   <span className="area-photo-card-shade" aria-hidden="true" />
                   <span className="area-photo-icon" aria-hidden="true">

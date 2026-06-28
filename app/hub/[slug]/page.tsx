@@ -65,7 +65,7 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
       <section className="area-detail-hero" style={{ backgroundImage: `url(${visual.image})` }}>
         <div className="area-detail-hero-shade">
           <div className="container area-detail-copy">
-            <Link href="/hub" className="back-link">
+            <Link href="/areas" className="back-link">
               All Areas
             </Link>
             <div className="area-detail-title-row">

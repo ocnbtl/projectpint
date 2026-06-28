@@ -34,7 +34,7 @@ export default function AboutPage() {
       "Is everything renter-friendly?",
       <>
         Not everything, but renter-safe options come first. Start with the{" "}
-        <Link href="/hub/renter" className="text-link">
+        <Link href="/areas/renter" className="text-link">
           Renter Friendly
         </Link>{" "}
         area when deposits, tile, or drill limits matter.
@@ -44,7 +44,7 @@ export default function AboutPage() {
       "How budget-friendly is this?",
       <>
         Most recommendations start with the smallest useful improvement first. The{" "}
-        <Link href="/hub/extreme-budget" className="text-link">
+        <Link href="/areas/extreme-budget" className="text-link">
           Extreme Budget
         </Link>{" "}
         area keeps the lowest-cost ideas easy to find.

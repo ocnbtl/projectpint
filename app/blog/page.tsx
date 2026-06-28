@@ -37,7 +37,7 @@ export default async function BlogIndex({
     {
       id: "fallback-plants",
       slug: "plants",
-      href: "/hub/plants",
+      href: "/areas/plants",
       title: "The easiest plants for a small bathroom",
       excerpt: "Start with resilient greenery that handles humidity, tight corners, and imperfect light.",
       tags: ["Plants", "Low light"],
@@ -50,7 +50,7 @@ export default async function BlogIndex({
     {
       id: "fallback-mirror",
       slug: "mirror",
-      href: "/hub/mirror",
+      href: "/areas/mirror",
       title: "Mirror upgrades that make a bathroom feel bigger",
       excerpt: "Use shape, scale, and simple frame details to change the room without a full renovation.",
       tags: ["Mirror", "Renter-safe"],
@@ -63,7 +63,7 @@ export default async function BlogIndex({
     {
       id: "fallback-storage",
       slug: "storage",
-      href: "/hub/storage",
+      href: "/areas/storage",
       title: "Storage fixes that calm bathroom clutter",
       excerpt: "A practical starting point for shelves, bins, and vanity zones that stay usable.",
       tags: ["Storage", "Small spaces"],

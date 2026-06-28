@@ -96,7 +96,7 @@ export default async function StartHerePage() {
                 blogSource.filter((blog) => blogMatchesArea(blog, hub.area)).length +
                 guideSource.filter((guide) => guide.area === hub.area).length;
               return (
-                <Link key={hub.slug} href={`/hub/${hub.slug}`} className="start-area-card">
+                <Link key={hub.slug} href={`/areas/${hub.slug}`} className="start-area-card">
                   <span className="start-area-icon">
                     <AreaIcon name={visual.icon} />
                   </span>

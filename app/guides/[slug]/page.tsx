@@ -51,7 +51,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
       <section className="article-detail-hero article-detail-photo-hero" style={{ backgroundImage: `url(${image})` }}>
         <div className="container article-detail-hero-inner">
           <div className="article-detail-copy">
-            <Link href="/hub" className="back-link">
+            <Link href="/areas" className="back-link">
               Back to Areas
             </Link>
             <p className="article-detail-kicker">Bathroom Guide</p>

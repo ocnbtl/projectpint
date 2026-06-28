@@ -31,7 +31,7 @@ export default async function HubIndexPage() {
                 blogSource.filter((blog) => blogMatchesArea(blog, hub.area)).length +
                 guideSource.filter((guide) => guide.area === hub.area).length;
               return (
-                <Link key={hub.slug} href={`/hub/${hub.slug}`} className="area-overview-card">
+                <Link key={hub.slug} href={`/areas/${hub.slug}`} className="area-overview-card">
                   <img src={visual.image} alt="" />
                   <span className="area-overview-shade" aria-hidden="true" />
                   <span className="area-overview-copy">

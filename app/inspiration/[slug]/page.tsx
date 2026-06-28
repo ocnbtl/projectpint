@@ -69,7 +69,7 @@ export default async function InspirationDetailPage({ params }: { params: Promis
         <section className="inspiration-detail-cta">
           <p>Love this look? Get a personalized plan to recreate it on your budget.</p>
           <div className="cta-row">
-            <Link href="/hub" className="btn btn-ghost">
+            <Link href="/areas" className="btn btn-ghost">
               Browse areas
             </Link>
             <Link href="/blueprint" className="btn btn-accent">

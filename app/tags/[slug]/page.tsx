@@ -128,7 +128,7 @@ export default async function TagArchivePage({ params }: { params: Promise<{ slu
           <Link href="/blog" className="btn btn-secondary">
             Back to all articles
           </Link>
-          <Link href={`/hub/${contentAreaSlug(linkedArea)}`} className="btn btn-accent">
+          <Link href={`/areas/${contentAreaSlug(linkedArea)}`} className="btn btn-accent">
             Browse this area
           </Link>
         </div>

@@ -4,7 +4,7 @@ import { CookieNotice } from "./CookieNotice";
 
 const navItems = [
   { href: "/start-here", label: "Start Here" },
-  { href: "/hub", label: "Areas" },
+  { href: "/areas", label: "Areas" },
   { href: "/inspiration", label: "Inspiration" },
   { href: "/blog", label: "Blog" },
   { href: "/blueprint", label: "Blueprint" },
@@ -97,7 +97,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <h2>Explore</h2>
             <p className="footer-links footer-links-column">
               <Link href="/start-here">Start Here</Link>
-              <Link href="/hub">Areas</Link>
+              <Link href="/areas">Areas</Link>
               <Link href="/inspiration">Inspiration</Link>
               <Link href="/blog">Blog</Link>
             </p>

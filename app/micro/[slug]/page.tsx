@@ -125,7 +125,7 @@ export default async function MicroPage({ params }: { params: Promise<{ slug: st
             <h2>More practical bathroom help</h2>
           </div>
           <div className="article-related-grid">
-            <Link href={`/hub/${contentAreaSlug(area)}`} className="article-related-card">
+            <Link href={`/areas/${contentAreaSlug(area)}`} className="article-related-card">
               <span className="article-related-media">
                 <img src={visual.image} alt="" />
               </span>
