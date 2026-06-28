@@ -6854,22 +6854,36 @@ h4 {
   }
 
   .blog-index-hero {
-    padding: 2.2rem 0 2.2rem;
+    padding: 1.7rem 0 1rem;
   }
 
   .blog-index-hero h1 {
-    font-size: clamp(2rem, 9vw, 2.45rem);
-    line-height: 1.08;
+    font-size: clamp(1.95rem, 8vw, 2.2rem);
+    line-height: 1.06;
+    max-width: 330px;
   }
 
   .blog-intro-steps {
-    font-size: 0.9rem;
-    line-height: 1.45;
+    font-size: 0.86rem;
+    line-height: 1.42;
+    margin-top: 0.85rem;
     max-width: 320px;
   }
 
+  .blog-index-hero .blog-hero-search {
+    margin-top: 1rem;
+  }
+
+  .blog-hero-search input {
+    min-height: 44px;
+  }
+
   .blog-index-body {
-    margin-top: -1.15rem;
+    margin-top: -0.35rem;
+  }
+
+  .blog-filter-stack {
+    margin-bottom: 1.15rem;
   }
 
   .site-page-tight {
@@ -8529,7 +8543,6 @@ h4 {
 .inspiration-figma-hero,
 .legal-figma-hero {
   background: linear-gradient(180deg, #f0ebe3 0%, #faf7f2 100%);
-  border-bottom: 1px solid rgba(44, 37, 32, 0.06);
 }
 
 .about-figma-hero-inner,
