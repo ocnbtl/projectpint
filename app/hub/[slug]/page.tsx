@@ -9,13 +9,13 @@ import { blogMatchesArea, findGuidesForHub, hubs, readBlogs } from "../../../lib
 export const dynamic = "force-dynamic";
 
 const STYLE_BY_AREA: Record<string, string[]> = {
-  plants: ["spa-greenery", "warm-editorial"],
+  plants: ["spa-greenery", "japandi"],
   mirror: ["modern-marble", "minimalist-elegance"],
-  storage: ["minimalist-elegance", "warm-editorial"],
-  lighting: ["warm-editorial", "modern-marble"],
-  shower: ["spa-greenery", "modern-marble"],
-  renter: ["minimalist-elegance", "warm-editorial"],
-  diy: ["brass-terrazzo", "warm-editorial"],
+  storage: ["scandinavian-clean", "japandi"],
+  lighting: ["warm-editorial", "dark-moody"],
+  shower: ["spa-greenery", "coastal-calm"],
+  renter: ["minimalist-elegance", "scandinavian-clean"],
+  diy: ["industrial-loft", "brass-terrazzo"],
   "extreme-budget": ["boho-earth-tones", "warm-editorial"]
 };
 
@@ -50,15 +50,20 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
       type: "Guide"
     }))
   ].slice(0, 6);
+  const relatedStyles = inspirationStyles.filter((style) => (STYLE_BY_AREA[hub.slug] ?? ["warm-editorial"]).includes(style.slug));
   const inspirationImages = Array.from(
     new Set([
       visual.image,
-      ...inspirationStyles
-        .filter((style) => (STYLE_BY_AREA[hub.slug] ?? ["warm-editorial"]).includes(style.slug))
-        .flatMap((style) => [style.cover]),
+      ...relatedStyles.flatMap((style) => [
+        style.cover,
+        ...style.items
+          .filter((item) => item.type === "image")
+          .slice(1, 5)
+          .map((item) => item.src)
+      ]),
       ...inspirationStyles.slice(0, 4).map((style) => style.cover)
     ])
-  ).slice(0, 8);
+  ).slice(0, 14);
 
   return (
     <SiteShell>
