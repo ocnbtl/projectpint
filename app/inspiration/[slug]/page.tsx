@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteShell } from "../../../components/SiteShell";
-import { inspirationStyles, redesignImages } from "../../../lib/redesign-data";
+import { inspirationStyles } from "../../../lib/redesign-data";
 
 export function generateStaticParams() {
   return inspirationStyles.map((style) => ({ slug: style.slug }));
@@ -11,17 +11,6 @@ export default async function InspirationDetailPage({ params }: { params: Promis
   const { slug } = await params;
   const style = inspirationStyles.find((item) => item.slug === slug);
   if (!style) return notFound();
-
-  const collage = [
-    { type: "image", src: style.cover, label: "Main finish", shape: "arch" },
-    { type: "image", src: redesignImages.plants, label: "Greenery", shape: "rounded" },
-    { type: "product", name: "Starter accent set", price: "$25-75" },
-    { type: "image", src: redesignImages.mirror, label: "Mirror zone", shape: "circle" },
-    { type: "image", src: redesignImages.storage, label: "Storage", shape: "wide" },
-    { type: "product", name: "Renter-safe upgrade", price: "$10-45" },
-    { type: "image", src: redesignImages.lighting, label: "Lighting", shape: "tall" },
-    { type: "image", src: redesignImages.shower, label: "Shower detail", shape: "polaroid" }
-  ];
 
   return (
     <SiteShell>
@@ -42,7 +31,7 @@ export default async function InspirationDetailPage({ params }: { params: Promis
       <div className="container site-page inspiration-detail-page">
         <p className="inspiration-board-kicker">Pinned for you - scroll the board</p>
         <section className="inspiration-board">
-          {collage.map((item, index) =>
+          {style.items.map((item, index) =>
             item.type === "product" ? (
               <article
                 key={`${style.slug}-product-${index}`}
@@ -51,7 +40,10 @@ export default async function InspirationDetailPage({ params }: { params: Promis
               >
                 <span style={{ backgroundColor: style.accent }}>Shop the look</span>
                 <h2>{item.name}</h2>
-                <p>{item.price}</p>
+                <p>
+                  {item.price}
+                  <i aria-hidden="true">-&gt;</i>
+                </p>
               </article>
             ) : (
               <figure
@@ -60,7 +52,7 @@ export default async function InspirationDetailPage({ params }: { params: Promis
                 style={{ transform: `rotate(${((index % 5) - 2) * 1.1}deg)` }}
               >
                 <img src={item.src} alt="" />
-                <figcaption>{item.label}</figcaption>
+                {item.label ? <figcaption>{item.label}</figcaption> : null}
               </figure>
             )
           )}

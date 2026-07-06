@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { SiteShell } from "../../components/SiteShell";
-import { inspirationStyles, redesignImages } from "../../lib/redesign-data";
-
-const thumbImages = [redesignImages.plants, redesignImages.mirror, redesignImages.storage, redesignImages.lighting];
+import { inspirationStyles } from "../../lib/redesign-data";
 
 export default function InspirationPage() {
   return (
@@ -20,8 +18,11 @@ export default function InspirationPage() {
 
       <div className="container site-page inspiration-figma-page">
         <section className="inspiration-style-grid" aria-label="Bathroom inspiration styles">
-          {inspirationStyles.map((style, index) => {
-            const thumbs = [style.cover, thumbImages[index % thumbImages.length], thumbImages[(index + 1) % thumbImages.length]];
+          {inspirationStyles.map((style) => {
+            const thumbs = style.items
+              .filter((item) => item.type === "image")
+              .slice(1, 4)
+              .map((item) => item.src);
             return (
               <Link key={style.slug} href={`/inspiration/${style.slug}`} className="inspiration-style-tile">
                 <img src={style.cover} alt="" />

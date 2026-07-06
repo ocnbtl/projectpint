@@ -26,8 +26,88 @@ export const redesignImages = {
   brass:
     "https://images.unsplash.com/photo-1768203633862-dd904d900704?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb250ZW1wb3JhcnklMjBiYXRocm9vbSUyMGJyYXNzJTIwZml4dHVyZXMlMjB0ZXJyYXp6b3xlbnwxfHx8fDE3NzM4OTE5Nzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
   boho:
-    "https://images.unsplash.com/photo-1588296250512-b75a9e4b534e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxib2hvJTIwYmF0aHJvb20lMjB3b3ZlbiUyMGJhc2tldHMlMjBlYXJ0aCUyMHRvbmVzfGVufDF8fHx8MTc3Mzg5MTk3OHww&ixlib=rb-4.1.0&q=80&w=1080"
+    "https://images.unsplash.com/photo-1588296250512-b75a9e4b534e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxib2hvJTIwYmF0aHJvb20lMjB3b3ZlbiUyMGJhc2tldHMlMjBlYXJ0aCUyMHRvbmVzfGVufDF8fHx8MTc3Mzg5MTk3OHww&ixlib=rb-4.1.0&q=80&w=1080",
+  minimalist:
+    "https://images.unsplash.com/photo-1506331959731-780370962434?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtaW5pbWFsaXN0JTIwd2hpdGUlMjBiYXRocm9vbSUyMGZyZWVzdGFuZGluZyUyMHR1YnxlbnwxfHx8fDE3NzM4OTE5Nzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+  scandi:
+    "https://images.unsplash.com/photo-1593069384905-41d812985992?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzY2FuZGluYXZpYW4lMjBiYXRocm9vbSUyMHBhbGUlMjB3b29kJTIwc3Vid2F5JTIwdGlsZXxlbnwxfHx8fDE3NzM4OTE5ODZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+  dark:
+    "https://images.unsplash.com/photo-1663811396038-7a21d4eef49e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxibGFjayUyMGFjY2VudCUyMGJhdGhyb29tJTIwZGFyayUyMG1vb2R5JTIwZWxlZ2FudHxlbnwxfHx8fDE3NzM4OTE5ODZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+  industrial:
+    "https://images.unsplash.com/photo-1445369265672-6ec4463fdb0f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHxpbmR1c3RyaWFsJTIwY29uY3JldGUlMjBiYXRocm9vbSUyMGRhcmt8ZW58MXx8fHwxNzgxMjcyNzk0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+  coastal:
+    "https://images.unsplash.com/photo-1779942578833-5f00dc79d6d1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwzfHxjb2FzdGFsJTIwYnJpZ2h0JTIwYWlyeSUyMGJhdGhyb29tfGVufDF8fHx8MTc4MTI3Mjc5NXww&ixlib=rb-4.1.0&q=80&w=1080",
+  japandi:
+    "https://images.unsplash.com/photo-1765278954186-ccbe4f2b78a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHxqYXBhbmRpJTIwd29vZCUyMG1pbmltYWxpc3QlMjBiYXRocm9vbXxlbnwxfHx8fDE3ODEyNzI3OTZ8MA&ixlib=rb-4.1.0&q=80&w=1080"
 };
+
+const collageImages = [
+  "https://images.unsplash.com/photo-1645567455251-334ed4702f9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYXRocm9vbSUyMHNoZWxmJTIwZGVjb3IlMjBhY2Nlc3Nvcmllc3xlbnwxfHx8fDE3ODEyNjgzODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1595515770338-e4d3c5d8dd91?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwyfHxiYXRocm9vbSUyMHNoZWxmJTIwZGVjb3IlMjBhY2Nlc3Nvcmllc3xlbnwxfHx8fDE3ODEyNjgzODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1773565744218-d8d11de58362?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwzfHxiYXRocm9vbSUyMHNoZWxmJTIwZGVjb3IlMjBhY2Nlc3Nvcmllc3xlbnwxfHx8fDE3ODEyNjgzODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1595515770345-0497f6f13692?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw0fHxiYXRocm9vbSUyMHNoZWxmJTIwZGVjb3IlMjBhY2Nlc3Nvcmllc3xlbnwxfHx8fDE3ODEyNjgzODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1780544241838-7b54189f01b0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw1fHxiYXRocm9vbSUyMHNoZWxmJTIwZGVjb3IlMjBhY2Nlc3Nvcmllc3xlbnwxfHx8fDE3ODEyNjgzODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1780952934157-f541e70c7ece?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw2fHxiYXRocm9vbSUyMHNoZWxmJTIwZGVjb3IlMjBhY2Nlc3Nvcmllc3xlbnwxfHx8fDE3ODEyNjgzODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1651513825857-9fda9d5729fe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHxiYXRocm9vbSUyMHRvd2VscyUyMGNhbmRsZXMlMjBzdHlsaW5nfGVufDF8fHx8MTc4MTI2ODM4NXww&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1611818830473-ab5d21f401ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwyfHxiYXRocm9vbSUyMHRvd2VscyUyMGNhbmRsZXMlMjBzdHlsaW5nfGVufDF8fHx8MTc4MTI2ODM4NXww&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1700918232124-f64da19e73eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwzfHxiYXRocm9vbSUyMHRvd2VscyUyMGNhbmRsZXMlMjBzdHlsaW5nfGVufDF8fHx8MTc4MTI2ODM4NXww&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1768413292047-116be08f120c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw0fHxiYXRocm9vbSUyMHRvd2VscyUyMGNhbmRsZXMlMjBzdHlsaW5nfGVufDF8fHx8MTc4MTI2ODM4NXww&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1765745520336-88acf0b84fe4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw1fHxiYXRocm9vbSUyMHRvd2VscyUyMGNhbmRsZXMlMjBzdHlsaW5nfGVufDF8fHx8MTc4MTI2ODM4NXww&ixlib=rb-4.1.0&q=80&w=1080",
+  "https://images.unsplash.com/photo-1765745518752-68a289300789?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw2fHxiYXRocm9vbSUyMHRvd2VscyUyMGNhbmRsZXMlMjBzdHlsaW5nfGVufDF8fHx8MTc4MTI2ODM4NXww&ixlib=rb-4.1.0&q=80&w=1080",
+  redesignImages.plants,
+  redesignImages.mirror,
+  redesignImages.storage,
+  redesignImages.lighting,
+  redesignImages.shower,
+  redesignImages.renter
+];
+
+type InspirationShape = "rounded" | "tall" | "wide" | "circle" | "polaroid" | "arch";
+
+type InspirationImageItem = {
+  type: "image";
+  shape: InspirationShape;
+  src: string;
+  label?: string;
+};
+
+type InspirationProductItem = {
+  type: "product";
+  name: string;
+  price: string;
+};
+
+export type InspirationItem = InspirationImageItem | InspirationProductItem;
+
+type InspirationStyle = {
+  slug: string;
+  name: string;
+  description: string;
+  cover: string;
+  accent: string;
+  items: InspirationItem[];
+};
+
+const collageShapes: InspirationShape[] = ["rounded", "tall", "wide", "circle", "polaroid", "arch", "rounded", "tall"];
+
+function buildInspirationItems(cover: string, seed: number, products: { name: string; price: string }[]): InspirationItem[] {
+  const items: InspirationItem[] = [{ type: "image", shape: "arch", src: cover, label: "Featured look" }];
+
+  for (let index = 0; index < 14; index += 1) {
+    if (index % 4 === 2 && products.length > 0) {
+      const product = products[(seed + index) % products.length];
+      items.push({ type: "product", name: product.name, price: product.price });
+    } else {
+      items.push({
+        type: "image",
+        shape: collageShapes[(seed + index) % collageShapes.length],
+        src: collageImages[(seed * 3 + index * 5) % collageImages.length]
+      });
+    }
+  }
+
+  return items;
+}
 
 export const areaVisuals: Record<ContentArea, { image: string; tagline: string; icon: string }> = {
   Plants: { image: redesignImages.plants, tagline: "Greenery that thrives in your space", icon: "leaf" },
@@ -40,48 +120,138 @@ export const areaVisuals: Record<ContentArea, { image: string; tagline: string; 
   ExtremeBudget: { image: redesignImages.budget, tagline: "Big impact, tiny spend", icon: "dollar" }
 };
 
-export const inspirationStyles = [
+export const inspirationStyles: InspirationStyle[] = [
   {
     slug: "minimalist-elegance",
     name: "Minimalist Elegance",
-    description: "Clean lines, calm palettes, and nothing you do not need.",
-    cover: redesignImages.mirror,
-    accent: "#8A7E74"
+    description: "Clean lines, calm palettes, and nothing you do not need. The art of the well-edited bathroom.",
+    cover: redesignImages.minimalist,
+    accent: "#8A7E74",
+    items: buildInspirationItems(redesignImages.minimalist, 1, [
+      { name: "Frosted glass soap pump", price: "$14" },
+      { name: "Matte white toothbrush cup", price: "$9" },
+      { name: "Linen waffle hand towel", price: "$18" }
+    ])
   },
   {
     slug: "modern-marble",
     name: "Modern Marble",
-    description: "Veined stone, cool tones, and a quietly luxe finish.",
+    description: "Veined stone, cool tones, and a quietly luxe finish. Looks expensive, plays with peel-and-stick.",
     cover: redesignImages.marble,
-    accent: "#7A8A94"
+    accent: "#7A8A94",
+    items: buildInspirationItems(redesignImages.marble, 2, [
+      { name: "Marble-look contact paper", price: "$22" },
+      { name: "Carrara tray", price: "$28" },
+      { name: "Brushed nickel hooks", price: "$12" }
+    ])
   },
   {
     slug: "spa-greenery",
     name: "Spa Greenery",
-    description: "Lush plants, soft steam, and earthy green tile.",
+    description: "Lush plants, soft steam, and earthy green tile. Turn your morning routine into a retreat.",
     cover: redesignImages.spa,
-    accent: "#5B8C6A"
+    accent: "#5B8C6A",
+    items: buildInspirationItems(redesignImages.spa, 3, [
+      { name: "Hanging pothos planter", price: "$16" },
+      { name: "Eucalyptus shower bundle", price: "$11" },
+      { name: "Teak bath mat", price: "$34" }
+    ])
   },
   {
     slug: "brass-terrazzo",
     name: "Brass & Terrazzo",
-    description: "Warm metals meet playful speckled surfaces.",
+    description: "Warm metals meet playful speckled surfaces. A confident, design-forward mix.",
     cover: redesignImages.brass,
-    accent: "#C4936A"
+    accent: "#C4936A",
+    items: buildInspirationItems(redesignImages.brass, 4, [
+      { name: "Brass towel ring", price: "$24" },
+      { name: "Terrazzo soap dish", price: "$15" },
+      { name: "Gold-framed mirror", price: "$48" }
+    ])
   },
   {
     slug: "boho-earth-tones",
     name: "Boho Earth Tones",
-    description: "Woven baskets, rattan, and sun-baked clay.",
+    description: "Woven baskets, rattan, and sun-baked clay. Relaxed texture layered on warm neutrals.",
     cover: redesignImages.boho,
-    accent: "#B07A52"
+    accent: "#B07A52",
+    items: buildInspirationItems(redesignImages.boho, 5, [
+      { name: "Woven seagrass basket", price: "$19" },
+      { name: "Terracotta planter", price: "$13" },
+      { name: "Tasseled cotton towel", price: "$21" }
+    ])
+  },
+  {
+    slug: "scandinavian-clean",
+    name: "Scandinavian Clean",
+    description: "Pale wood, subway tile, and uncluttered function. Cozy minimalism that just works.",
+    cover: redesignImages.scandi,
+    accent: "#A0907E",
+    items: buildInspirationItems(redesignImages.scandi, 6, [
+      { name: "Birch step stool", price: "$29" },
+      { name: "Ceramic tumbler set", price: "$16" },
+      { name: "Cotton bath rug", price: "$24" }
+    ])
+  },
+  {
+    slug: "dark-moody",
+    name: "Dark & Moody",
+    description: "Black accents, deep contrast, and dramatic lighting. Small space, big personality.",
+    cover: redesignImages.dark,
+    accent: "#4A4540",
+    items: buildInspirationItems(redesignImages.dark, 7, [
+      { name: "Matte black faucet kit", price: "$39" },
+      { name: "Smoked glass jar", price: "$12" },
+      { name: "Charcoal waffle towel", price: "$20" }
+    ])
   },
   {
     slug: "warm-editorial",
     name: "Warm Editorial",
-    description: "Plaster tones, soft light, and the signature Diyesu look.",
+    description: "Plaster tones, soft light, and material softness. The signature Diyesu look.",
     cover: redesignImages.hero,
-    accent: "#B8744A"
+    accent: "#B8744A",
+    items: buildInspirationItems(redesignImages.hero, 8, [
+      { name: "Plaster soap dispenser", price: "$17" },
+      { name: "Stoneware vase", price: "$22" },
+      { name: "Boucle bath stool", price: "$45" }
+    ])
+  },
+  {
+    slug: "industrial-loft",
+    name: "Industrial Loft",
+    description: "Concrete, exposed metal, and raw edges. Urban grit balanced with warm utility.",
+    cover: redesignImages.industrial,
+    accent: "#6B6358",
+    items: buildInspirationItems(redesignImages.industrial, 9, [
+      { name: "Iron pipe shelf", price: "$32" },
+      { name: "Concrete soap tray", price: "$14" },
+      { name: "Edison vanity bulb", price: "$11" }
+    ])
+  },
+  {
+    slug: "coastal-calm",
+    name: "Coastal Calm",
+    description: "Breezy blues, sun-bleached textures, and a just-back-from-the-beach ease.",
+    cover: redesignImages.coastal,
+    accent: "#6FA0B5",
+    items: buildInspirationItems(redesignImages.coastal, 10, [
+      { name: "Jute storage basket", price: "$18" },
+      { name: "Driftwood bath tray", price: "$26" },
+      { name: "Striped cotton towel", price: "$19" }
+    ])
+  },
+  {
+    slug: "japandi",
+    name: "Japandi",
+    description: "Japanese restraint meets Scandinavian warmth. Natural wood, low contrast, total calm.",
+    cover: redesignImages.japandi,
+    accent: "#9C8B73",
+    items: buildInspirationItems(redesignImages.japandi, 11, [
+      { name: "Hinoki wood bath mat", price: "$38" },
+      { name: "Stoneware dispenser", price: "$16" },
+      { name: "Linen robe", price: "$42" }
+    ])
   }
 ];
 
