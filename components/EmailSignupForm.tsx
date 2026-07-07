@@ -30,6 +30,7 @@ export function EmailSignupForm({
 }: EmailSignupFormProps) {
   const safeSource = sourceUrl.replace(/[^a-z0-9_-]/gi, "-");
   const defaultSet = new Set(normalizeContentAreas([...(defaultContentAreas ?? []), pillarInterest ?? ""]));
+  const defaultAreas = Array.from(defaultSet);
 
   return (
     <form action="/api/subscribe" method="post" className="form-grid">
@@ -66,7 +67,9 @@ export function EmailSignupForm({
             </select>
           </div>
         </>
-      ) : null}
+      ) : (
+        defaultAreas.map((area) => <input key={area} type="hidden" name="contentAreas" value={area} />)
+      )}
 
       {showContentAreaChecklist ? (
         <fieldset className="field fieldset-group fieldset-newsletter-topics">
