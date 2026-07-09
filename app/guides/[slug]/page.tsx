@@ -72,6 +72,13 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
       </section>
       <article className="article-body-card">
         <MarkdownArticle blocks={contentBlocks} slug={slug} />
+        <div className="article-body-tags" aria-label="Guide tags">
+          {guide.tags.map((tag) => (
+            <Link key={`${guide.Guide_ID}-body-${tag}`} href={tagPath(tag)} className="tag tag-muted tag-link">
+              {tag}
+            </Link>
+          ))}
+        </div>
       </article>
       <section className="article-next-section">
         <div className="article-blueprint-cta">

@@ -63,6 +63,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       </section>
       <article className="article-body-card">
         <MarkdownArticle blocks={contentBlocks} slug={slug} />
+        <div className="article-body-tags" aria-label="Article tags">
+          {tags.map((tag) => (
+            <Link key={`${blog.Blog_ID}-body-${tag}`} href={tagPath(tag)} className="tag tag-muted tag-link">
+              {tag}
+            </Link>
+          ))}
+        </div>
       </article>
       <section className="article-next-section">
         <div className="article-blueprint-cta">
