@@ -15,6 +15,7 @@ type PlantResult = {
   name: string;
   scientific: string;
   light: string;
+  humidity: readonly ("dry" | "normal" | "steamy")[];
   water: string;
   placement: string;
   difficulty: "Easy" | "Intermediate";
@@ -59,6 +60,7 @@ const plants: PlantResult[] = [
     name: "Pothos",
     scientific: "Epipremnum aureum",
     light: "Low to bright indirect",
+    humidity: ["normal", "steamy"],
     water: "Weekly",
     placement: "Shelf, hanging planter, windowsill",
     difficulty: "Easy",
@@ -71,6 +73,7 @@ const plants: PlantResult[] = [
     name: "Snake Plant",
     scientific: "Sansevieria trifasciata",
     light: "Low to bright",
+    humidity: ["dry", "normal"],
     water: "Every 2-3 weeks",
     placement: "Floor corner, counter, windowsill",
     difficulty: "Easy",
@@ -83,6 +86,7 @@ const plants: PlantResult[] = [
     name: "ZZ Plant",
     scientific: "Zamioculcas zamiifolia",
     light: "Low to medium",
+    humidity: ["dry", "normal"],
     water: "Every 2-3 weeks",
     placement: "Floor, counter, shelf",
     difficulty: "Easy",
@@ -95,6 +99,7 @@ const plants: PlantResult[] = [
     name: "Peace Lily",
     scientific: "Spathiphyllum",
     light: "Low to medium",
+    humidity: ["normal", "steamy"],
     water: "Weekly",
     placement: "Counter, floor, shelf",
     difficulty: "Easy",
@@ -107,6 +112,7 @@ const plants: PlantResult[] = [
     name: "Boston Fern",
     scientific: "Nephrolepis exaltata",
     light: "Medium indirect",
+    humidity: ["normal", "steamy"],
     water: "Keep moist",
     placement: "Hanging, high shelf, shower area",
     difficulty: "Intermediate",
@@ -250,11 +256,12 @@ export function PlantPickerTool() {
     if (light === "medium") {
       matches = matches.filter((plant) => plant.light.toLowerCase().includes("medium") || plant.light.toLowerCase().includes("indirect"));
     }
+    if (humidity) matches = matches.filter((plant) => plant.humidity.includes(humidity as "dry" | "normal" | "steamy"));
     if (space === "tiny") {
       matches = matches.filter((plant) => plant.placement.toLowerCase().includes("shelf") || plant.placement.toLowerCase().includes("counter"));
     }
     return matches.length >= 5 ? matches.slice(0, 5) : [...matches, ...plants.filter((plant) => !matches.includes(plant))].slice(0, 5);
-  }, [light, space]);
+  }, [humidity, light, space]);
 
   const canProceed = (step === 0 && light) || (step === 1 && humidity) || (step === 2 && space);
 
