@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 type HomeScrollControlsProps = {
   targetId: string;
   label: string;
@@ -13,6 +15,24 @@ function scrollTarget(targetId: string, direction: "left" | "right") {
 }
 
 export function HomeScrollControls({ targetId, label }: HomeScrollControlsProps) {
+  const [canScroll, setCanScroll] = useState(false);
+
+  useEffect(() => {
+    const target = document.getElementById(targetId);
+    if (!target) return;
+
+    const updateScrollability = () => {
+      setCanScroll(target.scrollWidth > target.clientWidth + 1);
+    };
+
+    updateScrollability();
+    const observer = new ResizeObserver(updateScrollability);
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [targetId]);
+
+  if (!canScroll) return null;
+
   return (
     <span className="home-scroll-controls" aria-label={label}>
       <button type="button" onClick={() => scrollTarget(targetId, "left")} aria-label="Scroll left">
