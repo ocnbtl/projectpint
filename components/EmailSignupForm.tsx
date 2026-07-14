@@ -9,6 +9,7 @@ interface EmailSignupFormProps {
   defaultContentAreas?: string[];
   showContentAreaChecklist?: boolean;
   showConsentNote?: boolean;
+  emailPlaceholder?: string;
   includePlantFields?: boolean;
   plantDefaults?: {
     light: "low" | "medium" | "bright";
@@ -25,6 +26,7 @@ export function EmailSignupForm({
   defaultContentAreas,
   showContentAreaChecklist = true,
   showConsentNote = true,
+  emailPlaceholder = "you@example.com",
   includePlantFields = false,
   plantDefaults = { light: "low", humidity: "high", space: "tiny" }
 }: EmailSignupFormProps) {
@@ -36,7 +38,7 @@ export function EmailSignupForm({
     <form action="/api/subscribe" method="post" className="form-grid">
       <div className="field">
         <label htmlFor={`email-${safeSource}`}>Email</label>
-        <input id={`email-${safeSource}`} name="email" type="email" required placeholder="you@example.com" />
+        <input id={`email-${safeSource}`} name="email" type="email" required placeholder={emailPlaceholder} />
       </div>
 
       {includePlantFields ? (

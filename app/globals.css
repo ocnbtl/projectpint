@@ -8821,14 +8821,19 @@ h4 {
 }
 
 .about-faq-item summary::after {
-  color: #8a7e74;
-  content: "+";
+  border-bottom: 1.5px solid #8a7e74;
+  border-right: 1.5px solid #8a7e74;
+  content: "";
   float: right;
-  font-weight: 900;
+  height: 0.38rem;
+  margin: 0.2rem 0.15rem 0 0;
+  transform: rotate(45deg);
+  transition: transform 160ms ease;
+  width: 0.38rem;
 }
 
 .about-faq-item[open] summary::after {
-  content: "-";
+  transform: rotate(225deg);
 }
 
 .about-faq-item p {
@@ -9979,5 +9984,403 @@ h4 {
   .inspiration-detail-page {
     padding-bottom: 3.5rem;
     padding-top: 3.5rem;
+  }
+}
+
+/* Figma Make fidelity: About, Blueprint, and Plant Picker. */
+.about-figma-hero-inner {
+  padding-bottom: 2.5rem;
+  padding-top: 2.5rem;
+}
+
+.about-figma-hero h1 {
+  margin-bottom: 0.75rem;
+}
+
+.about-callout {
+  border-radius: 999px;
+  flex-wrap: nowrap;
+  gap: 0;
+  margin: 0 0 2rem;
+  padding: 0.5rem 1.25rem;
+}
+
+.about-callout > span,
+.about-callout > strong {
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.about-callout > strong {
+  background: none;
+  color: #8a7e74;
+  display: inline-block;
+  font-weight: 400;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-width 400ms ease, opacity 240ms ease;
+}
+
+.about-callout:hover > strong {
+  max-width: 9rem;
+  opacity: 1;
+}
+
+.about-callout em {
+  background: linear-gradient(90deg, #5b8c6a, #c4936a, #d4a87a, #4a9b8e, #5b8c6a);
+  background-clip: text;
+  color: transparent;
+  font-style: normal;
+}
+
+.about-figma-hero p {
+  line-height: 1.5;
+  margin-top: 0;
+}
+
+.about-figma-hero p + p {
+  margin-top: 0.25rem;
+}
+
+.about-figma-page {
+  gap: 0;
+  padding-bottom: 2.5rem;
+  padding-top: 1.5rem;
+}
+
+.about-value-grid {
+  gap: 2rem;
+  margin-bottom: 3rem;
+  max-width: 42rem;
+}
+
+.about-value-card > span {
+  margin-bottom: 0.75rem;
+}
+
+.about-value-card h2 {
+  margin-bottom: 0.25rem;
+}
+
+.about-faq-panel {
+  margin-bottom: 0;
+  max-width: 42rem;
+  width: 100%;
+}
+
+.about-section-head {
+  margin-bottom: 1.5rem;
+}
+
+.about-faq-list {
+  gap: 0.5rem;
+}
+
+.site-main > .about-newsletter-dark {
+  margin: 0;
+  max-width: none;
+  padding: 0;
+  width: 100%;
+}
+
+.about-newsletter-inner {
+  padding-bottom: 4rem;
+  padding-top: 4rem;
+}
+
+.about-newsletter-copy,
+.about-newsletter-form {
+  margin-inline: auto;
+  max-width: 36rem;
+  text-align: center;
+}
+
+.about-newsletter-icon {
+  height: 2.5rem;
+  margin: 0 auto 1rem;
+  width: 2.5rem;
+}
+
+.about-newsletter-icon svg {
+  fill: none;
+  height: 1.25rem;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  width: 1.25rem;
+}
+
+.about-newsletter-copy h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  margin: 0 0 0.25rem;
+}
+
+.about-newsletter-copy p:last-child {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0 0 1.5rem;
+}
+
+.about-newsletter-form {
+  max-width: 28rem;
+}
+
+.about-newsletter-form .field label {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.about-newsletter-form .form-grid {
+  gap: 0.5rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.about-newsletter-form input {
+  border-radius: 8px;
+  min-height: 2.625rem;
+  padding-inline: 1rem;
+}
+
+.about-newsletter-form .btn {
+  border-radius: 8px;
+  min-height: 2.625rem;
+  padding-inline: 1.25rem;
+}
+
+.about-newsletter-form .consent-note,
+.about-newsletter-form .small {
+  color: #8a7e74;
+  font-size: 0.6875rem;
+  line-height: 1.45;
+}
+
+.tool-page-hero {
+  border-bottom: 0;
+  padding-bottom: 3.5rem;
+  padding-top: 3.5rem;
+}
+
+.tool-page-hero h1 {
+  max-width: 42rem;
+}
+
+.tool-page-hero p {
+  margin-top: 0.75rem;
+  max-width: 32rem;
+}
+
+.tool-page-hero .tool-badge {
+  font-size: 0.75rem;
+  gap: 0.25rem;
+  line-height: 1.5;
+  margin: 0 0 1rem;
+  padding: 0.125rem 0.625rem;
+}
+
+.tool-badge svg {
+  fill: none;
+  height: 0.75rem;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  width: 0.75rem;
+}
+
+.blueprint-page-body {
+  padding-bottom: 3.5rem;
+  padding-top: 2.5rem;
+}
+
+.blueprint-quiz-shell {
+  max-width: 42rem;
+  width: 100%;
+}
+
+.blueprint-quiz-shell .tool-quiz-card {
+  border-radius: 12px;
+}
+
+.blueprint-quiz-shell .tool-quiz-actions .btn-accent:disabled {
+  background: #aec8b5;
+  border-color: #aec8b5;
+  box-shadow: none;
+}
+
+.blueprint-final-step .tool-success-icon {
+  border-radius: 16px;
+  height: 3.5rem;
+  width: 3.5rem;
+}
+
+.plant-picker-page-body {
+  padding-bottom: 2.5rem;
+  padding-top: 1.5rem;
+}
+
+.plant-picker-shell {
+  max-width: 36rem;
+  width: 100%;
+}
+
+.plant-picker-shell .tool-quiz-card {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.plant-picker-shell .quiz-progress {
+  justify-content: space-between;
+  width: 100%;
+}
+
+.plant-picker-shell .quiz-progress-item {
+  flex: 1;
+}
+
+.plant-picker-shell .quiz-progress-item:last-child {
+  flex: 0 0 auto;
+}
+
+.plant-picker-shell .quiz-progress-item i {
+  flex: 1;
+  width: auto;
+}
+
+.plant-picker-shell .tool-quiz-actions {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.plant-picker-shell .tool-quiz-actions .btn {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.plant-picker-shell .tool-quiz-actions .btn-ghost {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: #8a7e74;
+  font-weight: 400;
+  padding-inline: 1.25rem;
+}
+
+.plant-picker-shell .tool-quiz-actions .btn-accent {
+  padding-inline: 1.25rem;
+}
+
+.plant-picker-shell .tool-quiz-actions .btn-accent:disabled {
+  background: #aec8b5;
+  border-color: #aec8b5;
+  box-shadow: none;
+}
+
+.plant-picker-shell .tool-quiz-step h2 {
+  font-size: 1.375rem;
+  margin-bottom: 0;
+}
+
+.plant-match-card {
+  grid-template-columns: 56px minmax(0, 1fr) 96px;
+  min-height: 11.25rem;
+}
+
+.plant-match-photo {
+  display: block;
+}
+
+.plant-match-title {
+  align-items: center;
+  flex-direction: row;
+}
+
+.plant-match-detail {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.4rem;
+}
+
+.plant-match-detail svg {
+  fill: none;
+  flex: 0 0 auto;
+  height: 0.75rem;
+  margin-top: 0.12rem;
+  stroke: #b8a99a;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+  width: 0.75rem;
+}
+
+.plant-match-detail b {
+  color: #b8a99a;
+  font-weight: 400;
+}
+
+.tool-page-hero-green h1 {
+  max-width: none;
+}
+
+@media (min-width: 640px) {
+  .blueprint-quiz-shell .quiz-option-grid,
+  .plant-picker-shell .quiz-option-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .blueprint-quiz-shell .quiz-option-grid-two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .plant-match-card {
+    grid-template-columns: 80px minmax(0, 1fr) 120px;
+  }
+}
+
+@media (min-width: 768px) {
+  .about-figma-hero-inner {
+    padding-bottom: 3.5rem;
+    padding-top: 3.5rem;
+  }
+
+  .about-figma-page {
+    padding-bottom: 3.5rem;
+    padding-top: 2rem;
+  }
+
+  .about-value-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .about-newsletter-inner {
+    padding-bottom: 5rem;
+    padding-top: 5rem;
+  }
+
+  .tool-page-hero {
+    padding-bottom: 5rem;
+    padding-top: 5rem;
+  }
+
+  .plant-picker-page-body {
+    padding-bottom: 3.5rem;
+    padding-top: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .about-figma-hero p {
+    max-width: none;
+    white-space: nowrap;
   }
 }

@@ -129,6 +129,13 @@ function MiniIcon({ name }: { name: string }) {
           <path d="M4 4l6 6M20 4l-6 6M4 20l6-6M20 20l-6-6" />
         </svg>
       );
+    case "sparkles":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m12 3 1.4 4.1L17.5 8.5l-4.1 1.4L12 14l-1.4-4.1-4.1-1.4 4.1-1.4L12 3Z" />
+          <path d="m18.5 14 .8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z" />
+        </svg>
+      );
     default:
       return (
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -308,12 +315,12 @@ export function BlueprintTool() {
         {step === 5 ? (
           <div className="tool-quiz-step blueprint-final-step">
             <span className="tool-success-icon">
-              <MiniIcon name="check" />
+              <MiniIcon name="sparkles" />
             </span>
-            <h2>Your Blueprint brief is ready</h2>
+            <h2>Your Blueprint is Ready</h2>
             <p>
-              Based on your selections, we&apos;ll create a personalized plan with product links, step-by-step notes, and a
-              reasonable timeline.
+              Based on your selections, we&apos;ll create a personalized plan with product links, step-by-step installment
+              guides, and a reasonable timeline. Delivered within 48 hours.
             </p>
             <div className="blueprint-selection-panel">
               <span>Your selections</span>

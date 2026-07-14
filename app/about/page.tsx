@@ -20,7 +20,7 @@ export default function AboutPage() {
     ["Small Wins", "Big transformations start with one smart upgrade at a time.", "zap"],
     [
       "Real People",
-      "We design for renters, beginners, DIYers, budget-first households, and anyone improving a bathroom they actually use.",
+      "We design for renters, beginners, DIYers, budget-first households, and anyone looking to improve their bathroom.",
       "user"
     ],
     ["Step By Step", "Every recommendation is actionable, affordable, and crafted with care.", "heart"]
@@ -28,30 +28,40 @@ export default function AboutPage() {
   const faqs = [
     [
       "What is Diyesu Decor?",
-      "A practical bathroom upgrade brand for renters, small spaces, and budget-first households."
+      "Diyesu Decor is a resource for bathroom upgrades on a budget. We help renters, DIYers, beginners, and homeowners make their bathrooms look and feel better without a complete renovation."
+    ],
+    [
+      "Is the Plant Picker really free?",
+      "Yes! Our Plant Picker is completely free. Just tell us about your bathroom's light and humidity, and we'll recommend the perfect plants for your situation."
+    ],
+    [
+      "How often do you publish new content?",
+      "We publish 2-3 new articles per week across multiple content areas, plus social posts and one curated Wednesday email."
     ],
     [
       "Is everything renter-friendly?",
       <>
-        Not everything, but renter-safe options come first. Start with the{" "}
+        Not everything, but we always label renter-safe options clearly. Our{" "}
         <Link href="/areas/renter" className="text-link">
           Renter Friendly
         </Link>{" "}
-        area when deposits, tile, or drill limits matter.
+          area is specifically curated for damage-free upgrades.
       </>
     ],
     [
-      "How budget-friendly is this?",
+      "How much do bathroom upgrades usually cost?",
       <>
-        Most recommendations start with the smallest useful improvement first. The{" "}
+        Most recommendations are under $50, and many are under $25. Our{" "}
         <Link href="/areas/extreme-budget" className="text-link">
           Extreme Budget
         </Link>{" "}
-        area keeps the lowest-cost ideas easy to find.
+          area focuses on upgrades under $10-25. Comprehensive upgrades can range from $100-300.
       </>
     ],
-    ["What is the Blueprint?", "A guided plan that turns budget, space, focus area, and style into a bathroom upgrade brief."],
-    ["Do you use affiliate links?", "Some pages may include affiliate links, and disclosures are shown when they apply."]
+    [
+      "What is the Blueprint?",
+      "It's our premium planning service. Answer a few quick questions about your budget, space, priorities, and preferred visual style, and within 48 hours we'll deliver a personalized bathroom upgrade plan with product links and step-by-step guides."
+    ]
   ];
 
   return (
@@ -61,7 +71,9 @@ export default function AboutPage() {
           <h1>About Diyesu Decor</h1>
           <div className="about-callout">
             <span>Budget DIY Bathroom Upgrades</span>
-            <strong>but with style</strong>
+            <strong>
+              , but with <em>style</em>
+            </strong>
           </div>
           <p>We believe every bathroom can be better, and it shouldn&apos;t cost a fortune to prove it.</p>
           <p>
@@ -86,7 +98,6 @@ export default function AboutPage() {
 
         <section className="about-faq-panel">
           <div className="about-section-head">
-            <p className="eyebrow blog-eyebrow">FAQ</p>
             <h2>Frequently asked questions</h2>
           </div>
           <div className="about-faq-list">
@@ -99,14 +110,19 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="about-newsletter-dark">
+      </div>
+
+      <section className="about-newsletter-dark">
+        <div className="container about-newsletter-inner">
           <div className="about-newsletter-copy">
             <span className="about-newsletter-icon" aria-hidden="true">
-              M
+              <svg viewBox="0 0 24 24">
+                <path d="M4 6h16v12H4z" />
+                <path d="m4 7 8 6 8-6" />
+              </svg>
             </span>
-            <p className="eyebrow">Weekly Bathroom Ideas</p>
-            <h2>One email, one idea, every Wednesday.</h2>
-            <p>No spam. Just practical upgrades, renter-aware tips, and small-space ideas you can actually use.</p>
+            <h2>Weekly Bathroom Ideas</h2>
+            <p>One email, one idea, every Wednesday</p>
           </div>
           <div className="about-newsletter-form">
             <EmailSignupForm
@@ -115,10 +131,11 @@ export default function AboutPage() {
               consentText="I agree to receive Diyesu Decor emails and understand I can unsubscribe anytime."
               showContentAreaChecklist={false}
               defaultContentAreas={["Plants", "Storage", "Renter"]}
+              emailPlaceholder="you@email.com"
             />
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </SiteShell>
   );
 }

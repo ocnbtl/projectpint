@@ -328,10 +328,18 @@ export function PlantPickerTool() {
                         <em>{plant.difficulty}</em>
                       </span>
                       <span className="plant-scientific">{plant.scientific}</span>
-                      <span className="plant-match-detail">Light: {plant.light}</span>
-                      <span className="plant-match-detail">Water: {plant.water}</span>
-                      <span className="plant-match-detail">Placement: {plant.placement}</span>
-                      <span>{plant.note}</span>
+                      <span className="plant-match-detail">
+                        <MiniIcon name="sun" />
+                        <span><b>Light:</b> {plant.light}</span>
+                      </span>
+                      <span className="plant-match-detail">
+                        <MiniIcon name="drop" />
+                        <span><b>Water:</b> {plant.water}</span>
+                      </span>
+                      <span className="plant-match-detail">
+                        <MiniIcon name="square" />
+                        <span><b>Placement:</b> {plant.placement}</span>
+                      </span>
                     </span>
                     <span className="plant-match-photo" style={{ backgroundImage: `url(${plant.image})` }} aria-hidden="true" />
                   </article>
