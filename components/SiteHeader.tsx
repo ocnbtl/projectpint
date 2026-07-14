@@ -41,8 +41,12 @@ export function SiteHeader() {
         <Link href="/" className="brand" aria-label="Diyesu Decor home">
           <LeafMark />
           <span className="brand-name">Diyesu Decor</span>
-          {isLanding ? <span className="brand-home-divider" aria-hidden="true" /> : null}
-          {isLanding ? <span className="brand-tagline brand-tagline-landing">Budget DIY Bathroom Upgrades</span> : null}
+          {isLanding ? (
+            <span className="brand-home-reveal">
+              <span className="brand-home-divider" aria-hidden="true" />
+              <span className="brand-tagline brand-tagline-landing">Budget DIY Bathroom Upgrades</span>
+            </span>
+          ) : null}
         </Link>
         <nav className="main-nav" aria-label="Primary">
           {navItems.map((item) => (
@@ -50,11 +54,11 @@ export function SiteHeader() {
               {item.label}
             </Link>
           ))}
-          <Link href="/plant-picker" className={`nav-link nav-cta${pathname.startsWith("/plant-picker") ? " is-active" : ""}`}>
-            <LeafMark small />
-            Free Plant Picker
-          </Link>
         </nav>
+        <Link href="/plant-picker" className={`nav-link nav-cta desktop-nav-cta${pathname.startsWith("/plant-picker") ? " is-active" : ""}`}>
+          <LeafMark small />
+          Free Plant Picker
+        </Link>
         <details className="mobile-nav">
           <summary aria-label="Open navigation">
             <MenuIcon />

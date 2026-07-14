@@ -92,7 +92,7 @@ export default async function HomePage() {
 
       <div className="container site-page home-page">
         <section className="home-section home-areas-section">
-          <div className="dd-section-head home-section-head home-section-head-center">
+          <div className="dd-section-head home-section-head home-section-head-left">
             <div>
               <h2>What part of your bathroom needs love?</h2>
               <p>Pick an area to explore realistic ideas, product picks, and step-by-step guides.</p>
@@ -149,7 +149,7 @@ export default async function HomePage() {
         </section>
 
         <section className="home-section home-blog-section">
-          <div className="dd-section-head home-section-head">
+          <div className="dd-section-head home-section-head home-section-head-left">
             <div>
               <h2>Quick reads to upgrade your bathroom</h2>
             </div>
@@ -221,9 +221,9 @@ export default async function HomePage() {
               100% Free
             </span>
             <h2>Find the perfect bathroom plant</h2>
-            <p>
-              Tell us about your bathroom&apos;s light and humidity. We&apos;ll recommend plants that will actually thrive, with
-              placement tips included.
+            <p className="home-plant-copy">
+              <span>Tell us about your bathroom&apos;s light and humidity.</span>
+              <span>We&apos;ll recommend plants that will actually thrive with placement tips included.</span>
             </p>
             <Link href="/plant-picker" className="btn btn-accent">
               Try the Plant Picker
