@@ -4252,11 +4252,15 @@ h4 {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 460px);
   gap: clamp(2rem, 5vw, 3rem);
+  height: min(78vh, 820px);
   min-height: min(78vh, 820px);
 }
 
 .area-resource-column,
 .area-inspiration-column {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
   min-width: 0;
 }
 
@@ -4300,6 +4304,9 @@ h4 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.35rem;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.5rem;
 }
 
 .area-resource-card {
@@ -4385,15 +4392,17 @@ h4 {
 }
 
 .area-inspiration-masonry {
-  columns: 2;
-  column-gap: 1rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.5rem;
 }
 
 .area-inspiration-image {
-  break-inside: avoid;
   border-radius: 12px;
   display: block;
-  margin-bottom: 1rem;
   overflow: hidden;
 }
 
@@ -4411,7 +4420,7 @@ h4 {
 
 .area-inspiration-button {
   justify-content: center;
-  margin-top: 0.4rem;
+  margin-top: 1rem;
   width: 100%;
 }
 
@@ -6851,6 +6860,22 @@ h4 {
     padding-left: 0;
   }
 
+  .area-detail-grid {
+    height: auto;
+    min-height: 0;
+  }
+
+  .area-resource-column,
+  .area-inspiration-column {
+    display: block;
+  }
+
+  .area-resource-grid,
+  .area-inspiration-masonry {
+    overflow: visible;
+    padding-right: 0;
+  }
+
   .admin-sheet-hero .admin-hero-head,
   .admin-datasheet-head {
     grid-template-columns: 1fr;
@@ -6994,7 +7019,6 @@ h4 {
   .inspo-strip,
   .inspiration-grid,
   .areas-overview-grid,
-  .area-resource-grid,
   .filter-panel,
   .grid-2,
   .grid-3,
@@ -7010,6 +7034,11 @@ h4 {
 
   .home-area-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .area-resource-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
   }
 
   .home-section-head {
@@ -7166,7 +7195,7 @@ h4 {
   }
 
   .area-inspiration-masonry {
-    columns: 1;
+    grid-template-columns: 1fr;
   }
 
   .area-inspiration-image,
