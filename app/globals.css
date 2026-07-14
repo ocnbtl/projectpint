@@ -9773,3 +9773,211 @@ h4 {
     line-height: 1.15;
   }
 }
+
+/* Exact public page bands and route spacing from the Figma Make source. */
+.site-main > :not(.container) {
+  margin-inline: 0;
+  width: 100%;
+}
+
+.areas-index-hero,
+.inspiration-figma-hero {
+  padding-block: 3.5rem;
+}
+
+.areas-index-hero .areas-kicker {
+  letter-spacing: 0.2em;
+  margin-bottom: 1rem;
+}
+
+.areas-index-hero h1 {
+  margin: 0 0 0.75rem;
+  max-width: none;
+}
+
+.areas-index-hero p {
+  margin: 0;
+  max-width: 32rem;
+}
+
+.areas-index-page {
+  padding-bottom: 2.5rem;
+  padding-top: 1.5rem;
+}
+
+.start-figma-page {
+  padding-bottom: 2.5rem;
+  padding-top: 1.5rem;
+}
+
+.start-figma-page > section + section {
+  margin-top: 0;
+}
+
+.start-figma-hero p:not(.eyebrow) {
+  text-align: left;
+}
+
+.start-area-section {
+  background: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+.start-area-section > .container,
+.start-picker-wrap {
+  padding-bottom: 2.5rem;
+  padding-top: 2.5rem;
+}
+
+.start-area-card {
+  background: #fff;
+}
+
+.inspiration-figma-hero .container {
+  padding-bottom: 0;
+  padding-top: 0;
+}
+
+.inspiration-figma-hero p {
+  max-width: 36rem;
+}
+
+.inspiration-figma-page {
+  padding-bottom: 2.5rem;
+  padding-top: 1rem;
+}
+
+.inspiration-style-grid {
+  gap: 0.75rem;
+}
+
+.inspiration-style-preview em,
+.inspiration-detail-copy .back-link,
+.inspiration-detail-cta .btn,
+.inspiration-product-pin > span {
+  align-items: center;
+  display: inline-flex;
+}
+
+.inspiration-style-preview em,
+.inspiration-detail-copy .back-link,
+.inspiration-detail-cta .btn {
+  gap: 0.25rem;
+}
+
+.inspiration-style-preview em svg,
+.inspiration-detail-copy .back-link svg,
+.inspiration-detail-cta .btn svg,
+.inspiration-product-pin > span svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.inspiration-style-preview em svg,
+.inspiration-detail-copy .back-link svg {
+  height: 0.875rem;
+  width: 0.875rem;
+}
+
+.inspiration-detail-hero {
+  height: 45vh;
+  min-height: 300px;
+}
+
+.inspiration-detail-copy {
+  padding-bottom: 3rem;
+}
+
+.inspiration-detail-copy .back-link,
+.area-detail-hero .back-link {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  color: #b8a99a;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  padding: 0;
+}
+
+.inspiration-detail-copy h1 {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+}
+
+.inspiration-detail-page {
+  padding-bottom: 2.5rem;
+  padding-top: 2.5rem;
+}
+
+.inspiration-board {
+  column-gap: 1rem;
+  max-width: none;
+}
+
+.inspiration-image-pin,
+.inspiration-product-pin {
+  margin-bottom: 1rem;
+}
+
+.inspiration-product-pin {
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+.inspiration-product-pin > span {
+  gap: 0.25rem;
+}
+
+.inspiration-product-pin > span svg {
+  height: 0.75rem;
+  width: 0.75rem;
+}
+
+.inspiration-detail-cta .btn svg {
+  height: 1rem;
+  width: 1rem;
+}
+
+@media (min-width: 768px) {
+  .areas-index-hero,
+  .inspiration-figma-hero {
+    padding-block: 5rem;
+  }
+
+  .areas-index-page {
+    padding-bottom: 3.5rem;
+    padding-top: 2rem;
+  }
+
+  .start-figma-page {
+    padding-bottom: 3.5rem;
+    padding-top: 2rem;
+  }
+
+  .start-area-section > .container,
+  .start-picker-wrap {
+    padding-bottom: 3.5rem;
+    padding-top: 3.5rem;
+  }
+
+  .inspiration-figma-page {
+    padding-bottom: 3.5rem;
+    padding-top: 1.5rem;
+  }
+
+  .inspiration-style-grid {
+    gap: 1rem;
+  }
+
+  .inspiration-style-title strong {
+    font-size: 1.125rem;
+  }
+
+  .inspiration-detail-page {
+    padding-bottom: 3.5rem;
+    padding-top: 3.5rem;
+  }
+}

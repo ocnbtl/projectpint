@@ -47,7 +47,7 @@ export default async function StartHerePage() {
   const steps = [
     ["target", "Pick an area", "Choose the part of your bathroom that bugs you the most."],
     ["sparkles", "Browse ideas", "Find specific guides and product recommendations for that area."],
-    ["hammer", "Make it happen", "Follow step-by-step plans and enjoy the upgrade."]
+    ["hammer", "Make it happen", "Follow our step-by-step plans and enjoy the upgrade."]
   ];
 
   return (
@@ -82,7 +82,10 @@ export default async function StartHerePage() {
           </div>
         </section>
 
-        <section className="start-area-section">
+      </div>
+
+      <section className="start-area-section">
+        <div className="container">
           <div className="start-section-head">
             <div>
               <h2>Choose the first area you want to upgrade</h2>
@@ -119,8 +122,10 @@ export default async function StartHerePage() {
               );
             })}
           </div>
-        </section>
+        </div>
+      </section>
 
+      <div className="container start-picker-wrap">
         <section className="start-picker-cta">
           <div>
             <h2>Still deciding?</h2>

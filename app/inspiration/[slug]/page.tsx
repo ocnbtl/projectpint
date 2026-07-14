@@ -19,6 +19,10 @@ export default async function InspirationDetailPage({ params }: { params: Promis
         <div className="inspiration-detail-shade">
           <div className="container inspiration-detail-copy">
             <Link href="/inspiration" className="back-link">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M19 12H5" />
+                <path d="m11 18-6-6 6-6" />
+              </svg>
               All Styles
             </Link>
             <span style={{ backgroundColor: style.accent }} aria-hidden="true" />
@@ -29,16 +33,22 @@ export default async function InspirationDetailPage({ params }: { params: Promis
       </section>
 
       <div className="container site-page inspiration-detail-page">
-        <p className="inspiration-board-kicker">Pinned for you - scroll the board</p>
+        <p className="inspiration-board-kicker">Pinned for you &mdash; scroll the board</p>
         <section className="inspiration-board">
           {style.items.map((item, index) =>
             item.type === "product" ? (
               <article
                 key={`${style.slug}-product-${index}`}
                 className="inspiration-product-pin"
-                style={{ transform: `rotate(${((index % 5) - 2) * 1.1}deg)` }}
+                style={{ transform: `rotate(${((index % 5) - 2) * 1.4}deg)` }}
               >
-                <span style={{ backgroundColor: style.accent }}>Shop the look</span>
+                <span style={{ backgroundColor: style.accent }}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20 12V5a1 1 0 0 0-1-1h-7l-8 8 8 8 8-8Z" />
+                    <circle cx="16" cy="8" r="1" />
+                  </svg>
+                  Shop the look
+                </span>
                 <h2>{item.name}</h2>
                 <p>
                   {item.price}
@@ -49,7 +59,7 @@ export default async function InspirationDetailPage({ params }: { params: Promis
               <figure
                 key={`${style.slug}-image-${index}`}
                 className={`inspiration-image-pin inspiration-image-${item.shape}`}
-                style={{ transform: `rotate(${((index % 5) - 2) * 1.1}deg)` }}
+                style={{ transform: `rotate(${((index % 5) - 2) * 1.4}deg)` }}
               >
                 <img src={item.src} alt="" />
                 {item.label ? <figcaption>{item.label}</figcaption> : null}
@@ -60,14 +70,13 @@ export default async function InspirationDetailPage({ params }: { params: Promis
 
         <section className="inspiration-detail-cta">
           <p>Love this look? Get a personalized plan to recreate it on your budget.</p>
-          <div className="cta-row">
-            <Link href="/areas" className="btn btn-ghost">
-              Browse areas
-            </Link>
-            <Link href="/blueprint" className="btn btn-accent">
-              Build My Blueprint
-            </Link>
-          </div>
+          <Link href="/blueprint" className="btn btn-accent">
+            Build My Blueprint
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14" />
+              <path d="m13 6 6 6-6 6" />
+            </svg>
+          </Link>
         </section>
       </div>
     </SiteShell>

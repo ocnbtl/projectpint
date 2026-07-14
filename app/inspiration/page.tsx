@@ -11,7 +11,7 @@ export default function InspirationPage() {
           <h1>Find your bathroom&apos;s style</h1>
           <p>
             Browse curated boards by style. Click any style to find more ideas, complete with visuals and the best
-            starting points to recreate them.
+            products to recreate them.
           </p>
         </div>
       </section>
@@ -37,7 +37,13 @@ export default function InspirationPage() {
                       <img key={`${style.slug}-${thumbIndex}`} src={src} alt="" />
                     ))}
                   </span>
-                  <em>Explore board</em>
+                  <em>
+                    Explore board
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M5 12h14" />
+                      <path d="m13 6 6 6-6 6" />
+                    </svg>
+                  </em>
                 </span>
               </Link>
             );
