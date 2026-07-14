@@ -10384,3 +10384,240 @@ h4 {
     white-space: nowrap;
   }
 }
+
+/* Figma Make fidelity: remaining public route measurements. */
+.home-photo-hero-overlay {
+  background: linear-gradient(90deg, rgba(44, 37, 32, 0.85), rgba(44, 37, 32, 0.6), transparent);
+}
+
+.site-main .home-photo-hero-copy {
+  justify-items: start;
+  padding-bottom: 6rem;
+  padding-top: 6rem;
+  text-align: left;
+  width: min(704px, 100%);
+}
+
+.home-photo-hero h1 {
+  font-size: clamp(1.7rem, 5vw, 3.5rem);
+  max-width: 100%;
+  width: 36rem;
+}
+
+.home-photo-hero p {
+  font-weight: 400;
+  line-height: 1.625;
+  margin: 0 0 2rem;
+  max-width: 100%;
+  width: 32rem;
+}
+
+.home-photo-hero .cta-row {
+  justify-content: flex-start;
+  margin-top: 0;
+}
+
+.home-photo-hero .btn {
+  font-size: 0.9375rem;
+  min-height: 52.5px;
+  padding-block: 0.84rem;
+  white-space: nowrap;
+}
+
+.area-detail-hero {
+  height: 50vh;
+  max-height: none;
+}
+
+.area-detail-copy {
+  padding-bottom: 3rem;
+}
+
+.area-detail-hero-shade {
+  height: 100%;
+  min-height: 100%;
+}
+
+.area-detail-hero h1 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  line-height: 1.25;
+}
+
+.area-detail-title-row {
+  gap: 1rem;
+}
+
+.back-link {
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.back-link svg {
+  fill: none;
+  height: 1rem;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+  width: 1rem;
+}
+
+.start-area-section .start-section-head {
+  justify-items: start;
+  margin-left: 0;
+  max-width: 42rem;
+  text-align: left;
+}
+
+.area-detail-hero + .site-page {
+  padding-top: 4rem;
+}
+
+.site-main > .article-body-card {
+  box-sizing: border-box;
+  font-size: 0.9375rem;
+  margin-inline: auto;
+  padding: 3rem 1.25rem;
+  width: min(700px, 100%);
+}
+
+.article-detail-photo-hero .back-link {
+  font-weight: 400;
+}
+
+.article-body-card h2 {
+  font-size: 1.375rem;
+}
+
+.article-body-tags {
+  margin-top: 3rem;
+  padding-top: 2rem;
+}
+
+.article-body-card .article-blueprint-cta {
+  align-items: start;
+  display: grid;
+  justify-content: stretch;
+  margin-top: 3rem;
+  padding: 1.5rem;
+}
+
+.article-body-card .article-blueprint-cta h2 {
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+}
+
+.article-body-card .article-blueprint-cta p {
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.article-body-card .article-blueprint-cta .btn {
+  justify-self: start;
+}
+
+.article-body-card .article-blueprint-cta .btn svg {
+  fill: none;
+  height: 1rem;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+  width: 1rem;
+}
+
+.article-related-section {
+  background: #fff;
+  width: 100%;
+}
+
+.site-main .article-next-section {
+  margin: 0 auto;
+  padding-bottom: 4rem;
+  padding-top: 4rem;
+  width: min(1400px, 100%);
+}
+
+.legal-figma-hero h1 {
+  line-height: 1.5;
+}
+
+.legal-figma-body {
+  padding-bottom: 4rem;
+  padding-top: 4rem;
+}
+
+.legal-prose {
+  max-width: 42rem;
+}
+
+@media (min-width: 768px) {
+  .home-photo-hero .btn {
+    padding-inline: 1.5rem;
+  }
+
+  .blog-index-hero h1 {
+    max-width: none;
+  }
+
+  .blog-intro-steps {
+    max-width: none;
+  }
+
+  .area-detail-hero + .site-page {
+    padding-top: 6rem;
+  }
+
+  .site-main > .article-body-card {
+    padding: 4rem 2rem;
+  }
+
+  .site-main .article-next-section {
+    padding-bottom: 6rem;
+    padding-top: 6rem;
+  }
+
+  .legal-figma-body {
+    padding-bottom: 6rem;
+    padding-top: 6rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .home-photo-hero-overlay {
+    background: linear-gradient(90deg, rgba(44, 37, 32, 0.85), rgba(44, 37, 32, 0.6), transparent);
+  }
+
+  .home-photo-hero-copy {
+    padding-bottom: 6rem;
+    padding-top: 6rem;
+  }
+
+  .home-photo-hero .cta-row {
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+  }
+
+  .home-photo-hero .btn {
+    padding-inline: 1rem;
+  }
+
+  .site-main .home-photo-hero-copy {
+    width: 100%;
+  }
+
+  .home-photo-hero h1,
+  .home-photo-hero p {
+    width: 100%;
+  }
+
+  .area-column-head {
+    align-items: flex-end;
+    flex-direction: row;
+  }
+
+  .legal-figma-hero .container {
+    padding-bottom: 4rem;
+    padding-top: 4rem;
+  }
+}

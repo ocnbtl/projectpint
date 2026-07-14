@@ -110,7 +110,7 @@ function buildInspirationItems(cover: string, seed: number, products: { name: st
 }
 
 export const areaVisuals: Record<ContentArea, { image: string; tagline: string; icon: string }> = {
-  Plants: { image: redesignImages.plants, tagline: "Greenery that thrives in your space", icon: "leaf" },
+  Plants: { image: redesignImages.plants, tagline: "Greenery that thrives in your space", icon: "sprout" },
   Mirror: { image: redesignImages.mirror, tagline: "The fastest visual upgrade", icon: "circle" },
   Storage: { image: redesignImages.storage, tagline: "Tame the clutter for good", icon: "box" },
   Lighting: { image: redesignImages.lighting, tagline: "Set the right mood instantly", icon: "sun" },

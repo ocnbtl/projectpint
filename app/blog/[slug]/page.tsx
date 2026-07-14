@@ -64,7 +64,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <div className="container article-detail-hero-inner">
           <div className="article-detail-copy">
             <Link href="/blog" className="back-link">
-              Back to Blog
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M19 12H5" />
+                <path d="m11 18-6-6 6-6" />
+              </svg>
+              <span>Back to Blog</span>
             </Link>
             <div className="article-detail-meta-row">
               {tags[0] ? (
@@ -91,42 +95,46 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </Link>
           ))}
         </div>
-      </article>
-      <section className="article-next-section">
         <div className="article-blueprint-cta">
-          <div>
-            <h2>Want a personalized upgrade plan?</h2>
-            <p>The Bathroom Upgrade Blueprint turns your budget, constraints, and style into a step-by-step plan.</p>
-          </div>
+          <h2>Want a personalized upgrade plan?</h2>
+          <p>The Bathroom Upgrade Blueprint gives you step-by-step recommendations for your budget.</p>
           <Link href="/blueprint" className="btn btn-accent">
-            Build My Blueprint
+            Learn About the Blueprint
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14" />
+              <path d="m13 6 6 6-6 6" />
+            </svg>
           </Link>
         </div>
-        {related.length > 0 ? (
-          <div className="article-related-block">
-            <div className="article-related-head">
-              <p className="areas-kicker">Keep Reading</p>
-              <h2>More from this area</h2>
-            </div>
-            <div className="article-related-grid">
-              {related.map((item) => {
-                const relatedArea = contentAreaForBlog(item);
-                return (
-                  <Link key={item.Blog_ID} href={`/blog/${item.Slug}`} className="article-related-card">
-                    <span className="article-related-media">
-                      <img src={areaVisuals[relatedArea].image} alt="" />
-                    </span>
-                    <span className="article-related-copy">
-                      <strong>{item.Title}</strong>
-                      <span>{excerptFromMarkdown(item.Draft_Markdown, 120)}</span>
-                    </span>
-                  </Link>
-                );
-              })}
+      </article>
+      {related.length > 0 ? (
+        <section className="article-related-section">
+          <div className="container article-next-section">
+            <div className="article-related-block">
+              <div className="article-related-head">
+                <p className="areas-kicker">Keep Reading</p>
+                <h2>More from this area</h2>
+              </div>
+              <div className="article-related-grid">
+                {related.map((item) => {
+                  const relatedArea = contentAreaForBlog(item);
+                  return (
+                    <Link key={item.Blog_ID} href={`/blog/${item.Slug}`} className="article-related-card">
+                      <span className="article-related-media">
+                        <img src={areaVisuals[relatedArea].image} alt="" />
+                      </span>
+                      <span className="article-related-copy">
+                        <strong>{item.Title}</strong>
+                        <span>{excerptFromMarkdown(item.Draft_Markdown, 120)}</span>
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        ) : null}
-      </section>
+        </section>
+      ) : null}
       {showAffiliateDisclosure ? <AffiliateDisclosure /> : null}
       <AdSlot enabled={blog.Ad_Enabled} slotId={`blog-${blog.Blog_ID}`} />
     </SiteShell>

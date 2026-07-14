@@ -10,6 +10,17 @@ function IconSvg({ children }: { children: ReactNode }) {
 
 export function AreaIcon({ name }: { name: string }) {
   switch (name) {
+    case "sprout":
+      return (
+        <IconSvg>
+          <path d="M7 20h10" />
+          <path d="M10 20c5.5-2.5.8-6.4 3-10" />
+          <path d="M9.5 9.4c1.1.8 1.8 2.2 2 3.6" />
+          <path d="M14.1 6.5c-1 1.3-1.6 3-1.5 4.7" />
+          <path d="M14 10a4 4 0 0 0 4-4c-2.8 0-4 1.4-4 4Z" />
+          <path d="M6 9c2.8 0 5 2.2 5 5-2.8 0-5-2.2-5-5Z" />
+        </IconSvg>
+      );
     case "leaf":
       return (
         <IconSvg>

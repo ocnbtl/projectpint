@@ -71,7 +71,11 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
         <div className="area-detail-hero-shade">
           <div className="container area-detail-copy">
             <Link href="/areas" className="back-link">
-              All Areas
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M19 12H5" />
+                <path d="m11 18-6-6 6-6" />
+              </svg>
+              <span>All Areas</span>
             </Link>
             <div className="area-detail-title-row">
               <span className="area-icon-bubble area-icon-bubble-large">
