@@ -12,6 +12,26 @@ import { tagPath } from "../../../lib/tags";
 
 export const dynamic = "force-dynamic";
 
+function ClockIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 7.5v5l3.5 2" />
+    </svg>
+  );
+}
+
+function formatPublishedDate(value: string): string | null {
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  }).format(date);
+}
+
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const blogs = await readBlogs();
@@ -30,6 +50,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const tags = tagsForBlog(blog);
   const area = contentAreaForBlog(blog);
   const image = areaVisuals[area].image;
+  const publishedDate = formatPublishedDate(blog.Published_At);
   const publicBlogs = blogs.filter((row) => row.Status === "published");
   const relatedSource = publicBlogs.length > 0 ? publicBlogs : blogs;
   const related = relatedSource
@@ -45,19 +66,19 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <Link href="/blog" className="back-link">
               Back to Blog
             </Link>
-            <p className="article-detail-kicker">Evergreen Article</p>
-            <div className="tag-list article-tag-list">
-              {tags.map((tag) => (
-                <Link key={`${blog.Blog_ID}-${tag}`} href={tagPath(tag)} className="tag tag-link">
-                  {tag}
+            <div className="article-detail-meta-row">
+              {tags[0] ? (
+                <Link href={tagPath(tags[0])} className="tag tag-link">
+                  {tags[0]}
                 </Link>
-              ))}
+              ) : null}
+              <span className="article-detail-meta-item">
+                <ClockIcon />
+                {readTimeMinutes} min read
+              </span>
+              {publishedDate ? <time dateTime={blog.Published_At}>{publishedDate}</time> : null}
             </div>
             <h1>{titleBlock?.text ?? blog.Title}</h1>
-            <span className="article-readtime-callout">
-              <span className="article-readtime-kicker">Reading time</span>
-              <strong>{readTimeMinutes} min read</strong>
-            </span>
           </div>
         </div>
       </section>
