@@ -2,9 +2,9 @@
 
 Date: 2026-07-16
 
-Local release candidate base: `0cda699fd90ed56c299561ffca99b2ac0c5dfd9e` plus the changes in this campaign
+Implementation commit: `ff4629127497141fc419543f9a74dc1de690c09b` plus the evidence-only release record update
 
-Production release status: **BLOCKED** until the two reviewed Supabase migrations are explicitly approved and applied
+Production release status: **PRE-DEPLOYMENT CONDITIONAL GO**; production deployment and live verification remain pending
 
 ## Design source
 
@@ -54,8 +54,8 @@ Status meanings:
 | `/admin/blogs/new`, `/admin/blogs/[id]` | Validation, generated/duplicate slug, save/readback, durable feedback, media rights, SEO, preview, publish, conflict, reload, restore, unpublish, unsaved changes | PASS | Disposable local `BLOG_*` fixtures proved snapshot isolation and persisted readback. |
 | `/admin/guides` | Index, search/filter/sort/empty/data states, responsive table | PASS | Published-only public selector and focused editor navigation verified. |
 | `/admin/guides/new`, `/admin/guides/[id]` | Same full editorial lifecycle as blogs, including publication date | PASS | Disposable local `GUIDE_*` fixture proved the workflow. |
-| `/admin/inspiration` | Index, keyboard-scrollable responsive table, empty/data states | PASS locally / BLOCKED in production | UI and local persistence pass. Production writes require `inspiration_evergreen` to be created by the pending migration. |
-| `/admin/inspiration/new`, `/admin/inspiration/[id]` | Validation, save/readback, media rights, SEO, preview, publish, conflict, restore, unpublish, unsaved changes | PASS locally / BLOCKED in production | Disposable local `INSP_*` fixture proved the workflow without production writes. |
+| `/admin/inspiration` | Index, keyboard-scrollable responsive table, empty/data states | PASS | UI/local persistence pass; production `inspiration_evergreen` exists empty with the intended server-only boundary. |
+| `/admin/inspiration/new`, `/admin/inspiration/[id]` | Validation, save/readback, media rights, SEO, preview, publish, conflict, restore, unpublish, unsaved changes | PASS | Disposable local `INSP_*` fixture proved the workflow; transactional production service-role CRUD passed and rolled back cleanly. |
 | `/admin/preview/[kind]/[id]`, kinds `blogs`, `guides`, `inspiration` | Authenticated saved-draft preview, semantic hero, noindex, exactly one H1 | PASS | All three preview types resolve and strip a duplicate leading Markdown H1. |
 | `/admin/emails` | Desktop/tablet/mobile, existing table operations and empty/data states | PASS | Existing content-engine behavior preserved. No real email was sent. |
 | `/admin/users` | Desktop/tablet/mobile, search/sort and read-only customer review | PASS | Customer mutation controls were intentionally removed from this surface. |
@@ -79,7 +79,7 @@ There are no discovered dedicated media-library, author, taxonomy, settings, or 
 | `GET|POST /api/admin/command-center/[tab]` | PASS | Exact table schemas, optimistic revisions, read-only customers and bounded writes covered by tests. |
 | `POST /api/admin/command-center/ops` | PASS | Action-specific schemas, confirmations and allowed operations covered by tests. |
 | `GET|POST /api/admin/editorial/[kind]` | PASS | Blogs/guides validation, conflicts and snapshot publication covered by tests and browser workflows. |
-| `GET|POST /api/admin/inspiration` | PASS locally / BLOCKED in production | Full local workflow passes; production table migration remains unapplied. |
+| `GET|POST /api/admin/inspiration` | PASS | Full local workflow passes; production schema/access exists and transactional service-role CRUD passed without retained data. |
 | `GET|POST /api/admin/sheets/[tab]` | PASS | Authenticated legacy endpoint intentionally returns 410. |
 | `/robots.txt` | PASS | Valid output; public routes allowed and `/admin`/`/api/admin` disallowed. |
 | `/sitemap.xml` | PASS | Published-only public routes, approved micro guides, canonical areas and inspiration included; drafts/admin excluded. |
@@ -102,14 +102,15 @@ There are no discovered dedicated media-library, author, taxonomy, settings, or 
 | Representative Axe serious/critical scan | PASS | Composite public matrix and representative authenticated admin routes are clean. |
 | Media loading, crop, alt, caption, credit and rights gate | PASS | `SafeImage` restricts optimizer use to exact approved Unsplash paths; publication requires approved hero rights when a social image is used. |
 
-## Approved exceptions and release blockers
+## Approved exceptions and accepted release conditions
 
 1. **APPROVED EXCEPTION — design freshness:** hosted Figma freshness is `UNKNOWN / NOT CONFIRMED`; Version 15 and the checked-in export are the strongest available source.
 2. **APPROVED EXCEPTION — Plant Picker behavior:** humidity-based priority is intentionally preserved even though the prototype did not model it reliably.
 3. **APPROVED EXCEPTION — dynamic copy:** data-backed blog, guide, tag and managed-inspiration copy cannot have fixed-copy Figma parity; their shared templates, wrapping, media and representative states are the parity target.
-4. **BLOCKED RELEASE RISK — dependency advisory:** `next@15.5.18` resolves `postcss@8.4.31`, producing two moderate `GHSA-qx2v-qp2m-jg93` audit findings. `npm audit` offers only a breaking forced change to `next@9.3.3`; that unsafe remediation is not used, and owner disposition is still required.
-5. **NOT VERIFIED RELEASE RISK — login throttling durability:** the application limiter is in-memory. The currently configured Vercel firewall/rate-limit policy could not be independently read through the available integration and remains `UNKNOWN / NOT CONFIRMED`; no owner acceptance has been inferred.
-6. **BLOCKED — production schema/security:** `20260716_inspiration_evergreen.sql` and `20260716_release_security_hardening.sql` are reviewed and contain no editorial row writes or deletes, but they alter production schema/RLS/privileges and have not received the explicit risk-specific approval required to apply them. Until applied, managed Inspiration is not production-ready and the legacy `app_storage_tabs` browser-access posture remains unresolved.
+4. **ACCEPTED CONDITION — dependency advisory:** `next@15.5.18` resolves `postcss@8.4.31`, producing two moderate `GHSA-qx2v-qp2m-jg93` findings and zero high/critical findings. `npm audit` offers only a breaking forced change to `next@9.3.3`; the owner explicitly accepted deferral until a compatible upstream fix exists.
+5. **ACCEPTED CONDITIONAL RISK — distributed limiting:** the application limiter is in-memory. Authenticated Vercel Firewall configuration was unavailable, no paid or potentially billable rule was guessed, no active Cloudflare-proxied production hostname was found, and the direct `*.vercel.app` aliases remain exposed. The owner accepted this for the current low-traffic release with review before higher-risk public writes or material growth and no later than 2026-10-16.
+6. **RESOLVED — production schema/security:** `20260716_inspiration_evergreen.sql` and `20260716_release_security_hardening.sql` were applied in order as migrations `20260716093525` and `20260716093727`. Counts/hashes were preserved, browser roles were denied, service-role access passed, function search paths were fixed, and Supabase advisors returned no warning/error/high/critical finding.
+7. **PROVIDER EVIDENCE — Cloudflare:** `diyesu.com` uses Cloudflare nameservers, but the apex has no A/AAAA record and `www` is NXDOMAIN. It is not an active proxied production hostname, no Cloudflare WAF/bot/rate protection covers the current release, and the public Vercel aliases remain directly accessible.
 
 ## Evidence index
 
@@ -121,5 +122,8 @@ There are no discovered dedicated media-library, author, taxonomy, settings, or 
 - `output/playwright/final-admin-matrix/`
 - `output/playwright/final-admin-matrix/post-fix-final/`
 - `output/playwright/final-admin-matrix/post-fix-final-3033/` (13/13 true-404, contrast, Axe and diagnostic checks)
+- `docs/verification/production-security-evidence-2026-07-16.md`
+- `docs/verification/supabase-release-runbook-2026-07-16.md`
+- `docs/verification/predeployment-gate-2026-07-16.md`
 
 These generated browser artifacts are intentionally untracked and must not be staged. The parity matrix itself is source documentation and should be committed with the implementation.
