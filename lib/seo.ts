@@ -4,6 +4,7 @@ import { redesignImages } from "./redesign-data.ts";
 export const SITE_NAME = "Diyesu Decor";
 export const SITE_DESCRIPTION = "Renter-friendly bathroom DIY systems for budget-first households.";
 export const PRODUCTION_SITE_ORIGIN = "https://projectpint.vercel.app";
+const VERIFIED_SITE_ORIGINS = new Set([PRODUCTION_SITE_ORIGIN]);
 
 export function resolveSiteOrigin(configured = process.env.NEXT_PUBLIC_SITE_URL): string {
   const candidate = configured?.trim();
@@ -15,7 +16,9 @@ export function resolveSiteOrigin(configured = process.env.NEXT_PUBLIC_SITE_URL)
     if (url.hostname === "localhost" || url.hostname === "127.0.0.1" || url.hostname.endsWith(".example.com")) {
       return PRODUCTION_SITE_ORIGIN;
     }
-    return url.origin;
+    // Canonicals must never point at an intended custom domain before its
+    // Vercel attachment, public DNS, and TLS have been verified.
+    return VERIFIED_SITE_ORIGINS.has(url.origin) ? url.origin : PRODUCTION_SITE_ORIGIN;
   } catch {
     return PRODUCTION_SITE_ORIGIN;
   }

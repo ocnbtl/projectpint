@@ -22,7 +22,7 @@ Set these in `.env.local`:
 - `STORAGE_MODE` (`supabase` for hosted persistence, `local` for local fallback)
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `NEXT_PUBLIC_SITE_URL`
+- `NEXT_PUBLIC_SITE_URL` (keep `https://projectpint.vercel.app` until a custom domain is attached to Vercel and its public DNS/TLS are verified)
 - Klaviyo vars if using live email sync
 
 ## 4) Change admin password (any time)

@@ -66,6 +66,8 @@ test("SEO metadata uses the verified production alias and can explicitly disable
   assert.equal(resolveSiteOrigin("not a url"), PRODUCTION_SITE_ORIGIN);
   assert.equal(resolveSiteOrigin("http://localhost:3000"), PRODUCTION_SITE_ORIGIN);
   assert.equal(resolveSiteOrigin("https://projectpint.example.com"), PRODUCTION_SITE_ORIGIN);
+  assert.equal(resolveSiteOrigin("https://diyesu.com"), PRODUCTION_SITE_ORIGIN);
+  assert.equal(resolveSiteOrigin(PRODUCTION_SITE_ORIGIN), PRODUCTION_SITE_ORIGIN);
 
   const metadata = pageMetadata({
     title: "Private preview",

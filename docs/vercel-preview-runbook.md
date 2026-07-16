@@ -35,7 +35,7 @@ Notes:
 - Keep secrets only in Vercel env settings, never in repo.
 - `ADMIN_SESSION_SECRET` should be a long random string, separate from `ADMIN_PASSWORD`.
 - `SUPABASE_SERVICE_ROLE_KEY` must stay server-only. Do not expose it as a public env var.
-- For preview URLs, set `NEXT_PUBLIC_SITE_URL` to the active Vercel preview URL if needed.
+- Keep `NEXT_PUBLIC_SITE_URL=https://projectpint.vercel.app` so previews and production use the verified canonical origin. Change it only after a custom domain is attached to Vercel and its public DNS/TLS are verified.
 
 ## 3) Trigger preview deploy
 - Push commits to GitHub.

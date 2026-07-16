@@ -9,9 +9,9 @@
 - **Risk level:** High; includes authentication, personal data, publishing workflows, and production schema/privilege changes
 - **Target/environment:** Vercel production project `prj_fATwa8oY5QLKCHOgRo5867S4vkZE`; Supabase production project `dlgwzvovucsaizxnyuut`
 - **Branch:** canonical `main`
-- **Commit/artifact:** Implementation commit `ff4629127497141fc419543f9a74dc1de690c09b` plus this evidence-only gate update; final immutable descendant must be verified after push
+- **Commit/artifact:** Release commit `d1de7e75ab8d00c4eb73a024183de0a5b9b16dd6` plus the bounded verified-canonical correction discovered during its first live smoke; final immutable descendant must be verified after push
 - **Domain:** `https://projectpint.vercel.app`
-- **Timestamp:** 2026-07-16 07:10 EDT
+- **Timestamp:** 2026-07-16 07:25 EDT
 
 ## Launch matrix
 
@@ -26,7 +26,7 @@
 | Visual fidelity | Public route/state parity at target widths | HIGH | PASSED | Final public screenshot matrix; breakpoint, motion, layering, crop, focus/pressed and reduced-motion checks | Design/build owner | Parity is limited to the named accessible Version 15 evidence. |
 | Visual fidelity | Admin shell, indexes, editors, previews and responsive states | HIGH | PASSED | Full admin matrix plus 1023/1024 shell and final 390/1440 branded 404 captures | Design/build owner | Admin extensions absent from Figma use the approved shell language. |
 | Accessibility | Structure, labels, contrast, keyboard/focus, dialogs, reduced motion | CRITICAL | PASSED | Composite public Axe matrix clean; representative admin Axe clean; Plant modal and admin drawer manually verified | Build owner | Automated checks do not replace future screen-reader user testing. |
-| SEO/discovery | Metadata, canonicals, JSON-LD, RSS, sitemap, robots, redirects, 404s | HIGH | PASSED | Build routes plus public system matrix; admin excluded from indexing | Build owner | Verify the new sitemap, robots, RSS and metadata live after deployment. |
+| SEO/discovery | Metadata, canonicals, JSON-LD, RSS, sitemap, robots, redirects, 404s | HIGH | PASSED | First live smoke exposed an inactive `diyesu.com` environment override; `resolveSiteOrigin` now accepts only the verified production alias, regression coverage passes, and the 34-page production build succeeds | Build owner | Verify canonical, sitemap, robots, RSS and structured metadata on the replacement deployment. |
 | Performance/resilience | Production build, route weights, images, motion work and layout stability | HIGH | PASSED | Next 15.5.18 build: 34 generated static pages; exact Unsplash optimization allowlist; no local overflow/unrevealed content | Build owner | Observe field/runtime behavior post-deploy. |
 | Security/privacy | Release diff input/auth/export/media/headers review | CRITICAL | PASSED | Bounded schemas, CSV neutralization, HTTPS validation, CSP/nosniff/frame/referrer/permissions headers, private admin JSON | Security reviewer | No critical code finding remains. |
 | Security/privacy | Production Supabase browser boundary | CRITICAL | PASSED | Migrations `20260716093525` and `20260716093727`; nine RLS-enabled tables; zero browser grants; direct negative tests returned `42501`; service-role transaction passed | Release operator | Recheck advisors and server-backed application reads after deployment. |
@@ -47,6 +47,7 @@
 - Completed the responsive authenticated admin shell, content indexes/editors/previews, real analytics states, safe operations and managed Inspiration workflow.
 - Added published-snapshot isolation, metadata envelopes, media-rights gates, duplicate-slug/conflict handling and unsaved-change protection.
 - Added sitemap/robots, canonical social metadata, structured data, RSS consistency, security headers and server-only review-pack access.
+- Prevented an inactive or unverified custom-domain environment override from becoming the live canonical origin; updated the environment contract and regression test.
 - Applied and verified the owner-approved production Inspiration and security-hardening migrations without changing editorial rows.
 - Created and verified a private targeted recovery package and guarded rollback dry-run.
 

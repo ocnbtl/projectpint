@@ -36,6 +36,7 @@ Post-migration Supabase security advisors returned only nine informational `rls_
 - If a free authenticated rule becomes safely available, the narrow target is exact method `POST` and path `/api/subscribe`, per source IP, at 8 requests per 10 minutes. This matches the sustained rate of the existing 12-per-15-minute application limit and does not touch admin, preview, deploy or monitoring traffic.
 - Cloudflare is authoritative DNS for `diyesu.com`, but neither the apex nor `www` currently resolves to the production application. No active proxied custom production hostname or applicable Cloudflare WAF/bot/rate-limit protection was verified.
 - The directly accessible `projectpint.vercel.app` and related Vercel aliases remain outside Cloudflare.
+- The first live deployment exposed `NEXT_PUBLIC_SITE_URL=https://diyesu.com` in metadata despite the absent DNS. The application now accepts only the verified `https://projectpint.vercel.app` origin for canonicals, sitemap, RSS and structured data. A custom domain must be attached to Vercel and pass public DNS/TLS verification before it is added to the verified-origin set.
 
 Owner disposition:
 
