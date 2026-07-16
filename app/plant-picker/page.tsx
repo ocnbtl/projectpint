@@ -1,5 +1,14 @@
 import { PlantPickerTool } from "../../components/PlantPickerTool";
 import { SiteShell } from "../../components/SiteShell";
+import { areaVisuals } from "../../lib/redesign-data";
+import { pageMetadata } from "../../lib/seo";
+
+export const metadata = pageMetadata({
+  title: "Bathroom Plant Picker",
+  description: "Answer three quick questions to find bathroom plants that fit your light, humidity, and available space.",
+  path: "/plant-picker",
+  image: areaVisuals.Plants.image
+});
 
 export default function PlantPickerPage() {
   return (

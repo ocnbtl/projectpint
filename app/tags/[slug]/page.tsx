@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { SafeImage } from "../../../components/SafeImage";
 import { SiteShell } from "../../../components/SiteShell";
 import { contentAreaLabel, contentAreaSlug } from "../../../lib/constants";
 import { estimateReadTimeMinutes, excerptFromMarkdown } from "../../../lib/content-render";
 import { areaVisuals } from "../../../lib/redesign-data";
+import { pageMetadata } from "../../../lib/seo";
 import { contentAreaForBlog, findTagArchiveBySlug, tagsForBlog } from "../../../lib/site-data";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +21,21 @@ function displayTagLabel(label: string) {
       return `${lower.charAt(0).toUpperCase()}${lower.slice(1)}`;
     })
     .join(" ");
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const archive = await findTagArchiveBySlug(slug);
+  if (!archive) return { robots: { index: false, follow: false } };
+  const linkedArea = archive.blogs[0] ? contentAreaForBlog(archive.blogs[0]) : archive.guides[0]?.area ?? "DIY";
+  const label = displayTagLabel(archive.label);
+
+  return pageMetadata({
+    title: `${label} Bathroom Articles`,
+    description: `Browse published Diyesu Decor articles and guides tagged ${label}.`,
+    path: `/tags/${slug}`,
+    image: areaVisuals[linkedArea].image
+  });
 }
 
 export default async function TagArchivePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -60,7 +77,7 @@ export default async function TagArchivePage({ params }: { params: Promise<{ slu
                   <Link key={blog.Blog_ID} href={`/blog/${blog.Slug}`} className="blog-card-link">
                     <article className="blog-image-card">
                       <div className="blog-image-card-media">
-                        <img src={areaVisuals[area].image} alt="" />
+                        <SafeImage src={areaVisuals[area].image} alt="" />
                       </div>
                       <div className="blog-image-card-copy">
                         <div className="blog-card-meta">
@@ -68,7 +85,7 @@ export default async function TagArchivePage({ params }: { params: Promise<{ slu
                           <span className="blog-read-time">{estimateReadTimeMinutes(blog.Draft_Markdown)} min</span>
                         </div>
                         <h2>{blog.Title}</h2>
-                        <p>{excerptFromMarkdown(blog.Draft_Markdown, 160)}</p>
+                        <p>{blog.editorial.excerpt || excerptFromMarkdown(blog.Draft_Markdown, 160)}</p>
                         <div className="tag-list blog-tag-list tag-list-compact">
                           {tagsForBlog(blog)
                             .slice(0, 3)
@@ -100,7 +117,7 @@ export default async function TagArchivePage({ params }: { params: Promise<{ slu
                 <Link key={guide.Guide_ID} href={`/guides/${guide.slug}`} className="blog-card-link">
                   <article className="blog-image-card">
                     <div className="blog-image-card-media">
-                      <img src={areaVisuals[guide.area].image} alt="" />
+                      <SafeImage src={areaVisuals[guide.area].image} alt="" />
                     </div>
                     <div className="blog-image-card-copy">
                       <div className="blog-card-meta">

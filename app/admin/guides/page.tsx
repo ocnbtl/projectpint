@@ -1,4 +1,5 @@
 import { AdminFrame } from "../../../components/admin/AdminFrame";
+import Link from "next/link";
 import { AdminGenerateDisclosure } from "../../../components/admin/AdminGenerateDisclosure";
 import { AdminSheetWorkspace } from "../../../components/admin/AdminSheetWorkspace";
 import { AreaCountsAction } from "../../../components/admin/AreaCountsAction";
@@ -26,6 +27,7 @@ export default async function AdminGuidesPage() {
       >
         <div className="admin-action-stack admin-figma-action-stack">
           <div className="admin-ops-grid">
+            <Link href="/admin/guides/new" className="btn btn-accent">New guide</Link>
             <AdminGenerateDisclosure label="Generate New Guides">
               <AreaCountsAction action="generate_new_guides" label="Generate new guides" mode="checkbox" />
             </AdminGenerateDisclosure>

@@ -3,11 +3,13 @@ import Link from "next/link";
 import { AdSlot } from "../../../components/AdSlot";
 import { AffiliateDisclosure } from "../../../components/AffiliateDisclosure";
 import { MarkdownArticle } from "../../../components/MarkdownArticle";
+import { SafeImage } from "../../../components/SafeImage";
 import { SiteShell } from "../../../components/SiteShell";
 import { shouldShowAffiliateDisclosure } from "../../../lib/affiliate";
 import { estimateReadTimeMinutes, excerptFromMarkdown, markdownBlocks } from "../../../lib/content-render";
 import { areaVisuals } from "../../../lib/redesign-data";
-import { contentAreaForBlog, readBlogs, tagsForBlog } from "../../../lib/site-data";
+import { contentAreaForBlog, readPublishedBlogs, tagsForBlog } from "../../../lib/site-data";
+import { articleJsonLd, jsonLd, pageMetadata } from "../../../lib/seo";
 import { tagPath } from "../../../lib/tags";
 
 export const dynamic = "force-dynamic";
@@ -32,9 +34,34 @@ function formatPublishedDate(value: string): string | null {
   }).format(date);
 }
 
+function validPublishedTime(value: string): string | undefined {
+  if (!value) return undefined;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const blogs = await readPublishedBlogs();
+  const blog = blogs.find((item) => item.Slug === slug);
+  if (!blog) return { robots: { index: false, follow: false } };
+
+  const area = contentAreaForBlog(blog);
+  const approvedHero = blog.editorial.heroRights === "approved" ? blog.editorial.heroImageUrl : "";
+  return pageMetadata({
+    title: blog.editorial.seoTitle || blog.Title,
+    description: blog.editorial.seoDescription || blog.editorial.excerpt || excerptFromMarkdown(blog.Draft_Markdown, 155),
+    path: blog.editorial.canonicalUrl || `/blog/${blog.Slug}`,
+    image: blog.editorial.socialImageUrl || approvedHero || areaVisuals[area].image,
+    type: "article",
+    publishedTime: validPublishedTime(blog.Published_At),
+    indexable: blog.editorial.indexable
+  });
+}
+
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const blogs = await readBlogs();
+  const blogs = await readPublishedBlogs();
   const blog = blogs.find((b) => b.Slug === slug);
   if (!blog) return notFound();
 
@@ -46,21 +73,33 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const blocks = markdownBlocks(blog.Draft_Markdown);
   const readTimeMinutes = estimateReadTimeMinutes(blog.Draft_Markdown);
   const titleBlock = blocks[0]?.type === "h1" ? blocks[0] : null;
+  const articleTitle = titleBlock?.text ?? blog.Title;
+  const articleDescription = blog.editorial.excerpt || excerptFromMarkdown(blog.Draft_Markdown, 155);
   const contentBlocks = titleBlock ? blocks.slice(1) : blocks;
   const tags = tagsForBlog(blog);
   const area = contentAreaForBlog(blog);
-  const image = areaVisuals[area].image;
+  const approvedHero = blog.editorial.heroRights === "approved" ? blog.editorial.heroImageUrl : "";
+  const image = approvedHero || areaVisuals[area].image;
+  const imageAlt = approvedHero ? blog.editorial.heroAlt : "";
   const publishedDate = formatPublishedDate(blog.Published_At);
-  const publicBlogs = blogs.filter((row) => row.Status === "published");
-  const relatedSource = publicBlogs.length > 0 ? publicBlogs : blogs;
-  const related = relatedSource
+  const related = blogs
     .filter((row) => row.Blog_ID !== blog.Blog_ID)
     .sort((a, b) => Number(contentAreaForBlog(b) === area) - Number(contentAreaForBlog(a) === area))
     .slice(0, 2);
+  const structuredArticle = articleJsonLd({
+    title: articleTitle,
+    description: articleDescription,
+    path: blog.editorial.canonicalUrl || `/blog/${blog.Slug}`,
+    image,
+    publishedTime: validPublishedTime(blog.Published_At),
+    authorName: blog.editorial.authorName
+  });
 
   return (
     <SiteShell>
-      <section className="article-detail-hero article-detail-photo-hero" style={{ backgroundImage: `url(${image})` }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(structuredArticle) }} />
+      <section className="article-detail-hero article-detail-photo-hero">
+        <SafeImage className="article-detail-hero-image" src={image} alt={imageAlt} priority />
         <div className="container article-detail-hero-inner">
           <div className="article-detail-copy">
             <Link href="/blog" className="back-link">
@@ -81,11 +120,19 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 {readTimeMinutes} min read
               </span>
               {publishedDate ? <time dateTime={blog.Published_At}>{publishedDate}</time> : null}
+              {blog.editorial.authorName ? <span>By {blog.editorial.authorName}</span> : null}
             </div>
-            <h1>{titleBlock?.text ?? blog.Title}</h1>
+            <h1>{articleTitle}</h1>
           </div>
         </div>
       </section>
+      {approvedHero && (blog.editorial.heroCaption || blog.editorial.heroCredit) ? (
+        <p className="article-hero-credit container">
+          {blog.editorial.heroCaption}
+          {blog.editorial.heroCaption && blog.editorial.heroCredit ? " · " : ""}
+          {blog.editorial.heroCredit}
+        </p>
+      ) : null}
       <article className="article-body-card">
         <MarkdownArticle blocks={contentBlocks} slug={slug} />
         <div className="article-body-tags" aria-label="Article tags">
@@ -121,11 +168,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   return (
                     <Link key={item.Blog_ID} href={`/blog/${item.Slug}`} className="article-related-card">
                       <span className="article-related-media">
-                        <img src={areaVisuals[relatedArea].image} alt="" />
+                        <SafeImage src={areaVisuals[relatedArea].image} alt="" />
                       </span>
                       <span className="article-related-copy">
                         <strong>{item.Title}</strong>
-                        <span>{excerptFromMarkdown(item.Draft_Markdown, 120)}</span>
+                        <span>{item.editorial.excerpt || excerptFromMarkdown(item.Draft_Markdown, 120)}</span>
                       </span>
                     </Link>
                   );

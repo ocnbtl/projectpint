@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AreaIcon } from "../../../components/AreaIcon";
+import { SafeImage } from "../../../components/SafeImage";
 import { SiteShell } from "../../../components/SiteShell";
 import { estimateReadTimeMinutes, excerptFromMarkdown } from "../../../lib/content-render";
 import { areaVisuals, inspirationStyles } from "../../../lib/redesign-data";
-import { blogMatchesArea, findGuidesForHub, hubs, readBlogs } from "../../../lib/site-data";
+import { pageMetadata } from "../../../lib/seo";
+import { blogMatchesArea, findGuidesForHub, hubs, readPublishedBlogs } from "../../../lib/site-data";
 
 export const dynamic = "force-dynamic";
 
@@ -19,23 +21,34 @@ const STYLE_BY_AREA: Record<string, string[]> = {
   "extreme-budget": ["boho-earth-tones", "warm-editorial"]
 };
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const hub = hubs.find((item) => item.slug === slug);
+  if (!hub) return { robots: { index: false, follow: false } };
+
+  return pageMetadata({
+    title: `${hub.title} Bathroom Ideas`,
+    description: `${hub.description} ${hub.outcome}`,
+    path: `/areas/${hub.slug}`,
+    image: areaVisuals[hub.area].image
+  });
+}
+
 export default async function HubPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const hub = hubs.find((h) => h.slug === slug);
   if (!hub) return notFound();
 
   const visual = areaVisuals[hub.area];
-  const blogs = await readBlogs();
-  const publishedBlogs = blogs.filter((blog) => blog.Status === "published");
-  const blogSource = publishedBlogs.length > 0 ? publishedBlogs : blogs;
-  const relatedBlogs = blogSource.filter((blog) => blogMatchesArea(blog, hub.area)).slice(0, 4);
+  const blogs = await readPublishedBlogs();
+  const relatedBlogs = blogs.filter((blog) => blogMatchesArea(blog, hub.area)).slice(0, 4);
   const guides = await findGuidesForHub(hub, 3);
   const resourceCards = [
     ...relatedBlogs.map((blog) => ({
       id: blog.Blog_ID,
       href: `/blog/${blog.Slug}`,
       title: blog.Title,
-      excerpt: excerptFromMarkdown(blog.Draft_Markdown, 120),
+      excerpt: blog.editorial.excerpt || excerptFromMarkdown(blog.Draft_Markdown, 120),
       readTime: estimateReadTimeMinutes(blog.Draft_Markdown),
       image: visual.image,
       type: "Article"
@@ -112,7 +125,7 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
                   {resourceCards.map((resource) => (
                     <Link key={resource.id} href={resource.href} className="area-resource-card">
                       <span className="area-resource-media">
-                        <img src={resource.image} alt={`${resource.title} article`} loading="lazy" decoding="async" />
+                        <SafeImage src={resource.image} alt={`${resource.title} article`} loading="lazy" decoding="async" />
                       </span>
                       <span className="area-resource-meta">
                         <span>{resource.type}</span>
@@ -144,7 +157,7 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
               <div className="area-inspiration-masonry">
                 {inspirationImages.map((image, index) => (
                   <Link key={`${image}-${index}`} href="/inspiration" className="area-inspiration-image">
-                    <img src={image} alt={`${hub.title} bathroom inspiration`} loading="lazy" decoding="async" />
+                    <SafeImage src={image} alt={`${hub.title} bathroom inspiration`} loading="lazy" decoding="async" />
                   </Link>
                 ))}
               </div>

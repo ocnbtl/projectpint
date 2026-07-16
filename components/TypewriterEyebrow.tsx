@@ -33,7 +33,8 @@ export function TypewriterEyebrow({ text }: { text: string }) {
   }, [text]);
 
   return (
-    <span className="typewriter-text" aria-label={text}>
+    <span className="typewriter-text">
+      <span className="screen-reader-text">{text}</span>
       <span aria-hidden="true">{visibleText}</span>
       <span className="typewriter-cursor" aria-hidden="true" />
     </span>

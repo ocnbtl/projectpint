@@ -198,7 +198,7 @@ export default async function AdminPage() {
                 icon={action.icon}
               />
             ))}
-            <Link href="/review_pack.html" className="btn btn-ghost admin-home-action-link">
+            <Link href="/api/admin/review-pack" className="btn btn-ghost admin-home-action-link">
               <span className="admin-action-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
                   <path d="M12 4v10" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 interface OpsButtonProps {
   action: string;
@@ -8,7 +8,25 @@ interface OpsButtonProps {
   payload?: Record<string, unknown>;
   variant?: "accent" | "ghost";
   icon?: "plus" | "refresh" | "link" | "play" | "download";
+  confirmMessage?: string;
 }
+
+const CONFIRM_ACTIONS = new Set([
+  "generate_new_pins",
+  "generate_overlay_cta",
+  "prepare_approved_pins_for_export",
+  "generate_email_subjects",
+  "generate_blog_titles_keywords",
+  "refresh_blog_quality_checks",
+  "update_blog_related_pins",
+  "generate_guide_titles_keywords",
+  "refresh_guide_quality_checks",
+  "update_guide_related_pins",
+  "publish_approved_blogs",
+  "publish_approved_guides",
+  "refresh_customers",
+  "update_product_stats"
+]);
 
 function summarizeResult(result: Record<string, unknown> | undefined): string {
   if (!result) return "Done.";
@@ -62,11 +80,22 @@ function ActionIcon({ name }: { name: NonNullable<OpsButtonProps["icon"]> }) {
   }
 }
 
-export function OpsButton({ action, label, payload, variant = "accent", icon }: OpsButtonProps) {
+export function OpsButton({ action, label, payload, variant = "accent", icon, confirmMessage }: OpsButtonProps) {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
+  const statusId = useId();
 
   async function run() {
+    const confirmation = confirmMessage ?? (
+      CONFIRM_ACTIONS.has(action)
+        ? `${label} will update stored command-center data. Continue?`
+        : ""
+    );
+    if (confirmation && !window.confirm(confirmation)) {
+      setStatus("Action cancelled. No changes were made.");
+      return;
+    }
+
     try {
       setLoading(true);
       setStatus("Running...");
@@ -81,7 +110,7 @@ export function OpsButton({ action, label, payload, variant = "accent", icon }: 
         return;
       }
       setStatus(summarizeResult(body.result));
-      window.location.reload();
+      window.setTimeout(() => window.location.reload(), 900);
     } catch {
       setStatus("Failed: network error.");
     } finally {
@@ -96,11 +125,22 @@ export function OpsButton({ action, label, payload, variant = "accent", icon }: 
         className={`btn ${variant === "accent" ? "btn-accent" : "btn-ghost"} admin-action-button`}
         onClick={run}
         disabled={loading}
+        aria-describedby={status ? statusId : undefined}
       >
         {icon ? <span className="admin-action-icon"><ActionIcon name={icon} /></span> : null}
         {loading ? "Running..." : label}
       </button>
-      {status ? <p className="small admin-inline-status">{status}</p> : null}
+      {status ? (
+        <p
+          id={statusId}
+          className="small admin-inline-status"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {status}
+        </p>
+      ) : null}
     </div>
   );
 }

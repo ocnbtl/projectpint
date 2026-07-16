@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { COMMAND_CENTER_CONTENT_AREAS } from "../../lib/constants";
+import {
+  COMMAND_CENTER_CONTENT_AREAS,
+  MAX_AREA_GENERATOR_COUNT,
+  MAX_AREA_GENERATOR_TOTAL
+} from "../../lib/constants";
 
 interface AreaCountsActionProps {
   action: string;
@@ -25,10 +29,14 @@ export function AreaCountsAction({ action, label, mode = "counts" }: AreaCountsA
   );
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
+  const requestedTotal = Object.values(counts).reduce((total, count) => total + count, 0);
 
   function setCount(area: string, value: string) {
     const parsed = Number(value);
-    setCounts((current) => ({ ...current, [area]: Number.isFinite(parsed) && parsed >= 0 ? parsed : 0 }));
+    const bounded = Number.isFinite(parsed)
+      ? Math.min(MAX_AREA_GENERATOR_COUNT, Math.max(0, Math.floor(parsed)))
+      : 0;
+    setCounts((current) => ({ ...current, [area]: bounded }));
   }
 
   function setChecked(area: string, checked: boolean) {
@@ -36,6 +44,10 @@ export function AreaCountsAction({ action, label, mode = "counts" }: AreaCountsA
   }
 
   async function submit() {
+    if (mode === "counts" && requestedTotal > MAX_AREA_GENERATOR_TOTAL) {
+      setStatus(`Choose no more than ${MAX_AREA_GENERATOR_TOTAL} total rows per batch.`);
+      return;
+    }
     try {
       setLoading(true);
       setStatus("Running...");
@@ -65,7 +77,7 @@ export function AreaCountsAction({ action, label, mode = "counts" }: AreaCountsA
         <p className="small">
           {mode === "checkbox"
             ? "Select the areas you want included in the next draft batch."
-            : "Set the number of rows you want generated for each area."}
+            : `Set up to ${MAX_AREA_GENERATOR_COUNT} rows per area and ${MAX_AREA_GENERATOR_TOTAL} total per batch.`}
         </p>
       </div>
       <div className="admin-area-grid">
@@ -82,6 +94,7 @@ export function AreaCountsAction({ action, label, mode = "counts" }: AreaCountsA
               <input
                 type="number"
                 min={0}
+                max={MAX_AREA_GENERATOR_COUNT}
                 step={1}
                 value={counts[area] ?? 0}
                 onChange={(event) => setCount(area, event.target.value)}
@@ -90,7 +103,12 @@ export function AreaCountsAction({ action, label, mode = "counts" }: AreaCountsA
           </label>
         ))}
       </div>
-      <button type="button" className="btn btn-accent" onClick={submit} disabled={loading}>
+      <button
+        type="button"
+        className="btn btn-accent"
+        onClick={submit}
+        disabled={loading || (mode === "counts" && requestedTotal > MAX_AREA_GENERATOR_TOTAL)}
+      >
         {loading ? "Running..." : label}
       </button>
       {status ? <p className="small admin-inline-status">{status}</p> : null}

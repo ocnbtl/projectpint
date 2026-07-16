@@ -26,7 +26,11 @@ export function writeText(filePath: string, value: string): void {
 
 export function toCsv<T extends Record<string, unknown>>(rows: T[], headers: string[]): string {
   const esc = (v: unknown) => {
-    const value = String(v ?? "").replace(/"/g, '""');
+    const rawValue = String(v ?? "");
+    const spreadsheetSafeValue = /^[\t\r\n]/.test(rawValue) || /^[ \t\r\n]*[=+\-@]/.test(rawValue)
+      ? `'${rawValue}`
+      : rawValue;
+    const value = spreadsheetSafeValue.replace(/"/g, '""');
     return /[",\n]/.test(value) ? `"${value}"` : value;
   };
   const head = headers.join(",");

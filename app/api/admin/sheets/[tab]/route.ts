@@ -1,18 +1,20 @@
 import { NextResponse } from "next/server";
 import { isAdminSessionValid } from "../../../../../lib/admin-auth";
+import { PRIVATE_NO_STORE_HEADERS } from "../../../../../lib/request-security";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 type RouteContext = { params: Promise<{ tab: string }> };
 
 export async function GET(_: Request, context: RouteContext) {
-  if (!(await isAdminSessionValid())) return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  if (!(await isAdminSessionValid())) return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401, headers: PRIVATE_NO_STORE_HEADERS });
   const { tab } = await context.params;
   return NextResponse.json(
     {
       ok: false,
       error: `Legacy sheets API is retired. ${tab} is no longer part of the live command-center workflow.`
     },
-    { status: 410 }
+    { status: 410, headers: PRIVATE_NO_STORE_HEADERS }
   );
 }
 

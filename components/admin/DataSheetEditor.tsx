@@ -1,7 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { COMMAND_CENTER_CONTENT_AREAS } from "../../lib/constants";
 import { parseKeywordTags } from "../../lib/tags";
+import { useUnsavedChangesGuard } from "./useUnsavedChangesGuard";
 
 interface DataSheetEditorProps {
   tab: "pins" | "blogs" | "guides" | "emails" | "customers" | "products";
@@ -11,6 +14,7 @@ interface DataSheetEditorProps {
   dateColumn?: string;
   showSummary?: boolean;
   showTitle?: boolean;
+  readOnly?: boolean;
   onStatsChange?: (stats: DataSheetStats) => void;
 }
 
@@ -148,6 +152,10 @@ function formatColumnLabel(column: string, tab?: DataSheetEditorProps["tab"]): s
   return DISPLAY_COLUMN_LABELS[column] ?? column.replace(/_/g, " ");
 }
 
+function isFocusedEditorialBody(tab: DataSheetEditorProps["tab"], column: string): boolean {
+  return (tab === "blogs" && column === "Blog_Content") || (tab === "guides" && column === "Guide_Content");
+}
+
 function KeywordTokenField({
   value,
   onChange
@@ -226,6 +234,7 @@ export function DataSheetEditor({
   dateColumn,
   showSummary = true,
   showTitle = true,
+  readOnly = false,
   onStatsChange
 }: DataSheetEditorProps) {
   const [rows, setRows] = useState<Record<string, string>[]>(
@@ -234,6 +243,7 @@ export function DataSheetEditor({
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState("");
   const [dirty, setDirty] = useState(false);
+  const [conflict, setConflict] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState("all");
   const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState<string | null>(null);
@@ -241,12 +251,15 @@ export function DataSheetEditor({
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() => sanitizeColumnWidths(columns, null));
   const [columnWidthsReady, setColumnWidthsReady] = useState(false);
   const rowsRef = useRef(rows);
+  const baseRowsRef = useRef(normalizeRowsForColumns(columns, initialRows));
   const resizeStateRef = useRef<{ column: string; startX: number; startWidth: number } | null>(null);
   const columnStorageKey = `command-center:${tab}:column-widths`;
 
   useEffect(() => {
     rowsRef.current = rows;
   }, [rows]);
+
+  useUnsavedChangesGuard(dirty || saving);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -315,25 +328,38 @@ export function DataSheetEditor({
   }, [columns.length, onStatsChange, rows.length, visibleRows.length]);
 
   function updateCell(rowIndex: number, column: string, value: string) {
+    if (readOnly) return;
     setRows((current) => {
       const next = [...current];
       next[rowIndex] = { ...next[rowIndex], [column]: value };
       return next;
     });
     setDirty(true);
+    setConflict(false);
     setStatus("Changes pending...");
   }
 
   function appendRow() {
+    if (readOnly) return;
     const blank = Object.fromEntries(columns.map((column) => [column, ""])) as Record<string, string>;
     setRows((current) => [...current, blank]);
     setDirty(true);
+    setConflict(false);
     setStatus("Changes pending...");
   }
 
   function deleteRow(rowIndex: number) {
+    if (readOnly) return;
+    const targetRow = rowsRef.current[rowIndex] ?? {};
+    const label = tab === "blogs"
+      ? targetRow.Blog_Title
+      : tab === "guides"
+        ? targetRow.Guide_Title
+        : String(Object.values(targetRow)[0] ?? "");
+    if (!window.confirm(`Delete ${label || `row ${rowIndex + 1}`}? This takes effect after the table is saved.`)) return;
     setRows((current) => current.filter((_, index) => index !== rowIndex));
     setDirty(true);
+    setConflict(false);
     setStatus("Changes pending...");
   }
 
@@ -350,6 +376,7 @@ export function DataSheetEditor({
   }
 
   const saveRows = useCallback(async (snapshot = rowsRef.current, mode: "manual" | "auto" = "manual") => {
+    if (readOnly) return;
     const snapshotKey = JSON.stringify(snapshot);
     try {
       setSaving(true);
@@ -357,20 +384,23 @@ export function DataSheetEditor({
       const response = await fetch(`/api/admin/command-center/${tab}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rows: snapshot })
+        body: JSON.stringify({ rows: snapshot, baseRows: baseRowsRef.current })
       });
-      const body = (await response.json()) as { ok?: boolean; error?: string; saved?: number; rows?: Record<string, unknown>[] };
+      const body = (await response.json()) as { ok?: boolean; error?: string; saved?: number; rows?: Record<string, unknown>[]; conflict?: boolean };
       if (!response.ok || !body.ok) {
+        setConflict(response.status === 409 || body.conflict === true);
         setStatus(`Save failed: ${body.error ?? "unknown error"}`);
         return;
       }
       if (JSON.stringify(rowsRef.current) === snapshotKey) {
         if (Array.isArray(body.rows)) {
           const normalizedRows = normalizeRowsForColumns(columns, body.rows);
+          baseRowsRef.current = normalizedRows;
           rowsRef.current = normalizedRows;
           setRows(normalizedRows);
         }
         setDirty(false);
+        setConflict(false);
         setStatus(`Saved ${body.saved ?? snapshot.length} rows.`);
       } else {
         setStatus("Saved. More changes pending...");
@@ -379,6 +409,27 @@ export function DataSheetEditor({
       setStatus("Save failed: network error.");
     } finally {
       setSaving(false);
+    }
+  }, [columns, readOnly, tab]);
+
+  const reloadCurrentRows = useCallback(async () => {
+    try {
+      setStatus("Reloading current rows...");
+      const response = await fetch(`/api/admin/command-center/${tab}`, { cache: "no-store" });
+      const body = (await response.json()) as { ok?: boolean; error?: string; rows?: Record<string, unknown>[] };
+      if (!response.ok || !body.ok || !Array.isArray(body.rows)) {
+        setStatus(`Reload failed: ${body.error ?? "unknown error"}`);
+        return;
+      }
+      const normalizedRows = normalizeRowsForColumns(columns, body.rows);
+      baseRowsRef.current = normalizedRows;
+      rowsRef.current = normalizedRows;
+      setRows(normalizedRows);
+      setDirty(false);
+      setConflict(false);
+      setStatus("Current rows reloaded.");
+    } catch {
+      setStatus("Reload failed: network error.");
     }
   }, [columns, tab]);
 
@@ -415,14 +466,14 @@ export function DataSheetEditor({
   }, [columnWidths, handleResizeMove, stopResize]);
 
   useEffect(() => {
-    if (!dirty) return undefined;
+    if (!dirty || readOnly || conflict) return undefined;
 
     const timer = window.setTimeout(() => {
       void saveRows(rowsRef.current, "auto");
     }, 900);
 
     return () => window.clearTimeout(timer);
-  }, [dirty, rows, saveRows]);
+  }, [conflict, dirty, readOnly, rows, saveRows]);
 
   return (
     <section className="admin-panel admin-datasheet-panel">
@@ -462,35 +513,42 @@ export function DataSheetEditor({
               </select>
             </label>
           ) : null}
-          <button type="button" className="btn btn-ghost admin-toolbar-button" onClick={appendRow}>
-            <span className="admin-action-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 5v14" />
-                <path d="M5 12h14" />
-              </svg>
-            </span>
-            Add row
-          </button>
-          <button
-            type="button"
-            className="btn btn-accent admin-toolbar-button"
-            onClick={() => void saveRows(rowsRef.current, "manual")}
-            disabled={saving}
-          >
-            <span className="admin-action-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M5 12.5 10 17l9-10" />
-              </svg>
-            </span>
-            {saving ? "Saving..." : "Save now"}
-          </button>
+          {readOnly ? (
+            <span className="admin-save-pill">Read-only customer data</span>
+          ) : (
+            <>
+              <button type="button" className="btn btn-ghost admin-toolbar-button" onClick={appendRow}>
+                <span className="admin-action-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 5v14" />
+                    <path d="M5 12h14" />
+                  </svg>
+                </span>
+                Add row
+              </button>
+              <button
+                type="button"
+                className="btn btn-accent admin-toolbar-button"
+                onClick={() => void saveRows(rowsRef.current, "manual")}
+                disabled={saving}
+              >
+                <span className="admin-action-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M5 12.5 10 17l9-10" />
+                  </svg>
+                </span>
+                {saving ? "Saving..." : "Save now"}
+              </button>
+            </>
+          )}
         </div>
       </div>
       {showTitle ? (
         <div className="admin-table-status-row">
           <p className="small admin-table-note">
-            Long-form fields stay editable here for manual review and approval. Changes autosave after a short pause.
-            Drag a header edge to resize each column.
+            {readOnly
+              ? "Customer records are visible for audience review but cannot be edited or deleted from this workspace."
+              : "Long-form fields stay editable here for manual review and approval. Changes autosave after a short pause. Drag a header edge to resize each column."}
           </p>
           <span className={`admin-save-pill${dirty ? " is-dirty" : ""}`}>
             {dirty ? "Autosave pending" : "Saved state current"}
@@ -501,7 +559,16 @@ export function DataSheetEditor({
           <span className="admin-save-pill is-dirty">Autosave pending</span>
         </div>
       ) : null}
-      {status ? <p className="small admin-inline-status">{status}</p> : null}
+      {status ? (
+        <div className="admin-inline-status-row" aria-live="polite">
+          <p className="small admin-inline-status">{status}</p>
+          {conflict ? (
+            <button type="button" className="btn btn-ghost admin-toolbar-button" onClick={() => void reloadCurrentRows()}>
+              Reload current rows
+            </button>
+          ) : null}
+        </div>
+      ) : null}
       <div className="admin-table-wrap">
         <table className="admin-table" style={{ minWidth: `${tableMinWidth}px` }}>
           <colgroup>
@@ -555,39 +622,92 @@ export function DataSheetEditor({
                 <tr key={`${tab}-row-${absoluteIndex}`}>
                   {columns.map((column) => (
                     <td key={`${tab}-${absoluteIndex}-${column}`}>
-                      {KEYWORD_TOKEN_COLUMNS.has(column) ? (
+                      {column === "Workflow_Status" ? (
+                        <select
+                          value={row[column] ?? "draft"}
+                          onChange={(event) => updateCell(absoluteIndex, column, event.target.value)}
+                          aria-label={`${formatColumnLabel(column, tab)} for row ${absoluteIndex + 1}`}
+                          disabled={readOnly}
+                        >
+                          <option value="draft">Draft</option>
+                          <option value="approved">Approved</option>
+                          {tab === "pins" ? <option value="queued">Queued</option> : null}
+                          {tab === "pins" ? <option value="published">Published</option> : null}
+                          {(tab === "blogs" || tab === "guides") && row[column] === "published" ? (
+                            <option value="published" disabled>Published — use focused editor</option>
+                          ) : null}
+                          {tab === "pins" ? <option value="posted">Posted</option> : null}
+                        </select>
+                      ) : column === "Content_Area" ? (
+                        <select
+                          value={row[column] ?? ""}
+                          onChange={(event) => updateCell(absoluteIndex, column, event.target.value)}
+                          aria-label={`${formatColumnLabel(column, tab)} for row ${absoluteIndex + 1}`}
+                          disabled={readOnly}
+                        >
+                          <option value="">Choose area</option>
+                          {COMMAND_CENTER_CONTENT_AREAS.map((area) => <option key={area} value={area}>{area}</option>)}
+                        </select>
+                      ) : isFocusedEditorialBody(tab, column) ? (
+                        <div className="admin-editorial-cell-locked">
+                          <strong>Managed in the focused editor</strong>
+                          <span>Use the row action to edit body copy and protected metadata.</span>
+                        </div>
+                      ) : KEYWORD_TOKEN_COLUMNS.has(column) && !readOnly ? (
                         <KeywordTokenField value={row[column] ?? ""} onChange={(value) => updateCell(absoluteIndex, column, value)} />
                       ) : LONG_FIELD_COLUMNS.has(column) ? (
                         <textarea
                           value={row[column] ?? ""}
                           onChange={(event) => updateCell(absoluteIndex, column, event.target.value)}
+                          aria-label={`${formatColumnLabel(column, tab)} for row ${absoluteIndex + 1}`}
                           rows={4}
+                          readOnly={readOnly}
                         />
                       ) : (
                         <input
                           value={row[column] ?? ""}
                           onChange={(event) => updateCell(absoluteIndex, column, event.target.value)}
-                          type="text"
+                          aria-label={`${formatColumnLabel(column, tab)} for row ${absoluteIndex + 1}`}
+                          type={column.endsWith("_URL") || column === "CTA_Target" || column === "Product_Link" ? "url" : column.endsWith("_Time") ? "time" : "text"}
+                          inputMode={column.endsWith("_Sales") || column.endsWith("_Revenue") || column === "Purchases" ? "decimal" : undefined}
+                          readOnly={readOnly}
                         />
                       )}
                     </td>
                   ))}
                   <td className="admin-table-row-cell">
-                    <button
-                      type="button"
-                      className="admin-row-icon-button"
-                      onClick={() => deleteRow(absoluteIndex)}
-                      aria-label={`Delete row ${absoluteIndex + 1}`}
-                      title="Delete row"
-                    >
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M3 6h18" />
-                        <path d="M8 6V4h8v2" />
-                        <path d="M10 11v6" />
-                        <path d="M14 11v6" />
-                        <path d="M6 6l1 14h10l1-14" />
-                      </svg>
-                    </button>
+                    <div className="admin-row-actions">
+                      {(tab === "blogs" || tab === "guides") && row[tab === "blogs" ? "Blog_ID" : "Guide_ID"] ? (
+                        <Link
+                          className="admin-row-icon-button"
+                          href={`/admin/${tab}/${encodeURIComponent(row[tab === "blogs" ? "Blog_ID" : "Guide_ID"] ?? "")}`}
+                          aria-label={`Open ${tab === "blogs" ? "blog" : "guide"} editor for row ${absoluteIndex + 1}`}
+                          title="Open focused editor"
+                        >
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 20h4l11-11-4-4L4 16v4Z" />
+                            <path d="m13.5 6.5 4 4" />
+                          </svg>
+                        </Link>
+                      ) : null}
+                      {!readOnly ? (
+                        <button
+                          type="button"
+                          className="admin-row-icon-button"
+                          onClick={() => deleteRow(absoluteIndex)}
+                          aria-label={`Delete row ${absoluteIndex + 1}`}
+                          title="Delete row"
+                        >
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 6h18" />
+                            <path d="M8 6V4h8v2" />
+                            <path d="M10 11v6" />
+                            <path d="M14 11v6" />
+                            <path d="M6 6l1 14h10l1-14" />
+                          </svg>
+                        </button>
+                      ) : null}
+                    </div>
                   </td>
                 </tr>
               ))

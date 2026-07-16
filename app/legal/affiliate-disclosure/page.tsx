@@ -1,5 +1,12 @@
 import Link from "next/link";
 import { SiteShell } from "../../../components/SiteShell";
+import { pageMetadata } from "../../../lib/seo";
+
+export const metadata = pageMetadata({
+  title: "Affiliate Disclosure",
+  description: "How Diyesu Decor identifies affiliate recommendations and may earn commissions from qualifying purchases.",
+  path: "/legal/affiliate-disclosure"
+});
 
 export default function AffiliateDisclosurePage() {
   return (

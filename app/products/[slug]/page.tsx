@@ -3,6 +3,8 @@ import { AffiliateDisclosure } from "../../../components/AffiliateDisclosure";
 import { BlueprintTool } from "../../../components/BlueprintTool";
 import { SiteShell } from "../../../components/SiteShell";
 import { shouldShowAffiliateDisclosure } from "../../../lib/affiliate";
+import { redesignImages } from "../../../lib/redesign-data";
+import { pageMetadata } from "../../../lib/seo";
 
 const products = {
   "renter-bathroom-upgrade-blueprint": {
@@ -30,6 +32,19 @@ const products = {
 
 export function generateStaticParams() {
   return Object.keys(products).map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = products[slug as keyof typeof products];
+  if (!product) return { robots: { index: false, follow: false } };
+
+  return pageMetadata({
+    title: product.title,
+    description: product.summary,
+    path: `/products/${slug}`,
+    image: redesignImages.hero
+  });
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {

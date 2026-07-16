@@ -2,10 +2,17 @@ import Link from "next/link";
 import { AreaIcon } from "../../components/AreaIcon";
 import { SiteShell } from "../../components/SiteShell";
 import { TypewriterEyebrow } from "../../components/TypewriterEyebrow";
-import { areaVisuals } from "../../lib/redesign-data";
-import { blogMatchesArea, hubs, readBlogs, readGuides } from "../../lib/site-data";
+import { areaVisuals, redesignImages } from "../../lib/redesign-data";
+import { pageMetadata } from "../../lib/seo";
+import { blogMatchesArea, hubs, readPublishedBlogs, readPublishedGuides } from "../../lib/site-data";
 
 export const dynamic = "force-dynamic";
+export const metadata = pageMetadata({
+  title: "Start Here",
+  description: "Choose the first bathroom area to improve and find practical articles, guides, and quick wins.",
+  path: "/start-here",
+  image: redesignImages.hero
+});
 
 function StepIcon({ name }: { name: "target" | "sparkles" | "hammer" }) {
   const paths = {
@@ -40,11 +47,7 @@ function StepIcon({ name }: { name: "target" | "sparkles" | "hammer" }) {
 }
 
 export default async function StartHerePage() {
-  const [blogs, guides] = await Promise.all([readBlogs(), readGuides()]);
-  const publishedBlogs = blogs.filter((blog) => blog.Status === "published");
-  const blogSource = publishedBlogs.length > 0 ? publishedBlogs : blogs;
-  const publishedGuides = guides.filter((guide) => guide.status.trim().toLowerCase() === "published");
-  const guideSource = publishedGuides.length > 0 ? publishedGuides : guides;
+  const [blogSource, guideSource] = await Promise.all([readPublishedBlogs(), readPublishedGuides()]);
   const steps = [
     ["target", "Pick an area", "Choose the part of your bathroom that bugs you the most."],
     ["sparkles", "Browse ideas", "Find specific guides and product recommendations for that area."],

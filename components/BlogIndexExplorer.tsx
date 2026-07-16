@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { SafeImage } from "./SafeImage";
 
 interface BlogCard {
   id: string;
@@ -100,7 +101,7 @@ export function BlogIndexExplorer({ blogs, availableTags, areaFilters, initialAr
                 <Link key={blog.id} href={blog.href ?? `/blog/${blog.slug}`} className="blog-card-link">
                   <article className="blog-image-card">
                     <div className="blog-image-card-media">
-                      <img src={blog.image} alt={`${blog.title} article`} loading="lazy" decoding="async" />
+                      <SafeImage src={blog.image} alt={`${blog.title} article`} loading="lazy" decoding="async" />
                     </div>
                     <div className="blog-image-card-copy">
                       <div className="blog-card-meta">

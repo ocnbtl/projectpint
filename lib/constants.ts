@@ -11,6 +11,10 @@ export const COMMAND_CENTER_CONTENT_AREAS: ContentArea[] = [
   "ExtremeBudget"
 ] as const;
 
+export const MAX_PIN_GENERATOR_COUNT = 100;
+export const MAX_AREA_GENERATOR_COUNT = 25;
+export const MAX_AREA_GENERATOR_TOTAL = 100;
+
 export const HOOK_CLASSES: HookClass[] = [
   "BeforeAfter",
   "Checklist",

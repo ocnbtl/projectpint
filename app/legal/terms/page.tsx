@@ -1,5 +1,12 @@
 import Link from "next/link";
 import { SiteShell } from "../../../components/SiteShell";
+import { pageMetadata } from "../../../lib/seo";
+
+export const metadata = pageMetadata({
+  title: "Terms of Use",
+  description: "The terms that govern access to and use of Diyesu Decor content, recommendations, and services.",
+  path: "/legal/terms"
+});
 
 export default function TermsPage() {
   return (

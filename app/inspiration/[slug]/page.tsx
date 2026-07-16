@@ -1,21 +1,50 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { MarkdownArticle } from "../../../components/MarkdownArticle";
+import { SafeImage } from "../../../components/SafeImage";
 import { SiteShell } from "../../../components/SiteShell";
-import { inspirationStyles } from "../../../lib/redesign-data";
+import { markdownBlocks } from "../../../lib/content-render";
+import { findPublicInspirationView } from "../../../lib/inspiration-content";
+import { inspirationStyleName } from "../../../lib/inspiration-content";
+import { articleJsonLd, jsonLd, pageMetadata } from "../../../lib/seo";
 
-export function generateStaticParams() {
-  return inspirationStyles.map((style) => ({ slug: style.slug }));
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const style = await findPublicInspirationView(slug);
+  if (!style) return { robots: { index: false, follow: false } };
+
+  return pageMetadata({
+    title: style.metadata.seoTitle || `${style.name} Bathroom Inspiration`,
+    description: style.metadata.seoDescription || style.description,
+    path: style.metadata.canonicalUrl || `/inspiration/${style.slug}`,
+    image: style.metadata.socialImageUrl || style.cover,
+    type: style.source === "managed" ? "article" : "website",
+    publishedTime: style.publishedAt || undefined,
+    indexable: style.metadata.indexable
+  });
 }
 
 export default async function InspirationDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const style = inspirationStyles.find((item) => item.slug === slug);
+  const style = await findPublicInspirationView(slug);
   if (!style) return notFound();
+  const bodyBlocks = markdownBlocks(style.body);
+  const contentBlocks = bodyBlocks[0]?.type === "h1" ? bodyBlocks.slice(1) : bodyBlocks;
+  const structuredEntry = style.source === "managed" ? articleJsonLd({
+    title: style.name,
+    description: style.description,
+    path: style.metadata.canonicalUrl || `/inspiration/${style.slug}`,
+    image: style.cover,
+    publishedTime: style.publishedAt || undefined
+  }) : null;
 
   return (
     <SiteShell>
+      {structuredEntry ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(structuredEntry) }} /> : null}
       <section className="inspiration-detail-hero">
-        <img src={style.cover} alt={`${style.name} bathroom inspiration`} />
+        <SafeImage src={style.cover} alt={style.coverAlt} priority />
         <div className="inspiration-detail-shade">
           <div className="container inspiration-detail-copy" data-reveal="hero">
             <Link href="/inspiration" className="back-link">
@@ -33,8 +62,21 @@ export default async function InspirationDetailPage({ params }: { params: Promis
       </section>
 
       <div className="container site-page inspiration-detail-page">
-        <p className="inspiration-board-kicker">Pinned for you &mdash; scroll the board</p>
-        <section className="inspiration-board" data-reveal>
+        {style.source === "managed" ? (
+          <section className="inspiration-managed-story" data-reveal>
+            <div className="tag-list">
+              <span className="tag">{inspirationStyleName(style)}</span>
+              {style.tags.map((tag) => <span key={`${style.id}-${tag}`} className="tag tag-muted">{tag}</span>)}
+            </div>
+            <div className="inspiration-managed-prose"><MarkdownArticle blocks={contentBlocks} slug={`inspiration-${style.slug}`} /></div>
+            {style.caption || style.credit ? <p className="inspiration-managed-credit">{style.caption}{style.caption && style.credit ? " · " : ""}{style.credit}</p> : null}
+          </section>
+        ) : null}
+
+        {style.items.length > 0 ? (
+          <>
+            <p className="inspiration-board-kicker">Pinned for you &mdash; scroll the board</p>
+            <section className="inspiration-board" data-reveal>
           {style.items.map((item, index) =>
             item.type === "product" ? (
               <article
@@ -61,7 +103,7 @@ export default async function InspirationDetailPage({ params }: { params: Promis
                 className={`inspiration-image-pin inspiration-image-${item.shape}`}
                 style={{ transform: `rotate(${((index % 5) - 2) * 1.4}deg)` }}
               >
-                <img
+                <SafeImage
                   src={item.src}
                   alt={item.label || `${style.name} bathroom inspiration`}
                   loading="lazy"
@@ -71,7 +113,9 @@ export default async function InspirationDetailPage({ params }: { params: Promis
               </figure>
             )
           )}
-        </section>
+            </section>
+          </>
+        ) : null}
 
         <section className="inspiration-detail-cta" data-reveal>
           <p>Love this look? Get a personalized plan to recreate it on your budget.</p>

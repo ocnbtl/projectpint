@@ -1,8 +1,21 @@
 import Link from "next/link";
+import { SafeImage } from "../../components/SafeImage";
 import { SiteShell } from "../../components/SiteShell";
+import { readPublicInspirationViews } from "../../lib/inspiration-content";
 import { inspirationStyles } from "../../lib/redesign-data";
+import { pageMetadata } from "../../lib/seo";
 
-export default function InspirationPage() {
+export const dynamic = "force-dynamic";
+
+export const metadata = pageMetadata({
+  title: "Bathroom Inspiration",
+  description: "Explore curated bathroom style boards with attainable ideas for function, comfort, and budget.",
+  path: "/inspiration",
+  image: inspirationStyles[0]?.cover
+});
+
+export default async function InspirationPage() {
+  const styles = await readPublicInspirationViews();
   return (
     <SiteShell>
       <section className="inspiration-figma-hero">
@@ -18,7 +31,7 @@ export default function InspirationPage() {
 
       <div className="container site-page inspiration-figma-page">
         <section className="inspiration-style-grid" aria-label="Bathroom inspiration styles">
-          {inspirationStyles.map((style, index) => {
+          {styles.map((style, index) => {
             const thumbs = style.items
               .filter((item) => item.type === "image")
               .slice(1, 4)
@@ -31,7 +44,7 @@ export default function InspirationPage() {
                 data-reveal
                 style={{ transitionDelay: `${index * 40}ms` }}
               >
-                <img src={style.cover} alt={`${style.name} bathroom inspiration`} loading="lazy" decoding="async" />
+                <SafeImage src={style.cover} alt={style.coverAlt} loading="lazy" decoding="async" />
                 <span className="inspiration-style-shade" aria-hidden="true" />
                 <span className="inspiration-style-title">
                   <i style={{ backgroundColor: style.accent }} />
@@ -40,7 +53,7 @@ export default function InspirationPage() {
                 <span className="inspiration-style-preview">
                   <span>
                     {thumbs.map((src, thumbIndex) => (
-                      <img key={`${style.slug}-${thumbIndex}`} src={src} alt="" loading="lazy" decoding="async" />
+                      <SafeImage key={`${style.slug}-${thumbIndex}`} src={src} alt="" loading="lazy" decoding="async" />
                     ))}
                   </span>
                   <em>

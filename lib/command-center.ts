@@ -5,7 +5,23 @@ import {
   normalizeContentArea,
   normalizeContentAreas
 } from "./constants.ts";
+import { COMMAND_CENTER_COLUMNS } from "./command-center-config.ts";
 import { summarizeContentQuality } from "./content-quality.ts";
+import {
+  parseEditorialDocument,
+  serializeEditorialDocument,
+  validateEditorialMediaForPublish
+} from "./editorial-content.ts";
+import {
+  editableEditorialRows,
+  isPublishedSnapshot,
+  mergeEditorialAdminSave,
+  publicEditorialRows,
+  publishEditorialSnapshots,
+  restoreEditorialSnapshot,
+  unpublishEditorialSnapshot,
+  type EditorialTab
+} from "./editorial-publication.ts";
 import { loadRuntimeTab, saveRuntimeTab } from "./runtime-store.ts";
 import {
   allowedCtaUrls,
@@ -36,7 +52,7 @@ export interface PinEvergreenRow {
   Prepared_For_Export_At: string;
 }
 
-export interface BlogEvergreenRow {
+export interface BlogEvergreenRow extends Record<string, unknown> {
   Blog_ID: string;
   Blog_Publish_Date: string;
   Blog_Publish_Time: string;
@@ -54,7 +70,7 @@ export interface BlogEvergreenRow {
   Published_To_Public_At: string;
 }
 
-export interface GuideEvergreenRow {
+export interface GuideEvergreenRow extends Record<string, unknown> {
   Guide_ID: string;
   Guide_Publish_Date: string;
   Guide_Publish_Time: string;
@@ -135,6 +151,31 @@ const TAB_MAP = {
 
 type TabKey = keyof typeof TAB_MAP;
 
+async function loadAllEditorialRows<T extends Record<string, unknown>>(tab: EditorialTab): Promise<T[]> {
+  return loadRuntimeTab<T>(TAB_MAP[tab]);
+}
+
+async function loadEditableBlogs(): Promise<BlogEvergreenRow[]> {
+  return editableEditorialRows("blogs", await loadAllEditorialRows<BlogEvergreenRow>("blogs"));
+}
+
+async function loadEditableGuides(): Promise<GuideEvergreenRow[]> {
+  return editableEditorialRows("guides", await loadAllEditorialRows<GuideEvergreenRow>("guides"));
+}
+
+async function loadPublicBlogs(): Promise<BlogEvergreenRow[]> {
+  return publicEditorialRows("blogs", await loadAllEditorialRows<BlogEvergreenRow>("blogs"));
+}
+
+async function loadPublicGuides(): Promise<GuideEvergreenRow[]> {
+  return publicEditorialRows("guides", await loadAllEditorialRows<GuideEvergreenRow>("guides"));
+}
+
+async function saveEditableEditorialRows<T extends Record<string, unknown>>(tab: EditorialTab, rows: T[]): Promise<void> {
+  const existingRows = await loadAllEditorialRows<T>(tab);
+  await saveRuntimeTab<T>(TAB_MAP[tab], mergeEditorialAdminSave(tab, existingRows, rows));
+}
+
 const PIN_HOOKS: Record<CommandCenterArea, string[]> = {
   Plants: [
     "Bathroom plants keep failing?",
@@ -163,17 +204,6 @@ const PIN_BENEFITS: Record<CommandCenterArea, string> = {
   Renter: "You get renter safe changes that improve function without risky installs.",
   DIY: "You get a step by step DIY path you can finish this week.",
   ExtremeBudget: "You get visible change without blowing your monthly budget."
-};
-
-const AREA_KEYWORDS: Record<CommandCenterArea, string[]> = {
-  Plants: ["bathroom plants", "low light plants", "humidity plants", "plant placement"],
-  Mirror: ["bathroom mirror", "mirror placement", "mirror lighting", "mirror style"],
-  Storage: ["bathroom storage", "small storage", "counter organization", "cabinet organization"],
-  Lighting: ["bathroom lighting", "vanity lighting", "soft lighting", "lighting upgrades"],
-  Shower: ["shower upgrades", "shower storage", "shower routine", "small shower"],
-  Renter: ["renter bathroom", "no drill bathroom", "temporary upgrades", "deposit safe"],
-  DIY: ["bathroom DIY", "easy bathroom project", "weekend bathroom", "home DIY"],
-  ExtremeBudget: ["budget bathroom", "under 75 bathroom", "cheap bathroom ideas", "low cost upgrades"]
 };
 
 const PROMPT_VARIANTS = [
@@ -527,6 +557,43 @@ function destinationPathForGuide(guide: GuideEvergreenRow): string {
   return `/guides/${slugify(guide.Guide_Title || guide.Guide_ID, guide.Guide_ID)}`;
 }
 
+export class EvergreenConflictError extends Error {
+  constructor() {
+    super("This table changed in another session. Reload the current rows before saving again.");
+    this.name = "EvergreenConflictError";
+  }
+}
+
+export class EvergreenValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "EvergreenValidationError";
+  }
+}
+
+function assertUniqueEditorialPaths(tab: EditorialTab, rows: Array<BlogEvergreenRow | GuideEvergreenRow>): void {
+  const used = new Map<string, string>();
+  for (const row of rows) {
+    const id = tab === "blogs" ? String(row.Blog_ID ?? "") : String((row as GuideEvergreenRow).Guide_ID ?? "");
+    const path = tab === "blogs"
+      ? destinationPathForBlog(row as BlogEvergreenRow)
+      : destinationPathForGuide(row as GuideEvergreenRow);
+    const previousId = used.get(path);
+    if (previousId && previousId !== id) {
+      throw new EvergreenValidationError(`Duplicate public path ${path} is used by ${previousId} and ${id}.`);
+    }
+    used.set(path, id);
+  }
+}
+
+function rowsMatch(tab: TabKey, left: Record<string, unknown>[], right: Record<string, unknown>[]): boolean {
+  const columns = COMMAND_CENTER_COLUMNS[tab];
+  const project = (rows: Record<string, unknown>[]) => rows.map((row) =>
+    Object.fromEntries(columns.map((column) => [column, String(row[column] ?? "")]))
+  );
+  return JSON.stringify(project(left)) === JSON.stringify(project(right));
+}
+
 function generatePinCaption(area: CommandCenterArea, mode: "free" | "cost" | "both" | "none", index: number): string {
   const hooks = PIN_HOOKS[area];
   const hook = hooks[index % hooks.length];
@@ -778,26 +845,16 @@ function sanitizeMarkdownForDisplay(markdown: string): string {
     .trim();
 }
 
-function applySoftCta(content: string, label: string, url: string): string {
-  const linked = `[${sanitizeVisibleMarkdownSegment(label).trim()}](${url})`;
-  const closing = `If you want the next step, ${linked}.`;
-  if (content.includes(`](${url})`)) return content;
-  if (/^## Next step\b/m.test(content)) {
-    return content.replace(/^## Next step[\s\S]*$/m, `## Next step\n${closing}`).trim();
-  }
-  return `${content.trim()}\n\n## Next step\n${closing}`;
-}
+function sanitizeEditorialMarkdownForStorage(markdown: string): { stored: string; body: string } {
+  const unwrapped = unwrapMarkdownFence(markdown);
+  const hasMetadataEnvelope = /^<!-- project-pint:editorial:[A-Za-z0-9_-]+ -->\s*/.test(unwrapped);
+  const parsed = parseEditorialDocument(unwrapped);
+  const body = sanitizeMarkdownForDisplay(parsed.body);
 
-function fallbackBlogContent(area: CommandCenterArea, ctaLabel: string, ctaUrl: string): string {
-  const base = buildBlogDraftContent(area);
-  const bulletSection = `\n\n## Keep these checks in mind\n• Stay within a budget that feels realistic for this month.\n• Choose the lowest risk install path first.\n• Keep the room easier to clean after the change.\n• Stop when the routine feels calmer and more functional.`;
-  return applySoftCta(`${base}${bulletSection}`, ctaLabel, ctaUrl);
-}
-
-function fallbackGuideContent(area: CommandCenterArea, ctaLabel: string, ctaUrl: string): string {
-  const base = buildGuideDraftContent(area);
-  const bulletSection = `\n\n## Quick checks\n• Keep the setup renter safe.\n• Use the smallest useful budget first.\n• Make sure the change saves time or reduces clutter.`;
-  return applySoftCta(`${base}${bulletSection}`, ctaLabel, ctaUrl);
+  return {
+    body,
+    stored: hasMetadataEnvelope ? serializeEditorialDocument(body, parsed.metadata) : body
+  };
 }
 
 function manualTopicPlaceholder(area: CommandCenterArea, kind: "blog" | "guide"): string {
@@ -837,8 +894,12 @@ function pendingWriterChecks(kind: "blog" | "guide", title: string, ctaUrl: stri
 }
 
 function publishTimestamp(date: Date): string {
-  const when = toEasternDateTime(date);
-  return `${when.date} ${when.time} ET`;
+  return date.toISOString();
+}
+
+function editableEditorialStatus(value: unknown): "draft" | "approved" {
+  const normalized = String(value ?? "draft").trim().toLowerCase();
+  return normalized === "approved" || normalized === "published" ? "approved" : "draft";
 }
 
 function emailSubjectFor(area: CommandCenterArea, index: number): string {
@@ -869,13 +930,16 @@ export async function generateBlogDraftForRow(row: BlogEvergreenRow, blogs: Blog
   const mainConstraint = editorialProfileFor(area).pain;
   const desiredOutcome = "The reader should be able to act on the advice today.";
   const currentContent = String(row.Blog_Content ?? "").trim();
-  const finalContent = currentContent ? sanitizeMarkdownForDisplay(currentContent) : "";
-  const quality = finalContent
+  const sanitizedContent = currentContent
+    ? sanitizeEditorialMarkdownForStorage(currentContent)
+    : { stored: "", body: "" };
+  const finalContent = sanitizedContent.stored;
+  const quality = sanitizedContent.body
     ? summarizeContentQuality({
         id: row.Blog_ID,
         kind: "blog",
         title: finalTitle,
-        content: finalContent,
+        content: sanitizedContent.body,
         ctaUrl: ctaFallback.url,
         existingTitles: visibleTitles,
         allowedCtaUrls: allowedCtaUrls(area)
@@ -941,13 +1005,16 @@ export async function generateGuideDraftForRow(
   const mainConstraint = editorialProfileFor(area).pain;
   const desiredOutcome = "The reader should finish one useful quick win in one sitting.";
   const currentContent = String(row.Guide_Content ?? "").trim();
-  const finalContent = currentContent ? sanitizeMarkdownForDisplay(currentContent) : "";
-  const quality = finalContent
+  const sanitizedContent = currentContent
+    ? sanitizeEditorialMarkdownForStorage(currentContent)
+    : { stored: "", body: "" };
+  const finalContent = sanitizedContent.stored;
+  const quality = sanitizedContent.body
     ? summarizeContentQuality({
         id: row.Guide_ID,
         kind: "guide",
         title: finalTitle,
-        content: finalContent,
+        content: sanitizedContent.body,
         ctaUrl: ctaFallback.url,
         existingTitles: visibleTitles,
         allowedCtaUrls: allowedCtaUrls(area)
@@ -998,7 +1065,7 @@ export async function generateGuideDraftForRow(
 }
 
 export async function refreshBlogQualityChecks(): Promise<{ updated: number; belowThreshold: number }> {
-  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
+  const blogs = await loadEditableBlogs();
   let belowThreshold = 0;
 
   for (const row of blogs) {
@@ -1017,12 +1084,12 @@ export async function refreshBlogQualityChecks(): Promise<{ updated: number; bel
     if (quality.score < 80 || quality.blockingIssues.length > 0) belowThreshold += 1;
   }
 
-  await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, blogs);
+  await saveEditableEditorialRows("blogs", blogs);
   return { updated: blogs.length, belowThreshold };
 }
 
 export async function refreshGuideQualityChecks(): Promise<{ updated: number; belowThreshold: number }> {
-  const guides = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
+  const guides = await loadEditableGuides();
   let belowThreshold = 0;
 
   for (const row of guides) {
@@ -1041,23 +1108,35 @@ export async function refreshGuideQualityChecks(): Promise<{ updated: number; be
     if (quality.score < 80 || quality.blockingIssues.length > 0) belowThreshold += 1;
   }
 
-  await saveRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides, guides);
+  await saveEditableEditorialRows("guides", guides);
   return { updated: guides.length, belowThreshold };
 }
 
 export async function loadEvergreenTab(key: TabKey): Promise<Record<string, unknown>[]> {
-  return loadRuntimeTab<Record<string, unknown>>(TAB_MAP[key]);
+  const rows = await loadRuntimeTab<Record<string, unknown>>(TAB_MAP[key]);
+  if (key === "blogs" || key === "guides") return editableEditorialRows(key, rows);
+  return rows;
 }
 
-export async function saveEvergreenTab(key: TabKey, rows: Record<string, unknown>[]): Promise<Record<string, unknown>[]> {
+export async function saveEvergreenTab(
+  key: TabKey,
+  rows: Record<string, unknown>[],
+  expectedBaseRows?: Record<string, unknown>[]
+): Promise<Record<string, unknown>[]> {
+  const existingRows = await loadRuntimeTab<Record<string, unknown>>(TAB_MAP[key]);
+  const existingEditable = key === "blogs" || key === "guides" ? editableEditorialRows(key, existingRows) : existingRows;
+  if (expectedBaseRows && !rowsMatch(key, existingEditable, expectedBaseRows)) {
+    throw new EvergreenConflictError();
+  }
+
   if (key === "blogs") {
     const usedIds = new Set<string>();
-    const normalizedRows: BlogEvergreenRow[] = rows.map((row) => ({
+    const normalizedRows: BlogEvergreenRow[] = rows.filter((row) => !isPublishedSnapshot("blogs", row)).map((row) => ({
       Blog_ID: ensureRowId(String(row.Blog_ID ?? ""), "BLOG_", 4, usedIds),
       Blog_Publish_Date: String(row.Blog_Publish_Date ?? ""),
       Blog_Publish_Time: String(row.Blog_Publish_Time ?? ""),
       Content_Area: areaFromValue(String(row.Content_Area ?? "")),
-      Workflow_Status: String(row.Workflow_Status ?? "draft"),
+      Workflow_Status: editableEditorialStatus(row.Workflow_Status),
       Blog_URL: String(row.Blog_URL ?? ""),
       Blog_Title: String(row.Blog_Title ?? ""),
       Blog_Keywords: String(row.Blog_Keywords ?? ""),
@@ -1069,20 +1148,21 @@ export async function saveEvergreenTab(key: TabKey, rows: Record<string, unknown
       Related_Pins: String(row.Related_Pins ?? ""),
       Published_To_Public_At: String(row.Published_To_Public_At ?? "")
     }));
+    assertUniqueEditorialPaths("blogs", normalizedRows);
     const nextRows = await Promise.all(normalizedRows.map((row) => generateBlogDraftForRow(row, normalizedRows)));
-    await saveRuntimeTab(TAB_MAP[key], nextRows);
+    await saveRuntimeTab(TAB_MAP[key], mergeEditorialAdminSave("blogs", existingRows, nextRows));
     return nextRows as unknown as Record<string, unknown>[];
   }
 
   if (key === "guides") {
-    const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
+    const blogs = await loadEditableBlogs();
     const usedIds = new Set<string>();
-    const normalizedRows: GuideEvergreenRow[] = rows.map((row) => ({
+    const normalizedRows: GuideEvergreenRow[] = rows.filter((row) => !isPublishedSnapshot("guides", row)).map((row) => ({
       Guide_ID: ensureRowId(String(row.Guide_ID ?? ""), "GUIDE_", 4, usedIds),
       Guide_Publish_Date: String(row.Guide_Publish_Date ?? ""),
       Guide_Publish_Time: String(row.Guide_Publish_Time ?? ""),
       Content_Area: areaFromValue(String(row.Content_Area ?? "")),
-      Workflow_Status: String(row.Workflow_Status ?? "draft"),
+      Workflow_Status: editableEditorialStatus(row.Workflow_Status),
       Blog_ID: String(row.Blog_ID ?? ""),
       Guide_URL: String(row.Guide_URL ?? ""),
       Guide_Title: String(row.Guide_Title ?? ""),
@@ -1095,8 +1175,9 @@ export async function saveEvergreenTab(key: TabKey, rows: Record<string, unknown
       Related_Pins: String(row.Related_Pins ?? ""),
       Published_To_Public_At: String(row.Published_To_Public_At ?? "")
     }));
+    assertUniqueEditorialPaths("guides", normalizedRows);
     const nextRows = await Promise.all(normalizedRows.map((row) => generateGuideDraftForRow(row, normalizedRows, blogs)));
-    await saveRuntimeTab(TAB_MAP[key], nextRows);
+    await saveRuntimeTab(TAB_MAP[key], mergeEditorialAdminSave("guides", existingRows, nextRows));
     return nextRows as unknown as Record<string, unknown>[];
   }
 
@@ -1132,8 +1213,8 @@ export async function bootstrapEvergreenProducts(): Promise<void> {
 
 export async function generateNewPins(count = 25): Promise<{ created: number }> {
   const pins = await loadRuntimeTab<PinEvergreenRow>(TAB_MAP.pins);
-  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
-  const guides = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
+  const blogs = await loadEditableBlogs();
+  const guides = await loadEditableGuides();
 
   const latestStamp = new Date();
   const areas = cycleAreas(count);
@@ -1198,7 +1279,7 @@ export async function generatePinOverlayAndCta(lastCount = 25): Promise<{ update
 }
 
 export async function generateNewBlogs(areaCounts?: Partial<Record<string, unknown>>): Promise<{ created: number }> {
-  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
+  const blogs = await loadEditableBlogs();
   const counts = parseAreaCounts(areaCounts);
   const now = new Date();
   const created: BlogEvergreenRow[] = [];
@@ -1231,12 +1312,12 @@ export async function generateNewBlogs(areaCounts?: Partial<Record<string, unkno
 
   const nextRows = [...blogs, ...created];
   const hydrated = await Promise.all(nextRows.map((row) => generateBlogDraftForRow(row, nextRows)));
-  await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, hydrated);
+  await saveEditableEditorialRows("blogs", hydrated);
   return { created: created.length };
 }
 
 export async function generateBlogTitlesAndKeywords(): Promise<{ updated: number }> {
-  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
+  const blogs = await loadEditableBlogs();
   let updated = 0;
   const nextBlogs = [...blogs];
 
@@ -1247,12 +1328,12 @@ export async function generateBlogTitlesAndKeywords(): Promise<{ updated: number
     updated += 1;
   }
 
-  await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, nextBlogs);
+  await saveEditableEditorialRows("blogs", nextBlogs);
   return { updated };
 }
 
 export async function updateBlogRelatedPins(): Promise<{ updated: number }> {
-  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
+  const blogs = await loadEditableBlogs();
   const pins = await loadRuntimeTab<PinEvergreenRow>(TAB_MAP.pins);
 
   blogs.forEach((blog) => {
@@ -1263,13 +1344,13 @@ export async function updateBlogRelatedPins(): Promise<{ updated: number }> {
     blog.Related_Pins = related;
   });
 
-  await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, blogs);
+  await saveEditableEditorialRows("blogs", blogs);
   return { updated: blogs.length };
 }
 
 export async function generateNewGuides(areaCounts?: Partial<Record<string, unknown>>): Promise<{ created: number }> {
-  const guides = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
-  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
+  const guides = await loadEditableGuides();
+  const blogs = await loadEditableBlogs();
   const counts = parseAreaCounts(areaCounts);
   const now = new Date();
   const created: GuideEvergreenRow[] = [];
@@ -1306,13 +1387,13 @@ export async function generateNewGuides(areaCounts?: Partial<Record<string, unkn
 
   const nextRows = [...guides, ...created];
   const hydrated = await Promise.all(nextRows.map((row) => generateGuideDraftForRow(row, nextRows, blogs)));
-  await saveRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides, hydrated);
+  await saveEditableEditorialRows("guides", hydrated);
   return { created: created.length };
 }
 
 export async function generateGuideTitlesAndKeywords(): Promise<{ updated: number }> {
-  const guides = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
-  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
+  const guides = await loadEditableGuides();
+  const blogs = await loadEditableBlogs();
   let updated = 0;
   const nextGuides = [...guides];
 
@@ -1330,12 +1411,12 @@ export async function generateGuideTitlesAndKeywords(): Promise<{ updated: numbe
     updated += 1;
   }
 
-  await saveRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides, nextGuides);
+  await saveEditableEditorialRows("guides", nextGuides);
   return { updated };
 }
 
 export async function updateGuideRelatedPins(): Promise<{ updated: number }> {
-  const guides = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
+  const guides = await loadEditableGuides();
   const pins = await loadRuntimeTab<PinEvergreenRow>(TAB_MAP.pins);
 
   guides.forEach((guide) => {
@@ -1346,13 +1427,13 @@ export async function updateGuideRelatedPins(): Promise<{ updated: number }> {
     guide.Related_Pins = related;
   });
 
-  await saveRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides, guides);
+  await saveEditableEditorialRows("guides", guides);
   return { updated: guides.length };
 }
 
 export async function generateNewEmails(areaCounts?: Partial<Record<string, unknown>>): Promise<{ created: number }> {
   const emails = await loadRuntimeTab<EmailEvergreenRow>(TAB_MAP.emails);
-  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
+  const blogs = await loadEditableBlogs();
   const counts = parseAreaCounts(areaCounts);
   const now = new Date();
   const created: EmailEvergreenRow[] = [];
@@ -1435,8 +1516,11 @@ function pinCaptionParts(pin: PinEvergreenRow, area: CommandCenterArea): { title
 }
 
 export async function publishApprovedBlogsToPublic(): Promise<Record<string, unknown>> {
-  const blogsEvergreen = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
+  const allBlogRows = await loadAllEditorialRows<BlogEvergreenRow>("blogs");
+  const blogsEvergreen = editableEditorialRows("blogs", allBlogRows);
+  assertUniqueEditorialPaths("blogs", blogsEvergreen);
   const syncedAt = publishTimestamp(new Date());
+  const publishIds: string[] = [];
   let published = 0;
   let updated = 0;
   let skipped = 0;
@@ -1448,13 +1532,14 @@ export async function publishApprovedBlogsToPublic(): Promise<Record<string, unk
       continue;
     }
 
+    const editorial = parseEditorialDocument(String(row.Blog_Content ?? ""));
     if (
       !isReadyForManualPublish({
         title: String(row.Blog_Title ?? ""),
-        content: String(row.Blog_Content ?? ""),
+        content: editorial.body,
         qualityScore: String(row.Quality_Score ?? ""),
         qualityChecks: String(row.Quality_Checks ?? "")
-      })
+      }) || validateEditorialMediaForPublish(editorial.metadata).length > 0
     ) {
       blocked += 1;
       continue;
@@ -1467,21 +1552,26 @@ export async function publishApprovedBlogsToPublic(): Promise<Record<string, unk
     row.Blog_URL = blogPath;
     row.Workflow_Status = "published";
     row.Published_To_Public_At = syncedAt;
+    publishIds.push(row.Blog_ID);
   }
 
-  await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, blogsEvergreen);
+  const nextRows = publishEditorialSnapshots("blogs", allBlogRows, publishIds, syncedAt);
+  await saveRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs, nextRows);
   return {
     published,
     updated,
     skipped,
     blocked,
-    totalPublicBlogs: blogsEvergreen.filter((blog) => workflowStatusFrom(String(blog.Workflow_Status)) === "published").length
+    totalPublicBlogs: publicEditorialRows("blogs", nextRows).length
   };
 }
 
 export async function publishApprovedGuidesToPublic(): Promise<Record<string, unknown>> {
-  const guidesEvergreen = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
+  const allGuideRows = await loadAllEditorialRows<GuideEvergreenRow>("guides");
+  const guidesEvergreen = editableEditorialRows("guides", allGuideRows);
+  assertUniqueEditorialPaths("guides", guidesEvergreen);
   const syncedAt = publishTimestamp(new Date());
+  const publishIds: string[] = [];
   let published = 0;
   let updated = 0;
   let skipped = 0;
@@ -1493,13 +1583,14 @@ export async function publishApprovedGuidesToPublic(): Promise<Record<string, un
       continue;
     }
 
+    const editorial = parseEditorialDocument(String(row.Guide_Content ?? ""));
     if (
       !isReadyForManualPublish({
         title: String(row.Guide_Title ?? ""),
-        content: String(row.Guide_Content ?? ""),
+        content: editorial.body,
         qualityScore: String(row.Quality_Score ?? ""),
         qualityChecks: String(row.Quality_Checks ?? "")
-      })
+      }) || validateEditorialMediaForPublish(editorial.metadata).length > 0
     ) {
       blocked += 1;
       continue;
@@ -1512,24 +1603,80 @@ export async function publishApprovedGuidesToPublic(): Promise<Record<string, un
     row.Guide_URL = guidePath;
     row.Workflow_Status = "published";
     row.Published_To_Public_At = syncedAt;
+    publishIds.push(row.Guide_ID);
   }
 
-  await saveRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides, guidesEvergreen);
+  const nextRows = publishEditorialSnapshots("guides", allGuideRows, publishIds, syncedAt);
+  await saveRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides, nextRows);
   return {
     published,
     updated,
     skipped,
     blocked,
-    totalPublicGuides: guidesEvergreen.filter((guide) => workflowStatusFrom(String(guide.Workflow_Status)) === "published").length
+    totalPublicGuides: publicEditorialRows("guides", nextRows).length
   };
+}
+
+export async function publishEditorialItem(tab: EditorialTab, sourceId: string): Promise<Record<string, unknown>> {
+  const rows = await loadAllEditorialRows<Record<string, unknown>>(tab);
+  const editableRows = editableEditorialRows(tab, rows);
+  const idKey = tab === "blogs" ? "Blog_ID" : "Guide_ID";
+  const titleKey = tab === "blogs" ? "Blog_Title" : "Guide_Title";
+  const contentKey = tab === "blogs" ? "Blog_Content" : "Guide_Content";
+  const urlKey = tab === "blogs" ? "Blog_URL" : "Guide_URL";
+  const row = editableRows.find((item) => String(item[idKey] ?? "") === sourceId);
+  if (!row) throw new EvergreenValidationError(`No ${tab === "blogs" ? "blog" : "guide"} exists with ID ${sourceId}.`);
+  if (!isPublishableWorkflowStatus(String(row.Workflow_Status ?? ""))) {
+    throw new EvergreenValidationError("Set the workflow status to approved before publishing.");
+  }
+
+  assertUniqueEditorialPaths(tab, editableRows as Array<BlogEvergreenRow | GuideEvergreenRow>);
+  const editorial = parseEditorialDocument(String(row[contentKey] ?? ""));
+  if (!isReadyForManualPublish({
+    title: String(row[titleKey] ?? ""),
+    content: editorial.body,
+    qualityScore: String(row.Quality_Score ?? ""),
+    qualityChecks: String(row.Quality_Checks ?? "")
+  })) {
+    throw new EvergreenValidationError("Title, body, quality score, or quality checks are not ready for publication.");
+  }
+  const mediaIssues = validateEditorialMediaForPublish(editorial.metadata);
+  if (mediaIssues.length > 0) throw new EvergreenValidationError(mediaIssues.join(" "));
+
+  const publishedAt = publishTimestamp(new Date());
+  row[urlKey] = tab === "blogs"
+    ? destinationPathForBlog(row as BlogEvergreenRow)
+    : destinationPathForGuide(row as GuideEvergreenRow);
+  row.Workflow_Status = "published";
+  row.Published_To_Public_At = publishedAt;
+  const nextRows = publishEditorialSnapshots(tab, rows, [sourceId], publishedAt);
+  await saveRuntimeTab(TAB_MAP[tab], nextRows);
+  return { row, publishedAt };
+}
+
+export async function unpublishEditorialItem(tab: EditorialTab, sourceId: string): Promise<Record<string, unknown>> {
+  const rows = await loadAllEditorialRows<Record<string, unknown>>(tab);
+  const exists = editableEditorialRows(tab, rows).some((row) => String(row[tab === "blogs" ? "Blog_ID" : "Guide_ID"] ?? "") === sourceId);
+  if (!exists) throw new EvergreenValidationError(`No editable item exists with ID ${sourceId}.`);
+  const nextRows = unpublishEditorialSnapshot(tab, rows, sourceId);
+  await saveRuntimeTab(TAB_MAP[tab], nextRows);
+  return { unpublished: sourceId };
+}
+
+export async function restoreEditorialItem(tab: EditorialTab, sourceId: string): Promise<Record<string, unknown>> {
+  const rows = await loadAllEditorialRows<Record<string, unknown>>(tab);
+  const nextRows = restoreEditorialSnapshot(tab, rows, sourceId);
+  if (rowsMatch(tab, rows, nextRows)) {
+    throw new EvergreenValidationError("No published snapshot is available to restore.");
+  }
+  await saveRuntimeTab(TAB_MAP[tab], nextRows);
+  return { restored: sourceId };
 }
 
 export async function syncApprovedPinsToLegacy(): Promise<Record<string, unknown>> {
   const pinsEvergreen = await loadRuntimeTab<PinEvergreenRow>(TAB_MAP.pins);
-  const publicBlogs = (await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs)).filter(
-    (blog) => workflowStatusFrom(String(blog.Workflow_Status ?? "")) === "published"
-  );
-  const guidesEvergreen = (await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides)).filter((guide) => Boolean(guide.Guide_URL));
+  const publicBlogs = await loadPublicBlogs();
+  const guidesEvergreen = (await loadPublicGuides()).filter((guide) => Boolean(guide.Guide_URL));
   const syncedAt = new Date().toISOString();
   let synced = 0;
   let updated = 0;
@@ -1602,12 +1749,8 @@ export async function listApprovedPinsForExport(): Promise<
   }>
 > {
   const pinsEvergreen = await loadRuntimeTab<PinEvergreenRow>(TAB_MAP.pins);
-  const publicBlogs = (await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs)).filter(
-    (blog) => workflowStatusFrom(String(blog.Workflow_Status ?? "")) === "published"
-  );
-  const publicGuides = (await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides)).filter(
-    (guide) => workflowStatusFrom(String(guide.Workflow_Status ?? "")) === "published"
-  );
+  const publicBlogs = await loadPublicBlogs();
+  const publicGuides = await loadPublicGuides();
 
   return pinsEvergreen
     .filter((pin) => {
@@ -1720,8 +1863,8 @@ export async function updateProductStats(): Promise<{ updated: number }> {
   await bootstrapEvergreenProducts();
   const products = await loadRuntimeTab<ProductEvergreenRow>(TAB_MAP.products);
   const customers = await loadRuntimeTab<CustomerEvergreenRow>(TAB_MAP.customers);
-  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
-  const guides = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
+  const blogs = await loadEditableBlogs();
+  const guides = await loadEditableGuides();
 
   products.forEach((product) => {
     const sales = customers.reduce((sum, customer) => {
@@ -1843,8 +1986,8 @@ function commandCenterKpisFromRows(params: {
 
 export async function commandCenterDashboardSnapshot(): Promise<CommandCenterDashboardSnapshot> {
   const pins = await loadRuntimeTab<PinEvergreenRow>(TAB_MAP.pins);
-  const blogs = await loadRuntimeTab<BlogEvergreenRow>(TAB_MAP.blogs);
-  const guides = await loadRuntimeTab<GuideEvergreenRow>(TAB_MAP.guides);
+  const blogs = await loadEditableBlogs();
+  const guides = await loadEditableGuides();
   const emails = await loadRuntimeTab<EmailEvergreenRow>(TAB_MAP.emails);
   const customers = await loadRuntimeTab<CustomerEvergreenRow>(TAB_MAP.customers);
   const products = await loadRuntimeTab<ProductEvergreenRow>(TAB_MAP.products);

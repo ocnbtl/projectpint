@@ -1,17 +1,21 @@
 import Link from "next/link";
 import { AreaIcon } from "../../components/AreaIcon";
+import { SafeImage } from "../../components/SafeImage";
 import { SiteShell } from "../../components/SiteShell";
-import { areaVisuals } from "../../lib/redesign-data";
-import { blogMatchesArea, hubs, readBlogs, readGuides } from "../../lib/site-data";
+import { areaVisuals, redesignImages } from "../../lib/redesign-data";
+import { pageMetadata } from "../../lib/seo";
+import { blogMatchesArea, hubs, readPublishedBlogs, readPublishedGuides } from "../../lib/site-data";
 
 export const dynamic = "force-dynamic";
+export const metadata = pageMetadata({
+  title: "Bathroom Areas",
+  description: "Browse bathroom ideas, guides, and upgrade plans by the part of the room you want to improve.",
+  path: "/areas",
+  image: redesignImages.hero
+});
 
 export default async function HubIndexPage() {
-  const [blogs, guides] = await Promise.all([readBlogs(), readGuides()]);
-  const publishedBlogs = blogs.filter((blog) => blog.Status === "published");
-  const blogSource = publishedBlogs.length > 0 ? publishedBlogs : blogs;
-  const publishedGuides = guides.filter((guide) => guide.status.trim().toLowerCase() === "published");
-  const guideSource = publishedGuides.length > 0 ? publishedGuides : guides;
+  const [blogSource, guideSource] = await Promise.all([readPublishedBlogs(), readPublishedGuides()]);
 
   return (
     <SiteShell>
@@ -38,7 +42,7 @@ export default async function HubIndexPage() {
                   data-reveal
                   style={{ transitionDelay: `${index * 50}ms` }}
                 >
-                  <img src={visual.image} alt={`${hub.title} bathroom inspiration`} loading="lazy" decoding="async" />
+                  <SafeImage src={visual.image} alt={`${hub.title} bathroom inspiration`} loading="lazy" decoding="async" />
                   <span className="area-overview-shade" aria-hidden="true" />
                   <div className="area-overview-copy">
                     <div className="area-overview-head">

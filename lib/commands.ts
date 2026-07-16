@@ -433,7 +433,6 @@ function writeReviewPackAndExports(): void {
   const { plan, pins, blogs } = runScheduleBuild();
   const html = toReviewHtml(pins, blogs, plan);
   writeText(path.join(process.cwd(), "review_pack.html"), html);
-  writeText(path.join(process.cwd(), "public", "review_pack.html"), html);
 
   const paths = reviewPaths();
   writeQaReports(paths);

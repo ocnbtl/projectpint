@@ -74,6 +74,34 @@ const DEDICATED_SUPABASE_TABLES: Record<string, DedicatedTableConfig> = {
       "Published_To_Public_At"
     ]
   },
+  Inspiration_Evergreen: {
+    table: "inspiration_evergreen",
+    primaryKey: "Inspiration_ID",
+    columns: [
+      "Inspiration_ID",
+      "Inspiration_Publish_Date",
+      "Inspiration_Publish_Time",
+      "Content_Area",
+      "Workflow_Status",
+      "Inspiration_URL",
+      "Inspiration_Title",
+      "Inspiration_Style",
+      "Inspiration_Tags",
+      "Inspiration_Description",
+      "Inspiration_Body",
+      "Hero_Image_URL",
+      "Hero_Alt_Text",
+      "Hero_Caption",
+      "Hero_Credit",
+      "Hero_Rights_Status",
+      "SEO_Title",
+      "SEO_Description",
+      "Canonical_URL",
+      "Social_Image_URL",
+      "Indexable",
+      "Published_To_Public_At"
+    ]
+  },
   Emails_Evergreen: {
     table: "emails_evergreen",
     primaryKey: "Email_ID",
@@ -117,7 +145,9 @@ function runtimeStoreMode(): RuntimeStoreMode {
 }
 
 function localTabPath(tabName: string): string {
-  return path.join(process.cwd(), "data", "sheets", `${tabName}.json`);
+  const configuredRoot = process.env.LOCAL_DATA_ROOT?.trim();
+  const root = configuredRoot ? path.resolve(configuredRoot) : path.join(process.cwd(), "data", "sheets");
+  return path.join(root, `${tabName}.json`);
 }
 
 function requireSupabaseEnv(name: "SUPABASE_URL" | "SUPABASE_SERVICE_ROLE_KEY"): string {

@@ -37,6 +37,14 @@ function AdminNavIcon({ name }: { name: string }) {
           <path d="M5 5.5A2.5 2.5 0 0 1 7.5 8H20" />
         </svg>
       );
+    case "image":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="4" y="5" width="16" height="14" rx="2" />
+          <circle cx="9" cy="10" r="1.5" />
+          <path d="m6 17 4.5-4 3 2.5 2-2 2.5 3.5" />
+        </svg>
+      );
     case "mail":
       return (
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -78,7 +86,10 @@ function AdminNavIcon({ name }: { name: string }) {
 
 export function AdminNavLink({ href, label, icon }: AdminNavLinkProps) {
   const pathname = usePathname();
-  const isActive = pathname === href;
+  const isUsersAlias = href === "/admin/users" && pathname.startsWith("/admin/customers");
+  const isActive = href === "/admin"
+    ? pathname === href
+    : pathname === href || pathname.startsWith(`${href}/`) || isUsersAlias;
 
   return (
     <Link href={href} className={`admin-nav-link${isActive ? " is-active" : ""}`} aria-current={isActive ? "page" : undefined}>

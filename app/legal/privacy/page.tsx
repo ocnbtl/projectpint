@@ -1,4 +1,11 @@
 import { SiteShell } from "../../../components/SiteShell";
+import { pageMetadata } from "../../../lib/seo";
+
+export const metadata = pageMetadata({
+  title: "Privacy Policy",
+  description: "How Diyesu Decor collects, uses, and protects information provided through the website.",
+  path: "/legal/privacy"
+});
 
 export default function PrivacyPage() {
   return (

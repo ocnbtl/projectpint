@@ -3,9 +3,16 @@ import { SiteShell } from "../../components/SiteShell";
 import { contentAreaLabel, contentAreaSlug } from "../../lib/constants";
 import { estimateReadTimeMinutes, excerptFromMarkdown } from "../../lib/content-render";
 import { areaVisuals } from "../../lib/redesign-data";
-import { contentAreaForBlog, hubs, readBlogs, tagsForBlog } from "../../lib/site-data";
+import { pageMetadata } from "../../lib/seo";
+import { contentAreaForBlog, hubs, readPublishedBlogs, tagsForBlog } from "../../lib/site-data";
 
 export const dynamic = "force-dynamic";
+export const metadata = pageMetadata({
+  title: "Bathroom Articles",
+  description: "Browse published bathroom DIY articles for renters, small spaces, and budget-first upgrades.",
+  path: "/blog",
+  image: areaVisuals.DIY.image
+});
 
 export default async function BlogIndex({
   searchParams
@@ -14,9 +21,7 @@ export default async function BlogIndex({
 }) {
   const params = await searchParams;
   const areaParam = Array.isArray(params.area) ? params.area[0] : params.area;
-  const rows = await readBlogs();
-  const published = rows.filter((row) => row.Status === "published");
-  const source = published.length > 0 ? published : rows;
+  const source = await readPublishedBlogs();
 
   const blogs = source.map((row) => {
     const area = contentAreaForBlog(row);
@@ -24,7 +29,7 @@ export default async function BlogIndex({
       id: row.Blog_ID,
       slug: row.Slug,
       title: row.Title,
-      excerpt: excerptFromMarkdown(row.Draft_Markdown, 160),
+      excerpt: row.editorial.excerpt || excerptFromMarkdown(row.Draft_Markdown, 160),
       tags: tagsForBlog(row),
       keyword: row.Keyword_Target,
       image: areaVisuals[area].image,

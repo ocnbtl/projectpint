@@ -294,7 +294,7 @@ export function BlueprintTool() {
           <div className="tool-quiz-step">
             <h2 ref={stepHeadingRef} tabIndex={-1}>What matters most to you?</h2>
             <p>Select one or more areas. We&apos;ll prioritize your plan accordingly.</p>
-            <div className="quiz-option-grid quiz-option-grid-two">
+            <div className="quiz-option-grid quiz-option-grid-two blueprint-focus-grid">
               {focusAreas.map((area) => (
                 <ChoiceCard key={area.id} choice={area} selected={selectedFocus.includes(area.id)} onClick={() => toggleFocus(area.id)} compact />
               ))}
@@ -306,7 +306,7 @@ export function BlueprintTool() {
           <div className="tool-quiz-step">
             <h2 ref={stepHeadingRef} tabIndex={-1}>How big is your bathroom?</h2>
             <p>This helps us recommend the right-sized products and layouts.</p>
-            <div className="quiz-option-grid">
+            <div className="quiz-option-grid blueprint-size-grid">
               {bathroomSizes.map((bathroomSize) => (
                 <ChoiceCard
                   key={bathroomSize.id}

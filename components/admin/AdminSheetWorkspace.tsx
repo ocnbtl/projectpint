@@ -11,6 +11,7 @@ interface AdminSheetWorkspaceProps {
   columns: string[];
   initialRows: Record<string, unknown>[];
   dateColumn?: string;
+  readOnly?: boolean;
   summaryCards?: AdminSheetSummaryCard[];
   children?: ReactNode;
 }
@@ -30,6 +31,7 @@ export function AdminSheetWorkspace({
   columns,
   initialRows,
   dateColumn,
+  readOnly = false,
   summaryCards = [],
   children
 }: AdminSheetWorkspaceProps) {
@@ -62,6 +64,7 @@ export function AdminSheetWorkspace({
         columns={columns}
         initialRows={initialRows}
         dateColumn={dateColumn}
+        readOnly={readOnly}
         showSummary={false}
         showTitle={false}
       />

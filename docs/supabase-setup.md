@@ -10,6 +10,7 @@ This creates:
   - `pins_evergreen`
   - `blogs_evergreen`
   - `guides_evergreen`
+  - `inspiration_evergreen`
   - `emails_evergreen`
   - `customers_evergreen`
   - `products_evergreen`
@@ -21,6 +22,7 @@ Direct mapping:
 - `/admin/pins` <-> `pins_evergreen`
 - `/admin/blogs` <-> `blogs_evergreen`
 - `/admin/guides` <-> `guides_evergreen`
+- `/admin/inspiration` <-> `inspiration_evergreen`
 - `/admin/emails` <-> `emails_evergreen`
 - `/admin/customers` <-> `customers_evergreen`
 - `/admin/products` <-> `products_evergreen`
@@ -33,7 +35,9 @@ Current sync behavior:
 - this is direct persistence, but it is not multi-user realtime collaboration
 
 ## Why this shape
-The current admin command center needed real tables for Pins, Blogs, Guides, Emails, Customers, Products, and Leads. Those are now the live storage model.
+The current admin command center needed real tables for Pins, Blogs, Guides, Inspiration, Emails, Customers, Products, and Leads. Those are now the live storage model.
+
+For an existing hosted project, apply `supabase/migrations/20260716_inspiration_evergreen.sql` before deploying the Inspiration admin workflow. The migration only creates and secures the new table; it does not create, edit, or delete editorial content. This repository change does not apply the migration automatically.
 
 ## Required env vars
 - `STORAGE_MODE=supabase`
@@ -49,7 +53,7 @@ Use:
 - fallback: legacy `service_role` key -> `SUPABASE_SERVICE_ROLE_KEY`
 
 Do not expose this server key publicly.
-Enable RLS on these tables. The app uses a server-side secret key, so the hosted runtime will still work while browser/public access stays blocked by default.
+The checked-in schema enables RLS and revokes `anon` and `authenticated` table privileges. The app uses a server-side secret key, so the hosted runtime continues to work while browser/public access stays blocked by both grants and RLS.
 
 ## Local usage
 For local development you can either:

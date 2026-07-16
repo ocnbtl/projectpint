@@ -21,20 +21,6 @@ interface AnalyticsPageProps {
   searchParams: Promise<{ channel?: string | string[] }>;
 }
 
-interface PinMetric {
-  id: string;
-  title: string;
-  area: ContentArea;
-  status: string;
-  impressions: number;
-  saves: number;
-  outboundClicks: number;
-  closeups: number;
-  saveRate: number;
-  clickRate: number;
-  engagementScore: number;
-}
-
 const CHANNELS: Array<{ key: Channel; label: string; icon: string }> = [
   { key: "all", label: "All", icon: "all" },
   { key: "pins", label: "Pins", icon: "pin" },
@@ -53,10 +39,6 @@ const AREA_COLORS: Record<ContentArea, string> = {
   DIY: "#a89080",
   ExtremeBudget: "#b8a99a"
 };
-
-function formatNumber(value: number) {
-  return new Intl.NumberFormat("en-US").format(Math.round(value));
-}
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-US", {
@@ -79,58 +61,12 @@ function normalizedArea(value: unknown): ContentArea {
   return normalizeContentArea(String(value ?? "")) ?? "DIY";
 }
 
-function stableNumber(seed: string) {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i += 1) {
-    hash = (hash * 31 + seed.charCodeAt(i)) % 100000;
-  }
-  return hash;
-}
-
 function dateToWeek(value: unknown) {
   const date = new Date(String(value ?? ""));
   if (Number.isNaN(date.getTime())) return "Unscheduled";
   const month = date.toLocaleString("en-US", { month: "short", timeZone: "UTC" });
   const week = Math.max(1, Math.ceil(date.getUTCDate() / 7));
   return `W${week} ${month}`;
-}
-
-function titleFromPin(row: Record<string, unknown>) {
-  const overlay = String(row.Pin_Overlay ?? "").split(/\n/)[0]?.trim();
-  const caption = String(row.Pin_Caption ?? "").trim();
-  return overlay || caption || String(row.Destination ?? row.Pin_ID ?? "Pinterest pin");
-}
-
-function pinMetricsFromRows(rows: Record<string, unknown>[]): PinMetric[] {
-  return rows.map((row, index) => {
-    const id = String(row.Pin_ID ?? `PIN-${index + 1}`);
-    const area = normalizedArea(row.Content_Area);
-    const status = normalizeStatus(row.Workflow_Status);
-    const seed = stableNumber(`${id}:${row.Content_Area}:${row.Destination}:${index}`);
-    const statusMultiplier = status === "posted" || status === "published" ? 1.28 : status === "approved" ? 1.1 : 0.78;
-    const mediaMultiplier = row.Media_URL ? 1.16 : 0.86;
-    const impressions = Math.round((18000 + seed * 0.72 + index * 1270) * statusMultiplier * mediaMultiplier);
-    const saveRateBase = 0.075 + (seed % 55) / 1000;
-    const clickRateBase = 0.029 + (seed % 32) / 1000;
-    const saves = Math.round(impressions * saveRateBase);
-    const outboundClicks = Math.round(impressions * clickRateBase);
-    const closeups = Math.round(impressions * (0.16 + (seed % 5) / 100));
-    const saveRate = impressions ? (saves / impressions) * 100 : 0;
-    const clickRate = impressions ? (outboundClicks / impressions) * 100 : 0;
-    return {
-      id,
-      area,
-      status,
-      title: titleFromPin(row),
-      impressions,
-      saves,
-      outboundClicks,
-      closeups,
-      saveRate,
-      clickRate,
-      engagementScore: impressions ? ((saves * 3 + outboundClicks * 5 + closeups) / impressions) * 100 : 0
-    };
-  });
 }
 
 function qualityScore(row: Record<string, unknown>) {
@@ -323,135 +259,6 @@ function AreaTrendChart({ data }: { data: Array<{ label: string; created: number
   );
 }
 
-function AnalyticsEmptyState({ label }: { label: string }) {
-  return (
-    <div className="admin-analytics-empty">
-      <span aria-hidden="true" />
-      <p>{label}</p>
-    </div>
-  );
-}
-
-function ScatterPlot({
-  data,
-  xKey,
-  yKey,
-  xLabel,
-  yLabel
-}: {
-  data: PinMetric[];
-  xKey: "impressions" | "clickRate";
-  yKey: "saveRate";
-  xLabel: string;
-  yLabel: string;
-}) {
-  if (data.length === 0) {
-    return <AnalyticsEmptyState label="Performance points will appear after pin metrics are available." />;
-  }
-
-  const xValues = data.map((item) => item[xKey]);
-  const yValues = data.map((item) => item[yKey]);
-  const minX = Math.min(...xValues, 0);
-  const maxX = Math.max(...xValues, 1);
-  const maxY = Math.max(...yValues, 1);
-
-  return (
-    <div className="admin-chart admin-chart-scatter">
-      <svg viewBox="0 0 100 70" role="img" aria-label={`${xLabel} by ${yLabel}`}>
-        <g className="scatter-grid">
-          {[0, 25, 50, 75, 100].map((tick) => (
-            <line key={`v-${tick}`} x1={tick} x2={tick} y1="0" y2="62" />
-          ))}
-          {[0, 20, 40, 60].map((tick) => (
-            <line key={`h-${tick}`} x1="0" x2="100" y1={tick} y2={tick} />
-          ))}
-        </g>
-        {data.map((item) => {
-          const x = ((item[xKey] - minX) / Math.max(1, maxX - minX)) * 96 + 2;
-          const y = 62 - (item[yKey] / maxY) * 58;
-          const radius = Math.max(1.4, Math.min(3.8, item.outboundClicks / Math.max(1, Math.max(...data.map((pin) => pin.outboundClicks))) * 4));
-          return <circle key={item.id} cx={x} cy={y} r={radius} fill={AREA_COLORS[item.area]} opacity="0.76" />;
-        })}
-      </svg>
-      <div className="admin-chart-axis-labels">
-        <span>{xLabel}</span>
-        <span>{yLabel}</span>
-      </div>
-    </div>
-  );
-}
-
-function RadarChart({ data }: { data: Array<{ area: ContentArea; saveRate: number; clickRate: number }> }) {
-  if (data.length === 0) {
-    return <AnalyticsEmptyState label="Area comparison will appear after pins are assigned to content areas." />;
-  }
-
-  const center = 50;
-  const radius = 32;
-  const max = Math.max(...data.flatMap((item) => [item.saveRate, item.clickRate]), 1);
-  const pointsFor = (key: "saveRate" | "clickRate") =>
-    data
-      .map((item, index) => {
-        const angle = (Math.PI * 2 * index) / data.length - Math.PI / 2;
-        const r = (item[key] / max) * radius;
-        return `${center + Math.cos(angle) * r},${center + Math.sin(angle) * r}`;
-      })
-      .join(" ");
-
-  return (
-    <div className="admin-chart admin-chart-radar">
-      <svg viewBox="0 0 100 100" role="img" aria-label="Area performance radar">
-        {[0.25, 0.5, 0.75, 1].map((scale) => (
-          <polygon
-            key={scale}
-            points={data
-              .map((_, index) => {
-                const angle = (Math.PI * 2 * index) / data.length - Math.PI / 2;
-                return `${center + Math.cos(angle) * radius * scale},${center + Math.sin(angle) * radius * scale}`;
-              })
-              .join(" ")}
-            className="radar-ring"
-          />
-        ))}
-        {data.map((item, index) => {
-          const angle = (Math.PI * 2 * index) / data.length - Math.PI / 2;
-          return (
-            <text key={item.area} x={center + Math.cos(angle) * 43} y={center + Math.sin(angle) * 43} textAnchor="middle">
-              {contentAreaLabel(item.area).replace("Extreme Budget", "extreme")}
-            </text>
-          );
-        })}
-        <polygon points={pointsFor("saveRate")} className="radar-save" />
-        <polygon points={pointsFor("clickRate")} className="radar-click" />
-      </svg>
-      <div className="admin-chart-legend">
-        <span className="legend-published">Avg Save Rate</span>
-        <span className="legend-prepared">Avg Click Rate</span>
-      </div>
-    </div>
-  );
-}
-
-function RankBadge({ rank }: { rank: number }) {
-  return <span className={`admin-rank-badge${rank === 1 ? " is-first" : rank <= 3 ? " is-top" : ""}`}>#{rank}</span>;
-}
-
-function areaAggFromPins(metrics: PinMetric[]) {
-  return COMMAND_CENTER_CONTENT_AREAS.map((area) => {
-    const pins = metrics.filter((pin) => pin.area === area);
-    const impressions = pins.reduce((sum, pin) => sum + pin.impressions, 0);
-    const saves = pins.reduce((sum, pin) => sum + pin.saves, 0);
-    const clicks = pins.reduce((sum, pin) => sum + pin.outboundClicks, 0);
-    return {
-      area,
-      pins: pins.length,
-      avgImpressions: pins.length ? Math.round(impressions / pins.length) : 0,
-      saveRate: impressions ? (saves / impressions) * 100 : 0,
-      clickRate: impressions ? (clicks / impressions) * 100 : 0
-    };
-  }).filter((item) => item.pins > 0);
-}
-
 function weeklyPipeline(rows: Record<string, unknown>[]) {
   const grouped = new Map<string, { label: string; created: number; prepared: number; published: number }>();
   for (const row of rows) {
@@ -468,10 +275,6 @@ function weeklyPipeline(rows: Record<string, unknown>[]) {
 }
 
 function PinsAnalytics({ rows, kpis }: { rows: Record<string, unknown>[]; kpis: CommandCenterKpis }) {
-  const metrics = pinMetricsFromRows(rows);
-  const totalImpressions = metrics.reduce((sum, pin) => sum + pin.impressions, 0);
-  const totalSaves = metrics.reduce((sum, pin) => sum + pin.saves, 0);
-  const totalClicks = metrics.reduce((sum, pin) => sum + pin.outboundClicks, 0);
   const prepared = rows.filter((row) => row.Prepared_For_Export_At || ["approved", "queued", "posted", "published"].includes(normalizeStatus(row.Workflow_Status))).length;
   const review = rows.filter((row) => normalizeStatus(row.Workflow_Status) === "review").length;
   const drafts = rows.filter((row) => normalizeStatus(row.Workflow_Status) === "draft").length;
@@ -481,12 +284,6 @@ function PinsAnalytics({ rows, kpis }: { rows: Record<string, unknown>[]; kpis: 
     { label: "Approved", value: kpis.pinsReadyToSync },
     { label: "Published", value: kpis.pinsPosted }
   ];
-  const areaAgg = areaAggFromPins(metrics);
-  const leaderboard = [...metrics].sort((a, b) => b.impressions - a.impressions);
-  const maxImpressions = Math.max(...areaAgg.map((item) => item.avgImpressions), 1);
-  const maxSave = Math.max(...areaAgg.map((item) => item.saveRate), 1);
-  const maxClick = Math.max(...areaAgg.map((item) => item.clickRate), 1);
-
   return (
     <>
       <section className="admin-analytics-stat-grid is-five">
@@ -508,131 +305,21 @@ function PinsAnalytics({ rows, kpis }: { rows: Record<string, unknown>[]; kpis: 
         </article>
       </section>
 
-      <section className="admin-analytics-deep-head">
+      <article className="admin-analytics-panel admin-analytics-unavailable" role="status">
+        <span className="admin-analytics-unavailable-icon" aria-hidden="true">!</span>
         <div>
-          <h2>Pin Performance Deep Dive</h2>
-          <p>{metrics.length} pins in selected period - compare, rank, and identify top performers</p>
+          <h2>Pin performance metrics are not connected</h2>
+          <p>
+            Impressions, saves, outbound clicks, closeups, and engagement rates do not currently come from a verified
+            analytics source. No estimated or synthetic performance values are shown.
+          </p>
+          <p>
+            Operational pin totals, workflow status, export readiness, and published URL coverage above remain based on
+            stored command-center rows.
+          </p>
         </div>
-        <div className="admin-analytics-time-filter" aria-label="Time period">
-          {["Last 7 days", "Last 30 days", "Last 90 days", "Last 6 months", "All time"].map((label) => (
-            <span key={label} className={label === "All time" ? "is-active" : ""}>{label}</span>
-          ))}
-        </div>
-      </section>
-
-      <section className="admin-analytics-stat-grid is-five">
-        <AdminMetricCard label="Impressions" value={formatNumber(totalImpressions)} trend="up" />
-        <AdminMetricCard label="Saves" value={formatNumber(totalSaves)} trend="up" />
-        <AdminMetricCard label="Outbound Clicks" value={formatNumber(totalClicks)} trend="up" />
-        <AdminMetricCard label="Avg Save Rate" value={`${totalImpressions ? ((totalSaves / totalImpressions) * 100).toFixed(1) : "0.0"}%`} sub="Saves / Impressions" />
-        <AdminMetricCard label="Avg Click Rate" value={`${totalImpressions ? ((totalClicks / totalImpressions) * 100).toFixed(1) : "0.0"}%`} sub="Clicks / Impressions" />
-      </section>
-
-      <section className="admin-analytics-chart-grid">
-        <article className="admin-analytics-panel">
-          <h2>Reach vs. Save Rate</h2>
-          <p>Bubble size = outbound clicks. Top-right quadrant = high reach, high engagement.</p>
-          <ScatterPlot data={metrics} xKey="impressions" yKey="saveRate" xLabel="Impressions" yLabel="Save Rate %" />
-          <AreaLegend areas={areaAgg.map((item) => item.area)} />
-        </article>
-        <article className="admin-analytics-panel">
-          <h2>Area Performance Radar</h2>
-          <p>Compare areas across avg impressions, save rate, and click rate.</p>
-          <RadarChart data={areaAgg} />
-        </article>
-      </section>
-
-      <article className="admin-analytics-panel">
-        <h2>Area Performance Heatmap</h2>
-        <p>Color intensity indicates relative performance. Darker = higher metric value.</p>
-        {areaAgg.length > 0 ? (
-          <div className="admin-analytics-table-wrap">
-            <table className="admin-analytics-table">
-              <thead>
-                <tr>
-                  <th>Area</th>
-                  <th>Pins</th>
-                  <th>Avg Impressions</th>
-                  <th>Save Rate</th>
-                  <th>Click Rate</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[...areaAgg].sort((a, b) => b.saveRate - a.saveRate).map((row) => (
-                  <tr key={row.area}>
-                    <td><AreaPill area={row.area} /></td>
-                    <td>{row.pins}</td>
-                    <td><HeatCell value={formatNumber(row.avgImpressions)} intensity={row.avgImpressions / maxImpressions} tone="green" /></td>
-                    <td><HeatCell value={`${row.saveRate.toFixed(1)}%`} intensity={row.saveRate / maxSave} tone="gold" /></td>
-                    <td><HeatCell value={`${row.clickRate.toFixed(1)}%`} intensity={row.clickRate / maxClick} tone="brown" /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : <AnalyticsEmptyState label="Area heatmap rows will appear once pin metrics exist." />}
-      </article>
-
-      <article className="admin-analytics-panel">
-        <div className="admin-analytics-panel-row">
-          <div>
-            <h2>Pin Performance Leaderboard</h2>
-            <p>Weighted engagement score = (saves x 3 + clicks x 5 + closeups x 1) / impressions x 100</p>
-          </div>
-          <span className="admin-analytics-select">Sort by: Impressions</span>
-        </div>
-        {leaderboard.length > 0 ? (
-          <div className="admin-analytics-table-wrap">
-            <table className="admin-analytics-table">
-              <thead>
-                <tr>
-                  <th>Rank</th>
-                  <th>Pin</th>
-                  <th>Area</th>
-                  <th>Impressions</th>
-                  <th>Saves</th>
-                  <th>Clicks</th>
-                  <th>Save%</th>
-                  <th>Click%</th>
-                  <th>Eng. Score</th>
-                </tr>
-              </thead>
-              <tbody>
-                {leaderboard.map((pin, index) => (
-                  <tr key={pin.id} className={index < 3 ? "is-top-row" : undefined}>
-                    <td><RankBadge rank={index + 1} /></td>
-                    <td><strong>{pin.id}</strong><span>{pin.title}</span></td>
-                    <td><AreaPill area={pin.area} /></td>
-                    <td>{formatNumber(pin.impressions)}</td>
-                    <td>{formatNumber(pin.saves)}</td>
-                    <td>{formatNumber(pin.outboundClicks)}</td>
-                    <td className="is-green">{pin.saveRate.toFixed(1)}%</td>
-                    <td className="is-gold">{pin.clickRate.toFixed(1)}%</td>
-                    <td><ScoreMeter value={pin.engagementScore} max={Math.max(...leaderboard.map((item) => item.engagementScore), 1)} /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : <AnalyticsEmptyState label="Pin leaderboard rows will appear after exported pins collect metrics." />}
-      </article>
-
-      <article className="admin-analytics-panel">
-        <h2>Save Rate vs. Click Rate Quadrant Map</h2>
-        <p><strong>Top-right</strong> = viral + driving traffic - <strong>Top-left</strong> = viral but low clicks - <strong>Bottom-right</strong> = clicks but not saving - <strong>Bottom-left</strong> = underperforming</p>
-        <ScatterPlot data={metrics} xKey="clickRate" yKey="saveRate" xLabel="Click Rate %" yLabel="Save Rate %" />
       </article>
     </>
-  );
-}
-
-function AreaLegend({ areas }: { areas: ContentArea[] }) {
-  return (
-    <div className="admin-area-legend">
-      {areas.map((area) => (
-        <span key={area}><i style={{ backgroundColor: AREA_COLORS[area] }} />{contentAreaLabel(area)}</span>
-      ))}
-    </div>
   );
 }
 
@@ -645,20 +332,6 @@ function AreaPill({ area }: { area: ContentArea }) {
   );
 }
 
-function HeatCell({ value, intensity, tone }: { value: string; intensity: number; tone: "green" | "gold" | "brown" }) {
-  const alpha = Math.max(0.12, Math.min(0.42, intensity * 0.42));
-  const backgroundColor = tone === "green" ? `rgba(91, 140, 106, ${alpha})` : tone === "gold" ? `rgba(196, 147, 106, ${alpha})` : `rgba(142, 123, 107, ${alpha})`;
-  return <span className="admin-heat-cell" style={{ backgroundColor }}>{value}</span>;
-}
-
-function ScoreMeter({ value, max }: { value: number; max: number }) {
-  return (
-    <span className="admin-score-meter">
-      <i style={{ width: `${Math.max(6, percent(value, max))}%` }} />
-      <span>{value.toFixed(0)}</span>
-    </span>
-  );
-}
 
 function BlogAnalytics({ rows }: { rows: Record<string, unknown>[] }) {
   const withQuality = rows.filter((row) => qualityScore(row) > 0);

@@ -1,6 +1,15 @@
 import Link from "next/link";
 import { EmailSignupForm } from "../../components/EmailSignupForm";
 import { SiteShell } from "../../components/SiteShell";
+import { redesignImages } from "../../lib/redesign-data";
+import { pageMetadata } from "../../lib/seo";
+
+export const metadata = pageMetadata({
+  title: "About",
+  description: "Learn how Diyesu Decor helps renters, beginners, DIYers, and budget-first households improve their bathrooms.",
+  path: "/about",
+  image: redesignImages.hero
+});
 
 function AboutValueIcon({ name }: { name: "zap" | "user" | "heart" }) {
   const paths = {

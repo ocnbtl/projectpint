@@ -272,7 +272,11 @@ export function PlantPickerTool() {
     if (!dialog) return;
 
     const fallbackHeading = stepHeadingRef.current;
-    const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previouslyFocused = unlockButtonRef.current?.isConnected
+      ? unlockButtonRef.current
+      : document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
     const previousBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
@@ -392,7 +396,11 @@ export function PlantPickerTool() {
               {results.map((plant, index) => {
                 const isLocked = index >= 2 && !unlocked;
                 const card = (
-                  <article key={plant.name} className={isLocked ? "plant-match-card is-locked" : "plant-match-card"}>
+                  <article
+                    key={plant.name}
+                    className={isLocked ? "plant-match-card is-locked" : "plant-match-card"}
+                    aria-hidden={isLocked || undefined}
+                  >
                     <span className={`plant-match-icon plant-match-${plant.difficulty.toLowerCase()}`}>
                       <MiniIcon name={plant.icon} />
                     </span>

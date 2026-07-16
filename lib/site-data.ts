@@ -1,10 +1,12 @@
 import { contentAreaLabel, contentAreasForPillar, primaryContentAreaForPillar, primaryLegacyPillarForArea } from "./constants.ts";
 import { excerptFromMarkdown } from "./content-render.ts";
+import { DEFAULT_EDITORIAL_METADATA, parseEditorialDocument, type EditorialMetadata } from "./editorial-content.ts";
+import { publicEditorialRows } from "./editorial-publication.ts";
 import { loadRuntimeTab } from "./runtime-store.ts";
 import { mergeTags, parseKeywordTags, tagSlug } from "./tags.ts";
 import type { BlogDraft, ContentArea } from "./types.ts";
 
-interface BlogEvergreenShape {
+interface BlogEvergreenShape extends Record<string, unknown> {
   Blog_ID: string;
   Blog_Publish_Date: string;
   Blog_Publish_Time: string;
@@ -18,7 +20,7 @@ interface BlogEvergreenShape {
   Published_To_Public_At: string;
 }
 
-interface GuideEvergreenShape {
+interface GuideEvergreenShape extends Record<string, unknown> {
   Guide_ID: string;
   Guide_Publish_Date: string;
   Guide_Publish_Time: string;
@@ -53,12 +55,18 @@ export interface PublicGuideItem {
   tags: string[];
   relatedBlogId: string;
   status: string;
+  publishedAt: string;
+  editorial: EditorialMetadata;
+}
+
+export interface PublicBlogItem extends BlogDraft {
+  editorial: EditorialMetadata;
 }
 
 export interface TagArchive {
   label: string;
   slug: string;
-  blogs: BlogDraft[];
+  blogs: PublicBlogItem[];
   guides: PublicGuideItem[];
 }
 
@@ -178,21 +186,18 @@ function slugFromPathOrTitle(pathValue: string, fallback: string, id: string): s
     .replace(/\s+/g, "-");
 }
 
-function firstKeyword(value: string): string {
-  return parseKeywordTags(value)[0] ?? "";
-}
-
 export function tagsForBlog(blog: Pick<BlogDraft, "Pillar" | "Slug" | "Title" | "Keyword_Target"> & { Keyword_Tags?: string[] }): string[] {
   const keywordTags = Array.isArray(blog.Keyword_Tags) && blog.Keyword_Tags.length > 0 ? blog.Keyword_Tags : parseKeywordTags(blog.Keyword_Target);
   return mergeTags([contentAreaLabel(contentAreaForBlog(blog))], keywordTags);
 }
 
-function mapEvergreenBlogToPublic(row: BlogEvergreenShape): BlogDraft {
+function mapEvergreenBlogToPublic(row: BlogEvergreenShape): PublicBlogItem {
   const area = (hubs.find((hub) => hub.area === row.Content_Area)?.area ?? "DIY") as ContentArea;
   const slug = slugFromPathOrTitle(row.Blog_URL, row.Blog_Title, row.Blog_ID);
   const title = row.Blog_Title || slug.replace(/-/g, " ");
   const keywords = parseKeywordTags(row.Blog_Keywords);
   const keyword = keywords[0] ?? "";
+  const document = parseEditorialDocument(row.Blog_Content);
 
   return {
     Blog_ID: row.Blog_ID,
@@ -202,7 +207,7 @@ function mapEvergreenBlogToPublic(row: BlogEvergreenShape): BlogDraft {
     Keyword_Target: keyword,
     Keyword_Tags: keywords,
     Outline: "Evergreen admin source",
-    Draft_Markdown: row.Blog_Content || `# ${title}\n\nThis blog is being prepared.`,
+    Draft_Markdown: document.body || `# ${title}\n\nThis blog is being prepared.`,
     Internal_Links: "/start-here, /lead-magnets/plant-picker, /products/renter-bathroom-upgrade-blueprint",
     CTA_Block: "Subscribe for weekly renter safe bathroom plans.",
     Status: workflowToLegacyStatus(row.Workflow_Status),
@@ -210,7 +215,8 @@ function mapEvergreenBlogToPublic(row: BlogEvergreenShape): BlogDraft {
     Published_At: row.Published_To_Public_At || "",
     Ad_Enabled: true,
     Contains_Affiliate_Links: false,
-    Affiliate_Disclosure_Required: false
+    Affiliate_Disclosure_Required: false,
+    editorial: document.metadata
   };
 }
 
@@ -218,26 +224,37 @@ function mapEvergreenGuide(row: GuideEvergreenShape): PublicGuideItem {
   const area = (hubs.find((hub) => hub.area === row.Content_Area)?.area ?? "DIY") as ContentArea;
   const slug = slugFromPathOrTitle(row.Guide_URL, row.Guide_Title, row.Guide_ID);
   const keywords = parseKeywordTags(row.Guide_Keywords);
+  const document = parseEditorialDocument(row.Guide_Content);
   return {
     Guide_ID: row.Guide_ID,
     slug,
     title: row.Guide_Title || slug.replace(/-/g, " "),
-    summary: excerptFromMarkdown(row.Guide_Content, 140),
+    summary: document.metadata.excerpt || excerptFromMarkdown(document.body, 140),
     area,
-    content: row.Guide_Content || `# ${row.Guide_Title || slug}\n\nThis guide is being prepared.`,
+    content: document.body || `# ${row.Guide_Title || slug}\n\nThis guide is being prepared.`,
     keywords,
     tags: mergeTags([contentAreaLabel(area)], keywords),
     relatedBlogId: row.Blog_ID,
-    status: row.Workflow_Status
+    status: row.Workflow_Status,
+    publishedAt: row.Published_To_Public_At || "",
+    editorial: document.metadata
   };
 }
 
-export async function readBlogs(): Promise<BlogDraft[]> {
+export async function readBlogs(): Promise<PublicBlogItem[]> {
   const evergreen = await loadRuntimeTab<BlogEvergreenShape>("Blogs_Evergreen");
-  if (evergreen.length > 0) return evergreen.map(mapEvergreenBlogToPublic);
+  if (evergreen.length > 0) return publicEditorialRows("blogs", evergreen).map(mapEvergreenBlogToPublic);
 
   try {
-    return await loadRuntimeTab<BlogDraft>("Blog_Posts");
+    const legacy = await loadRuntimeTab<BlogDraft>("Blog_Posts");
+    return legacy.map((blog) => {
+      const document = parseEditorialDocument(blog.Draft_Markdown);
+      return {
+        ...blog,
+        Draft_Markdown: document.body,
+        editorial: document.metadata ?? DEFAULT_EDITORIAL_METADATA
+      };
+    });
   } catch {
     return [];
   }
@@ -245,34 +262,37 @@ export async function readBlogs(): Promise<BlogDraft[]> {
 
 export async function readGuides(): Promise<PublicGuideItem[]> {
   const evergreen = await loadRuntimeTab<GuideEvergreenShape>("Guides_Evergreen");
-  return evergreen.map(mapEvergreenGuide);
+  return publicEditorialRows("guides", evergreen).map(mapEvergreenGuide);
+}
+
+export function publishedBlogs<T extends BlogDraft>(rows: T[]): T[] {
+  return rows.filter((row) => row.Status === "published");
+}
+
+export function publishedGuides(rows: PublicGuideItem[]): PublicGuideItem[] {
+  return rows.filter((row) => row.status.trim().toLowerCase() === "published");
+}
+
+export async function readPublishedBlogs(): Promise<PublicBlogItem[]> {
+  return publishedBlogs(await readBlogs());
+}
+
+export async function readPublishedGuides(): Promise<PublicGuideItem[]> {
+  return publishedGuides(await readGuides());
 }
 
 export async function findGuidesForHub(hub: HubDefinition, limit = 6): Promise<PublicGuideItem[]> {
-  const all = await readGuides();
-  const published = all.filter((guide) => guide.status.trim().toLowerCase() === "published");
-  const source = published.length > 0 ? published : all;
-  return source.filter((guide) => guide.area === hub.area).slice(0, limit);
+  const guides = await readPublishedGuides();
+  return guides.filter((guide) => guide.area === hub.area).slice(0, limit);
 }
 
 export async function findGuideBySlug(slug: string): Promise<PublicGuideItem | undefined> {
-  const guides = await readGuides();
+  const guides = await readPublishedGuides();
   return guides.find((guide) => guide.slug === slug);
 }
 
-function publishedOrDraftBlogs(rows: BlogDraft[]): BlogDraft[] {
-  const published = rows.filter((row) => row.Status === "published");
-  return published.length > 0 ? published : rows;
-}
-
-function publishedOrDraftGuides(rows: PublicGuideItem[]): PublicGuideItem[] {
-  const published = rows.filter((row) => row.status.trim().toLowerCase() === "published");
-  return published.length > 0 ? published : rows;
-}
-
 export async function readAllTagArchives(): Promise<TagArchive[]> {
-  const blogs = publishedOrDraftBlogs(await readBlogs());
-  const guides = publishedOrDraftGuides(await readGuides());
+  const [blogs, guides] = await Promise.all([readPublishedBlogs(), readPublishedGuides()]);
   const labels = new Map<string, string>();
 
   for (const blog of blogs) {

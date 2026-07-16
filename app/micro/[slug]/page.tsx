@@ -4,17 +4,25 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import path from "path";
 import { MarkdownArticle } from "../../../components/MarkdownArticle";
+import { SafeImage } from "../../../components/SafeImage";
 import { SiteShell } from "../../../components/SiteShell";
 import { contentAreaLabel, contentAreaSlug } from "../../../lib/constants";
 import { estimateReadTimeMinutes, excerptFromMarkdown, markdownBlocks, titleFromSlug } from "../../../lib/content-render";
 import { areaVisuals } from "../../../lib/redesign-data";
+import { pageMetadata } from "../../../lib/seo";
 import { hubs } from "../../../lib/site-data";
 import { tagPath } from "../../../lib/tags";
 import type { ContentArea } from "../../../lib/types";
 
 const MICRO_GUIDES_DIR = path.join(process.cwd(), "micro_guides");
+const UNAPPROVED_MICRO_PREFIX = "auto-generated-";
+
+function isApprovedMicroSlug(slug: string): boolean {
+  return Boolean(slug) && !slug.startsWith(UNAPPROVED_MICRO_PREFIX);
+}
 
 async function readMicroGuide(slug: string): Promise<string | null> {
+  if (!isApprovedMicroSlug(slug)) return null;
   try {
     return await readFile(path.join(MICRO_GUIDES_DIR, `${slug}.md`), "utf8");
   } catch {
@@ -42,7 +50,7 @@ export async function generateStaticParams() {
   try {
     const files = await readdir(MICRO_GUIDES_DIR);
     return files
-      .filter((file) => file.endsWith(".md"))
+      .filter((file) => file.endsWith(".md") && !file.startsWith(UNAPPROVED_MICRO_PREFIX))
       .map((file) => ({
         slug: file.replace(/\.md$/, "")
       }));
@@ -54,15 +62,19 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const markdown = await readMicroGuide(slug);
-  if (!markdown) return {};
+  if (!markdown) return { robots: { index: false, follow: false } };
 
   const blocks = markdownBlocks(markdown);
   const titleBlock = blocks[0]?.type === "h1" ? blocks[0] : null;
   const title = titleBlock?.text ?? titleFromSlug(slug);
-  return {
+  const area = inferMicroArea(slug, markdown);
+  return pageMetadata({
     title,
-    description: excerptFromMarkdown(markdown, 155)
-  };
+    description: excerptFromMarkdown(markdown, 155),
+    path: `/micro/${slug}`,
+    image: areaVisuals[area].image,
+    type: "article"
+  });
 }
 
 export default async function MicroPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -134,7 +146,7 @@ export default async function MicroPage({ params }: { params: Promise<{ slug: st
           <div className="article-related-grid">
             <Link href={`/areas/${contentAreaSlug(area)}`} className="article-related-card">
               <span className="article-related-media">
-                <img src={visual.image} alt="" />
+                <SafeImage src={visual.image} alt="" />
               </span>
               <span className="article-related-copy">
                 <strong>{areaLabel} ideas</strong>
@@ -143,7 +155,7 @@ export default async function MicroPage({ params }: { params: Promise<{ slug: st
             </Link>
             <Link href="/lead-magnets/plant-picker" className="article-related-card">
               <span className="article-related-media">
-                <img src={areaVisuals.Plants.image} alt="" />
+                <SafeImage src={areaVisuals.Plants.image} alt="" />
               </span>
               <span className="article-related-copy">
                 <strong>Free Plant Picker</strong>

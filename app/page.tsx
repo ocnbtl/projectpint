@@ -2,12 +2,28 @@ import Link from "next/link";
 import { AreaIcon } from "../components/AreaIcon";
 import { EmailSignupForm } from "../components/EmailSignupForm";
 import { HomeScrollControls } from "../components/HomeScrollControls";
+import { SafeImage } from "../components/SafeImage";
 import { SiteShell } from "../components/SiteShell";
 import { estimateReadTimeMinutes, excerptFromMarkdown } from "../lib/content-render";
-import { areaVisuals, inspirationStyles, redesignImages } from "../lib/redesign-data";
-import { blogMatchesArea, contentAreaForBlog, hubs, readBlogs, readGuides, tagsForBlog } from "../lib/site-data";
+import { areaVisuals, redesignImages } from "../lib/redesign-data";
+import { readPublicInspirationViews } from "../lib/inspiration-content";
+import { pageMetadata } from "../lib/seo";
+import {
+  blogMatchesArea,
+  contentAreaForBlog,
+  hubs,
+  readPublishedBlogs,
+  readPublishedGuides,
+  tagsForBlog
+} from "../lib/site-data";
 
 export const dynamic = "force-dynamic";
+export const metadata = pageMetadata({
+  title: "DIY Bathroom Upgrades",
+  description: "Practical bathroom upgrades for renters, small spaces, and tight budgets.",
+  path: "/",
+  image: redesignImages.hero
+});
 
 function HouseSmokeIcon() {
   return (
@@ -26,14 +42,14 @@ function HouseSmokeIcon() {
 }
 
 export default async function HomePage() {
-  const [allBlogs, allGuides] = await Promise.all([readBlogs(), readGuides()]);
-  const publishedBlogs = allBlogs.filter((blog) => blog.Status === "published");
-  const blogSource = publishedBlogs.length > 0 ? publishedBlogs : allBlogs;
+  const [blogSource, guideSource, inspirationSource] = await Promise.all([
+    readPublishedBlogs(),
+    readPublishedGuides(),
+    readPublicInspirationViews()
+  ]);
   const blogs = blogSource.slice(0, 6);
   const hasLiveBlogs = blogs.length > 0;
-  const publishedGuides = allGuides.filter((guide) => guide.status.trim().toLowerCase() === "published");
-  const guideSource = publishedGuides.length > 0 ? publishedGuides : allGuides;
-  const inspirationLoop = [...inspirationStyles, ...inspirationStyles];
+  const inspirationLoop = [...inspirationSource, ...inspirationSource];
   const fallbackBlogCards = [
     {
       id: "fallback-plants",
@@ -72,7 +88,8 @@ export default async function HomePage() {
               <span className="hero-line hero-line-desktop" aria-hidden="true">Your bathroom deserves better.</span>
               <span className="hero-line hero-line-wallet" aria-hidden="true">Your wallet says be smart.</span>
             </h1>
-            <p aria-label="Practical upgrades for renters, small spaces, and tight budgets.">
+            <p>
+              <span className="screen-reader-text">Practical upgrades for renters, small spaces, and tight budgets.</span>
               <span className="hero-line hero-line-mobile" aria-hidden="true">Practical upgrades for renters, small spaces,</span>
               <span className="hero-line hero-line-mobile" aria-hidden="true">and tight budgets.</span>
               <span className="hero-line hero-line-desktop" aria-hidden="true">Practical upgrades for renters, small spaces, and tight budgets.</span>
@@ -106,7 +123,7 @@ export default async function HomePage() {
                 guideSource.filter((guide) => guide.area === hub.area).length;
               return (
                 <Link key={hub.slug} href={`/areas/${hub.slug}`} className="area-photo-card">
-                  <img src={visual.image} alt={`${hub.title} bathroom inspiration`} loading="lazy" decoding="async" />
+                  <SafeImage src={visual.image} alt={`${hub.title} bathroom inspiration`} loading="lazy" decoding="async" />
                   <span className="area-photo-card-shade" aria-hidden="true" />
                   <span className="area-photo-icon" aria-hidden="true">
                     <AreaIcon name={visual.icon} />
@@ -142,13 +159,13 @@ export default async function HomePage() {
                 <Link
                   key={`${style.slug}-${index}`}
                   href={`/inspiration/${style.slug}`}
-                  className={`inspo-strip-card${index >= inspirationStyles.length ? " home-inspo-duplicate" : ""}`}
-                  aria-hidden={index >= inspirationStyles.length ? true : undefined}
-                  tabIndex={index >= inspirationStyles.length ? -1 : undefined}
+                  className={`inspo-strip-card${index >= inspirationSource.length ? " home-inspo-duplicate" : ""}`}
+                  aria-hidden={index >= inspirationSource.length ? true : undefined}
+                  tabIndex={index >= inspirationSource.length ? -1 : undefined}
                 >
-                  <img
+                  <SafeImage
                     src={style.cover}
-                    alt={index >= inspirationStyles.length ? "" : `${style.name} bathroom inspiration`}
+                    alt={index >= inspirationSource.length ? "" : style.coverAlt}
                     loading="lazy"
                     decoding="async"
                   />
@@ -179,7 +196,7 @@ export default async function HomePage() {
                     <Link key={blog.Blog_ID} href={`/blog/${blog.Slug}`} className="blog-card-link home-blog-card-link">
                       <article className="blog-image-card">
                         <div className="blog-image-card-media">
-                          <img src={image} alt={`${blog.Title} article`} loading="lazy" decoding="async" />
+                          <SafeImage src={image} alt={`${blog.Title} article`} loading="lazy" decoding="async" />
                         </div>
                         <div className="blog-image-card-copy">
                           <div className="tag-list tag-list-compact">
@@ -193,7 +210,7 @@ export default async function HomePage() {
                             <span className="blog-read-time">{estimateReadTimeMinutes(blog.Draft_Markdown)} min read</span>
                           </div>
                           <h3>{blog.Title}</h3>
-                          <p>{excerptFromMarkdown(blog.Draft_Markdown, 130)}</p>
+                          <p>{blog.editorial.excerpt || excerptFromMarkdown(blog.Draft_Markdown, 130)}</p>
                         </div>
                       </article>
                     </Link>
@@ -203,7 +220,7 @@ export default async function HomePage() {
                   <Link key={blog.id} href={blog.href} className="blog-card-link home-blog-card-link">
                     <article className="blog-image-card">
                       <div className="blog-image-card-media">
-                        <img src={blog.image} alt={`${blog.title} article`} loading="lazy" decoding="async" />
+                        <SafeImage src={blog.image} alt={`${blog.title} article`} loading="lazy" decoding="async" />
                       </div>
                       <div className="blog-image-card-copy">
                         <div className="tag-list tag-list-compact">

@@ -1,5 +1,14 @@
+"use client";
+
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type ReactNode
+} from "react";
 import { AdminNavLink } from "./AdminNavLink";
 
 const NAV_ITEMS = [
@@ -7,63 +16,203 @@ const NAV_ITEMS = [
   { href: "/admin/pins", label: "Pins", icon: "pin" },
   { href: "/admin/blogs", label: "Blogs", icon: "file" },
   { href: "/admin/guides", label: "Guides", icon: "book" },
+  { href: "/admin/inspiration", label: "Inspiration", icon: "image" },
   { href: "/admin/emails", label: "Emails", icon: "mail" },
-  { href: "/admin/customers", label: "Users", icon: "users" },
+  { href: "/admin/users", label: "Users", icon: "users" },
   { href: "/admin/products", label: "Products", icon: "package" },
   { href: "/admin/analytics", label: "Analytics", icon: "chart" }
 ];
 
-export function AdminFrame({ children }: { children: ReactNode }) {
+function BrandLockup({ onNavigate }: { onNavigate?: () => void }) {
   return (
-    <div className="admin-shell">
-      <aside className="admin-sidebar">
-        <Link href="/admin" className="admin-brand">
-          <span className="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img">
-              <path d="M19.2 4.8c-6.8.4-11.5 3.1-14 8.2 2.2-.9 4.4-.9 6.7-.1-2.9 1.1-5.1 3-6.5 5.8 5.9-.2 10.3-2.1 13.1-5.8 1.5-2 1.7-4.7.7-8.1Z" />
-              <path d="M5.5 18.2c2.8-4.4 6.2-7.2 10.1-8.5" />
-            </svg>
-          </span>
-          <span>
-            <strong>Diyesu Decor</strong>
-            <span className="admin-brand-sub">Command Center</span>
-          </span>
-        </Link>
-        <nav className="admin-nav" aria-label="Admin navigation">
-          {NAV_ITEMS.map((item) => (
-            <AdminNavLink key={item.href} href={item.href} label={item.label} icon={item.icon} />
-          ))}
-        </nav>
-        <div className="admin-sidebar-foot">
-          <p className="admin-sidebar-note">
-            Human approval stays required before any publish or Pinterest export.
-          </p>
-          <div className="admin-sidebar-actions">
-            <Link href="/" className="btn btn-ghost">
+    <Link href="/admin" className="admin-brand" onClick={onNavigate}>
+      <span className="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" role="img">
+          <path d="M19.2 4.8c-6.8.4-11.5 3.1-14 8.2 2.2-.9 4.4-.9 6.7-.1-2.9 1.1-5.1 3-6.5 5.8 5.9-.2 10.3-2.1 13.1-5.8 1.5-2 1.7-4.7.7-8.1Z" />
+          <path d="M5.5 18.2c2.8-4.4 6.2-7.2 10.1-8.5" />
+        </svg>
+      </span>
+      <span>
+        <strong>Diyesu Decor</strong>
+        <span className="admin-brand-sub">Command Center</span>
+      </span>
+    </Link>
+  );
+}
+
+function SidebarContents({ onNavigate }: { onNavigate?: () => void }) {
+  return (
+    <>
+      <BrandLockup onNavigate={onNavigate} />
+      <nav
+        className="admin-nav"
+        aria-label="Admin navigation"
+        onClick={(event) => {
+          if (event.target instanceof Element && event.target.closest("a")) onNavigate?.();
+        }}
+      >
+        {NAV_ITEMS.map((item) => (
+          <AdminNavLink key={item.href} href={item.href} label={item.label} icon={item.icon} />
+        ))}
+      </nav>
+      <div className="admin-sidebar-foot">
+        <div className="admin-sidebar-actions">
+          <Link href="/" className="btn btn-ghost" target="_blank" rel="noreferrer" onClick={onNavigate}>
+            <span className="admin-action-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M15 3h6v6" />
+                <path d="M10 14 21 3" />
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              </svg>
+            </span>
+            Open public site
+          </Link>
+          <form action="/api/admin/logout" method="post">
+            <button type="submit" className="btn btn-accent admin-logout-btn">
               <span className="admin-action-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
-                  <path d="M15 3h6v6" />
-                  <path d="M10 14 21 3" />
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <path d="M16 17l5-5-5-5" />
+                  <path d="M21 12H9" />
                 </svg>
               </span>
-              Open public site
-            </Link>
-            <form action="/api/admin/logout" method="post">
-              <button type="submit" className="btn btn-accent admin-logout-btn">
-                <span className="admin-action-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <path d="M16 17l5-5-5-5" />
-                    <path d="M21 12H9" />
-                  </svg>
-                </span>
-                Log out
-              </button>
-            </form>
-          </div>
+              Log out
+            </button>
+          </form>
         </div>
+      </div>
+    </>
+  );
+}
+
+function focusableElements(container: HTMLElement): HTMLElement[] {
+  return Array.from(
+    container.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )
+  ).filter((element) => !element.hasAttribute("hidden"));
+}
+
+export function AdminFrame({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const drawerRef = useRef<HTMLElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const priorFocusRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const closeAtDesktop = () => {
+      if (desktop.matches) setDrawerOpen(false);
+    };
+    closeAtDesktop();
+    desktop.addEventListener("change", closeAtDesktop);
+    return () => desktop.removeEventListener("change", closeAtDesktop);
+  }, []);
+
+  useEffect(() => {
+    if (!drawerOpen) return undefined;
+
+    priorFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const fallbackFocus = menuButtonRef.current;
+    document.body.classList.add("admin-drawer-open");
+    const firstFocusable = drawerRef.current ? focusableElements(drawerRef.current)[0] : null;
+    firstFocusable?.focus();
+
+    return () => {
+      document.body.classList.remove("admin-drawer-open");
+      (priorFocusRef.current ?? fallbackFocus)?.focus();
+    };
+  }, [drawerOpen]);
+
+  function closeDrawer() {
+    setDrawerOpen(false);
+  }
+
+  function handleDrawerKeyDown(event: ReactKeyboardEvent<HTMLElement>) {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeDrawer();
+      return;
+    }
+
+    if (event.key !== "Tab" || !drawerRef.current) return;
+    const focusable = focusableElements(drawerRef.current);
+    if (focusable.length === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
+  return (
+    <div className="admin-shell">
+      <aside className="admin-sidebar admin-sidebar-desktop" aria-label="Command Center">
+        <SidebarContents />
       </aside>
+
+      <header className="admin-mobile-topbar">
+        <button
+          ref={menuButtonRef}
+          type="button"
+          className="admin-mobile-menu-button"
+          aria-label="Open admin navigation"
+          aria-controls="admin-mobile-navigation"
+          aria-expanded={drawerOpen}
+          onClick={() => setDrawerOpen(true)}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+        </button>
+        <span>Command Center</span>
+      </header>
+
+      {drawerOpen ? (
+        <>
+          <button
+            type="button"
+            className="admin-sidebar-backdrop"
+            aria-label="Close admin navigation"
+            onClick={closeDrawer}
+          />
+          <aside
+            ref={drawerRef}
+            id="admin-mobile-navigation"
+            className="admin-sidebar admin-sidebar-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Admin navigation"
+            onKeyDown={handleDrawerKeyDown}
+          >
+            <button
+              type="button"
+              className="admin-drawer-close"
+              aria-label="Close admin navigation"
+              onClick={closeDrawer}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m6 6 12 12M18 6 6 18" />
+              </svg>
+            </button>
+            <SidebarContents onNavigate={closeDrawer} />
+          </aside>
+        </>
+      ) : null}
+
       <main className="admin-main">{children}</main>
     </div>
   );
