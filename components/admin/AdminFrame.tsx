@@ -98,7 +98,6 @@ export function AdminFrame({ children }: { children: ReactNode }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const drawerRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const priorFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     setDrawerOpen(false);
@@ -117,23 +116,19 @@ export function AdminFrame({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!drawerOpen) return undefined;
 
-    priorFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const fallbackFocus = menuButtonRef.current;
     document.body.classList.add("admin-drawer-open");
     const firstFocusable = drawerRef.current ? focusableElements(drawerRef.current)[0] : null;
     firstFocusable?.focus();
 
     return () => {
       document.body.classList.remove("admin-drawer-open");
-      const restoreTarget = priorFocusRef.current?.isConnected ? priorFocusRef.current : fallbackFocus;
-      requestAnimationFrame(() => {
-        (restoreTarget?.isConnected ? restoreTarget : fallbackFocus)?.focus();
-      });
     };
   }, [drawerOpen]);
 
   function closeDrawer() {
+    const focusTarget = menuButtonRef.current;
     setDrawerOpen(false);
+    window.setTimeout(() => focusTarget?.focus(), 0);
   }
 
   function handleDrawerKeyDown(event: ReactKeyboardEvent<HTMLElement>) {
