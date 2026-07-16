@@ -51,7 +51,7 @@ export function BlogIndexExplorer({ blogs, availableTags, areaFilters, initialAr
   return (
     <>
       <section className="blog-index-hero">
-        <div className="container blog-index-hero-inner">
+        <div className="container blog-index-hero-inner" data-reveal="hero">
           <h1>Curated guides & articles to upgrade your bathroom</h1>
           <ol className="blog-intro-steps">
             <li>Find a relevant article and read in less than 10 minutes</li>
@@ -76,6 +76,7 @@ export function BlogIndexExplorer({ blogs, availableTags, areaFilters, initialAr
                 type="button"
                 className={`area-filter-chip${activeArea === "all" ? " is-active" : ""}`}
                 onClick={() => setActiveArea("all")}
+                aria-pressed={activeArea === "all"}
               >
                 All
               </button>
@@ -85,6 +86,7 @@ export function BlogIndexExplorer({ blogs, availableTags, areaFilters, initialAr
                   type="button"
                   className={`area-filter-chip${activeArea === area.slug ? " is-active" : ""}`}
                   onClick={() => setActiveArea(area.slug)}
+                  aria-pressed={activeArea === area.slug}
                 >
                   {area.label}
                 </button>
@@ -98,7 +100,7 @@ export function BlogIndexExplorer({ blogs, availableTags, areaFilters, initialAr
                 <Link key={blog.id} href={blog.href ?? `/blog/${blog.slug}`} className="blog-card-link">
                   <article className="blog-image-card">
                     <div className="blog-image-card-media">
-                      <img src={blog.image} alt="" />
+                      <img src={blog.image} alt={`${blog.title} article`} loading="lazy" decoding="async" />
                     </div>
                     <div className="blog-image-card-copy">
                       <div className="blog-card-meta">

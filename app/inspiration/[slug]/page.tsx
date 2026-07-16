@@ -15,9 +15,9 @@ export default async function InspirationDetailPage({ params }: { params: Promis
   return (
     <SiteShell>
       <section className="inspiration-detail-hero">
-        <img src={style.cover} alt="" />
+        <img src={style.cover} alt={`${style.name} bathroom inspiration`} />
         <div className="inspiration-detail-shade">
-          <div className="container inspiration-detail-copy">
+          <div className="container inspiration-detail-copy" data-reveal="hero">
             <Link href="/inspiration" className="back-link">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M19 12H5" />
@@ -34,7 +34,7 @@ export default async function InspirationDetailPage({ params }: { params: Promis
 
       <div className="container site-page inspiration-detail-page">
         <p className="inspiration-board-kicker">Pinned for you &mdash; scroll the board</p>
-        <section className="inspiration-board">
+        <section className="inspiration-board" data-reveal>
           {style.items.map((item, index) =>
             item.type === "product" ? (
               <article
@@ -61,14 +61,19 @@ export default async function InspirationDetailPage({ params }: { params: Promis
                 className={`inspiration-image-pin inspiration-image-${item.shape}`}
                 style={{ transform: `rotate(${((index % 5) - 2) * 1.4}deg)` }}
               >
-                <img src={item.src} alt="" />
+                <img
+                  src={item.src}
+                  alt={item.label || `${style.name} bathroom inspiration`}
+                  loading="lazy"
+                  decoding="async"
+                />
                 {item.label ? <figcaption>{item.label}</figcaption> : null}
               </figure>
             )
           )}
         </section>
 
-        <section className="inspiration-detail-cta">
+        <section className="inspiration-detail-cta" data-reveal>
           <p>Love this look? Get a personalized plan to recreate it on your budget.</p>
           <Link href="/blueprint" className="btn btn-accent">
             Build My Blueprint

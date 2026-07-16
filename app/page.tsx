@@ -65,7 +65,7 @@ export default async function HomePage() {
     <SiteShell>
       <section className="home-photo-hero" style={{ backgroundImage: `url(${redesignImages.hero})` }}>
         <div className="home-photo-hero-overlay">
-          <div className="container home-photo-hero-copy">
+          <div className="container home-photo-hero-copy" data-reveal="hero">
             <h1 aria-label="Your bathroom deserves better. Your wallet says be smart.">
               <span className="hero-line hero-line-mobile" aria-hidden="true">Your bathroom</span>
               <span className="hero-line hero-line-mobile" aria-hidden="true">deserves better.</span>
@@ -91,7 +91,7 @@ export default async function HomePage() {
       </section>
 
       <div className="container site-page home-page">
-        <section className="home-section home-areas-section">
+        <section className="home-section home-areas-section" data-reveal>
           <div className="dd-section-head home-section-head home-section-head-left">
             <div>
               <h2>What part of your bathroom needs love?</h2>
@@ -106,7 +106,7 @@ export default async function HomePage() {
                 guideSource.filter((guide) => guide.area === hub.area).length;
               return (
                 <Link key={hub.slug} href={`/areas/${hub.slug}`} className="area-photo-card">
-                  <img src={visual.image} alt="" />
+                  <img src={visual.image} alt={`${hub.title} bathroom inspiration`} loading="lazy" decoding="async" />
                   <span className="area-photo-card-shade" aria-hidden="true" />
                   <span className="area-photo-icon" aria-hidden="true">
                     <AreaIcon name={visual.icon} />
@@ -123,7 +123,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="home-section home-inspiration-section">
+        <section className="home-section home-inspiration-section" data-reveal>
           <div className="dd-section-head home-section-head">
             <div>
               <h2>Beautiful bathrooms, attainable upgrades</h2>
@@ -139,8 +139,19 @@ export default async function HomePage() {
           <div className="home-inspo-window">
             <div className="inspo-strip home-inspo-strip" id="home-inspiration-carousel">
               {inspirationLoop.map((style, index) => (
-                <Link key={`${style.slug}-${index}`} href={`/inspiration/${style.slug}`} className="inspo-strip-card">
-                  <img src={style.cover} alt="" />
+                <Link
+                  key={`${style.slug}-${index}`}
+                  href={`/inspiration/${style.slug}`}
+                  className={`inspo-strip-card${index >= inspirationStyles.length ? " home-inspo-duplicate" : ""}`}
+                  aria-hidden={index >= inspirationStyles.length ? true : undefined}
+                  tabIndex={index >= inspirationStyles.length ? -1 : undefined}
+                >
+                  <img
+                    src={style.cover}
+                    alt={index >= inspirationStyles.length ? "" : `${style.name} bathroom inspiration`}
+                    loading="lazy"
+                    decoding="async"
+                  />
                   <span>{style.name}</span>
                 </Link>
               ))}
@@ -148,7 +159,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="home-section home-blog-section">
+        <section className="home-section home-blog-section" data-reveal>
           <div className="dd-section-head home-section-head home-section-head-left">
             <div>
               <h2>Quick reads to upgrade your bathroom</h2>
@@ -168,7 +179,7 @@ export default async function HomePage() {
                     <Link key={blog.Blog_ID} href={`/blog/${blog.Slug}`} className="blog-card-link home-blog-card-link">
                       <article className="blog-image-card">
                         <div className="blog-image-card-media">
-                          <img src={image} alt="" />
+                          <img src={image} alt={`${blog.Title} article`} loading="lazy" decoding="async" />
                         </div>
                         <div className="blog-image-card-copy">
                           <div className="tag-list tag-list-compact">
@@ -192,7 +203,7 @@ export default async function HomePage() {
                   <Link key={blog.id} href={blog.href} className="blog-card-link home-blog-card-link">
                     <article className="blog-image-card">
                       <div className="blog-image-card-media">
-                        <img src={blog.image} alt="" />
+                        <img src={blog.image} alt={`${blog.title} article`} loading="lazy" decoding="async" />
                       </div>
                       <div className="blog-image-card-copy">
                         <div className="tag-list tag-list-compact">
@@ -212,7 +223,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="home-section home-plant-section dark-cta">
+        <section className="home-section home-plant-section dark-cta" data-reveal>
           <div>
             <span className="home-free-pill">
               <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -235,7 +246,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="home-section newsletter-band home-newsletter-dark">
+        <section className="home-section newsletter-band home-newsletter-dark" data-reveal>
           <div>
             <span className="home-newsletter-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24">

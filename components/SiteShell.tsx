@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { CookieNotice } from "./CookieNotice";
+import { RevealController } from "./RevealController";
 import { SiteHeader } from "./SiteHeader";
 
 const footerTickerItems = [
@@ -29,6 +30,10 @@ export function SiteShell({ children }: { children: ReactNode }) {
   return (
     <div className="site-shell">
       <SiteHeader />
+      <RevealController />
+      <noscript>
+        <style>{`[data-reveal] { opacity: 1 !important; transform: none !important; }`}</style>
+      </noscript>
       <main className="site-main">{children}</main>
       <footer className="site-footer">
         <div className="container footer-grid">

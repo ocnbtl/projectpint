@@ -11,7 +11,8 @@ function scrollTarget(targetId: string, direction: "left" | "right") {
   const element = document.getElementById(targetId);
   if (!element) return;
   const amount = Math.min(380, element.clientWidth * 0.82);
-  element.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" });
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  element.scrollBy({ left: direction === "left" ? -amount : amount, behavior: reduceMotion ? "auto" : "smooth" });
 }
 
 export function HomeScrollControls({ targetId, label }: HomeScrollControlsProps) {

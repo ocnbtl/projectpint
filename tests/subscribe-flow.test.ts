@@ -6,6 +6,15 @@ import test from "node:test";
 import { upsertCustomerFromSignup } from "../lib/command-center.ts";
 import { persistLead } from "../lib/lead-store.ts";
 
+test("signup POST redirects with See Other after a successful subscription", async () => {
+  const routeSource = await readFile(new URL("../app/api/subscribe/route.ts", import.meta.url), "utf8");
+
+  assert.match(
+    routeSource,
+    /NextResponse\.redirect\(new URL\("\/start-here\?subscribed=1", request\.url\), \{ status: 303 \}\)/
+  );
+});
+
 test("signup storage persists leads and upserts evergreen customers", async () => {
   const previousCwd = process.cwd();
   const previousForceLocal = process.env.FORCE_LOCAL_SHEETS;

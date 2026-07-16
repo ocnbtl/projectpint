@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { inspirationStyles } from "../lib/redesign-data";
 import { ConsentNote } from "./ConsentNote";
 
@@ -50,6 +50,12 @@ const includedFeatures = [
   "Colors and styles that match your aesthetic",
   "A reasonable timeline for the work"
 ];
+
+function summarizeChoice(options: Choice[], id: string) {
+  const choice = options.find((option) => option.id === id);
+  if (!choice) return id;
+  return choice.description ? `${choice.label} — ${choice.description}` : choice.label;
+}
 
 function MiniIcon({ name }: { name: string }) {
   switch (name) {
@@ -171,7 +177,12 @@ function ChoiceCard({
   compact?: boolean;
 }) {
   return (
-    <button type="button" className={selected ? "quiz-option-card is-selected" : "quiz-option-card"} onClick={onClick}>
+    <button
+      type="button"
+      className={selected ? "quiz-option-card is-selected" : "quiz-option-card"}
+      aria-pressed={selected}
+      onClick={onClick}
+    >
       <span className="quiz-option-icon">
         <MiniIcon name={choice.icon} />
       </span>
@@ -191,6 +202,18 @@ export function BlueprintTool() {
   const [selectedFocus, setSelectedFocus] = useState<string[]>([]);
   const [size, setSize] = useState("");
   const [styles, setStyles] = useState<string[]>([]);
+  const stepHeadingRef = useRef<HTMLHeadingElement>(null);
+  const hasRenderedStep = useRef(false);
+
+  useEffect(() => {
+    if (!hasRenderedStep.current) {
+      hasRenderedStep.current = true;
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(() => stepHeadingRef.current?.focus({ preventScroll: true }));
+    return () => window.cancelAnimationFrame(frame);
+  }, [step]);
 
   const selectedContentAreas = useMemo(() => {
     const areas = new Set<string>();
@@ -205,10 +228,10 @@ export function BlueprintTool() {
 
   const selectedLabels = useMemo(
     () => [
-      budget,
-      bathroomType,
-      ...selectedFocus,
-      size,
+      summarizeChoice(budgetTiers, budget),
+      summarizeChoice(bathroomTypes, bathroomType),
+      ...selectedFocus.map((id) => summarizeChoice(focusAreas, id)),
+      summarizeChoice(bathroomSizes, size),
       ...styles.map((slug) => inspirationStyles.find((style) => style.slug === slug)?.name ?? slug)
     ].filter(Boolean),
     [bathroomType, budget, selectedFocus, size, styles]
@@ -229,6 +252,15 @@ export function BlueprintTool() {
     setStyles((current) => (current.includes(slug) ? current.filter((item) => item !== slug) : [...current, slug]));
   };
 
+  const reset = () => {
+    setStep(0);
+    setBudget("");
+    setBathroomType("");
+    setSelectedFocus([]);
+    setSize("");
+    setStyles([]);
+  };
+
   return (
     <section className="tool-quiz-shell blueprint-quiz-shell">
       <ProgressSteps step={step} />
@@ -236,7 +268,7 @@ export function BlueprintTool() {
       <div className="tool-quiz-card">
         {step === 0 ? (
           <div className="tool-quiz-step">
-            <h2>What&apos;s your upgrade budget?</h2>
+            <h2 ref={stepHeadingRef} tabIndex={-1}>What&apos;s your upgrade budget?</h2>
             <p>We&apos;ll tailor every recommendation to fit your budget exactly.</p>
             <div className="quiz-option-stack">
               {budgetTiers.map((tier) => (
@@ -248,7 +280,7 @@ export function BlueprintTool() {
 
         {step === 1 ? (
           <div className="tool-quiz-step">
-            <h2>Is this a rental or owned home?</h2>
+            <h2 ref={stepHeadingRef} tabIndex={-1}>Is this a rental or owned home?</h2>
             <p>Renters get only non-permanent, damage-free recommendations.</p>
             <div className="quiz-option-grid quiz-option-grid-two">
               {bathroomTypes.map((type) => (
@@ -260,7 +292,7 @@ export function BlueprintTool() {
 
         {step === 2 ? (
           <div className="tool-quiz-step">
-            <h2>What matters most to you?</h2>
+            <h2 ref={stepHeadingRef} tabIndex={-1}>What matters most to you?</h2>
             <p>Select one or more areas. We&apos;ll prioritize your plan accordingly.</p>
             <div className="quiz-option-grid quiz-option-grid-two">
               {focusAreas.map((area) => (
@@ -272,7 +304,7 @@ export function BlueprintTool() {
 
         {step === 3 ? (
           <div className="tool-quiz-step">
-            <h2>How big is your bathroom?</h2>
+            <h2 ref={stepHeadingRef} tabIndex={-1}>How big is your bathroom?</h2>
             <p>This helps us recommend the right-sized products and layouts.</p>
             <div className="quiz-option-grid">
               {bathroomSizes.map((bathroomSize) => (
@@ -290,7 +322,7 @@ export function BlueprintTool() {
 
         {step === 4 ? (
           <div className="tool-quiz-step">
-            <h2>Which looks are you drawn to?</h2>
+            <h2 ref={stepHeadingRef} tabIndex={-1}>Which looks are you drawn to?</h2>
             <p>Pick one or more styles that fit your vision.</p>
             <div className="style-choice-grid">
               {inspirationStyles.map((style) => {
@@ -300,6 +332,7 @@ export function BlueprintTool() {
                     key={style.slug}
                     type="button"
                     className={selected ? "style-choice-card is-selected" : "style-choice-card"}
+                    aria-pressed={selected}
                     onClick={() => toggleStyle(style.slug)}
                   >
                     <span className="style-choice-image" style={{ backgroundImage: `url(${style.cover})` }} aria-hidden="true" />
@@ -317,7 +350,7 @@ export function BlueprintTool() {
             <span className="tool-success-icon">
               <MiniIcon name="sparkles" />
             </span>
-            <h2>Your Blueprint is Ready</h2>
+            <h2 ref={stepHeadingRef} tabIndex={-1}>Your Blueprint is Ready</h2>
             <p>
               Based on your selections, we&apos;ll create a personalized plan with product links, step-by-step installment
               guides, and a reasonable timeline. Delivered within 48 hours.
@@ -357,7 +390,7 @@ export function BlueprintTool() {
               </button>
               <ConsentNote />
             </form>
-            <button type="button" className="tool-reset-link" onClick={() => setStep(0)}>
+            <button type="button" className="tool-reset-link" onClick={reset}>
               Start over
             </button>
           </div>

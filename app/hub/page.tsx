@@ -16,7 +16,7 @@ export default async function HubIndexPage() {
   return (
     <SiteShell>
       <section className="areas-index-hero">
-        <div className="container areas-index-hero-inner">
+        <div className="container areas-index-hero-inner" data-reveal="hero">
           <p className="areas-kicker">Browse by Area</p>
           <h1>Every part of your bathroom, covered</h1>
           <p>Pick an area to explore curated articles, product recommendations, upgrade plans, and tips tailored to your space + budget.</p>
@@ -25,29 +25,35 @@ export default async function HubIndexPage() {
 
       <div className="container site-page areas-index-page">
         <section className="areas-overview-grid" aria-label="Bathroom areas">
-            {hubs.map((hub) => {
+            {hubs.map((hub, index) => {
               const visual = areaVisuals[hub.area];
               const resourceCount =
                 blogSource.filter((blog) => blogMatchesArea(blog, hub.area)).length +
                 guideSource.filter((guide) => guide.area === hub.area).length;
               return (
-                <Link key={hub.slug} href={`/areas/${hub.slug}`} className="area-overview-card">
-                  <img src={visual.image} alt="" />
+                <Link
+                  key={hub.slug}
+                  href={`/areas/${hub.slug}`}
+                  className="area-overview-card"
+                  data-reveal
+                  style={{ transitionDelay: `${index * 50}ms` }}
+                >
+                  <img src={visual.image} alt={`${hub.title} bathroom inspiration`} loading="lazy" decoding="async" />
                   <span className="area-overview-shade" aria-hidden="true" />
-                  <span className="area-overview-copy">
-                    <span className="area-overview-head">
+                  <div className="area-overview-copy">
+                    <div className="area-overview-head">
                       <span className="area-icon-bubble">
                         <AreaIcon name={visual.icon} />
                       </span>
-                      <span>
-                        <strong>{hub.title}</strong>
+                      <div>
+                        <h2>{hub.title}</h2>
                         <span>{visual.tagline}</span>
-                      </span>
-                    </span>
+                      </div>
+                    </div>
                     <span className="area-resource-count">
                       {resourceCount} {resourceCount === 1 ? "article" : "articles"}
                     </span>
-                  </span>
+                  </div>
                 </Link>
               );
             })}

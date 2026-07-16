@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ConsentNote } from "./ConsentNote";
 
 type PlantStep = 0 | 1 | 2 | 3;
@@ -228,6 +228,7 @@ function OptionGrid({
           key={option.value}
           type="button"
           className={value === option.value ? "quiz-option-card is-selected" : "quiz-option-card"}
+          aria-pressed={value === option.value}
           onClick={() => onChange(option.value)}
         >
           <span className="quiz-option-icon">
@@ -249,6 +250,85 @@ export function PlantPickerTool() {
   const [showSignup, setShowSignup] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
   const [selectedAreas, setSelectedAreas] = useState<string[]>(["Plants"]);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const stepHeadingRef = useRef<HTMLHeadingElement>(null);
+  const unlockButtonRef = useRef<HTMLButtonElement>(null);
+  const hasRenderedStep = useRef(false);
+
+  useEffect(() => {
+    if (!hasRenderedStep.current) {
+      hasRenderedStep.current = true;
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(() => stepHeadingRef.current?.focus({ preventScroll: true }));
+    return () => window.cancelAnimationFrame(frame);
+  }, [step]);
+
+  useEffect(() => {
+    if (!showSignup || unlocked) return;
+
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const fallbackHeading = stepHeadingRef.current;
+    const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const focusableSelector =
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    const getFocusableElements = () =>
+      Array.from(dialog.querySelectorAll<HTMLElement>(focusableSelector)).filter(
+        (element) => element.getClientRects().length > 0 && element.getAttribute("aria-hidden") !== "true"
+      );
+
+    const frame = window.requestAnimationFrame(() => {
+      const email = dialog.querySelector<HTMLInputElement>("#plant-picker-email");
+      (email ?? getFocusableElements()[0] ?? dialog).focus();
+    });
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setShowSignup(false);
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+      const focusableElements = getFocusableElements();
+      const first = focusableElements[0];
+      const last = focusableElements[focusableElements.length - 1];
+
+      if (!first || !last) {
+        event.preventDefault();
+        dialog.focus();
+        return;
+      }
+
+      if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousBodyOverflow;
+      window.requestAnimationFrame(() => {
+        if (previouslyFocused?.isConnected) {
+          previouslyFocused.focus();
+        } else {
+          fallbackHeading?.focus({ preventScroll: true });
+        }
+      });
+    };
+  }, [showSignup, unlocked]);
 
   const results = useMemo(() => {
     let matches = [...plants];
@@ -286,39 +366,33 @@ export function PlantPickerTool() {
       <div className="tool-quiz-card">
         {step === 0 ? (
           <div className="tool-quiz-step">
-            <h2>How much natural light does your bathroom get?</h2>
+            <h2 ref={stepHeadingRef} tabIndex={-1}>How much natural light does your bathroom get?</h2>
             <OptionGrid options={lightOptions} value={light} onChange={setLight} />
           </div>
         ) : null}
 
         {step === 1 ? (
           <div className="tool-quiz-step">
-            <h2>How humid does it get?</h2>
+            <h2 ref={stepHeadingRef} tabIndex={-1}>How humid does it get?</h2>
             <OptionGrid options={humidityOptions} value={humidity} onChange={setHumidity} />
           </div>
         ) : null}
 
         {step === 2 ? (
           <div className="tool-quiz-step">
-            <h2>How much space do you have?</h2>
+            <h2 ref={stepHeadingRef} tabIndex={-1}>How much space do you have?</h2>
             <OptionGrid options={spaceOptions} value={space} onChange={setSpace} />
           </div>
         ) : null}
 
         {step === 3 ? (
           <div className="tool-quiz-step">
-            <h2>Recommended bathroom plants for you</h2>
+            <h2 ref={stepHeadingRef} tabIndex={-1}>Recommended bathroom plants for you</h2>
             <div className="plant-match-list">
               {results.map((plant, index) => {
                 const isLocked = index >= 2 && !unlocked;
-                return (
+                const card = (
                   <article key={plant.name} className={isLocked ? "plant-match-card is-locked" : "plant-match-card"}>
-                    {isLocked && index === 2 ? (
-                      <button type="button" className="plant-lock-button" onClick={() => setShowSignup(true)}>
-                        <span>Unlock 3 more matches</span>
-                        <small>Free weekly bathroom ideas</small>
-                      </button>
-                    ) : null}
                     <span className={`plant-match-icon plant-match-${plant.difficulty.toLowerCase()}`}>
                       <MiniIcon name={plant.icon} />
                     </span>
@@ -344,6 +418,20 @@ export function PlantPickerTool() {
                     <span className="plant-match-photo" style={{ backgroundImage: `url(${plant.image})` }} aria-hidden="true" />
                   </article>
                 );
+
+                if (isLocked && index === 2) {
+                  return (
+                    <div key={plant.name} style={{ position: "relative" }}>
+                      {card}
+                      <button ref={unlockButtonRef} type="button" className="plant-lock-button" onClick={() => setShowSignup(true)}>
+                        <span>Unlock 3 more matches</span>
+                        <small>Free weekly bathroom ideas</small>
+                      </button>
+                    </div>
+                  );
+                }
+
+                return card;
               })}
             </div>
             <button type="button" className="tool-reset-link" onClick={reset}>
@@ -365,9 +453,16 @@ export function PlantPickerTool() {
       </div>
 
       {showSignup && !unlocked ? (
-        <div className="tool-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="plant-signup-title">
-          <div className="tool-modal-card">
-            <button type="button" className="tool-modal-close" aria-label="Close" onClick={() => setShowSignup(false)}>
+        <div className="tool-modal-backdrop">
+          <div
+            ref={dialogRef}
+            className="tool-modal-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="plant-signup-title"
+            tabIndex={-1}
+          >
+            <button type="button" className="tool-modal-close" aria-label="Close signup" onClick={() => setShowSignup(false)}>
               ×
             </button>
             <div className="tool-modal-icon">
@@ -378,7 +473,7 @@ export function PlantPickerTool() {
             <form action="/api/subscribe" method="post" className="tool-modal-form">
               <div className="field">
                 <label htmlFor="plant-picker-email">Email</label>
-                <input id="plant-picker-email" name="email" type="email" required placeholder="you@example.com" />
+                <input id="plant-picker-email" name="email" type="email" required placeholder="you@example.com" autoFocus />
               </div>
               <div className="area-chip-picker" aria-label="Areas you are interested in">
                 {areaOptions.map((area) => (
@@ -386,6 +481,7 @@ export function PlantPickerTool() {
                     key={area}
                     type="button"
                     className={selectedAreas.includes(area) ? "is-selected" : ""}
+                    aria-pressed={selectedAreas.includes(area)}
                     onClick={() => toggleArea(area)}
                   >
                     {area === "ExtremeBudget" ? "Extreme Budget" : area}

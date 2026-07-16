@@ -5,7 +5,7 @@ export default function PlantPickerPage() {
   return (
     <SiteShell>
       <section className="tool-page-hero tool-page-hero-green">
-        <div className="container tool-page-hero-inner">
+        <div className="container tool-page-hero-inner" data-reveal="hero">
           <p className="tool-badge">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M11 20A7 7 0 0 1 9.8 6.1C15 5 19 2 19 2c1 9-2.5 15-8 18Z" />
@@ -17,7 +17,7 @@ export default function PlantPickerPage() {
           <p>Answer 3 quick questions about your bathroom, and we&apos;ll match you with plants that will thrive in your space.</p>
         </div>
       </section>
-      <div className="container site-page tool-page-body plant-picker-page-body">
+      <div className="container site-page tool-page-body plant-picker-page-body" data-reveal>
         <PlantPickerTool />
       </div>
     </SiteShell>

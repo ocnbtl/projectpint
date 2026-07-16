@@ -67,7 +67,7 @@ export default function AboutPage() {
   return (
     <SiteShell>
       <section className="about-figma-hero">
-        <div className="container about-figma-hero-inner">
+        <div className="container about-figma-hero-inner" data-reveal="hero">
           <h1>About Diyesu Decor</h1>
           <div className="about-callout">
             <span>Budget DIY Bathroom Upgrades</span>
@@ -85,8 +85,13 @@ export default function AboutPage() {
 
       <div className="container site-page about-figma-page">
         <section className="about-value-grid" aria-label="Diyesu Decor values">
-          {values.map(([title, copy, marker]) => (
-            <article key={title} className="about-value-card">
+          {values.map(([title, copy, marker], index) => (
+            <article
+              key={title}
+              className="about-value-card"
+              data-reveal
+              style={{ transitionDelay: `${index * 100}ms` }}
+            >
               <span>
                 <AboutValueIcon name={marker as "zap" | "user" | "heart"} />
               </span>
@@ -96,7 +101,7 @@ export default function AboutPage() {
           ))}
         </section>
 
-        <section className="about-faq-panel">
+        <section className="about-faq-panel" data-reveal>
           <div className="about-section-head">
             <h2>Frequently asked questions</h2>
           </div>
@@ -113,7 +118,7 @@ export default function AboutPage() {
       </div>
 
       <section className="about-newsletter-dark">
-        <div className="container about-newsletter-inner">
+        <div className="container about-newsletter-inner" data-reveal>
           <div className="about-newsletter-copy">
             <span className="about-newsletter-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24">

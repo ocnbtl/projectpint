@@ -5,7 +5,7 @@ export default function BlueprintPage() {
   return (
     <SiteShell>
       <section className="tool-page-hero">
-        <div className="container tool-page-hero-inner">
+        <div className="container tool-page-hero-inner" data-reveal="hero">
           <h1>Your personalized bathroom transformation plan.</h1>
           <p>
             Tell us your budget, constraints, and priorities. Within 48 hours we&apos;ll build a complete upgrade plan
@@ -14,7 +14,7 @@ export default function BlueprintPage() {
           </p>
         </div>
       </section>
-      <div className="container site-page tool-page-body blueprint-page-body">
+      <div className="container site-page tool-page-body blueprint-page-body" data-reveal>
         <BlueprintTool />
       </div>
     </SiteShell>

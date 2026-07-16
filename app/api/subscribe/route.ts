@@ -129,5 +129,5 @@ export async function POST(request: Request) {
     console.error("Customer evergreen upsert failed", error);
   }
 
-  return NextResponse.redirect(new URL("/start-here?subscribed=1", request.url));
+  return NextResponse.redirect(new URL("/start-here?subscribed=1", request.url), { status: 303 });
 }

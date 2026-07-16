@@ -69,7 +69,7 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
     <SiteShell>
       <section className="area-detail-hero" style={{ backgroundImage: `url(${visual.image})` }}>
         <div className="area-detail-hero-shade">
-          <div className="container area-detail-copy">
+          <div className="container area-detail-copy" data-reveal="hero">
             <Link href="/areas" className="back-link">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M19 12H5" />
@@ -91,7 +91,7 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
       </section>
 
       <div className="container site-page">
-        <section className="area-detail-section">
+        <section className="area-detail-section" data-reveal>
           <p className="area-detail-description">{hub.description} {hub.outcome}</p>
 
           <div className="area-detail-grid">
@@ -112,13 +112,13 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
                   {resourceCards.map((resource) => (
                     <Link key={resource.id} href={resource.href} className="area-resource-card">
                       <span className="area-resource-media">
-                        <img src={resource.image} alt="" />
+                        <img src={resource.image} alt={`${resource.title} article`} loading="lazy" decoding="async" />
                       </span>
                       <span className="area-resource-meta">
                         <span>{resource.type}</span>
                         <span>{resource.readTime} min read</span>
                       </span>
-                      <strong>{resource.title}</strong>
+                      <h3>{resource.title}</h3>
                       <span>{resource.excerpt}</span>
                     </Link>
                   ))}
@@ -144,7 +144,7 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
               <div className="area-inspiration-masonry">
                 {inspirationImages.map((image, index) => (
                   <Link key={`${image}-${index}`} href="/inspiration" className="area-inspiration-image">
-                    <img src={image} alt="" />
+                    <img src={image} alt={`${hub.title} bathroom inspiration`} loading="lazy" decoding="async" />
                   </Link>
                 ))}
               </div>
@@ -155,7 +155,7 @@ export default async function HubPage({ params }: { params: Promise<{ slug: stri
           </div>
         </section>
 
-        <section className="dark-cta">
+        <section className="dark-cta" data-reveal>
           <div>
             <p className="eyebrow">Next Step</p>
             <h2>Turn this area into a budget-aware bathroom plan.</h2>

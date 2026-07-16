@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AreaIcon } from "../../components/AreaIcon";
 import { SiteShell } from "../../components/SiteShell";
+import { TypewriterEyebrow } from "../../components/TypewriterEyebrow";
 import { areaVisuals } from "../../lib/redesign-data";
 import { blogMatchesArea, hubs, readBlogs, readGuides } from "../../lib/site-data";
 
@@ -53,8 +54,10 @@ export default async function StartHerePage() {
   return (
     <SiteShell>
       <section className="start-figma-hero">
-        <div className="container">
-          <p className="eyebrow blog-eyebrow">Welcome</p>
+        <div className="container" data-reveal="hero">
+          <p className="eyebrow blog-eyebrow">
+            <TypewriterEyebrow text="Welcome" />
+          </p>
           <h1>Not sure where to start?</h1>
           <p>
             <span>We get it. There are a hundred things you could do to your bathroom.</span>
@@ -65,17 +68,22 @@ export default async function StartHerePage() {
 
       <div className="container start-figma-page">
         <section className="start-steps-section">
-          <div className="start-section-head">
+          <div className="start-section-head" data-reveal>
             <p className="eyebrow blog-eyebrow">How This Works</p>
             <h2>Three steps to see your first bathroom win</h2>
           </div>
           <div className="start-step-grid">
-            {steps.map(([icon, title, copy]) => (
-              <article key={title} className="start-step-card">
+            {steps.map(([icon, title, copy], index) => (
+              <article
+                key={title}
+                className="start-step-card"
+                data-reveal
+                style={{ transitionDelay: `${index * 100}ms` }}
+              >
                 <span>
                   <StepIcon name={icon as "target" | "sparkles" | "hammer"} />
                 </span>
-                <h2>{title}</h2>
+                <h3>{title}</h3>
                 <p>{copy}</p>
               </article>
             ))}
@@ -86,32 +94,38 @@ export default async function StartHerePage() {
 
       <section className="start-area-section">
         <div className="container">
-          <div className="start-section-head">
+          <div className="start-section-head" data-reveal>
             <div>
               <h2>Choose the first area you want to upgrade</h2>
               <p>Each area has curated articles, product recommendations, and quick-start guides.</p>
             </div>
           </div>
           <div className="start-area-list">
-            {hubs.map((hub) => {
+            {hubs.map((hub, index) => {
               const visual = areaVisuals[hub.area];
               const articleCount =
                 blogSource.filter((blog) => blogMatchesArea(blog, hub.area)).length +
                 guideSource.filter((guide) => guide.area === hub.area).length;
               return (
-                <Link key={hub.slug} href={`/areas/${hub.slug}`} className="start-area-card">
+                <Link
+                  key={hub.slug}
+                  href={`/areas/${hub.slug}`}
+                  className="start-area-card"
+                  data-reveal
+                  style={{ transitionDelay: `${index * 50}ms` }}
+                >
                   <span className="start-area-icon">
                     <AreaIcon name={visual.icon} />
                   </span>
-                  <span className="start-area-copy">
-                    <span>
-                      <strong>{hub.title}</strong>
-                      <em>
+                  <div className="start-area-copy">
+                    <div>
+                      <h3>{hub.title}</h3>
+                      <span className="start-area-count">
                         {articleCount} {articleCount === 1 ? "article" : "articles"}
-                      </em>
-                    </span>
+                      </span>
+                    </div>
                     <small>{visual.tagline}</small>
-                  </span>
+                  </div>
                   <span className="start-area-arrow" aria-hidden="true">
                     <svg viewBox="0 0 24 24">
                       <path d="M5 12h14" />
@@ -126,7 +140,7 @@ export default async function StartHerePage() {
       </section>
 
       <div className="container start-picker-wrap">
-        <section className="start-picker-cta">
+        <section className="start-picker-cta" data-reveal>
           <div>
             <h2>Still deciding?</h2>
             <p>

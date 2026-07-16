@@ -6,7 +6,7 @@ export default function InspirationPage() {
   return (
     <SiteShell>
       <section className="inspiration-figma-hero">
-        <div className="container">
+        <div className="container" data-reveal="hero">
           <p className="eyebrow blog-eyebrow">Visual Inspiration</p>
           <h1>Find your bathroom&apos;s style</h1>
           <p>
@@ -18,23 +18,29 @@ export default function InspirationPage() {
 
       <div className="container site-page inspiration-figma-page">
         <section className="inspiration-style-grid" aria-label="Bathroom inspiration styles">
-          {inspirationStyles.map((style) => {
+          {inspirationStyles.map((style, index) => {
             const thumbs = style.items
               .filter((item) => item.type === "image")
               .slice(1, 4)
               .map((item) => item.src);
             return (
-              <Link key={style.slug} href={`/inspiration/${style.slug}`} className="inspiration-style-tile">
-                <img src={style.cover} alt="" />
+              <Link
+                key={style.slug}
+                href={`/inspiration/${style.slug}`}
+                className="inspiration-style-tile"
+                data-reveal
+                style={{ transitionDelay: `${index * 40}ms` }}
+              >
+                <img src={style.cover} alt={`${style.name} bathroom inspiration`} loading="lazy" decoding="async" />
                 <span className="inspiration-style-shade" aria-hidden="true" />
                 <span className="inspiration-style-title">
                   <i style={{ backgroundColor: style.accent }} />
-                  <strong>{style.name}</strong>
+                  <h2>{style.name}</h2>
                 </span>
                 <span className="inspiration-style-preview">
                   <span>
                     {thumbs.map((src, thumbIndex) => (
-                      <img key={`${style.slug}-${thumbIndex}`} src={src} alt="" />
+                      <img key={`${style.slug}-${thumbIndex}`} src={src} alt="" loading="lazy" decoding="async" />
                     ))}
                   </span>
                   <em>
