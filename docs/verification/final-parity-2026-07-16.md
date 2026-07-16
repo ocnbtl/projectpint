@@ -63,7 +63,7 @@ Status meanings:
 | `/admin/products` | Desktop/tablet/mobile, existing product model and operations | PASS | Existing products and revenue fields preserved; no fabricated values added. |
 | `/admin/analytics` | Desktop/tablet/mobile; horizontally contained tabs at 390; empty/unavailable/readiness states | PASS | Zero serious/critical Axe findings after exact contrast fixes. No estimated analytics are shown. |
 | Shared admin loading, error, dynamic-item not-found and unknown-route 404 | Branded, responsive, private/no-store, noindex; unknown path is a real 404 | PASS | The unknown-path response is auth-gated and non-hydrating to avoid Next streamed-status coercion. |
-| Responsive admin navigation | Desktop sidebar; mobile drawer; open/close, backdrop, focus trap, Escape, body lock, restore, reduced motion | PASS | Exact 1023/1024 behavior and 390 screenshots verified. |
+| Responsive admin navigation | Desktop sidebar; mobile drawer; open/close, backdrop, focus trap, Escape, body lock, restore, reduced motion | PASS | Exact 1023/1024 behavior and 390 screenshots verified; focus restoration is deferred until after drawer unmount for cross-engine reliability. |
 
 There are no discovered dedicated media-library, author, taxonomy, settings, or pagination routes. Those capabilities are intentionally represented by fields in the focused editors and by the existing table controls. The available approved Figma source did not distinguish additional standalone screens, so adding an unrelated CMS was not justified.
 

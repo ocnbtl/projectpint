@@ -58,3 +58,11 @@ test("admin recovery routes and editorial navigation preserve branded state and 
   assert.match(editor, /sessionStorage\.setItem/);
   assert.match(editor, /sessionStorage\.removeItem/);
 });
+
+test("mobile admin drawer restores focus after its unmount commit", async () => {
+  const frameSource = await source("components/admin/AdminFrame.tsx");
+
+  assert.match(frameSource, /const restoreTarget = priorFocusRef\.current\?\.isConnected/);
+  assert.match(frameSource, /requestAnimationFrame\(\(\) => \{/);
+  assert.match(frameSource, /restoreTarget\?\.isConnected \? restoreTarget : fallbackFocus/);
+});

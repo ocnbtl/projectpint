@@ -125,7 +125,10 @@ export function AdminFrame({ children }: { children: ReactNode }) {
 
     return () => {
       document.body.classList.remove("admin-drawer-open");
-      (priorFocusRef.current ?? fallbackFocus)?.focus();
+      const restoreTarget = priorFocusRef.current?.isConnected ? priorFocusRef.current : fallbackFocus;
+      requestAnimationFrame(() => {
+        (restoreTarget?.isConnected ? restoreTarget : fallbackFocus)?.focus();
+      });
     };
   }, [drawerOpen]);
 
