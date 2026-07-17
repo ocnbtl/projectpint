@@ -1,14 +1,39 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
 import test from "node:test";
 import {
   buildBlogDraftContent,
   buildGuideDraftContent,
+  defaultPinOverlay,
   generateBlogDraftForRow,
-  generateGuideDraftForRow
+  generateGuideDraftForRow,
+  generatePinCaption,
+  generatePinPrompt
 } from "../lib/command-center.ts";
 import { COMMAND_CENTER_CONTENT_AREAS } from "../lib/constants.ts";
 import { lintEditorialStyle } from "../lib/style-linter.ts";
 import { buildBlogPromptPack, buildGuidePromptPack } from "../lib/writer-prompts.ts";
+
+test("pin generation creates specific media direction, human captions, and overlay copy", () => {
+  for (const [index, area] of COMMAND_CENTER_CONTENT_AREAS.entries()) {
+    const prompt = generatePinPrompt(area, `/areas/${area.toLowerCase()}`, `PIN_TEST_${index}`, index);
+    const caption = generatePinCaption(area, "free", index);
+    const overlay = defaultPinOverlay(area, caption, `GUIDE_TEST_${index}`);
+
+    assert.ok(prompt.length > 900, `${area} prompt should be detailed enough for production image generation`);
+    assert.match(prompt, /vertical 2 by 3 Pinterest image/);
+    assert.match(prompt, /top 22 percent and bottom 18 percent/);
+    assert.match(prompt, /attainable residential bathroom/);
+    assert.match(prompt, /No people, hands, faces, pets, text, letters, numbers, logos/);
+    assert.doesNotMatch(caption, /Diyesu Decor built this/);
+    assert.match(caption, /The full guide is free/);
+    assert.match(overlay, /^Top: .+ Bottom: Use one step in under one hour\.$/);
+  }
+
+  const commandCenterSource = fs.readFileSync(path.join(process.cwd(), "lib", "command-center.ts"), "utf8");
+  assert.match(commandCenterSource, /Pin_Overlay:\s*defaultPinOverlay\(area, pinCaption, destination\)/);
+});
 
 test("blog draft content includes concrete operational constraints for every area", () => {
   for (const area of COMMAND_CENTER_CONTENT_AREAS) {

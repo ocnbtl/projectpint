@@ -594,32 +594,49 @@ function rowsMatch(tab: TabKey, left: Record<string, unknown>[], right: Record<s
   return JSON.stringify(project(left)) === JSON.stringify(project(right));
 }
 
-function generatePinCaption(area: CommandCenterArea, mode: "free" | "cost" | "both" | "none", index: number): string {
+const PIN_SCENE_BRIEFS: Record<CommandCenterArea, string> = {
+  Plants: "A real small bathroom with one healthy humidity appropriate plant as the unmistakable focal point, accurate leaf anatomy, a believable planter, and practical placement near indirect light without blocking the sink or shower.",
+  Storage: "A compact bathroom with one clearly solved storage problem, such as organized vanity drawers, shallow wall shelves, labeled baskets without visible words, or a slim rolling cart, while keeping plumbing and walking clearance realistic.",
+  Lighting: "A real vanity and mirror with flattering layered bathroom lighting, accurate fixture scale, warm practical illumination, and enough ambient daylight to preserve true material colors without unsafe exposed wiring.",
+  Shower: "An attainable tub or walk in shower update with a clear focal improvement such as a better showerhead, useful niche, fresh curtain, or organized ledge, with correct drainage, waterproof surfaces, and realistic hardware.",
+  Mirror: "A compact vanity where a well proportioned wall mirror is the hero, with believable reflections, centered task lighting, a practical faucet, and enough surrounding bathroom context to read instantly.",
+  Renter: "An ordinary rental bathroom transformed with reversible upgrades such as removable hooks, a shower curtain, peel and stick floor treatment, a rolling cart, framed mirror, and textiles, with no demolition or permanent construction.",
+  DIY: "A finished, polished bathroom improvement that a careful homeowner could complete over a weekend, with one realistic handmade detail, common tools implied but not scattered, and safe professional looking installation.",
+  ExtremeBudget: "A modest real bathroom elevated through low cost styling, organization, paint safe accessories, textiles, and one strong focal change, avoiding luxury materials or a full renovation look."
+};
+
+export function generatePinCaption(area: CommandCenterArea, mode: "free" | "cost" | "both" | "none", index: number): string {
   const hooks = PIN_HOOKS[area];
   const hook = hooks[index % hooks.length];
   const benefit = PIN_BENEFITS[area];
+  const bridges = [
+    "It is a small shift, but it can make the whole room feel easier to use.",
+    "You can start with the part that bothers you most and leave the rest for later.",
+    "No perfect bathroom required. The goal is one useful change you will notice every day.",
+    "This is the kind of update that earns its keep in a real morning routine."
+  ];
 
   const pricingLine =
     mode === "free"
-      ? "The linked guide is free, so you can start today without extra cost."
+      ? "The full guide is free, so you can save it now and come back when you are ready."
       : mode === "cost"
-        ? "Most people can finish this update for under 75 dollars with common tools."
+        ? "The plan keeps the shopping list focused so you can price the idea before buying anything."
         : mode === "both"
-          ? "The guide is free and the update can usually stay under 75 dollars."
-          : "The plan is practical, clear, and built for real daily routines.";
+          ? "The guide is free and includes a focused shopping path for the pieces you actually need."
+          : "The plan is practical, specific, and written for real daily routines.";
 
-  const closing = "Open the destination now, pick one step, and finish one useful change today.";
-  return noDashText(`${hook} Diyesu Decor built this ${areaPhrase(area)} idea for real homes. ${benefit} ${pricingLine} ${closing}`);
+  const closing = "Open the full idea, choose the first step that fits your bathroom, and make it your own.";
+  return noDashText(`${hook} ${bridges[index % bridges.length]} ${benefit} ${pricingLine} ${closing}`);
 }
 
-function generatePinPrompt(area: CommandCenterArea, destination: string, pinId: string, index: number): string {
+export function generatePinPrompt(area: CommandCenterArea, destination: string, pinId: string, index: number): string {
   const variant = PROMPT_VARIANTS[index % PROMPT_VARIANTS.length];
   return noDashText(
-    `Create a photoreal vertical 2 by 3 Pinterest image for Diyesu Decor. Pin id ${pinId}. Content area ${area}. Destination reference ${destination}. Scene should show a real bathroom with ${variant}. No people. No face. No logo. No watermark. Leave clear safe space at top and bottom for text overlay.`
+    `Create a polished photorealistic vertical 2 by 3 Pinterest image for Diyesu Decor. Internal pin id ${pinId}. Content area ${area}. Destination reference ${destination}. Creative direction: ${PIN_SCENE_BRIEFS[area]} Compose the scene with ${variant}. Use an attainable residential bathroom, natural editorial lighting, accurate material texture, realistic fixture scale, plausible plumbing, and a clear focal point that remains legible on a phone. Frame for a 1000 by 1500 crop. Reserve calm, low detail safe zones across roughly the top 22 percent and bottom 18 percent for a separate text overlay, but do not render any words inside the image. Keep important fixtures, faces of products, and the main transformation inside the center safe area. Maintain the Diyesu visual tone with warm neutrals, restrained green or clay accents, and clean but lived in styling. Avoid visual clutter, excessive luxury, construction hazards, impossible reflections, duplicate faucets, warped tile, blocked doorways, and unstable objects. No people, hands, faces, pets, text, letters, numbers, logos, trademarks, product packaging, or watermark.`
   );
 }
 
-function defaultPinOverlay(area: CommandCenterArea, caption: string, destination: string): string {
+export function defaultPinOverlay(area: CommandCenterArea, caption: string, destination: string): string {
   const firstSentence = caption
     .split(/[.!?]/)
     .map((part) => part.trim())
@@ -1240,6 +1257,7 @@ export async function generateNewPins(count = 25): Promise<{ created: number }> 
 
     const pricingMode = i % 5 === 0 ? "free" : i % 5 === 1 ? "cost" : i % 5 === 2 ? "both" : "none";
     const utm = `${destinationPath}?utm_source=pinterest&utm_medium=organic&utm_campaign=evergreen&utm_content=${pinId.toLowerCase()}`;
+    const pinCaption = generatePinCaption(area, pricingMode, i);
 
     newRows.push({
       Pin_ID: pinId,
@@ -1251,8 +1269,8 @@ export async function generateNewPins(count = 25): Promise<{ created: number }> 
       Blog_ID: blogId,
       Media_Prompt: generatePinPrompt(area, destination || destinationPath, pinId, i),
       Media_URL: "",
-      Pin_Overlay: "",
-      Pin_Caption: generatePinCaption(area, pricingMode, i),
+      Pin_Overlay: defaultPinOverlay(area, pinCaption, destination),
+      Pin_Caption: pinCaption,
       Pin_CTA: "",
       Pin_URL: "",
       UTM_URL: utm,

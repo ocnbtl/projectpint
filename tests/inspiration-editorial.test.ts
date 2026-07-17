@@ -16,6 +16,22 @@ import {
   unpublishInspirationItem
 } from "../lib/inspiration-admin.ts";
 import { readPublicInspirationViews } from "../lib/inspiration-content.ts";
+import { inspirationStyles } from "../lib/redesign-data.ts";
+
+test("every static inspiration board uses a cohesive style pool and two exact product destinations", () => {
+  assert.equal(inspirationStyles.length, 11);
+
+  for (const style of inspirationStyles) {
+    const images = style.items.filter((item) => item.type === "image");
+    const products = style.items.filter((item) => item.type === "product");
+
+    assert.equal(images.length, 8, style.slug);
+    assert.equal(products.length, 2, style.slug);
+    assert.ok(images.every((item) => item.src === style.cover || item.src.includes(`/images/inspiration/${style.slug}/`)));
+    assert.ok(products.every((item) => item.url.startsWith("https://")));
+    assert.ok(products.every((item) => item.image.includes(`/images/inspiration/${style.slug}/`)));
+  }
+});
 
 test("inspiration drafts, snapshots, conflicts, restore, and fallback remain isolated", async (context) => {
   const dataRoot = await fs.mkdtemp(path.join(os.tmpdir(), "project-pint-inspiration-"));

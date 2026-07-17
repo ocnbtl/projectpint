@@ -79,12 +79,19 @@ export default async function InspirationDetailPage({ params }: { params: Promis
             <section className="inspiration-board" data-reveal>
           {style.items.map((item, index) =>
             item.type === "product" ? (
-              <article
+              <a
                 key={`${style.slug}-product-${index}`}
                 className="inspiration-product-pin"
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`View ${item.name} at ${item.retailer} (opens in a new tab)`}
                 style={{ transform: `rotate(${((index % 5) - 2) * 1.4}deg)` }}
               >
-                <span style={{ backgroundColor: style.accent }}>
+                <div className="inspiration-product-image">
+                  <SafeImage src={item.image} alt={item.imageAlt} loading="lazy" decoding="async" />
+                </div>
+                <span className="inspiration-product-label" style={{ backgroundColor: style.accent }}>
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M20 12V5a1 1 0 0 0-1-1h-7l-8 8 8 8 8-8Z" />
                     <circle cx="16" cy="8" r="1" />
@@ -93,10 +100,11 @@ export default async function InspirationDetailPage({ params }: { params: Promis
                 </span>
                 <h2>{item.name}</h2>
                 <p>
-                  {item.price}
+                  View at {item.retailer}
                   <i aria-hidden="true">-&gt;</i>
                 </p>
-              </article>
+                <small>Style reference shown. See the retailer for the exact item and current price.</small>
+              </a>
             ) : (
               <figure
                 key={`${style.slug}-image-${index}`}

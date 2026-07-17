@@ -6,15 +6,15 @@ export const redesignImages = {
   plants:
     "https://images.unsplash.com/photo-1750036015902-c6f5ebca924e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBiYXRocm9vbSUyMHBsYW50cyUyMG5hdHVyYWwlMjBsaWdodHxlbnwxfHx8fDE3NzM4MTY5OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
   mirror:
-    "https://images.unsplash.com/photo-1758239873506-82d0e76244f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzbWFsbCUyMGJhdGhyb29tJTIwbWlycm9yJTIwcmVub3ZhdGlvbnxlbnwxfHx8fDE3NzM4MTY5OTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    "/images/areas/mirror.jpg",
   storage:
-    "https://images.unsplash.com/photo-1721742736274-011e6677db65?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYXRocm9vbSUyMHN0b3JhZ2UlMjBvcmdhbml6YXRpb24lMjBzaGVsdmVzfGVufDF8fHx8MTc3MzgxNjk5NXww&ixlib=rb-4.1.0&q=80&w=1080",
+    "/images/areas/storage.jpg",
   lighting:
     "https://images.unsplash.com/photo-1763485956236-397fc3f25d3a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYXRocm9vbSUyMGxpZ2h0aW5nJTIwdmFuaXR5JTIwd2FybXxlbnwxfHx8fDE3NzM4MTY5OTZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
   shower:
     "https://images.unsplash.com/photo-1706670368974-af427a98e816?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzaG93ZXIlMjBoZWFkJTIwdXBncmFkZSUyMG1vZGVybnxlbnwxfHx8fDE3NzM4MTY5OTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
   renter:
-    "https://images.unsplash.com/photo-1765556556784-7656ee0a1bd8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtaW5pbWFsaXN0JTIwYmF0aHJvb20lMjB3aGl0ZSUyMHRpbGUlMjBjbGVhbnxlbnwxfHx8fDE3NzM4MTY5OTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    "/images/areas/renter.jpg",
   diy:
     "https://images.unsplash.com/photo-1730407391205-d22f78c79f5d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaXklMjBiYXRocm9vbSUyMHJlbm92YXRpb24lMjB0b29sc3xlbnwxfHx8fDE3NzM4MTY5OTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
   budget:
@@ -24,11 +24,11 @@ export const redesignImages = {
   spa:
     "https://images.unsplash.com/photo-1752769041878-f24e37fd6aea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzcGElMjBiYXRocm9vbSUyMGdyZWVuJTIwdGlsZXMlMjBwbGFudHMlMjBkZWNvcnxlbnwxfHx8fDE3NzM4OTE5Nzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
   brass:
-    "https://images.unsplash.com/photo-1768203633862-dd904d900704?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb250ZW1wb3JhcnklMjBiYXRocm9vbSUyMGJyYXNzJTIwZml4dHVyZXMlMjB0ZXJyYXp6b3xlbnwxfHx8fDE3NzM4OTE5Nzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    "/images/inspiration/brass-terrazzo/cover.jpg",
   boho:
-    "https://images.unsplash.com/photo-1588296250512-b75a9e4b534e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxib2hvJTIwYmF0aHJvb20lMjB3b3ZlbiUyMGJhc2tldHMlMjBlYXJ0aCUyMHRvbmVzfGVufDF8fHx8MTc3Mzg5MTk3OHww&ixlib=rb-4.1.0&q=80&w=1080",
+    "/images/inspiration/boho-earth-tones/cover.jpg",
   minimalist:
-    "https://images.unsplash.com/photo-1506331959731-780370962434?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtaW5pbWFsaXN0JTIwd2hpdGUlMjBiYXRocm9vbSUyMGZyZWVzdGFuZGluZyUyMHR1YnxlbnwxfHx8fDE3NzM4OTE5Nzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    "/images/inspiration/minimalist-elegance/cover.jpg",
   scandi:
     "https://images.unsplash.com/photo-1593069384905-41d812985992?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzY2FuZGluYXZpYW4lMjBiYXRocm9vbSUyMHBhbGUlMjB3b29kJTIwc3Vid2F5JTIwdGlsZXxlbnwxfHx8fDE3NzM4OTE5ODZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
   dark:
@@ -40,27 +40,6 @@ export const redesignImages = {
   japandi:
     "https://images.unsplash.com/photo-1765278954186-ccbe4f2b78a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHxqYXBhbmRpJTIwd29vZCUyMG1pbmltYWxpc3QlMjBiYXRocm9vbXxlbnwxfHx8fDE3ODEyNzI3OTZ8MA&ixlib=rb-4.1.0&q=80&w=1080"
 };
-
-const collageImages = [
-  "https://images.unsplash.com/photo-1645567455251-334ed4702f9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYXRocm9vbSUyMHNoZWxmJTIwZGVjb3IlMjBhY2Nlc3Nvcmllc3xlbnwxfHx8fDE3ODEyNjgzODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
-  "https://images.unsplash.com/photo-1595515770338-e4d3c5d8dd91?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwyfHxiYXRocm9vbSUyMHNoZWxmJTIwZGVjb3IlMjBhY2Nlc3Nvcmllc3xlbnwxfHx8fDE3ODEyNjgzODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
-  "https://images.unsplash.com/photo-1773565744218-d8d11de58362?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwzfHxiYXRocm9vbSUyMHNoZWxmJTIwZGVjb3IlMjBhY2Nlc3Nvcmllc3xlbnwxfHx8fDE3ODEyNjgzODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
-  "https://images.unsplash.com/photo-1595515770345-0497f6f13692?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw0fHxiYXRocm9vbSUyMHNoZWxmJTIwZGVjb3IlMjBhY2Nlc3Nvcmllc3xlbnwxfHx8fDE3ODEyNjgzODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
-  "https://images.unsplash.com/photo-1780544241838-7b54189f01b0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw1fHxiYXRocm9vbSUyMHNoZWxmJTIwZGVjb3IlMjBhY2Nlc3Nvcmllc3xlbnwxfHx8fDE3ODEyNjgzODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
-  "https://images.unsplash.com/photo-1780952934157-f541e70c7ece?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw2fHxiYXRocm9vbSUyMHNoZWxmJTIwZGVjb3IlMjBhY2Nlc3Nvcmllc3xlbnwxfHx8fDE3ODEyNjgzODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
-  "https://images.unsplash.com/photo-1651513825857-9fda9d5729fe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHxiYXRocm9vbSUyMHRvd2VscyUyMGNhbmRsZXMlMjBzdHlsaW5nfGVufDF8fHx8MTc4MTI2ODM4NXww&ixlib=rb-4.1.0&q=80&w=1080",
-  "https://images.unsplash.com/photo-1611818830473-ab5d21f401ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwyfHxiYXRocm9vbSUyMHRvd2VscyUyMGNhbmRsZXMlMjBzdHlsaW5nfGVufDF8fHx8MTc4MTI2ODM4NXww&ixlib=rb-4.1.0&q=80&w=1080",
-  "https://images.unsplash.com/photo-1700918232124-f64da19e73eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwzfHxiYXRocm9vbSUyMHRvd2VscyUyMGNhbmRsZXMlMjBzdHlsaW5nfGVufDF8fHx8MTc4MTI2ODM4NXww&ixlib=rb-4.1.0&q=80&w=1080",
-  "https://images.unsplash.com/photo-1768413292047-116be08f120c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw0fHxiYXRocm9vbSUyMHRvd2VscyUyMGNhbmRsZXMlMjBzdHlsaW5nfGVufDF8fHx8MTc4MTI2ODM4NXww&ixlib=rb-4.1.0&q=80&w=1080",
-  "https://images.unsplash.com/photo-1765745520336-88acf0b84fe4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw1fHxiYXRocm9vbSUyMHRvd2VscyUyMGNhbmRsZXMlMjBzdHlsaW5nfGVufDF8fHx8MTc4MTI2ODM4NXww&ixlib=rb-4.1.0&q=80&w=1080",
-  "https://images.unsplash.com/photo-1765745518752-68a289300789?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw2fHxiYXRocm9vbSUyMHRvd2VscyUyMGNhbmRsZXMlMjBzdHlsaW5nfGVufDF8fHx8MTc4MTI2ODM4NXww&ixlib=rb-4.1.0&q=80&w=1080",
-  redesignImages.plants,
-  redesignImages.mirror,
-  redesignImages.storage,
-  redesignImages.lighting,
-  redesignImages.shower,
-  redesignImages.renter
-];
 
 type InspirationShape = "rounded" | "tall" | "wide" | "circle" | "polaroid" | "arch";
 
@@ -74,7 +53,10 @@ type InspirationImageItem = {
 type InspirationProductItem = {
   type: "product";
   name: string;
-  price: string;
+  retailer: string;
+  url: string;
+  image: string;
+  imageAlt: string;
 };
 
 export type InspirationItem = InspirationImageItem | InspirationProductItem;
@@ -88,25 +70,42 @@ type InspirationStyle = {
   items: InspirationItem[];
 };
 
-const collageShapes: InspirationShape[] = ["rounded", "tall", "wide", "circle", "polaroid", "arch", "rounded", "tall"];
+const collageShapes: InspirationShape[] = ["arch", "rounded", "tall", "wide", "circle", "polaroid", "rounded", "tall"];
 
-function buildInspirationItems(cover: string, seed: number, products: { name: string; price: string }[]): InspirationItem[] {
-  const items: InspirationItem[] = [{ type: "image", shape: "arch", src: cover, label: "Featured look" }];
+function inspirationAsset(slug: string, name: "cover" | "detail-1" | "detail-2" | "detail-3"): string {
+  return `/images/inspiration/${slug}/${name}.jpg`;
+}
 
-  for (let index = 0; index < 14; index += 1) {
-    if (index % 4 === 2 && products.length > 0) {
-      const product = products[(seed + index) % products.length];
-      items.push({ type: "product", name: product.name, price: product.price });
-    } else {
-      items.push({
-        type: "image",
-        shape: collageShapes[(seed + index) % collageShapes.length],
-        src: collageImages[(seed * 3 + index * 5) % collageImages.length]
-      });
-    }
-  }
+function buildInspirationItems(
+  slug: string,
+  cover: string,
+  products: [InspirationProductItem, InspirationProductItem]
+): InspirationItem[] {
+  const details = [
+    inspirationAsset(slug, "detail-1"),
+    inspirationAsset(slug, "detail-2"),
+    inspirationAsset(slug, "detail-3")
+  ];
+  const imageSequence = [cover, details[0], details[1], details[2], details[0], details[1], details[2], cover];
+  const imageItems = imageSequence.map<InspirationImageItem>((src, index) => ({
+    type: "image",
+    shape: collageShapes[index],
+    src,
+    label: index === 0 ? "Featured look" : undefined
+  }));
 
-  return items;
+  return [
+    imageItems[0],
+    imageItems[1],
+    products[0],
+    imageItems[2],
+    imageItems[3],
+    imageItems[4],
+    products[1],
+    imageItems[5],
+    imageItems[6],
+    imageItems[7]
+  ];
 }
 
 export const areaVisuals: Record<ContentArea, { image: string; tagline: string; icon: string }> = {
@@ -127,10 +126,23 @@ export const inspirationStyles: InspirationStyle[] = [
     description: "Clean lines, calm palettes, and nothing you do not need. The art of the well-edited bathroom.",
     cover: redesignImages.minimalist,
     accent: "#8A7E74",
-    items: buildInspirationItems(redesignImages.minimalist, 1, [
-      { name: "Frosted glass soap pump", price: "$14" },
-      { name: "Matte white toothbrush cup", price: "$9" },
-      { name: "Linen waffle hand towel", price: "$18" }
+    items: buildInspirationItems("minimalist-elegance", redesignImages.minimalist, [
+      {
+        type: "product",
+        name: "TACKAN white soap dispenser",
+        retailer: "IKEA",
+        url: "https://www.ikea.com/us/en/p/tackan-soap-dispenser-white-90322303/",
+        image: inspirationAsset("minimalist-elegance", "detail-1"),
+        imageAlt: "Minimal white soap dispenser style reference in a warm bathroom"
+      },
+      {
+        type: "product",
+        name: "STORAVAN three-piece bathroom set",
+        retailer: "IKEA",
+        url: "https://www.ikea.com/us/en/p/storavan-3-piece-bathroom-set-white-70429003/",
+        image: inspirationAsset("minimalist-elegance", "detail-3"),
+        imageAlt: "White coordinated bathroom accessory set style reference"
+      }
     ])
   },
   {
@@ -139,10 +151,23 @@ export const inspirationStyles: InspirationStyle[] = [
     description: "Veined stone, cool tones, and a quietly luxe finish. Looks expensive, plays with peel-and-stick.",
     cover: redesignImages.marble,
     accent: "#7A8A94",
-    items: buildInspirationItems(redesignImages.marble, 2, [
-      { name: "Marble-look contact paper", price: "$22" },
-      { name: "Carrara tray", price: "$28" },
-      { name: "Brushed nickel hooks", price: "$12" }
+    items: buildInspirationItems("modern-marble", redesignImages.marble, [
+      {
+        type: "product",
+        name: "White marble soap dish",
+        retailer: "Target",
+        url: "https://www.target.com/p/-/A-17247412",
+        image: inspirationAsset("modern-marble", "detail-3"),
+        imageAlt: "White marble soap dish style reference on a bathroom vanity"
+      },
+      {
+        type: "product",
+        name: "Marble-look contact paper",
+        retailer: "The Home Depot",
+        url: "https://www.homedepot.com/p/334377132",
+        image: inspirationAsset("modern-marble", "detail-2"),
+        imageAlt: "Marble-look vanity surface style reference"
+      }
     ])
   },
   {
@@ -151,10 +176,23 @@ export const inspirationStyles: InspirationStyle[] = [
     description: "Lush plants, soft steam, and earthy green tile. Turn your morning routine into a retreat.",
     cover: redesignImages.spa,
     accent: "#5B8C6A",
-    items: buildInspirationItems(redesignImages.spa, 3, [
-      { name: "Hanging pothos planter", price: "$16" },
-      { name: "Eucalyptus shower bundle", price: "$11" },
-      { name: "Teak bath mat", price: "$34" }
+    items: buildInspirationItems("spa-greenery", redesignImages.spa, [
+      {
+        type: "product",
+        name: "Golden pothos hanging basket",
+        retailer: "The Home Depot",
+        url: "https://www.homedepot.com/p/314172361",
+        image: inspirationAsset("spa-greenery", "detail-2"),
+        imageAlt: "Hanging golden pothos style reference beside a bathroom shower"
+      },
+      {
+        type: "product",
+        name: "Original spa teak bath mat",
+        retailer: "AquaTeak",
+        url: "https://aquateak.com/the-original-spa-teak-bath-shower-mat/",
+        image: inspirationAsset("spa-greenery", "detail-3"),
+        imageAlt: "Slatted teak bath mat style reference outside a green tile shower"
+      }
     ])
   },
   {
@@ -163,10 +201,23 @@ export const inspirationStyles: InspirationStyle[] = [
     description: "Warm metals meet playful speckled surfaces. A confident, design-forward mix.",
     cover: redesignImages.brass,
     accent: "#C4936A",
-    items: buildInspirationItems(redesignImages.brass, 4, [
-      { name: "Brass towel ring", price: "$24" },
-      { name: "Terrazzo soap dish", price: "$15" },
-      { name: "Gold-framed mirror", price: "$48" }
+    items: buildInspirationItems("brass-terrazzo", redesignImages.brass, [
+      {
+        type: "product",
+        name: "Trinsic towel ring in Champagne Bronze",
+        retailer: "Delta",
+        url: "https://www.deltafaucet.com/bathroom/product/759460-CZ.html",
+        image: inspirationAsset("brass-terrazzo", "detail-1"),
+        imageAlt: "Brass towel ring style reference against terrazzo bathroom tile"
+      },
+      {
+        type: "product",
+        name: "Terrazzo shower curtain",
+        retailer: "Target",
+        url: "https://www.target.com/p/-/A-82032749",
+        image: inspirationAsset("brass-terrazzo", "detail-2"),
+        imageAlt: "Warm terrazzo-patterned shower curtain style reference"
+      }
     ])
   },
   {
@@ -175,10 +226,23 @@ export const inspirationStyles: InspirationStyle[] = [
     description: "Woven baskets, rattan, and sun-baked clay. Relaxed texture layered on warm neutrals.",
     cover: redesignImages.boho,
     accent: "#B07A52",
-    items: buildInspirationItems(redesignImages.boho, 5, [
-      { name: "Woven seagrass basket", price: "$19" },
-      { name: "Terracotta planter", price: "$13" },
-      { name: "Tasseled cotton towel", price: "$21" }
+    items: buildInspirationItems("boho-earth-tones", redesignImages.boho, [
+      {
+        type: "product",
+        name: "Boho border floral bath towel",
+        retailer: "Target",
+        url: "https://www.target.com/p/-/A-90022216",
+        image: inspirationAsset("boho-earth-tones", "detail-2"),
+        imageAlt: "Rust and cream floral-border bathroom towel style reference"
+      },
+      {
+        type: "product",
+        name: "Boho pom-pom shower curtain",
+        retailer: "Target",
+        url: "https://www.target.com/p/-/A-82247912",
+        image: inspirationAsset("boho-earth-tones", "detail-3"),
+        imageAlt: "Off-white woven shower curtain with pom-pom edge style reference"
+      }
     ])
   },
   {
@@ -187,10 +251,23 @@ export const inspirationStyles: InspirationStyle[] = [
     description: "Pale wood, subway tile, and uncluttered function. Cozy minimalism that just works.",
     cover: redesignImages.scandi,
     accent: "#A0907E",
-    items: buildInspirationItems(redesignImages.scandi, 6, [
-      { name: "Birch step stool", price: "$29" },
-      { name: "Ceramic tumbler set", price: "$16" },
-      { name: "Cotton bath rug", price: "$24" }
+    items: buildInspirationItems("scandinavian-clean", redesignImages.scandi, [
+      {
+        type: "product",
+        name: "RÅGRUND bamboo bench",
+        retailer: "IKEA",
+        url: "https://www.ikea.com/us/en/p/ragrund-bench-bamboo-60549416/",
+        image: inspirationAsset("scandinavian-clean", "detail-2"),
+        imageAlt: "Bamboo bathroom bench style reference beside a shower"
+      },
+      {
+        type: "product",
+        name: "TOFTBO gray-white bath mat",
+        retailer: "IKEA",
+        url: "https://www.ikea.com/us/en/p/toftbo-bath-mat-gray-white-melange-40610363/",
+        image: inspirationAsset("scandinavian-clean", "detail-3"),
+        imageAlt: "Soft gray-and-white bathroom mat style reference"
+      }
     ])
   },
   {
@@ -199,10 +276,23 @@ export const inspirationStyles: InspirationStyle[] = [
     description: "Black accents, deep contrast, and dramatic lighting. Small space, big personality.",
     cover: redesignImages.dark,
     accent: "#4A4540",
-    items: buildInspirationItems(redesignImages.dark, 7, [
-      { name: "Matte black faucet kit", price: "$39" },
-      { name: "Smoked glass jar", price: "$12" },
-      { name: "Charcoal waffle towel", price: "$20" }
+    items: buildInspirationItems("dark-moody", redesignImages.dark, [
+      {
+        type: "product",
+        name: "Ribbed glass soap pump in black",
+        retailer: "Target",
+        url: "https://www.target.com/p/-/A-87646697",
+        image: inspirationAsset("dark-moody", "detail-2"),
+        imageAlt: "Ribbed black glass soap pump style reference on a dark vanity"
+      },
+      {
+        type: "product",
+        name: "GANSJÖN three-piece bathroom set",
+        retailer: "IKEA",
+        url: "https://www.ikea.com/us/en/p/gansjoen-3-piece-bathroom-set-black-90587039/",
+        image: inspirationAsset("dark-moody", "detail-3"),
+        imageAlt: "Matte black coordinated bathroom accessory set style reference"
+      }
     ])
   },
   {
@@ -211,10 +301,23 @@ export const inspirationStyles: InspirationStyle[] = [
     description: "Plaster tones, soft light, and material softness. The signature Diyesu look.",
     cover: redesignImages.hero,
     accent: "#B8744A",
-    items: buildInspirationItems(redesignImages.hero, 8, [
-      { name: "Plaster soap dispenser", price: "$17" },
-      { name: "Stoneware vase", price: "$22" },
-      { name: "Boucle bath stool", price: "$45" }
+    items: buildInspirationItems("warm-editorial", redesignImages.hero, [
+      {
+        type: "product",
+        name: "EKOLN beige soap dispenser",
+        retailer: "IKEA",
+        url: "https://www.ikea.com/us/en/p/ekoln-soap-dispenser-beige-60493004/",
+        image: inspirationAsset("warm-editorial", "detail-2"),
+        imageAlt: "Warm beige ceramic soap dispenser style reference"
+      },
+      {
+        type: "product",
+        name: "Medium rustic ceramic vase",
+        retailer: "Target",
+        url: "https://www.target.com/p/-/A-94685983",
+        image: inspirationAsset("warm-editorial", "detail-3"),
+        imageAlt: "Rustic warm-white ceramic vase style reference on a bathroom shelf"
+      }
     ])
   },
   {
@@ -223,10 +326,23 @@ export const inspirationStyles: InspirationStyle[] = [
     description: "Concrete, exposed metal, and raw edges. Urban grit balanced with warm utility.",
     cover: redesignImages.industrial,
     accent: "#6B6358",
-    items: buildInspirationItems(redesignImages.industrial, 9, [
-      { name: "Iron pipe shelf", price: "$32" },
-      { name: "Concrete soap tray", price: "$14" },
-      { name: "Edison vanity bulb", price: "$11" }
+    items: buildInspirationItems("industrial-loft", redesignImages.industrial, [
+      {
+        type: "product",
+        name: "Pipe Decor bathroom wall shelf",
+        retailer: "The Home Depot",
+        url: "https://www.homedepot.com/p/323160431",
+        image: inspirationAsset("industrial-loft", "detail-2"),
+        imageAlt: "Black pipe and wood bathroom shelf style reference"
+      },
+      {
+        type: "product",
+        name: "Vintage Edison-style LED bulb",
+        retailer: "The Home Depot",
+        url: "https://www.homedepot.com/p/205891597",
+        image: inspirationAsset("industrial-loft", "detail-3"),
+        imageAlt: "Warm exposed-filament vanity bulb style reference"
+      }
     ])
   },
   {
@@ -235,10 +351,23 @@ export const inspirationStyles: InspirationStyle[] = [
     description: "Breezy blues, sun-bleached textures, and a just-back-from-the-beach ease.",
     cover: redesignImages.coastal,
     accent: "#6FA0B5",
-    items: buildInspirationItems(redesignImages.coastal, 10, [
-      { name: "Jute storage basket", price: "$18" },
-      { name: "Driftwood bath tray", price: "$26" },
-      { name: "Striped cotton towel", price: "$19" }
+    items: buildInspirationItems("coastal-calm", redesignImages.coastal, [
+      {
+        type: "product",
+        name: "Coastal white soap pump",
+        retailer: "Target",
+        url: "https://www.target.com/p/-/A-91973284",
+        image: inspirationAsset("coastal-calm", "detail-2"),
+        imageAlt: "White coastal-style soap pump reference on a pale blue vanity"
+      },
+      {
+        type: "product",
+        name: "SLÅNHÖSTMAL blue striped bath towel",
+        retailer: "IKEA",
+        url: "https://www.ikea.com/us/en/p/slanhoestmal-bath-towel-bright-blue-light-blue-stripe-60576037/",
+        image: inspirationAsset("coastal-calm", "detail-3"),
+        imageAlt: "Bright blue striped cotton bath towel style reference"
+      }
     ])
   },
   {
@@ -247,10 +376,23 @@ export const inspirationStyles: InspirationStyle[] = [
     description: "Japanese restraint meets Scandinavian warmth. Natural wood, low contrast, total calm.",
     cover: redesignImages.japandi,
     accent: "#9C8B73",
-    items: buildInspirationItems(redesignImages.japandi, 11, [
-      { name: "Hinoki wood bath mat", price: "$38" },
-      { name: "Stoneware dispenser", price: "$16" },
-      { name: "Linen robe", price: "$42" }
+    items: buildInspirationItems("japandi", redesignImages.japandi, [
+      {
+        type: "product",
+        name: "DRAGAN four-piece bamboo bathroom set",
+        retailer: "IKEA",
+        url: "https://www.ikea.com/us/en/p/dragan-4-piece-bathroom-set-bamboo-40222607/",
+        image: inspirationAsset("japandi", "detail-2"),
+        imageAlt: "Coordinated bamboo bathroom accessory set style reference"
+      },
+      {
+        type: "product",
+        name: "RÅGRUND chair with towel rack",
+        retailer: "IKEA",
+        url: "https://www.ikea.com/us/en/p/ragrund-chair-with-towel-rack-bamboo-90253074/",
+        image: inspirationAsset("japandi", "detail-3"),
+        imageAlt: "Bamboo bathroom chair and towel rack style reference"
+      }
     ])
   }
 ];

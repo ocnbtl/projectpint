@@ -106,6 +106,7 @@ test("final public polish keeps the supplied brand, requested icons, and respons
   const brandSource = fs.readFileSync(path.join(process.cwd(), "components", "BrandMarks.tsx"), "utf8");
   const shellSource = fs.readFileSync(path.join(process.cwd(), "components", "SiteShell.tsx"), "utf8");
   const markSource = fs.readFileSync(path.join(process.cwd(), "public", "brand", "diyesu-mark.svg"), "utf8");
+  const iconSource = fs.readFileSync(path.join(process.cwd(), "app", "icon.svg"), "utf8");
   const cssSource = fs.readFileSync(path.join(process.cwd(), "app", "globals.css"), "utf8");
 
   assert.match(homeSource, /home-inspo-group/);
@@ -117,6 +118,8 @@ test("final public polish keeps the supplied brand, requested icons, and respons
   assert.match(shellSource, /href="\/admin\/login">Admin/);
   assert.match(markSource, /#eac530/);
   assert.match(markSource, /#3f704e/);
+  assert.match(iconSource, /id="favicon-rounded-corners"/);
+  assert.match(iconSource, /rx="150"/);
   assert.match(cssSource, /\.inspiration-style-preview img\s*\{[\s\S]*height:\s*auto/);
   assert.match(cssSource, /\.inspiration-detail-copy p\s*\{[\s\S]*white-space:\s*nowrap/);
   assert.match(cssSource, /\.area-overview-card:nth-last-child\(2\):nth-child\(3n \+ 1\)/);

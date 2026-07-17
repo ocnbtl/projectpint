@@ -1,6 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  getPlantRecommendations,
+  type PlantHumidity,
+  type PlantLight,
+  type PlantSpace
+} from "../lib/plant-picker";
 import { ConsentNote } from "./ConsentNote";
 
 type PlantStep = 0 | 1 | 2 | 3;
@@ -9,19 +15,6 @@ type PlantOption = {
   label: string;
   description: string;
   icon: string;
-};
-
-type PlantResult = {
-  name: string;
-  scientific: string;
-  light: string;
-  humidity: readonly ("dry" | "normal" | "steamy")[];
-  water: string;
-  placement: string;
-  difficulty: "Easy" | "Intermediate";
-  note: string;
-  icon: string;
-  image: string;
 };
 
 const steps = ["Light", "Humidity", "Space", "Results"];
@@ -53,74 +46,6 @@ const areaOptions = [
   "Renter",
   "DIY",
   "ExtremeBudget"
-];
-
-const plants: PlantResult[] = [
-  {
-    name: "Pothos",
-    scientific: "Epipremnum aureum",
-    light: "Low to bright indirect",
-    humidity: ["normal", "steamy"],
-    water: "Weekly",
-    placement: "Shelf, hanging planter, windowsill",
-    difficulty: "Easy",
-    note: "Trails from shelves, handles humidity, and forgives imperfect watering.",
-    icon: "leaf",
-    image:
-      "https://images.unsplash.com/photo-1773431456773-50853cea57cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080"
-  },
-  {
-    name: "Snake Plant",
-    scientific: "Sansevieria trifasciata",
-    light: "Low to bright",
-    humidity: ["dry", "normal"],
-    water: "Every 2-3 weeks",
-    placement: "Floor corner, counter, windowsill",
-    difficulty: "Easy",
-    note: "Architectural, durable, and easy to place beside a vanity or toilet.",
-    icon: "tree",
-    image:
-      "https://images.unsplash.com/photo-1613498630970-f2a333cb4974?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080"
-  },
-  {
-    name: "ZZ Plant",
-    scientific: "Zamioculcas zamiifolia",
-    light: "Low to medium",
-    humidity: ["dry", "normal"],
-    water: "Every 2-3 weeks",
-    placement: "Floor, counter, shelf",
-    difficulty: "Easy",
-    note: "Slow growing, glossy, and tolerant of dry spells between watering.",
-    icon: "sprout",
-    image:
-      "https://images.unsplash.com/photo-1555758826-ce21b7e51ccf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080"
-  },
-  {
-    name: "Peace Lily",
-    scientific: "Spathiphyllum",
-    light: "Low to medium",
-    humidity: ["normal", "steamy"],
-    water: "Weekly",
-    placement: "Counter, floor, shelf",
-    difficulty: "Easy",
-    note: "A softer option for humid bathrooms with indirect light.",
-    icon: "flower",
-    image:
-      "https://images.unsplash.com/photo-1567465645848-b765281eca3c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080"
-  },
-  {
-    name: "Boston Fern",
-    scientific: "Nephrolepis exaltata",
-    light: "Medium indirect",
-    humidity: ["normal", "steamy"],
-    water: "Keep moist",
-    placement: "Hanging, high shelf, shower area",
-    difficulty: "Intermediate",
-    note: "Best near a shower or window where steam keeps the fronds lush.",
-    icon: "leaf",
-    image:
-      "https://images.unsplash.com/photo-1704869727879-25ed3c235e7d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080"
-  }
 ];
 
 function MiniIcon({ name }: { name: string }) {
@@ -196,6 +121,21 @@ function MiniIcon({ name }: { name: string }) {
         </svg>
       );
   }
+}
+
+function PlantMatchIcon({ index }: { index: number }) {
+  return (
+    <span className="plant-match-emblem" aria-hidden="true">
+      <svg viewBox="0 0 48 48">
+        <path d="M15 31h18l-2 11H17l-2-11Z" />
+        <path d="M24 31V14" />
+        <path d="M24 21c-6 0-10-3.5-10-9 6 0 10 3.5 10 9Z" />
+        <path d="M24 27c6 0 10-3.5 10-9-6 0-10 3.5-10 9Z" />
+        <path d="M24 16c4 0 7-2.5 7-6-4 0-7 2.5-7 6Z" />
+      </svg>
+      <b>{index + 1}</b>
+    </span>
+  );
 }
 
 function ProgressSteps({ step }: { step: PlantStep }) {
@@ -335,16 +275,11 @@ export function PlantPickerTool() {
   }, [showSignup, unlocked]);
 
   const results = useMemo(() => {
-    let matches = [...plants];
-    if (light === "low") matches = matches.filter((plant) => plant.light.toLowerCase().includes("low"));
-    if (light === "medium") {
-      matches = matches.filter((plant) => plant.light.toLowerCase().includes("medium") || plant.light.toLowerCase().includes("indirect"));
-    }
-    if (humidity) matches = matches.filter((plant) => plant.humidity.includes(humidity as "dry" | "normal" | "steamy"));
-    if (space === "tiny") {
-      matches = matches.filter((plant) => plant.placement.toLowerCase().includes("shelf") || plant.placement.toLowerCase().includes("counter"));
-    }
-    return matches.length >= 5 ? matches.slice(0, 5) : [...matches, ...plants.filter((plant) => !matches.includes(plant))].slice(0, 5);
+    return getPlantRecommendations({
+      light: (light || "low") as PlantLight,
+      humidity: (humidity || "normal") as PlantHumidity,
+      space: (space || "tiny") as PlantSpace
+    });
   }, [humidity, light, space]);
 
   const canProceed = (step === 0 && light) || (step === 1 && humidity) || (step === 2 && space);
@@ -395,35 +330,45 @@ export function PlantPickerTool() {
             <div className="plant-match-list">
               {results.map((plant, index) => {
                 const isLocked = index >= 2 && !unlocked;
+                const visibleName = isLocked ? "Bonus plant match" : plant.name;
+                const visibleScientific = isLocked ? "Unlock to reveal" : plant.scientific;
+                const visibleDifficulty = isLocked ? "Locked" : plant.difficulty;
+                const visibleLight = isLocked ? "Personalized to your answers" : plant.light;
+                const visibleWater = isLocked ? "Care details included" : plant.water;
+                const visiblePlacement = isLocked ? "Placement tip included" : plant.placement;
                 const card = (
                   <article
                     key={plant.name}
-                    className={isLocked ? "plant-match-card is-locked" : "plant-match-card"}
+                    className={`plant-match-card plant-difficulty-${plant.difficulty.toLowerCase()}${isLocked ? " is-locked" : ""}`}
                     aria-hidden={isLocked || undefined}
                   >
                     <span className={`plant-match-icon plant-match-${plant.difficulty.toLowerCase()}`}>
-                      <MiniIcon name={plant.icon} />
+                      <PlantMatchIcon index={index} />
                     </span>
                     <span className="plant-match-copy">
                       <span className="plant-match-title">
-                        <strong>{plant.name}</strong>
-                        <em>{plant.difficulty}</em>
+                        <strong>{visibleName}</strong>
+                        <em>{visibleDifficulty}</em>
                       </span>
-                      <span className="plant-scientific">{plant.scientific}</span>
+                      <span className="plant-scientific">{visibleScientific}</span>
                       <span className="plant-match-detail">
                         <MiniIcon name="sun" />
-                        <span><b>Light:</b> {plant.light}</span>
+                        <span><b>Light:</b> {visibleLight}</span>
                       </span>
                       <span className="plant-match-detail">
                         <MiniIcon name="drop" />
-                        <span><b>Water:</b> {plant.water}</span>
+                        <span><b>Water:</b> {visibleWater}</span>
                       </span>
                       <span className="plant-match-detail">
                         <MiniIcon name="square" />
-                        <span><b>Placement:</b> {plant.placement}</span>
+                        <span><b>Placement:</b> {visiblePlacement}</span>
                       </span>
                     </span>
-                    <span className="plant-match-photo" style={{ backgroundImage: `url(${plant.image})` }} aria-hidden="true" />
+                    <span
+                      className="plant-match-photo"
+                      style={{ backgroundImage: isLocked ? undefined : `url(${plant.image})` }}
+                      aria-hidden="true"
+                    />
                   </article>
                 );
 
@@ -432,8 +377,8 @@ export function PlantPickerTool() {
                     <div key={plant.name} style={{ position: "relative" }}>
                       {card}
                       <button ref={unlockButtonRef} type="button" className="plant-lock-button" onClick={() => setShowSignup(true)}>
-                        <span>Unlock 3 more matches</span>
-                        <small>Free weekly bathroom ideas</small>
+                        <small>Click here</small>
+                        <span>Unlock three more matches for free</span>
                       </button>
                     </div>
                   );

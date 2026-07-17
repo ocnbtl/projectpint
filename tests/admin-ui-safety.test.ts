@@ -65,3 +65,14 @@ test("mobile admin drawer restores focus after its unmount commit", async () => 
   assert.match(frameSource, /const focusTarget = menuButtonRef\.current;/);
   assert.match(frameSource, /setDrawerOpen\(false\);\s+window\.setTimeout\(\(\) => focusTarget\?\.focus\(\), 0\);/);
 });
+
+test("editable admin sheets expose accessible filtered selection and confirmed bulk deletion", async () => {
+  const editor = await source("components/admin/DataSheetEditor.tsx");
+
+  assert.match(editor, /selectedRows/);
+  assert.match(editor, /Select all visible rows/);
+  assert.match(editor, /Delete \$\{count\} selected/);
+  assert.match(editor, /window\.confirm/);
+  assert.match(editor, /readOnly \? 0 : ROW_SELECT_COLUMN_WIDTH/);
+  assert.match(editor, /Customer records are visible for audience review but cannot be edited or deleted/);
+});

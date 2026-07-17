@@ -39,6 +39,7 @@ const KEYWORD_TOKEN_COLUMNS = new Set(["Blog_Keywords", "Guide_Keywords"]);
 
 const MIN_COLUMN_WIDTH = 140;
 const ROW_ACTION_COLUMN_WIDTH = 120;
+const ROW_SELECT_COLUMN_WIDTH = 54;
 
 const DISPLAY_COLUMN_LABELS: Record<string, string> = {
   Blog_Publish_Date: "Date",
@@ -248,6 +249,7 @@ export function DataSheetEditor({
   const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [selectedRows, setSelectedRows] = useState<Set<number>>(() => new Set());
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() => sanitizeColumnWidths(columns, null));
   const [columnWidthsReady, setColumnWidthsReady] = useState(false);
   const rowsRef = useRef(rows);
@@ -314,9 +316,13 @@ export function DataSheetEditor({
     });
   }, [rows, dateColumn, selectedWeek, query, columns, sortDir, sortKey]);
 
+  const visibleRowIndexes = useMemo(() => visibleRows.map(({ index }) => index), [visibleRows]);
+  const allVisibleRowsSelected = !readOnly && visibleRowIndexes.length > 0 && visibleRowIndexes.every((index) => selectedRows.has(index));
+  const someVisibleRowsSelected = !readOnly && visibleRowIndexes.some((index) => selectedRows.has(index));
+
   const tableMinWidth = useMemo(
-    () => columns.reduce((total, column) => total + (columnWidths[column] ?? defaultColumnWidth(column)), 0) + ROW_ACTION_COLUMN_WIDTH,
-    [columnWidths, columns]
+    () => columns.reduce((total, column) => total + (columnWidths[column] ?? defaultColumnWidth(column)), 0) + ROW_ACTION_COLUMN_WIDTH + (readOnly ? 0 : ROW_SELECT_COLUMN_WIDTH),
+    [columnWidths, columns, readOnly]
   );
 
   useEffect(() => {
@@ -358,9 +364,45 @@ export function DataSheetEditor({
         : String(Object.values(targetRow)[0] ?? "");
     if (!window.confirm(`Delete ${label || `row ${rowIndex + 1}`}? This takes effect after the table is saved.`)) return;
     setRows((current) => current.filter((_, index) => index !== rowIndex));
+    setSelectedRows((current) => new Set(
+      Array.from(current)
+        .filter((index) => index !== rowIndex)
+        .map((index) => (index > rowIndex ? index - 1 : index))
+    ));
     setDirty(true);
     setConflict(false);
     setStatus("Changes pending...");
+  }
+
+  function toggleRowSelection(rowIndex: number) {
+    if (readOnly) return;
+    setSelectedRows((current) => {
+      const next = new Set(current);
+      if (next.has(rowIndex)) next.delete(rowIndex);
+      else next.add(rowIndex);
+      return next;
+    });
+  }
+
+  function toggleVisibleSelection() {
+    if (readOnly || visibleRowIndexes.length === 0) return;
+    setSelectedRows((current) => {
+      const next = new Set(current);
+      if (allVisibleRowsSelected) visibleRowIndexes.forEach((index) => next.delete(index));
+      else visibleRowIndexes.forEach((index) => next.add(index));
+      return next;
+    });
+  }
+
+  function deleteSelectedRows() {
+    if (readOnly || selectedRows.size === 0) return;
+    const count = selectedRows.size;
+    if (!window.confirm(`Delete ${count} selected ${count === 1 ? "row" : "rows"}? This takes effect after the table is saved.`)) return;
+    setRows((current) => current.filter((_, index) => !selectedRows.has(index)));
+    setSelectedRows(new Set());
+    setDirty(true);
+    setConflict(false);
+    setStatus(`${count} ${count === 1 ? "row" : "rows"} removed. Changes pending...`);
   }
 
   function toggleSort(column: string) {
@@ -398,6 +440,7 @@ export function DataSheetEditor({
           baseRowsRef.current = normalizedRows;
           rowsRef.current = normalizedRows;
           setRows(normalizedRows);
+          setSelectedRows(new Set());
         }
         setDirty(false);
         setConflict(false);
@@ -425,6 +468,7 @@ export function DataSheetEditor({
       baseRowsRef.current = normalizedRows;
       rowsRef.current = normalizedRows;
       setRows(normalizedRows);
+      setSelectedRows(new Set());
       setDirty(false);
       setConflict(false);
       setStatus("Current rows reloaded.");
@@ -526,6 +570,24 @@ export function DataSheetEditor({
                 </span>
                 Add row
               </button>
+              {selectedRows.size > 0 ? (
+                <button
+                  type="button"
+                  className="btn btn-ghost admin-toolbar-button admin-bulk-delete-button"
+                  onClick={deleteSelectedRows}
+                >
+                  <span className="admin-action-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M3 6h18" />
+                      <path d="M8 6V4h8v2" />
+                      <path d="M10 11v6" />
+                      <path d="M14 11v6" />
+                      <path d="M6 6l1 14h10l1-14" />
+                    </svg>
+                  </span>
+                  Delete {selectedRows.size}
+                </button>
+              ) : null}
               <button
                 type="button"
                 className="btn btn-accent admin-toolbar-button"
@@ -572,6 +634,7 @@ export function DataSheetEditor({
       <div className="admin-table-wrap">
         <table className="admin-table" style={{ minWidth: `${tableMinWidth}px` }}>
           <colgroup>
+            {!readOnly ? <col style={{ width: `${ROW_SELECT_COLUMN_WIDTH}px` }} /> : null}
             {columns.map((column) => (
               <col key={column} style={{ width: `${columnWidths[column] ?? defaultColumnWidth(column)}px` }} />
             ))}
@@ -579,6 +642,22 @@ export function DataSheetEditor({
           </colgroup>
           <thead>
             <tr>
+              {!readOnly ? (
+                <th className="admin-table-select-heading">
+                  <label className="admin-row-checkbox admin-row-checkbox-header">
+                    <input
+                      type="checkbox"
+                      checked={allVisibleRowsSelected}
+                      ref={(node) => {
+                        if (node) node.indeterminate = someVisibleRowsSelected && !allVisibleRowsSelected;
+                      }}
+                      onChange={toggleVisibleSelection}
+                      aria-label={allVisibleRowsSelected ? "Clear selection for visible rows" : "Select all visible rows"}
+                    />
+                    <span aria-hidden="true" />
+                  </label>
+                </th>
+              ) : null}
               {columns.map((column) => (
                 <th key={column}>
                   <div className="admin-table-header-cell">
@@ -613,13 +692,26 @@ export function DataSheetEditor({
           <tbody>
             {visibleRows.length === 0 ? (
               <tr>
-                <td className="admin-table-empty" colSpan={columns.length + 1}>
+                <td className="admin-table-empty" colSpan={columns.length + 1 + (readOnly ? 0 : 1)}>
                   No rows match the current search or week filter.
                 </td>
               </tr>
             ) : (
               visibleRows.map(({ row, index: absoluteIndex }) => (
-                <tr key={`${tab}-row-${absoluteIndex}`}>
+                <tr key={`${tab}-row-${absoluteIndex}`} className={selectedRows.has(absoluteIndex) ? "is-selected" : undefined}>
+                  {!readOnly ? (
+                    <td className="admin-table-select-cell">
+                      <label className="admin-row-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.has(absoluteIndex)}
+                          onChange={() => toggleRowSelection(absoluteIndex)}
+                          aria-label={`Select row ${absoluteIndex + 1}`}
+                        />
+                        <span aria-hidden="true" />
+                      </label>
+                    </td>
+                  ) : null}
                   {columns.map((column) => (
                     <td key={`${tab}-${absoluteIndex}-${column}`}>
                       {column === "Workflow_Status" ? (
@@ -717,7 +809,7 @@ export function DataSheetEditor({
       </div>
       <div className="admin-table-footer">
         <span>
-          {visibleRows.length} of {rows.length} rows
+          {visibleRows.length} of {rows.length} rows{selectedRows.size > 0 ? ` · ${selectedRows.size} selected` : ""}
         </span>
         <span>{sortKey ? `Sorted by ${formatColumnLabel(sortKey, tab)}` : "No sort applied"}</span>
       </div>
