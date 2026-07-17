@@ -49,7 +49,6 @@ export default async function HomePage() {
   ]);
   const blogs = blogSource.slice(0, 6);
   const hasLiveBlogs = blogs.length > 0;
-  const inspirationLoop = [...inspirationSource, ...inspirationSource];
   const fallbackBlogCards = [
     {
       id: "fallback-plants",
@@ -155,22 +154,26 @@ export default async function HomePage() {
           </div>
           <div className="home-inspo-window">
             <div className="inspo-strip home-inspo-strip" id="home-inspiration-carousel">
-              {inspirationLoop.map((style, index) => (
-                <Link
-                  key={`${style.slug}-${index}`}
-                  href={`/inspiration/${style.slug}`}
-                  className={`inspo-strip-card${index >= inspirationSource.length ? " home-inspo-duplicate" : ""}`}
-                  aria-hidden={index >= inspirationSource.length ? true : undefined}
-                  tabIndex={index >= inspirationSource.length ? -1 : undefined}
-                >
-                  <SafeImage
-                    src={style.cover}
-                    alt={index >= inspirationSource.length ? "" : style.coverAlt}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <span>{style.name}</span>
-                </Link>
+              {[0, 1].map((setIndex) => (
+                <div key={setIndex} className={`home-inspo-group${setIndex === 1 ? " home-inspo-duplicate" : ""}`}>
+                  {inspirationSource.map((style) => (
+                    <Link
+                      key={`${setIndex}-${style.slug}`}
+                      href={`/inspiration/${style.slug}`}
+                      className="inspo-strip-card"
+                      aria-hidden={setIndex === 1 ? true : undefined}
+                      tabIndex={setIndex === 1 ? -1 : undefined}
+                    >
+                      <SafeImage
+                        src={style.cover}
+                        alt={setIndex === 1 ? "" : style.coverAlt}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <span>{style.name}</span>
+                    </Link>
+                  ))}
+                </div>
               ))}
             </div>
           </div>
@@ -251,7 +254,7 @@ export default async function HomePage() {
             <h2>Find the perfect bathroom plant</h2>
             <p className="home-plant-copy">
               <span>Tell us about your bathroom&apos;s light and humidity.</span>
-              <span>We&apos;ll recommend plants that will actually thrive with placement tips included.</span>
+              <span>We&apos;ll recommend plants that will actually thrive, with placement tips included.</span>
             </p>
             <Link href="/plant-picker" className="btn btn-accent">
               Try the Plant Picker

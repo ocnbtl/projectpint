@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { BrandMark } from "./BrandMarks";
 import { CookieNotice } from "./CookieNotice";
 import { RevealController } from "./RevealController";
 import { SiteHeader } from "./SiteHeader";
@@ -15,17 +16,6 @@ const footerTickerItems = [
   { icon: "💰", label: "Budget" }
 ];
 
-function LeafMark({ small = false }: { small?: boolean }) {
-  return (
-    <span className={`brand-mark${small ? " brand-mark-footer" : ""}`} aria-hidden="true">
-      <svg viewBox="0 0 24 24" role="img">
-        <path d="M19.2 4.8c-6.8.4-11.5 3.1-14 8.2 2.2-.9 4.4-.9 6.7-.1-2.9 1.1-5.1 3-6.5 5.8 5.9-.2 10.3-2.1 13.1-5.8 1.5-2 1.7-4.7.7-8.1Z" />
-        <path d="M5.5 18.2c2.8-4.4 6.2-7.2 10.1-8.5" />
-      </svg>
-    </span>
-  );
-}
-
 export function SiteShell({ children }: { children: ReactNode }) {
   return (
     <div className="site-shell">
@@ -39,7 +29,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
         <div className="container footer-grid">
           <div className="footer-brand-block">
             <Link href="/" className="brand brand-footer" aria-label="Diyesu Decor home">
-              <LeafMark small />
+              <BrandMark small contrast />
               <span className="brand-name">Diyesu Decor</span>
             </Link>
             <p>
@@ -85,6 +75,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 <Link href="/legal/privacy">Privacy</Link>
                 <Link href="/legal/terms">Terms</Link>
                 <Link href="/legal/affiliate-disclosure">Affiliate Disclosure</Link>
+                <Link href="/admin/login">Admin</Link>
               </p>
             </div>
           </div>

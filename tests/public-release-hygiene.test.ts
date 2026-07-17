@@ -99,6 +99,30 @@ test("public motion and responsive controls keep accessible semantics and stable
   assert.match(cssSource, /\.plant-match-card\.is-locked\s*\{[\s\S]*filter:\s*blur\(4px\);/);
 });
 
+test("final public polish keeps the supplied brand, requested icons, and responsive layout contracts", () => {
+  const homeSource = fs.readFileSync(path.join(process.cwd(), "app", "page.tsx"), "utf8");
+  const startSource = fs.readFileSync(path.join(process.cwd(), "app", "start-here", "page.tsx"), "utf8");
+  const areaIconSource = fs.readFileSync(path.join(process.cwd(), "components", "AreaIcon.tsx"), "utf8");
+  const brandSource = fs.readFileSync(path.join(process.cwd(), "components", "BrandMarks.tsx"), "utf8");
+  const shellSource = fs.readFileSync(path.join(process.cwd(), "components", "SiteShell.tsx"), "utf8");
+  const markSource = fs.readFileSync(path.join(process.cwd(), "public", "brand", "diyesu-mark.svg"), "utf8");
+  const cssSource = fs.readFileSync(path.join(process.cwd(), "app", "globals.css"), "utf8");
+
+  assert.match(homeSource, /home-inspo-group/);
+  assert.match(homeSource, /actually thrive, with placement tips included/);
+  assert.match(startSource, /rect x="3" y="4" width="18" height="16"/);
+  assert.match(startSource, /m13\.5 3\.5 7 7/);
+  assert.match(areaIconSource, /m13\.5 3\.5 7 7/);
+  assert.match(brandSource, /M5 19c9\.5 0 14-5\.6 14-14/);
+  assert.match(shellSource, /href="\/admin\/login">Admin/);
+  assert.match(markSource, /#eac530/);
+  assert.match(markSource, /#3f704e/);
+  assert.match(cssSource, /\.inspiration-style-preview img\s*\{[\s\S]*height:\s*auto/);
+  assert.match(cssSource, /\.inspiration-detail-copy p\s*\{[\s\S]*white-space:\s*nowrap/);
+  assert.match(cssSource, /\.area-overview-card:nth-last-child\(2\):nth-child\(3n \+ 1\)/);
+  assert.match(cssSource, /about-style-rainbow/);
+});
+
 test("editorial images only use the optimizer when they match its exact remote pattern", () => {
   assert.equal(normalizeImageSource("https://images.unsplash.com/photo-123?fit=crop").optimize, true);
   assert.equal(normalizeImageSource("https://images.unsplash.com/custom/file.jpg").optimize, false);

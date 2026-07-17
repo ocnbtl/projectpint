@@ -66,7 +66,7 @@ export function AreaIcon({ name }: { name: string }) {
     case "tool":
       return (
         <IconSvg>
-          <path d="M14.5 5.3a4.4 4.4 0 0 0 4.2 5.9l-8.4 8.4a2.4 2.4 0 0 1-3.4-3.4l8.4-8.4a4.4 4.4 0 0 0-.8-2.5Z" />
+          <path d="m13.5 3.5 7 7-3.5 3.5-2.25-2.25L6 20.5 3.5 18l8.75-8.75L10 7l3.5-3.5Z" />
         </IconSvg>
       );
     case "dollar":

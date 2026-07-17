@@ -14,7 +14,7 @@ export const metadata = pageMetadata({
   image: redesignImages.hero
 });
 
-function StepIcon({ name }: { name: "target" | "sparkles" | "hammer" }) {
+function StepIcon({ name }: { name: "target" | "browse" | "hammer" }) {
   const paths = {
     target: (
       <>
@@ -23,18 +23,16 @@ function StepIcon({ name }: { name: "target" | "sparkles" | "hammer" }) {
         <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
       </>
     ),
-    sparkles: (
+    browse: (
       <>
-        <path d="M12 2l1.4 5.1L18 9l-4.6 1.9L12 16l-1.4-5.1L6 9l4.6-1.9L12 2Z" />
-        <path d="M5 15l.7 2.1L8 18l-2.3.9L5 21l-.7-2.1L2 18l2.3-.9L5 15Z" />
-        <path d="M19 14l.6 1.7 1.8.7-1.8.7L19 19l-.6-1.9-1.8-.7 1.8-.7L19 14Z" />
+        <rect x="3" y="4" width="18" height="16" rx="2" />
+        <circle cx="8" cy="9" r="1.5" />
+        <path d="m4 17 4.5-4.5 3 3 2.5-2.5 6 6" />
       </>
     ),
     hammer: (
       <>
-        <path d="M14 5l5 5" />
-        <path d="M11 8l5-5 3 3-5 5" />
-        <path d="M13 10L5 18l-2-2 8-8" />
+        <path d="m13.5 3.5 7 7-3.5 3.5-2.25-2.25L6 20.5 3.5 18l8.75-8.75L10 7l3.5-3.5Z" />
       </>
     )
   };
@@ -50,7 +48,7 @@ export default async function StartHerePage() {
   const [blogSource, guideSource] = await Promise.all([readPublishedBlogs(), readPublishedGuides()]);
   const steps = [
     ["target", "Pick an area", "Choose the part of your bathroom that bugs you the most."],
-    ["sparkles", "Browse ideas", "Find specific guides and product recommendations for that area."],
+    ["browse", "Browse ideas", "Find specific guides and product recommendations for that area."],
     ["hammer", "Make it happen", "Follow our step-by-step plans and enjoy the upgrade."]
   ];
 
@@ -84,7 +82,7 @@ export default async function StartHerePage() {
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
                 <span>
-                  <StepIcon name={icon as "target" | "sparkles" | "hammer"} />
+                  <StepIcon name={icon as "target" | "browse" | "hammer"} />
                 </span>
                 <h3>{title}</h3>
                 <p>{copy}</p>

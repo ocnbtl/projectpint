@@ -12415,3 +12415,148 @@ body.admin-drawer-open {
     animation: none;
   }
 }
+
+/* Final public polish: supplied Diyesu mark and requested content-ready adjustments. */
+.brand-mark {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+
+.brand-mark-contrast {
+  background: #fff;
+  border-radius: 6px;
+}
+
+.brand-mark img {
+  display: block;
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+.topbar .brand-mark {
+  height: 42px;
+  width: 42px;
+}
+
+.site-footer .brand-mark,
+.admin-brand .brand-mark,
+.admin-login-mark .brand-mark {
+  background: #fff;
+}
+
+.nav-plant-leaf {
+  fill: none;
+  flex: 0 0 auto;
+  height: 0.875rem;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+  width: 0.875rem;
+}
+
+.home-inspo-window {
+  box-sizing: border-box;
+  padding-left: max(1rem, calc((100vw - min(1808px, 100vw - 2rem)) / 2));
+}
+
+.home-inspo-strip {
+  gap: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.home-inspo-group {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 1rem;
+  padding-right: 1rem;
+}
+
+.inspiration-figma-hero .container {
+  display: grid;
+  justify-items: center;
+}
+
+.inspiration-figma-hero .eyebrow {
+  margin: 0 0 1rem;
+}
+
+.inspiration-figma-hero h1 {
+  margin: 0 0 0.75rem;
+}
+
+.inspiration-figma-hero p:last-child {
+  margin: 0;
+  max-width: 32rem;
+}
+
+.inspiration-style-preview > span {
+  align-items: start;
+  max-width: 15rem;
+  width: 100%;
+}
+
+.inspiration-style-preview img {
+  display: block;
+  height: auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+.about-callout em {
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-image: linear-gradient(90deg, #eac530, #e27d60, #b363b3, #4a9b8e, #5b8c6a, #eac530);
+  background-size: 300% 100%;
+  -webkit-text-fill-color: transparent;
+}
+
+.about-callout:hover em {
+  animation: about-style-rainbow 1.5s linear infinite;
+}
+
+@keyframes about-style-rainbow {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 150% 50%;
+  }
+}
+
+@media (min-width: 900px) {
+  .inspiration-detail-copy p {
+    max-width: none;
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 1101px) {
+  .areas-overview-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .area-overview-card {
+    grid-column: span 2;
+  }
+
+  .area-overview-card:nth-last-child(2):nth-child(3n + 1) {
+    grid-column: 2 / span 2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-callout:hover em {
+    animation: none;
+  }
+
+  .home-inspo-group.home-inspo-duplicate {
+    display: none;
+  }
+}
