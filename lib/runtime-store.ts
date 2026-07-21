@@ -317,6 +317,35 @@ async function supabaseSaveTab<T>(tabName: string, rows: T[]): Promise<void> {
   }
 }
 
+async function supabaseLoadServerStorageTab<T>(tabName: string): Promise<T[]> {
+  const url = new URL(supabaseTableUrl("app_storage_tabs"));
+  url.searchParams.set("select", "rows");
+  url.searchParams.set("tab_name", `eq.${tabName}`);
+  url.searchParams.set("limit", "1");
+
+  const response = await supabaseFetch(url, {
+    method: "GET",
+    headers: supabaseHeaders(),
+    cache: "no-store"
+  });
+  const body = (await parseSupabaseResponse(response)) as Array<{ rows?: unknown }> | null;
+  const rows = body?.[0]?.rows;
+  return Array.isArray(rows) ? (rows as T[]) : [];
+}
+
+async function supabaseSaveServerStorageTab<T>(tabName: string, rows: T[]): Promise<void> {
+  const response = await supabaseFetch(supabaseTableUrl("app_storage_tabs"), {
+    method: "POST",
+    headers: {
+      ...supabaseHeaders(),
+      Prefer: "resolution=merge-duplicates,return=minimal"
+    },
+    body: JSON.stringify({ tab_name: tabName, rows }),
+    cache: "no-store"
+  });
+  await parseSupabaseResponse(response);
+}
+
 export function getRuntimeStoreMode(): RuntimeStoreMode {
   return runtimeStoreMode();
 }
@@ -337,6 +366,23 @@ export async function loadRuntimeTab<T>(tabName: string): Promise<T[]> {
 export async function saveRuntimeTab<T>(tabName: string, rows: T[]): Promise<void> {
   if (runtimeStoreMode() === "supabase") {
     await supabaseSaveTab(tabName, rows);
+    return;
+  }
+  await localSaveTab(tabName, rows);
+}
+
+/** Server-only storage for small admin-managed datasets that do not expose a browser-role table. */
+export async function loadServerStorageTab<T>(tabName: string): Promise<T[]> {
+  if (runtimeStoreMode() === "supabase") {
+    return supabaseLoadServerStorageTab<T>(tabName);
+  }
+  return localLoadTab<T>(tabName);
+}
+
+/** Server-only storage for small admin-managed datasets that do not expose a browser-role table. */
+export async function saveServerStorageTab<T>(tabName: string, rows: T[]): Promise<void> {
+  if (runtimeStoreMode() === "supabase") {
+    await supabaseSaveServerStorageTab(tabName, rows);
     return;
   }
   await localSaveTab(tabName, rows);

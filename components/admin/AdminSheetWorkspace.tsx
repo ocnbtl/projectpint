@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { DataSheetEditor } from "./DataSheetEditor";
 
 interface AdminSheetWorkspaceProps {
-  tab: "pins" | "blogs" | "guides" | "emails" | "customers" | "products";
+  tab: "pins" | "blogs" | "guides" | "emails" | "customers" | "products" | "affiliate-links";
   heroTitle: string;
   heroDescription: ReactNode;
   editorTitle: string;

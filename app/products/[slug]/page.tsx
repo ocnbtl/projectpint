@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: product.title,
     description: product.summary,
     path: `/products/${slug}`,
-    image: redesignImages.hero
+    image: redesignImages.warmEditorial
   });
 }
 

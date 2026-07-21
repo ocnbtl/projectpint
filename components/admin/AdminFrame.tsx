@@ -21,6 +21,7 @@ const NAV_ITEMS = [
   { href: "/admin/emails", label: "Emails", icon: "mail" },
   { href: "/admin/users", label: "Users", icon: "users" },
   { href: "/admin/products", label: "Products", icon: "package" },
+  { href: "/admin/affiliate-links", label: "Affiliate Links", icon: "link" },
   { href: "/admin/analytics", label: "Analytics", icon: "chart" }
 ];
 

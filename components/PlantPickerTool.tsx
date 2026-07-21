@@ -299,7 +299,7 @@ export function PlantPickerTool() {
   };
 
   return (
-    <section className="tool-quiz-shell plant-picker-shell">
+    <section className={`tool-quiz-shell plant-picker-shell${step === 3 ? " is-results" : ""}`}>
       <ProgressSteps step={step} />
 
       <div className="tool-quiz-card">

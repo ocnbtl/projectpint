@@ -49,7 +49,7 @@ export function pageMetadata({
 }: PageMetadataOptions): Metadata {
   const canonical = absoluteUrl(path);
   const socialTitle = `${title} | ${SITE_NAME}`;
-  const socialImage = image || redesignImages.hero;
+  const socialImage = image || redesignImages.warmEditorial;
   const images = [{ url: socialImage, alt: title }];
   const openGraph: Metadata["openGraph"] = {
     title: socialTitle,

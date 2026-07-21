@@ -11,7 +11,7 @@ export const metadata = pageMetadata({
   title: "Bathroom Areas",
   description: "Browse bathroom ideas, guides, and upgrade plans by the part of the room you want to improve.",
   path: "/areas",
-  image: redesignImages.hero
+  image: redesignImages.warmEditorial
 });
 
 export default async function HubIndexPage() {
@@ -42,7 +42,13 @@ export default async function HubIndexPage() {
                   data-reveal
                   style={{ transitionDelay: `${index * 50}ms` }}
                 >
-                  <SafeImage src={visual.image} alt={`${hub.title} bathroom inspiration`} loading="lazy" decoding="async" />
+                  <SafeImage
+                    src={visual.pageImage}
+                    alt={`${hub.title} bathroom inspiration`}
+                    priority={index < 4}
+                    loading={index < 4 ? undefined : "lazy"}
+                    decoding="async"
+                  />
                   <span className="area-overview-shade" aria-hidden="true" />
                   <div className="area-overview-copy">
                     <div className="area-overview-head">

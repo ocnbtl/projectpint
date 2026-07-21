@@ -1,7 +1,8 @@
 import type { ContentArea } from "./types.ts";
 
 export const redesignImages = {
-  hero:
+  hero: "/images/home/hero.jpg",
+  warmEditorial:
     "https://images.unsplash.com/photo-1763485956070-431fca7bc030?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYXRocm9vbSUyMGludGVyaW9yJTIwZGVzaWduJTIwZWRpdG9yaWFsJTIwd2FybXxlbnwxfHx8fDE3NzM4MTY5OTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
   plants:
     "https://images.unsplash.com/photo-1750036015902-c6f5ebca924e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBiYXRocm9vbSUyMHBsYW50cyUyMG5hdHVyYWwlMjBsaWdodHxlbnwxfHx8fDE3NzM4MTY5OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
@@ -52,6 +53,7 @@ type InspirationImageItem = {
 
 type InspirationProductItem = {
   type: "product";
+  id: string;
   name: string;
   retailer: string;
   url: string;
@@ -70,10 +72,17 @@ type InspirationStyle = {
   items: InspirationItem[];
 };
 
-const collageShapes: InspirationShape[] = ["arch", "rounded", "tall", "wide", "circle", "polaroid", "rounded", "tall"];
+const collageShapes: InspirationShape[] = [
+  "arch", "rounded", "tall", "wide", "circle", "polaroid",
+  "rounded", "tall", "wide", "arch", "polaroid", "rounded"
+];
 
-function inspirationAsset(slug: string, name: "cover" | "detail-1" | "detail-2" | "detail-3"): string {
+function inspirationAsset(slug: string, name: string): string {
   return `/images/inspiration/${slug}/${name}.jpg`;
+}
+
+function amazonSearchUrl(query: string): string {
+  return `https://www.amazon.com/s?k=${encodeURIComponent(query)}`;
 }
 
 function buildInspirationItems(
@@ -81,12 +90,7 @@ function buildInspirationItems(
   cover: string,
   products: [InspirationProductItem, InspirationProductItem]
 ): InspirationItem[] {
-  const details = [
-    inspirationAsset(slug, "detail-1"),
-    inspirationAsset(slug, "detail-2"),
-    inspirationAsset(slug, "detail-3")
-  ];
-  const imageSequence = [cover, details[0], details[1], details[2], details[0], details[1], details[2], cover];
+  const imageSequence = [cover, ...Array.from({ length: 11 }, (_, index) => inspirationAsset(slug, `detail-${index + 1}`))];
   const imageItems = imageSequence.map<InspirationImageItem>((src, index) => ({
     type: "image",
     shape: collageShapes[index],
@@ -101,22 +105,26 @@ function buildInspirationItems(
     imageItems[2],
     imageItems[3],
     imageItems[4],
-    products[1],
     imageItems[5],
+    products[1],
     imageItems[6],
-    imageItems[7]
+    imageItems[7],
+    imageItems[8],
+    imageItems[9],
+    imageItems[10],
+    imageItems[11]
   ];
 }
 
-export const areaVisuals: Record<ContentArea, { image: string; tagline: string; icon: string }> = {
-  Plants: { image: redesignImages.plants, tagline: "Greenery that thrives in your space", icon: "sprout" },
-  Mirror: { image: redesignImages.mirror, tagline: "The fastest visual upgrade", icon: "circle" },
-  Storage: { image: redesignImages.storage, tagline: "Tame the clutter for good", icon: "box" },
-  Lighting: { image: redesignImages.lighting, tagline: "Set the right mood instantly", icon: "sun" },
-  Shower: { image: redesignImages.shower, tagline: "Upgrade your daily ritual", icon: "drop" },
-  Renter: { image: redesignImages.renter, tagline: "Zero damage, full transformation", icon: "home" },
-  DIY: { image: redesignImages.diy, tagline: "Weekend projects, real results", icon: "tool" },
-  ExtremeBudget: { image: redesignImages.budget, tagline: "Big impact, tiny spend", icon: "dollar" }
+export const areaVisuals: Record<ContentArea, { image: string; pageImage: string; tagline: string; icon: string }> = {
+  Plants: { image: redesignImages.plants, pageImage: "/images/areas-page/plants.jpg", tagline: "Greenery that thrives in your space", icon: "sprout" },
+  Mirror: { image: redesignImages.mirror, pageImage: "/images/areas-page/mirror.jpg", tagline: "The fastest visual upgrade", icon: "circle" },
+  Storage: { image: redesignImages.storage, pageImage: "/images/areas-page/storage.jpg", tagline: "Tame the clutter for good", icon: "box" },
+  Lighting: { image: redesignImages.lighting, pageImage: "/images/areas-page/lighting.jpg", tagline: "Set the right mood instantly", icon: "sun" },
+  Shower: { image: redesignImages.shower, pageImage: "/images/areas-page/shower.jpg", tagline: "Upgrade your daily ritual", icon: "drop" },
+  Renter: { image: redesignImages.renter, pageImage: "/images/areas-page/renter.jpg", tagline: "Zero damage, full transformation", icon: "home" },
+  DIY: { image: redesignImages.diy, pageImage: "/images/areas-page/diy.jpg", tagline: "Weekend projects, real results", icon: "tool" },
+  ExtremeBudget: { image: redesignImages.budget, pageImage: "/images/areas-page/extreme-budget.jpg", tagline: "Big impact, tiny spend", icon: "dollar" }
 };
 
 export const inspirationStyles: InspirationStyle[] = [
@@ -129,18 +137,20 @@ export const inspirationStyles: InspirationStyle[] = [
     items: buildInspirationItems("minimalist-elegance", redesignImages.minimalist, [
       {
         type: "product",
-        name: "TACKAN white soap dispenser",
-        retailer: "IKEA",
-        url: "https://www.ikea.com/us/en/p/tackan-soap-dispenser-white-90322303/",
-        image: inspirationAsset("minimalist-elegance", "detail-1"),
+        id: "minimalist-elegance-1",
+        name: "Matte white ceramic soap dispenser",
+        retailer: "Amazon",
+        url: amazonSearchUrl("matte white ceramic soap dispenser bathroom"),
+        image: inspirationAsset("minimalist-elegance", "product-1"),
         imageAlt: "Minimal white soap dispenser style reference in a warm bathroom"
       },
       {
         type: "product",
-        name: "STORAVAN three-piece bathroom set",
-        retailer: "IKEA",
-        url: "https://www.ikea.com/us/en/p/storavan-3-piece-bathroom-set-white-70429003/",
-        image: inspirationAsset("minimalist-elegance", "detail-3"),
+        id: "minimalist-elegance-2",
+        name: "White three-piece bathroom accessory set",
+        retailer: "Amazon",
+        url: amazonSearchUrl("white 3 piece bathroom accessory set minimalist"),
+        image: inspirationAsset("minimalist-elegance", "product-2"),
         imageAlt: "White coordinated bathroom accessory set style reference"
       }
     ])
@@ -154,18 +164,20 @@ export const inspirationStyles: InspirationStyle[] = [
     items: buildInspirationItems("modern-marble", redesignImages.marble, [
       {
         type: "product",
+        id: "modern-marble-1",
         name: "White marble soap dish",
-        retailer: "Target",
-        url: "https://www.target.com/p/-/A-17247412",
-        image: inspirationAsset("modern-marble", "detail-3"),
+        retailer: "Amazon",
+        url: amazonSearchUrl("white marble soap dish bathroom"),
+        image: inspirationAsset("modern-marble", "product-1"),
         imageAlt: "White marble soap dish style reference on a bathroom vanity"
       },
       {
         type: "product",
+        id: "modern-marble-2",
         name: "Marble-look contact paper",
-        retailer: "The Home Depot",
-        url: "https://www.homedepot.com/p/334377132",
-        image: inspirationAsset("modern-marble", "detail-2"),
+        retailer: "Amazon",
+        url: amazonSearchUrl("waterproof marble contact paper bathroom vanity"),
+        image: inspirationAsset("modern-marble", "product-2"),
         imageAlt: "Marble-look vanity surface style reference"
       }
     ])
@@ -179,18 +191,20 @@ export const inspirationStyles: InspirationStyle[] = [
     items: buildInspirationItems("spa-greenery", redesignImages.spa, [
       {
         type: "product",
-        name: "Golden pothos hanging basket",
-        retailer: "The Home Depot",
-        url: "https://www.homedepot.com/p/314172361",
-        image: inspirationAsset("spa-greenery", "detail-2"),
+        id: "spa-greenery-1",
+        name: "Live golden pothos hanging basket",
+        retailer: "Amazon",
+        url: amazonSearchUrl("live golden pothos hanging basket plant"),
+        image: inspirationAsset("spa-greenery", "product-1"),
         imageAlt: "Hanging golden pothos style reference beside a bathroom shower"
       },
       {
         type: "product",
-        name: "Original spa teak bath mat",
-        retailer: "AquaTeak",
-        url: "https://aquateak.com/the-original-spa-teak-bath-shower-mat/",
-        image: inspirationAsset("spa-greenery", "detail-3"),
+        id: "spa-greenery-2",
+        name: "Slatted teak bath mat",
+        retailer: "Amazon",
+        url: amazonSearchUrl("slatted teak bath mat shower"),
+        image: inspirationAsset("spa-greenery", "product-2"),
         imageAlt: "Slatted teak bath mat style reference outside a green tile shower"
       }
     ])
@@ -204,18 +218,20 @@ export const inspirationStyles: InspirationStyle[] = [
     items: buildInspirationItems("brass-terrazzo", redesignImages.brass, [
       {
         type: "product",
-        name: "Trinsic towel ring in Champagne Bronze",
-        retailer: "Delta",
-        url: "https://www.deltafaucet.com/bathroom/product/759460-CZ.html",
-        image: inspirationAsset("brass-terrazzo", "detail-1"),
+        id: "brass-terrazzo-1",
+        name: "Champagne bronze towel ring",
+        retailer: "Amazon",
+        url: amazonSearchUrl("champagne bronze bathroom towel ring"),
+        image: inspirationAsset("brass-terrazzo", "product-1"),
         imageAlt: "Brass towel ring style reference against terrazzo bathroom tile"
       },
       {
         type: "product",
+        id: "brass-terrazzo-2",
         name: "Terrazzo shower curtain",
-        retailer: "Target",
-        url: "https://www.target.com/p/-/A-82032749",
-        image: inspirationAsset("brass-terrazzo", "detail-2"),
+        retailer: "Amazon",
+        url: amazonSearchUrl("warm terrazzo shower curtain"),
+        image: inspirationAsset("brass-terrazzo", "product-2"),
         imageAlt: "Warm terrazzo-patterned shower curtain style reference"
       }
     ])
@@ -229,18 +245,20 @@ export const inspirationStyles: InspirationStyle[] = [
     items: buildInspirationItems("boho-earth-tones", redesignImages.boho, [
       {
         type: "product",
+        id: "boho-earth-tones-1",
         name: "Boho border floral bath towel",
-        retailer: "Target",
-        url: "https://www.target.com/p/-/A-90022216",
-        image: inspirationAsset("boho-earth-tones", "detail-2"),
+        retailer: "Amazon",
+        url: amazonSearchUrl("boho floral bath towel rust cream"),
+        image: inspirationAsset("boho-earth-tones", "product-1"),
         imageAlt: "Rust and cream floral-border bathroom towel style reference"
       },
       {
         type: "product",
+        id: "boho-earth-tones-2",
         name: "Boho pom-pom shower curtain",
-        retailer: "Target",
-        url: "https://www.target.com/p/-/A-82247912",
-        image: inspirationAsset("boho-earth-tones", "detail-3"),
+        retailer: "Amazon",
+        url: amazonSearchUrl("boho pom pom shower curtain cream"),
+        image: inspirationAsset("boho-earth-tones", "product-2"),
         imageAlt: "Off-white woven shower curtain with pom-pom edge style reference"
       }
     ])
@@ -254,18 +272,20 @@ export const inspirationStyles: InspirationStyle[] = [
     items: buildInspirationItems("scandinavian-clean", redesignImages.scandi, [
       {
         type: "product",
-        name: "RÅGRUND bamboo bench",
-        retailer: "IKEA",
-        url: "https://www.ikea.com/us/en/p/ragrund-bench-bamboo-60549416/",
-        image: inspirationAsset("scandinavian-clean", "detail-2"),
+        id: "scandinavian-clean-1",
+        name: "Bamboo shower bench",
+        retailer: "Amazon",
+        url: amazonSearchUrl("bamboo shower bench bathroom Scandinavian"),
+        image: inspirationAsset("scandinavian-clean", "product-1"),
         imageAlt: "Bamboo bathroom bench style reference beside a shower"
       },
       {
         type: "product",
-        name: "TOFTBO gray-white bath mat",
-        retailer: "IKEA",
-        url: "https://www.ikea.com/us/en/p/toftbo-bath-mat-gray-white-melange-40610363/",
-        image: inspirationAsset("scandinavian-clean", "detail-3"),
+        id: "scandinavian-clean-2",
+        name: "Gray-and-white textured bath mat",
+        retailer: "Amazon",
+        url: amazonSearchUrl("gray white textured bath mat Scandinavian"),
+        image: inspirationAsset("scandinavian-clean", "product-2"),
         imageAlt: "Soft gray-and-white bathroom mat style reference"
       }
     ])
@@ -279,18 +299,20 @@ export const inspirationStyles: InspirationStyle[] = [
     items: buildInspirationItems("dark-moody", redesignImages.dark, [
       {
         type: "product",
-        name: "Ribbed glass soap pump in black",
-        retailer: "Target",
-        url: "https://www.target.com/p/-/A-87646697",
-        image: inspirationAsset("dark-moody", "detail-2"),
+        id: "dark-moody-1",
+        name: "Ribbed black glass soap dispenser",
+        retailer: "Amazon",
+        url: amazonSearchUrl("ribbed black glass soap dispenser bathroom"),
+        image: inspirationAsset("dark-moody", "product-1"),
         imageAlt: "Ribbed black glass soap pump style reference on a dark vanity"
       },
       {
         type: "product",
-        name: "GANSJÖN three-piece bathroom set",
-        retailer: "IKEA",
-        url: "https://www.ikea.com/us/en/p/gansjoen-3-piece-bathroom-set-black-90587039/",
-        image: inspirationAsset("dark-moody", "detail-3"),
+        id: "dark-moody-2",
+        name: "Matte black bathroom accessory set",
+        retailer: "Amazon",
+        url: amazonSearchUrl("matte black bathroom accessory set"),
+        image: inspirationAsset("dark-moody", "product-2"),
         imageAlt: "Matte black coordinated bathroom accessory set style reference"
       }
     ])
@@ -299,23 +321,25 @@ export const inspirationStyles: InspirationStyle[] = [
     slug: "warm-editorial",
     name: "Warm Editorial",
     description: "Plaster tones, soft light, and material softness. The signature Diyesu look.",
-    cover: redesignImages.hero,
+    cover: redesignImages.warmEditorial,
     accent: "#B8744A",
-    items: buildInspirationItems("warm-editorial", redesignImages.hero, [
+    items: buildInspirationItems("warm-editorial", redesignImages.warmEditorial, [
       {
         type: "product",
-        name: "EKOLN beige soap dispenser",
-        retailer: "IKEA",
-        url: "https://www.ikea.com/us/en/p/ekoln-soap-dispenser-beige-60493004/",
-        image: inspirationAsset("warm-editorial", "detail-2"),
+        id: "warm-editorial-1",
+        name: "Beige ceramic soap dispenser",
+        retailer: "Amazon",
+        url: amazonSearchUrl("beige ceramic soap dispenser bathroom"),
+        image: inspirationAsset("warm-editorial", "product-1"),
         imageAlt: "Warm beige ceramic soap dispenser style reference"
       },
       {
         type: "product",
-        name: "Medium rustic ceramic vase",
-        retailer: "Target",
-        url: "https://www.target.com/p/-/A-94685983",
-        image: inspirationAsset("warm-editorial", "detail-3"),
+        id: "warm-editorial-2",
+        name: "Rustic warm-white ceramic vase",
+        retailer: "Amazon",
+        url: amazonSearchUrl("rustic warm white ceramic vase small"),
+        image: inspirationAsset("warm-editorial", "product-2"),
         imageAlt: "Rustic warm-white ceramic vase style reference on a bathroom shelf"
       }
     ])
@@ -329,18 +353,20 @@ export const inspirationStyles: InspirationStyle[] = [
     items: buildInspirationItems("industrial-loft", redesignImages.industrial, [
       {
         type: "product",
-        name: "Pipe Decor bathroom wall shelf",
-        retailer: "The Home Depot",
-        url: "https://www.homedepot.com/p/323160431",
-        image: inspirationAsset("industrial-loft", "detail-2"),
+        id: "industrial-loft-1",
+        name: "Industrial pipe bathroom wall shelf",
+        retailer: "Amazon",
+        url: amazonSearchUrl("industrial pipe bathroom wall shelf wood black"),
+        image: inspirationAsset("industrial-loft", "product-1"),
         imageAlt: "Black pipe and wood bathroom shelf style reference"
       },
       {
         type: "product",
+        id: "industrial-loft-2",
         name: "Vintage Edison-style LED bulb",
-        retailer: "The Home Depot",
-        url: "https://www.homedepot.com/p/205891597",
-        image: inspirationAsset("industrial-loft", "detail-3"),
+        retailer: "Amazon",
+        url: amazonSearchUrl("vintage Edison LED bulb warm bathroom vanity"),
+        image: inspirationAsset("industrial-loft", "product-2"),
         imageAlt: "Warm exposed-filament vanity bulb style reference"
       }
     ])
@@ -354,18 +380,20 @@ export const inspirationStyles: InspirationStyle[] = [
     items: buildInspirationItems("coastal-calm", redesignImages.coastal, [
       {
         type: "product",
+        id: "coastal-calm-1",
         name: "Coastal white soap pump",
-        retailer: "Target",
-        url: "https://www.target.com/p/-/A-91973284",
-        image: inspirationAsset("coastal-calm", "detail-2"),
+        retailer: "Amazon",
+        url: amazonSearchUrl("coastal white ceramic soap pump bathroom"),
+        image: inspirationAsset("coastal-calm", "product-1"),
         imageAlt: "White coastal-style soap pump reference on a pale blue vanity"
       },
       {
         type: "product",
-        name: "SLÅNHÖSTMAL blue striped bath towel",
-        retailer: "IKEA",
-        url: "https://www.ikea.com/us/en/p/slanhoestmal-bath-towel-bright-blue-light-blue-stripe-60576037/",
-        image: inspirationAsset("coastal-calm", "detail-3"),
+        id: "coastal-calm-2",
+        name: "Blue striped cotton bath towel",
+        retailer: "Amazon",
+        url: amazonSearchUrl("blue striped cotton bath towel coastal"),
+        image: inspirationAsset("coastal-calm", "product-2"),
         imageAlt: "Bright blue striped cotton bath towel style reference"
       }
     ])
@@ -379,19 +407,48 @@ export const inspirationStyles: InspirationStyle[] = [
     items: buildInspirationItems("japandi", redesignImages.japandi, [
       {
         type: "product",
-        name: "DRAGAN four-piece bamboo bathroom set",
-        retailer: "IKEA",
-        url: "https://www.ikea.com/us/en/p/dragan-4-piece-bathroom-set-bamboo-40222607/",
-        image: inspirationAsset("japandi", "detail-2"),
+        id: "japandi-1",
+        name: "Four-piece bamboo bathroom accessory set",
+        retailer: "Amazon",
+        url: amazonSearchUrl("bamboo bathroom accessory set Japandi"),
+        image: inspirationAsset("japandi", "product-1"),
         imageAlt: "Coordinated bamboo bathroom accessory set style reference"
       },
       {
         type: "product",
-        name: "RÅGRUND chair with towel rack",
-        retailer: "IKEA",
-        url: "https://www.ikea.com/us/en/p/ragrund-chair-with-towel-rack-bamboo-90253074/",
-        image: inspirationAsset("japandi", "detail-3"),
+        id: "japandi-2",
+        name: "Bamboo towel ladder and stool",
+        retailer: "Amazon",
+        url: amazonSearchUrl("bamboo towel ladder stool bathroom Japandi"),
+        image: inspirationAsset("japandi", "product-2"),
         imageAlt: "Bamboo bathroom chair and towel rack style reference"
+      }
+    ])
+  },
+  {
+    slug: "vintage-eclectic",
+    name: "Vintage Eclectic",
+    description: "Collected color, storied brass, and playful pattern. A bathroom that feels personal, layered, and one of a kind.",
+    cover: inspirationAsset("vintage-eclectic", "cover"),
+    accent: "#9A5E55",
+    items: buildInspirationItems("vintage-eclectic", inspirationAsset("vintage-eclectic", "cover"), [
+      {
+        type: "product",
+        id: "vintage-eclectic-1",
+        name: "Vintage floral shower curtain",
+        retailer: "Amazon",
+        url: amazonSearchUrl("vintage floral shower curtain colorful"),
+        image: inspirationAsset("vintage-eclectic", "product-1"),
+        imageAlt: "Layered vintage floral shower curtain style reference"
+      },
+      {
+        type: "product",
+        id: "vintage-eclectic-2",
+        name: "Antique brass wall mirror",
+        retailer: "Amazon",
+        url: amazonSearchUrl("antique brass wall mirror vintage bathroom"),
+        image: inspirationAsset("vintage-eclectic", "product-2"),
+        imageAlt: "Antique brass bathroom mirror style reference"
       }
     ])
   }
@@ -432,5 +489,5 @@ export function areaImageForSlug(slug: string): string {
   const entry = Object.entries(areaVisuals).find(([area]) =>
     area === "ExtremeBudget" ? slug === "extreme-budget" : area.toLowerCase() === slug
   );
-  return entry?.[1].image ?? redesignImages.hero;
+  return entry?.[1].image ?? redesignImages.warmEditorial;
 }

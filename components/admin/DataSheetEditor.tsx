@@ -7,7 +7,7 @@ import { parseKeywordTags } from "../../lib/tags";
 import { useUnsavedChangesGuard } from "./useUnsavedChangesGuard";
 
 interface DataSheetEditorProps {
-  tab: "pins" | "blogs" | "guides" | "emails" | "customers" | "products";
+  tab: "pins" | "blogs" | "guides" | "emails" | "customers" | "products" | "affiliate-links";
   title: string;
   columns: string[];
   initialRows: Record<string, unknown>[];
@@ -79,6 +79,12 @@ const DISPLAY_COLUMN_LABELS: Record<string, string> = {
   Product_Sales: "Sales",
   Product_Revenue: "Revenue",
   Product_Link: "Link",
+  Link_ID: "Link ID",
+  Style_Name: "Style Name",
+  Product_Name: "Product Name",
+  Product_URL: "Amazon URL",
+  Image_URL: "Image URL",
+  Image_Alt: "Image Alt",
 };
 
 function defaultColumnWidth(column: string): number {
@@ -89,6 +95,9 @@ function defaultColumnWidth(column: string): number {
   if (column === "Workflow_Status") return 132;
   if (column === "Blog_Publish_Date" || column === "Guide_Publish_Date" || column === "Pin_Publish_Date" || column === "Email_Publish_Date" || column === "Product_Date" || column === "User_Date_Email") return 124;
   if (column === "Blog_Title" || column === "Guide_Title") return 210;
+  if (column === "Product_Name" || column === "Style_Name") return 220;
+  if (column === "Product_URL" || column === "Image_URL") return 320;
+  if (column === "Image_Alt") return 300;
   if (column === "Blog_URL" || column === "Guide_URL") return 180;
   if (column === "Blog_Keywords" || column === "Guide_Keywords") return 160;
   if (column === "Writer_Brief") return 500;
@@ -256,6 +265,7 @@ export function DataSheetEditor({
   const baseRowsRef = useRef(normalizeRowsForColumns(columns, initialRows));
   const resizeStateRef = useRef<{ column: string; startX: number; startWidth: number } | null>(null);
   const columnStorageKey = `command-center:${tab}:column-widths`;
+  const apiEndpoint = tab === "affiliate-links" ? "/api/admin/affiliate-links" : `/api/admin/command-center/${tab}`;
 
   useEffect(() => {
     rowsRef.current = rows;
@@ -423,7 +433,7 @@ export function DataSheetEditor({
     try {
       setSaving(true);
       setStatus(mode === "auto" ? "Autosaving..." : "Saving...");
-      const response = await fetch(`/api/admin/command-center/${tab}`, {
+      const response = await fetch(apiEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rows: snapshot, baseRows: baseRowsRef.current })
@@ -453,12 +463,12 @@ export function DataSheetEditor({
     } finally {
       setSaving(false);
     }
-  }, [columns, readOnly, tab]);
+  }, [apiEndpoint, columns, readOnly]);
 
   const reloadCurrentRows = useCallback(async () => {
     try {
       setStatus("Reloading current rows...");
-      const response = await fetch(`/api/admin/command-center/${tab}`, { cache: "no-store" });
+      const response = await fetch(apiEndpoint, { cache: "no-store" });
       const body = (await response.json()) as { ok?: boolean; error?: string; rows?: Record<string, unknown>[] };
       if (!response.ok || !body.ok || !Array.isArray(body.rows)) {
         setStatus(`Reload failed: ${body.error ?? "unknown error"}`);
@@ -475,7 +485,7 @@ export function DataSheetEditor({
     } catch {
       setStatus("Reload failed: network error.");
     }
-  }, [columns, tab]);
+  }, [apiEndpoint, columns]);
 
   const handleResizeMove = useCallback((event: PointerEvent) => {
     const resizeState = resizeStateRef.current;

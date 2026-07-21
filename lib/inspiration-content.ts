@@ -1,4 +1,5 @@
 import { inspirationStyles, type InspirationItem } from "./redesign-data.ts";
+import { applyAffiliateLinks, readAffiliateLinks, type AffiliateLinkRow } from "./affiliate-links.ts";
 import { DEFAULT_EDITORIAL_METADATA, type EditorialMetadata } from "./editorial-content.ts";
 import { readPublishedManagedInspirations } from "./inspiration-admin.ts";
 import { inspirationStyleLabel } from "./inspiration-shared.ts";
@@ -23,7 +24,7 @@ export interface PublicInspirationView {
   publishedAt: string;
 }
 
-function staticViews(): PublicInspirationView[] {
+function staticViews(affiliateLinks: AffiliateLinkRow[]): PublicInspirationView[] {
   return inspirationStyles.map((style) => ({
     source: "static",
     id: `static-${style.slug}`,
@@ -39,15 +40,15 @@ function staticViews(): PublicInspirationView[] {
     caption: "",
     credit: "",
     accent: style.accent,
-    items: style.items,
+    items: applyAffiliateLinks(style.items, affiliateLinks),
     metadata: DEFAULT_EDITORIAL_METADATA,
     publishedAt: ""
   }));
 }
 
 export async function readPublicInspirationViews(): Promise<PublicInspirationView[]> {
-  const managed = await readPublishedManagedInspirations();
-  const staticEntries = staticViews();
+  const [managed, affiliateLinks] = await Promise.all([readPublishedManagedInspirations(), readAffiliateLinks()]);
+  const staticEntries = staticViews(affiliateLinks);
   if (managed.length === 0) return staticEntries;
 
   const staticBySlug = new Map(staticEntries.map((entry) => [entry.slug, entry]));

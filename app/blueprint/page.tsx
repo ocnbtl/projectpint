@@ -7,7 +7,7 @@ export const metadata = pageMetadata({
   title: "Bathroom Upgrade Blueprint",
   description: "Build a personalized bathroom upgrade plan around your budget, constraints, priorities, and style.",
   path: "/blueprint",
-  image: redesignImages.hero
+  image: redesignImages.warmEditorial
 });
 
 export default function BlueprintPage() {

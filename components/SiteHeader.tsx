@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BrandMark, PlantLeafIcon } from "./BrandMarks";
 
 const navItems = [
@@ -30,6 +30,45 @@ export function SiteHeader() {
   const pathname = usePathname();
   const isLanding = pathname === "/";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const landingTaglineRef = useRef<HTMLSpanElement>(null);
+
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const nextState = String(isLanding);
+    const previousState = root.dataset.diyesuHeaderHome;
+    root.dataset.diyesuHeaderHome = nextState;
+
+    if (
+      previousState === undefined ||
+      previousState === nextState ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      !landingTaglineRef.current
+    ) {
+      return;
+    }
+
+    const previousWasLanding = previousState === "true";
+    const animation = landingTaglineRef.current.animate(
+      [
+        {
+          maxWidth: previousWasLanding ? "17rem" : "0rem",
+          opacity: previousWasLanding ? 1 : 0,
+          transform: previousWasLanding ? "translateX(0)" : "translateX(-0.5rem)"
+        },
+        {
+          maxWidth: isLanding ? "17rem" : "0rem",
+          opacity: isLanding ? 1 : 0,
+          transform: isLanding ? "translateX(0)" : "translateX(-0.5rem)"
+        }
+      ],
+      {
+        duration: 350,
+        easing: "cubic-bezier(0.25, 0.1, 0.25, 1)"
+      }
+    );
+
+    return () => animation.cancel();
+  }, [isLanding]);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -41,12 +80,14 @@ export function SiteHeader() {
         <Link href="/" className="brand" aria-label="Diyesu Decor home">
           <BrandMark />
           <span className="brand-name">Diyesu Decor</span>
-          {isLanding ? (
-            <span className="brand-home-reveal">
-              <span className="brand-home-divider" aria-hidden="true" />
-              <span className="brand-tagline brand-tagline-landing">Budget DIY Bathroom Upgrades</span>
-            </span>
-          ) : null}
+          <span
+            ref={landingTaglineRef}
+            className={`brand-home-reveal ${isLanding ? "is-visible" : "is-collapsed"}`}
+            aria-hidden={!isLanding}
+          >
+            <span className="brand-home-divider" aria-hidden="true" />
+            <span className="brand-tagline brand-tagline-landing">Budget DIY Bathroom Upgrades</span>
+          </span>
         </Link>
         <nav className="main-nav" aria-label="Primary">
           {navItems.map((item) => {

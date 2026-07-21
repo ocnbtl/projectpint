@@ -11,7 +11,7 @@ export const metadata = pageMetadata({
   title: "Start Here",
   description: "Choose the first bathroom area to improve and find practical articles, guides, and quick wins.",
   path: "/start-here",
-  image: redesignImages.hero
+  image: redesignImages.warmEditorial
 });
 
 function StepIcon({ name }: { name: "target" | "browse" | "hammer" }) {

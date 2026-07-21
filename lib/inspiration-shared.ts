@@ -9,7 +9,8 @@ export const INSPIRATION_STYLE_OPTIONS = [
   { value: "warm-editorial", label: "Warm Editorial" },
   { value: "industrial-loft", label: "Industrial Loft" },
   { value: "coastal-calm", label: "Coastal Calm" },
-  { value: "japandi", label: "Japandi" }
+  { value: "japandi", label: "Japandi" },
+  { value: "vintage-eclectic", label: "Vintage Eclectic" }
 ] as const;
 
 export const INSPIRATION_STYLE_VALUES = INSPIRATION_STYLE_OPTIONS.map((option) => option.value);

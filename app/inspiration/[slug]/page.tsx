@@ -84,8 +84,8 @@ export default async function InspirationDetailPage({ params }: { params: Promis
                 className="inspiration-product-pin"
                 href={item.url}
                 target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`View ${item.name} at ${item.retailer} (opens in a new tab)`}
+                rel="sponsored noopener noreferrer"
+                aria-label={`Shop for ${item.name} on Amazon (opens in a new tab)`}
                 style={{ transform: `rotate(${((index % 5) - 2) * 1.4}deg)` }}
               >
                 <div className="inspiration-product-image">
@@ -100,10 +100,10 @@ export default async function InspirationDetailPage({ params }: { params: Promis
                 </span>
                 <h2>{item.name}</h2>
                 <p>
-                  View at {item.retailer}
+                  Shop on Amazon
                   <i aria-hidden="true">-&gt;</i>
                 </p>
-                <small>Style reference shown. See the retailer for the exact item and current price.</small>
+                <small>Style reference shown. Confirm the exact item, seller, price, and availability on Amazon.</small>
               </a>
             ) : (
               <figure
@@ -114,7 +114,8 @@ export default async function InspirationDetailPage({ params }: { params: Promis
                 <SafeImage
                   src={item.src}
                   alt={item.label || `${style.name} bathroom inspiration`}
-                  loading="lazy"
+                  priority={index === 0}
+                  loading={index === 0 ? undefined : "lazy"}
                   decoding="async"
                 />
                 {item.label ? <figcaption>{item.label}</figcaption> : null}

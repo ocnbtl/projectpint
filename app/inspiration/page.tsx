@@ -44,7 +44,13 @@ export default async function InspirationPage() {
                 data-reveal
                 style={{ transitionDelay: `${index * 40}ms` }}
               >
-                <SafeImage src={style.cover} alt={style.coverAlt} loading="lazy" decoding="async" />
+                <SafeImage
+                  src={style.cover}
+                  alt={style.coverAlt}
+                  priority={index < 4}
+                  loading={index < 4 ? undefined : "lazy"}
+                  decoding="async"
+                />
                 <span className="inspiration-style-shade" aria-hidden="true" />
                 <span className="inspiration-style-title">
                   <i style={{ backgroundColor: style.accent }} />

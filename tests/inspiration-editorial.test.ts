@@ -18,18 +18,22 @@ import {
 import { readPublicInspirationViews } from "../lib/inspiration-content.ts";
 import { inspirationStyles } from "../lib/redesign-data.ts";
 
-test("every static inspiration board uses a cohesive style pool and two exact product destinations", () => {
-  assert.equal(inspirationStyles.length, 11);
+test("every static inspiration board uses twelve unique scenes and two Amazon product destinations", () => {
+  assert.equal(inspirationStyles.length, 12);
 
   for (const style of inspirationStyles) {
     const images = style.items.filter((item) => item.type === "image");
     const products = style.items.filter((item) => item.type === "product");
 
-    assert.equal(images.length, 8, style.slug);
+    assert.equal(images.length, 12, style.slug);
+    const sceneSources = new Set(images.map((item) => item.src));
+    assert.equal(sceneSources.size, 12, `${style.slug} repeats an image`);
     assert.equal(products.length, 2, style.slug);
     assert.ok(images.every((item) => item.src === style.cover || item.src.includes(`/images/inspiration/${style.slug}/`)));
-    assert.ok(products.every((item) => item.url.startsWith("https://")));
+    assert.ok(products.every((item) => new URL(item.url).hostname.endsWith("amazon.com")));
     assert.ok(products.every((item) => item.image.includes(`/images/inspiration/${style.slug}/`)));
+    assert.ok(products.every((item) => !sceneSources.has(item.image)), `${style.slug} reuses a board scene as a product image`);
+    assert.equal(new Set(products.map((item) => item.image)).size, 2, `${style.slug} repeats a product image`);
   }
 });
 
@@ -76,7 +80,7 @@ test("inspiration drafts, snapshots, conflicts, restore, and fallback remain iso
   const draft = await saveInspirationEditorModel(initialInput, blank.revision);
   assert.match(draft.id, /^INSP_\d{4}$/);
   assert.equal((await readPublishedManagedInspirations()).length, 0);
-  assert.equal((await readPublicInspirationViews()).length, 11, "static V15 boards remain the empty-managed fallback");
+  assert.equal((await readPublicInspirationViews()).length, 12, "static boards remain the empty-managed fallback");
 
   const approved = await saveInspirationEditorModel({ ...draft, workflowStatus: "approved" }, draft.revision);
   await publishInspirationItem(approved.id);
@@ -84,7 +88,7 @@ test("inspiration drafts, snapshots, conflicts, restore, and fallback remain iso
   assert.ok(publishedModel?.hasPublishedVersion);
   assert.equal((await readPublishedManagedInspirations())[0]?.title, "A Calm Warm Bathroom");
   const mergedPublic = await readPublicInspirationViews();
-  assert.equal(mergedPublic.length, 12);
+  assert.equal(mergedPublic.length, 13);
   assert.equal(mergedPublic.find((entry) => entry.slug === "calm-warm-bathroom")?.source, "managed");
   assert.ok((mergedPublic.find((entry) => entry.slug === "calm-warm-bathroom")?.items.length ?? 0) > 0);
 
@@ -107,7 +111,7 @@ test("inspiration drafts, snapshots, conflicts, restore, and fallback remain iso
   assert.equal((await loadInspirationEditorModel(changedDraft.id))?.title, "A Calm Warm Bathroom");
   await unpublishInspirationItem(changedDraft.id);
   assert.equal((await readPublishedManagedInspirations()).length, 0);
-  assert.equal((await readPublicInspirationViews()).length, 11);
+  assert.equal((await readPublicInspirationViews()).length, 12);
 });
 
 test("inspiration media and social URLs require HTTPS", () => {

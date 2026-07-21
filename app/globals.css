@@ -7455,6 +7455,23 @@ h4 {
   padding: clamp(1.45rem, 2.3vw, 2.05rem);
 }
 
+.admin-callout {
+  border-left: 3px solid #5b8c6a;
+  display: grid;
+  gap: 0.45rem;
+  padding-left: 1rem;
+}
+
+.admin-callout p {
+  color: #6f6258;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.admin-callout strong {
+  color: #2c2520;
+}
+
 .admin-hero-body .admin-ops-grid {
   align-items: center;
   display: flex;
@@ -11355,7 +11372,12 @@ h4 {
 
 .plant-picker-shell {
   max-width: 36rem;
+  transition: max-width 350ms cubic-bezier(0.25, 0.1, 0.25, 1);
   width: 100%;
+}
+
+.plant-picker-shell.is-results {
+  max-width: 52rem;
 }
 
 .plant-picker-shell .tool-quiz-card {
@@ -11762,27 +11784,27 @@ h4 {
 
 .brand-home-reveal {
   align-items: center;
-  animation: brand-home-reveal 350ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
   display: inline-flex;
-  max-width: 17rem;
+  max-width: 0;
+  opacity: 0;
   overflow: hidden;
+  transform: translateX(-0.5rem);
+  transition:
+    max-width 350ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    opacity 240ms ease,
+    transform 350ms cubic-bezier(0.25, 0.1, 0.25, 1);
   white-space: nowrap;
+}
+
+.brand-home-reveal.is-visible {
+  max-width: 17rem;
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .brand-home-reveal .brand-home-divider {
   flex: 0 0 auto;
   margin-inline: 0.625rem;
-}
-
-@keyframes brand-home-reveal {
-  from {
-    max-width: 0;
-    opacity: 0;
-  }
-  to {
-    max-width: 17rem;
-    opacity: 1;
-  }
 }
 
 .topbar .main-nav {
@@ -12049,6 +12071,10 @@ h4 {
     animation: none !important;
   }
 
+  .brand-home-reveal {
+    transition: none !important;
+  }
+
   .typewriter-cursor,
   .house-smoke-icon span {
     animation: none !important;
@@ -12177,6 +12203,34 @@ h4 {
 .plant-match-copy > span:last-child,
 .plant-lock-button small {
   color: #6f6258;
+}
+
+.plant-lock-button > span {
+  white-space: nowrap;
+}
+
+.plant-picker-shell.is-results .plant-match-card {
+  grid-template-columns: 84px minmax(0, 1fr) 180px;
+  min-height: 12rem;
+}
+
+@media (max-width: 639px) {
+  .plant-picker-shell.is-results .plant-match-card {
+    grid-template-columns: 56px minmax(0, 1fr) 92px;
+  }
+
+  .plant-picker-shell.is-results .plant-match-photo {
+    display: block;
+  }
+
+  .plant-lock-button {
+    min-width: calc(100% - 1rem);
+    padding-inline: 0.5rem;
+  }
+
+  .plant-lock-button > span {
+    font-size: clamp(0.7rem, 3.4vw, 0.82rem);
+  }
 }
 
 .start-section-head > .eyebrow.blog-eyebrow,
@@ -12748,5 +12802,9 @@ body.admin-drawer-open {
 
   .home-inspo-group.home-inspo-duplicate {
     display: none;
+  }
+
+  .plant-picker-shell {
+    transition: none;
   }
 }

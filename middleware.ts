@@ -5,7 +5,7 @@ import { getAdminSessionCookieName, verifyAdminSessionToken } from "./lib/admin-
 const KNOWN_ADMIN_PATHS = [
   /^\/admin\/?$/,
   /^\/admin\/login\/?$/,
-  /^\/admin\/(?:analytics|customers|emails|pins|products|users)\/?$/,
+  /^\/admin\/(?:affiliate-links|analytics|customers|emails|pins|products|users)\/?$/,
   /^\/admin\/(?:blogs|guides|inspiration)(?:\/[^/]+)?\/?$/,
   /^\/admin\/preview\/(?:blogs|guides|inspiration)\/[^/]+\/?$/
 ];
@@ -58,7 +58,9 @@ export async function middleware(request: NextRequest) {
 
   const token = request.cookies.get(getAdminSessionCookieName())?.value;
   if (!(await verifyAdminSessionToken(token))) {
-    return NextResponse.redirect(new URL("/admin/login", request.url));
+    const response = NextResponse.redirect(new URL("/admin/login", request.url));
+    response.headers.set("Cache-Control", "private, no-store");
+    return response;
   }
 
   if (!isKnownAdminPath(request.nextUrl.pathname)) {

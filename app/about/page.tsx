@@ -8,7 +8,7 @@ export const metadata = pageMetadata({
   title: "About",
   description: "Learn how Diyesu Decor helps renters, beginners, DIYers, and budget-first households improve their bathrooms.",
   path: "/about",
-  image: redesignImages.hero
+  image: redesignImages.warmEditorial
 });
 
 function AboutValueIcon({ name }: { name: "zap" | "user" | "heart" }) {
