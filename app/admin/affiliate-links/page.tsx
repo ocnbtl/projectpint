@@ -1,46 +1,79 @@
 import { AdminFrame } from "../../../components/admin/AdminFrame";
-import { AdminSheetWorkspace } from "../../../components/admin/AdminSheetWorkspace";
+import { AffiliateCatalogManager } from "../../../components/admin/AffiliateCatalogManager";
+import { AffiliateReplacementQueue } from "../../../components/admin/AffiliateReplacementQueue";
 import {
-  AFFILIATE_LINK_COLUMNS,
-  isAmazonAssociatesTagConfigured,
-  readAffiliateLinks
-} from "../../../lib/affiliate-links";
+  affiliateReplacementFixture,
+  catalogSummary,
+  readAffiliateCatalog
+} from "../../../lib/affiliate-catalog";
+import { inspirationStyles } from "../../../lib/redesign-data";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminAffiliateLinksPage() {
-  const rows = await readAffiliateLinks();
-  const styles = new Set(rows.map((row) => row.Style)).size;
-  const active = rows.filter((row) => row.Status === "active").length;
-  const tagConfigured = isAmazonAssociatesTagConfigured();
+  const products = await readAffiliateCatalog();
+  const summary = catalogSummary(products);
+  const replacements = affiliateReplacementFixture();
+  const styleOptions = inspirationStyles.map((style) => ({ slug: style.slug, name: style.name }));
 
   return (
     <AdminFrame>
-      <AdminSheetWorkspace
-        tab="affiliate-links"
-        heroTitle="Affiliate Links"
-        heroDescription={
-          <p>Manage every Inspiration product by style. Paste exact Amazon SiteStripe links here before promoting a product.</p>
-        }
-        editorTitle="Amazon Inspiration Products"
-        columns={[...AFFILIATE_LINK_COLUMNS]}
-        initialRows={rows}
-        summaryCards={[
-          { label: "Styles", value: styles, detail: "grouped Inspiration boards", tone: "green" },
-          { label: "Products", value: rows.length, detail: "Amazon-only links", tone: "gold" },
-          { label: "Active", value: active, detail: "visible product cards", tone: "blue" }
-        ]}
-      >
-        <div className="admin-callout">
-          <p><strong>{tagConfigured ? "Associates tag configured." : "Associates tag not configured."}</strong></p>
-          <p>
-            {tagConfigured
-              ? "Direct Amazon URLs without a tag receive the configured environment tag when rendered publicly. Short SiteStripe links are preserved as entered."
-              : "The starter rows use Amazon search URLs and do not fabricate tracking. Replace them with exact SiteStripe links, or configure AMAZON_ASSOCIATES_TAG in the deployment environment."}
-          </p>
-          <p>Amazon Associates performance reporting is intentionally deferred until authorized reporting credentials are connected.</p>
+      <section className="admin-sheet-hero affiliate-catalog-hero">
+        <div className="admin-hero-head">
+          <div className="admin-hero-copy">
+            <p className="eyebrow">Shoppable Inspiration</p>
+            <h1>Affiliate Catalog</h1>
+            <div className="admin-hero-description">
+              <p>
+                Manage one canonical record per product, then assign it to one or more Inspiration styles.
+                Exact Amazon product URLs and user-supplied Associates URLs remain separate.
+              </p>
+            </div>
+          </div>
         </div>
-      </AdminSheetWorkspace>
+        <div className="admin-sheet-summary-grid" aria-label="Affiliate catalog summary">
+          <article className="admin-sheet-summary-card admin-sheet-summary-green">
+            <p>Products</p>
+            <strong>{summary.total}</strong>
+            <span>{summary.categories} useful categories</span>
+          </article>
+          <article className="admin-sheet-summary-card admin-sheet-summary-gold">
+            <p>Owner decisions</p>
+            <strong>{summary.approved} / {summary.total}</strong>
+            <span>{summary.rejected} rejected and preserved</span>
+          </article>
+          <article className="admin-sheet-summary-card admin-sheet-summary-blue">
+            <p>Replacement queue</p>
+            <strong>{replacements.length}</strong>
+            <span>pending owner review</span>
+          </article>
+          <article className="admin-sheet-summary-card admin-sheet-summary-brown">
+            <p>Media ready</p>
+            <strong>{summary.mediaReady}</strong>
+            <span>generation remains approval-gated</span>
+          </article>
+        </div>
+        <div className="admin-hero-body">
+          <div className="admin-callout">
+            <p>
+              <strong>Current boundary:</strong> 41 initial products are owner-approved, 19 are rejected with
+              their decision reasons preserved, and 19 replacements are pending.
+            </p>
+            <p>
+              Rejected and pending products cannot enter the generation manifest. No product can become public
+              until approval, private-reference rights clearance, complete QA-passed media, publication
+              readiness, and the owner-supplied Amazon Associates URL all exist.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <AffiliateReplacementQueue proposals={replacements} styles={styleOptions} />
+
+      <AffiliateCatalogManager
+        initialProducts={products}
+        styles={styleOptions}
+      />
     </AdminFrame>
   );
 }
