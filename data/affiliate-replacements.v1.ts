@@ -5,6 +5,7 @@ import {
 } from "./affiliate-candidates.v1.ts";
 
 const OBSERVED_AT = "2026-07-26T16:30:00-04:00";
+const OWNER_DECIDED_AT = "2026-07-26T18:00:00-04:00";
 
 interface ReplacementInput {
   styleSlug: string;
@@ -15,21 +16,39 @@ interface ReplacementInput {
 }
 
 function replacement(input: ReplacementInput) {
+  const approvalStatus = input.candidate.recommendation === "approve_with_caveat"
+    ? "approved_with_caveat" as const
+    : "approved" as const;
+  const proposedProduct = affiliateCandidateRecord({
+    ...input.candidate,
+    style: input.styleSlug,
+    rank: input.rank,
+    observedAt: OBSERVED_AT,
+    applyOwnerDecision: false
+  });
+
   return {
     id: `replacement_${input.styleSlug}_${input.rank}`,
     styleSlug: input.styleSlug,
     rank: input.rank,
     replacesAsin: input.replacesAsin,
     ownerRejectionReason: input.ownerRejectionReason,
-    proposalStatus: "pending" as const,
+    proposalStatus: approvalStatus,
     reuseExistingCanonical: false,
-    proposedProduct: affiliateCandidateRecord({
-      ...input.candidate,
-      style: input.styleSlug,
-      rank: input.rank,
-      observedAt: OBSERVED_AT,
-      applyOwnerDecision: false
-    })
+    proposedProduct: {
+      ...proposedProduct,
+      workflowStatus: "approved" as const,
+      approvalStatus,
+      approvalHistory: [{
+        decision: approvalStatus,
+        reason: approvalStatus === "approved_with_caveat"
+          ? "Owner approved this replacement candidate; the recorded research caveats remain applicable."
+          : "Owner approved this replacement candidate.",
+        decidedAt: OWNER_DECIDED_AT,
+        source: "owner" as const
+      }],
+      updatedAt: OWNER_DECIDED_AT
+    }
   };
 }
 
@@ -355,7 +374,7 @@ export const affiliateReplacementFixtureData = [
     rank: 1,
     replacesAsin: "B0BV1971T4",
     ownerRejectionReason: "The product is too expensive.",
-    proposalStatus: "pending" as const,
+    proposalStatus: "approved_with_caveat" as const,
     reuseExistingCanonical: true,
     proposedProduct: {
       ...approvedBambusi,
@@ -369,7 +388,16 @@ export const affiliateReplacementFixtureData = [
           rationale: "The restrained bamboo construction, slatted planes, and practical low form align naturally with a warm, pared-back Japandi bathroom."
         }
       ],
-      updatedAt: OBSERVED_AT
+      approvalHistory: [
+        ...approvedBambusi.approvalHistory,
+        {
+          decision: "approved_with_caveat" as const,
+          reason: "Owner approved this existing canonical product for the additional Japandi style assignment; the recorded research caveats remain applicable.",
+          decidedAt: OWNER_DECIDED_AT,
+          source: "owner" as const
+        }
+      ],
+      updatedAt: OWNER_DECIDED_AT
     }
   },
   replacement({

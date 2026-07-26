@@ -33,36 +33,37 @@ export default async function AdminAffiliateLinksPage() {
         </div>
         <div className="admin-sheet-summary-grid" aria-label="Affiliate catalog summary">
           <article className="admin-sheet-summary-card admin-sheet-summary-green">
-            <p>Products</p>
+            <p>Canonical products</p>
             <strong>{summary.total}</strong>
             <span>{summary.categories} useful categories</span>
           </article>
           <article className="admin-sheet-summary-card admin-sheet-summary-gold">
-            <p>Owner decisions</p>
-            <strong>{summary.approved} / {summary.total}</strong>
-            <span>{summary.rejected} rejected and preserved</span>
+            <p>Approved style slots</p>
+            <strong>{summary.styleSlots} / 60</strong>
+            <span>five for each Inspiration style</span>
           </article>
           <article className="admin-sheet-summary-card admin-sheet-summary-blue">
-            <p>Replacement queue</p>
-            <strong>{replacements.length}</strong>
-            <span>pending owner review</span>
+            <p>Replacement decisions</p>
+            <strong>{replacements.length} / {replacements.length}</strong>
+            <span>owner-approved and recorded</span>
           </article>
           <article className="admin-sheet-summary-card admin-sheet-summary-brown">
             <p>Media ready</p>
             <strong>{summary.mediaReady}</strong>
-            <span>generation remains approval-gated</span>
+            <span>generation remains rights-gated</span>
           </article>
         </div>
         <div className="admin-hero-body">
           <div className="admin-callout">
             <p>
-              <strong>Current boundary:</strong> 41 initial products are owner-approved, 19 are rejected with
-              their decision reasons preserved, and 19 replacements are pending.
+              <strong>Current boundary:</strong> product selection is complete. The 60 approved style slots use
+              59 canonical products because the approved Bambüsi bench is assigned to both Boho Earth Tones and
+              Japandi without duplicating its ASIN.
             </p>
             <p>
-              Rejected and pending products cannot enter the generation manifest. No product can become public
-              until approval, private-reference rights clearance, complete QA-passed media, publication
-              readiness, and the owner-supplied Amazon Associates URL all exist.
+              All media jobs remain blocked on private-reference rights. No product can become public until
+              complete QA-passed media, publication readiness, and the owner-supplied Amazon Associates URL all
+              exist.
             </p>
           </div>
         </div>

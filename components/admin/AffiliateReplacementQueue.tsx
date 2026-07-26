@@ -14,36 +14,32 @@ function priceLabel(proposal: AffiliateReplacementProposal): string {
   return proposal.proposedProduct.priceObservation?.display || "Price not recorded";
 }
 
-function recommendationLabel(proposal: AffiliateReplacementProposal): string {
-  return proposal.proposedProduct.recommendation === "approve_with_caveat"
-    ? "Approve with caveat"
-    : proposal.proposedProduct.recommendation === "replace"
-      ? "Replace"
-      : "Approve";
+function decisionLabel(proposal: AffiliateReplacementProposal): string {
+  return proposal.proposalStatus === "approved_with_caveat"
+    ? "Approved with caveat"
+    : proposal.proposalStatus === "approved"
+      ? "Approved"
+      : proposal.proposalStatus.replaceAll("_", " ");
 }
 
 export function AffiliateReplacementQueue({ proposals, styles }: AffiliateReplacementQueueProps) {
   const styleNames = new Map(styles.map((style) => [style.slug, style.name]));
-  const approveCount = proposals.filter(
-    (proposal) => proposal.proposedProduct.recommendation === "approve"
-  ).length;
-  const caveatCount = proposals.filter(
-    (proposal) => proposal.proposedProduct.recommendation === "approve_with_caveat"
-  ).length;
+  const approveCount = proposals.filter((proposal) => proposal.proposalStatus === "approved").length;
+  const caveatCount = proposals.filter((proposal) => proposal.proposalStatus === "approved_with_caveat").length;
   const reusedCount = proposals.filter((proposal) => proposal.reuseExistingCanonical).length;
 
   return (
     <section className="admin-panel affiliate-replacement-panel" aria-labelledby="affiliate-replacement-heading">
       <div className="affiliate-replacement-header">
         <div>
-          <p className="eyebrow">Owner review required</p>
-          <h2 id="affiliate-replacement-heading">Replacement approval queue</h2>
+          <p className="eyebrow">Owner decisions recorded</p>
+          <h2 id="affiliate-replacement-heading">Approved replacement record</h2>
           <p>
-            These proposals fill the 19 rejected style slots. They remain read-only and private until the owner
-            decides; no replacement has entered the canonical catalog or media manifest.
+            These 19 decisions fill every rejected style slot. The record remains read-only and private; accepted
+            replacements are now part of the local canonical cohort and rights-blocked media manifest.
           </p>
         </div>
-        <div className="affiliate-replacement-counts" aria-label="Replacement recommendation summary">
+        <div className="affiliate-replacement-counts" aria-label="Replacement decision summary">
           <span><strong>{approveCount}</strong> approve</span>
           <span><strong>{caveatCount}</strong> with caveat</span>
           <span><strong>{reusedCount}</strong> canonical reuse</span>
@@ -57,7 +53,7 @@ export function AffiliateReplacementQueue({ proposals, styles }: AffiliateReplac
               <th>Style slot</th>
               <th>Rejected product</th>
               <th>Proposed replacement</th>
-              <th>Recommendation</th>
+              <th>Owner decision</th>
               <th><span className="admin-sr-only">Research link</span></th>
             </tr>
           </thead>
@@ -85,9 +81,9 @@ export function AffiliateReplacementQueue({ proposals, styles }: AffiliateReplac
                   </td>
                   <td>
                     <span className={`affiliate-status${
-                      product.recommendation === "approve_with_caveat" ? " is-warning" : " is-success"
+                      proposal.proposalStatus === "approved_with_caveat" ? " is-warning" : " is-success"
                     }`}>
-                      {recommendationLabel(proposal)}
+                      {decisionLabel(proposal)}
                     </span>
                     {product.caveats[0] ? <small>{product.caveats[0]}</small> : null}
                   </td>
@@ -120,9 +116,9 @@ export function AffiliateReplacementQueue({ proposals, styles }: AffiliateReplac
                   <h3>{product.name}</h3>
                 </div>
                 <span className={`affiliate-status${
-                  product.recommendation === "approve_with_caveat" ? " is-warning" : " is-success"
+                  proposal.proposalStatus === "approved_with_caveat" ? " is-warning" : " is-success"
                 }`}>
-                  {recommendationLabel(proposal)}
+                  {decisionLabel(proposal)}
                 </span>
               </div>
               <p>{product.brand} · {product.category} · {priceLabel(proposal)}</p>

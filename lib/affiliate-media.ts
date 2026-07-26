@@ -105,17 +105,25 @@ export function buildAffiliateMediaManifest(products: AffiliateProduct[]) {
       reason: product.approvalHistory.at(-1)?.reason ?? "Product approval is incomplete."
     }));
   const jobs = eligibleProducts.flatMap(buildAffiliateMediaJobs);
+  const styleSlotCount = eligibleProducts.reduce(
+    (count, product) => count + product.styleAssignments.length,
+    0
+  );
   return {
     manifestVersion: 1,
     promptVersion: AFFILIATE_MEDIA_PROMPT_VERSION,
     generationVersion: AFFILIATE_MEDIA_GENERATION_VERSION,
     candidateCount: products.length,
     productCount: eligibleProducts.length,
+    styleSlotCount,
+    targetStyleSlotCount: inspirationStyles.length * 5,
     excludedCount: excludedProducts.length,
     presentationCount: eligibleProducts.length,
     styledCount: eligibleProducts.length * inspirationStyles.length * 5,
     totalCount: jobs.length,
-    cohortReadyForPilot: products.length === 60 && excludedProducts.length === 0,
+    cohortReadyForPilot:
+      styleSlotCount === inspirationStyles.length * 5 &&
+      excludedProducts.length === 0,
     generationAuthorized: false,
     excludedProducts,
     jobs

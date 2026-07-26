@@ -112,9 +112,9 @@ lines.push(
   "",
   "The owner has decided all 60 initial candidates. Rejected candidates remain in this artifact with their reasons; they are not silently deleted or converted into replacements.",
   "",
-  "The separate replacement slate contains 19 pending proposals. Deciding those proposals does not authorize a production database migration, production publication, Amazon Associates account access, fabricated tracking links, a paid provider purchase, or full-scale generation.",
+  "The owner approved all 19 entries in the separate replacement record. Eighteen are new canonical products and one reuses the approved Bambüsi bench for an additional Japandi assignment, yielding 59 canonical products across 60 approved style slots.",
   "",
-  "After replacement approval, the next gated sequence is: lock the approved ASINs and variations; receive the owner-supplied Associates URLs; resolve source-image/AI-reference rights; run the 33-image technical pilot; review product identity and segmentation QA; then return for explicit scale and spend authorization before the 3,660-image library.",
+  "The next gated sequence is: recheck the approved ASINs and variations; receive the owner-supplied Associates URLs; resolve source-image/AI-reference rights; run the 33-image technical pilot; review product identity and segmentation QA; then return for explicit scale and spend authorization before the 3,599-image library.",
   ""
 );
 

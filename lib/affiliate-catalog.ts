@@ -241,11 +241,11 @@ const replacementProposalSchema = z.object({
       message: "Proposed product must include the replacement style and rank."
     });
   }
-  if (!proposal.reuseExistingCanonical && proposal.proposedProduct.approvalStatus !== "pending") {
+  if (proposal.proposalStatus !== proposal.proposedProduct.approvalStatus) {
     context.addIssue({
       code: "custom",
       path: ["proposedProduct", "approvalStatus"],
-      message: "A new canonical replacement must remain pending until the owner decides."
+      message: "Replacement proposal and canonical product approval statuses must match."
     });
   }
 });
@@ -329,17 +329,40 @@ export function affiliateReplacementFixture(): AffiliateReplacementProposal[] {
   return proposals;
 }
 
+export function affiliateApprovedCohortFixture(): AffiliateProduct[] {
+  const initialProducts = affiliateCandidateFixture();
+  const proposals = affiliateReplacementFixture();
+  const acceptedProposals = proposals.filter(
+    (proposal) =>
+      proposal.proposalStatus === "approved" ||
+      proposal.proposalStatus === "approved_with_caveat"
+  );
+  const reusedByAsin = new Map(
+    acceptedProposals
+      .filter((proposal) => proposal.reuseExistingCanonical)
+      .map((proposal) => [proposal.proposedProduct.asin, proposal.proposedProduct])
+  );
+  const retainedProducts = initialProducts
+    .filter((product) => product.approvalStatus !== "rejected")
+    .map((product) => reusedByAsin.get(product.asin) ?? product);
+  const newProducts = acceptedProposals
+    .filter((proposal) => !proposal.reuseExistingCanonical)
+    .map((proposal) => proposal.proposedProduct);
+
+  return parseAffiliateCatalog([...retainedProducts, ...newProducts]);
+}
+
 async function loadCatalogStrict(): Promise<AffiliateProduct[]> {
   const stored = await loadServerStorageTab<AffiliateProduct>(STORAGE_TAB);
-  return stored.length > 0 ? parseAffiliateCatalog(stored) : affiliateCandidateFixture();
+  return stored.length > 0 ? parseAffiliateCatalog(stored) : affiliateApprovedCohortFixture();
 }
 
 export async function readAffiliateCatalog(): Promise<AffiliateProduct[]> {
   try {
     return await loadCatalogStrict();
   } catch (error) {
-    console.error("Affiliate catalog storage is unavailable or invalid; using the versioned research fixture.", error);
-    return affiliateCandidateFixture();
+    console.error("Affiliate catalog storage is unavailable or invalid; using the versioned approved cohort.", error);
+    return affiliateApprovedCohortFixture();
   }
 }
 
@@ -383,6 +406,7 @@ export async function readPublicAffiliateProduct(slug: string): Promise<Affiliat
 export function catalogSummary(products: AffiliateProduct[]) {
   return {
     total: products.length,
+    styleSlots: products.reduce((count, product) => count + product.styleAssignments.length, 0),
     pending: products.filter((product) => product.approvalStatus === "pending").length,
     approved: products.filter((product) => product.approvalStatus === "approved" || product.approvalStatus === "approved_with_caveat").length,
     rejected: products.filter((product) => product.approvalStatus === "rejected").length,

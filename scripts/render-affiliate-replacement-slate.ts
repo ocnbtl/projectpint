@@ -20,6 +20,12 @@ const recommendationCounts = {
   ).length,
   replace: proposals.filter((proposal) => proposal.proposedProduct.recommendation === "replace").length
 };
+const decisionCounts = {
+  approved: proposals.filter((proposal) => proposal.proposalStatus === "approved").length,
+  approvedWithCaveat: proposals.filter(
+    (proposal) => proposal.proposalStatus === "approved_with_caveat"
+  ).length
+};
 const categories = [...new Set(proposals.map((proposal) => proposal.proposedProduct.category))]
   .map((category) => ({
     category,
@@ -38,11 +44,11 @@ function recommendationLabel(value: "approve" | "approve_with_caveat" | "replace
 }
 
 const lines = [
-  "# Project Pint Affiliate Product Replacement Approval Slate",
+  "# Project Pint Affiliate Product Replacement Decision Record",
   "",
   `Research observation date: ${observedDate}`,
   "",
-  "This slate responds to the owner's 19 rejected initial candidates. Each new ASIN remains a private pending proposal; the one cross-style reuse remains one canonical record. Prices, seller condition, and availability are point-in-time observations from the linked Amazon product pages and must be rechecked before reference capture or publication.",
+  "This record preserves the owner's approval of all 19 replacements for the rejected initial candidates. The 18 new ASINs now belong to the private local canonical cohort; the one cross-style reuse remains one canonical record. Prices, seller condition, and availability are point-in-time observations from the linked Amazon product pages and must be rechecked before reference capture or publication.",
   "",
   "## Compact summary",
   "",
@@ -50,10 +56,12 @@ const lines = [
   `- New canonical ASINs proposed: ${proposals.filter((proposal) => !proposal.reuseExistingCanonical).length}`,
   `- Existing canonical products reused: ${proposals.filter((proposal) => proposal.reuseExistingCanonical).length}`,
   `- Recommendation mix: ${recommendationCounts.approve} approve, ${recommendationCounts.approveWithCaveat} approve with caveat, ${recommendationCounts.replace} replace`,
+  `- Owner decisions: ${decisionCounts.approved} approved, ${decisionCounts.approvedWithCaveat} approved with caveat`,
   `- Products with seller, low-stock, or availability caveats: ${volatileStockCount}`,
   "- Unavailable products when observed: 0",
   "- Slots without a defensible proposal: 0",
-  "- Generation status: blocked; replacements are not in the canonical catalog or media manifest",
+  "- Approved cohort: 59 canonical products filling 60 style slots",
+  "- Generation status: 3,599 deterministic jobs are prepared and blocked on private-reference rights; generation is not authorized",
   "",
   "### Replacement category balance",
   "",
@@ -82,7 +90,7 @@ for (const style of inspirationStyles) {
       .join("; ");
     const duplicateNote = proposal.reuseExistingCanonical
       ? `Reuse approved canonical ASIN \`${product.asin}\` and add ${style.name} as an additional style assignment. Do not create a duplicate product.`
-      : "No duplicate proposed; create one canonical record only if the owner approves this replacement.";
+      : "Approved as one new canonical record; no duplicate ASIN exists in the cohort.";
 
     lines.push(
       `### Slot ${proposal.rank}: ${product.brand} ${product.name}`,
@@ -94,22 +102,24 @@ for (const style of inspirationStyles) {
       `- Category: ${product.category}`,
       `- Style fit: ${assignment.rationale}`,
       `- Why it is useful: ${product.recommendationRationale}`,
-      `- Price and availability: ${product.priceObservation?.display ?? "Price not recorded"}; available to order on the specific Amazon listing when observed ${observedDate}. Recheck the seller, variation, price, and stock before approval-dependent reference work.`,
+      `- Price and availability: ${product.priceObservation?.display ?? "Price not recorded"}; available to order on the specific Amazon listing when observed ${observedDate}. Recheck the seller, variation, price, and stock before private-reference capture.`,
       `- Important caveats or unknowns: ${product.caveats.join(" ")}`,
       `- Strongest supporting sources: ${sources}`,
       `- Duplicate or cross-style relevance: ${duplicateNote}`,
       `- Recommendation: **${recommendationLabel(product.recommendation)}**`,
+      `- Owner decision: **${proposal.proposalStatus.replaceAll("_", " ").toUpperCase()}**`,
+      `- Decision record: ${product.approvalHistory.at(-1)?.reason ?? "No owner decision recorded."}`,
       ""
     );
   }
 }
 
 lines.push(
-  "## Approval requested",
+  "## Decision status",
   "",
-  "Approve or reject these 19 replacements by style and slot. If a proposal marked approve with caveat is accepted, its listed seller, stock, variation, material, dimension, or installation caveat remains part of the canonical record.",
+  "The owner approved all 19 replacements. Recorded seller, stock, variation, material, dimension, installation, and availability caveats remain part of each canonical record.",
   "",
-  "Approval closes the product-selection gate only. It does not authorize production migration, production publication, Amazon Associates access, fabricated tracking links, paid generation, or the full product-media library.",
+  "Product selection is complete. This does not authorize production migration, production publication, Amazon Associates access, fabricated tracking links, paid generation, reference-image use without rights clearance, or the full product-media library.",
   ""
 );
 

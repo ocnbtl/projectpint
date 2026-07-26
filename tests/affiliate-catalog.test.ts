@@ -5,6 +5,7 @@ import path from "node:path";
 import test from "node:test";
 import {
   AffiliateCatalogConflictError,
+  affiliateApprovedCohortFixture,
   affiliateCandidateFixture,
   affiliateReplacementFixture,
   catalogSummary,
@@ -73,6 +74,7 @@ test("the affiliate candidate fixture contains 60 unique canonical products and 
   const summary = catalogSummary(products);
   assert.deepEqual(summary, {
     total: 60,
+    styleSlots: 60,
     pending: 0,
     approved: 41,
     rejected: 19,
@@ -83,7 +85,7 @@ test("the affiliate candidate fixture contains 60 unique canonical products and 
   });
 });
 
-test("owner rejections and all 19 replacement proposals preserve the exact style slots and canonical identity rules", () => {
+test("owner rejections and all 19 approved replacements preserve the exact style slots and canonical identity rules", () => {
   const products = affiliateCandidateFixture();
   const proposals = affiliateReplacementFixture();
   const rejected = products.filter((product) => product.approvalStatus === "rejected");
@@ -102,11 +104,64 @@ test("owner rejections and all 19 replacement proposals preserve the exact style
   assert.equal(reused[0]?.styleSlug, "japandi");
   assert.equal(newCanonical.length, 18);
   assert.equal(new Set(newCanonical.map((proposal) => proposal.proposedProduct.asin)).size, 18);
-  assert.ok(newCanonical.every((proposal) => proposal.proposalStatus === "pending"));
-  assert.ok(newCanonical.every((proposal) => proposal.proposedProduct.approvalStatus === "pending"));
+  assert.ok(proposals.every(
+    (proposal) =>
+      proposal.proposalStatus === "approved" ||
+      proposal.proposalStatus === "approved_with_caveat"
+  ));
+  assert.ok(proposals.every(
+    (proposal) => proposal.proposedProduct.approvalStatus === proposal.proposalStatus
+  ));
+  assert.ok(proposals.every(
+    (proposal) => proposal.proposedProduct.approvalHistory.at(-1)?.source === "owner"
+  ));
   assert.ok(newCanonical.every((proposal) => !products.some(
     (product) => product.asin === proposal.proposedProduct.asin
   )));
+});
+
+test("the approved cohort fills 60 style slots with 59 unique canonical products", () => {
+  const products = affiliateApprovedCohortFixture();
+  const allAssignments = products.flatMap((product) => product.styleAssignments);
+
+  assert.equal(products.length, 59);
+  assert.equal(new Set(products.map((product) => product.asin)).size, 59);
+  assert.equal(allAssignments.length, 60);
+  assert.ok(products.every(
+    (product) =>
+      product.approvalStatus === "approved" ||
+      product.approvalStatus === "approved_with_caveat"
+  ));
+
+  for (const style of inspirationStyles) {
+    const assignments = allAssignments
+      .filter((assignment) => assignment.styleSlug === style.slug)
+      .sort((left, right) => left.rank - right.rank);
+    assert.equal(assignments.length, 5, `${style.name} should have exactly five approved slots`);
+    assert.deepEqual(assignments.map((assignment) => assignment.rank), [1, 2, 3, 4, 5]);
+  }
+
+  const bambusi = products.filter((product) => product.asin === "B0DC7VG6Z9");
+  assert.equal(bambusi.length, 1);
+  assert.deepEqual(
+    bambusi[0]?.styleAssignments.map((assignment) => [assignment.styleSlug, assignment.role, assignment.rank]),
+    [
+      ["boho-earth-tones", "primary", 5],
+      ["japandi", "additional", 1]
+    ]
+  );
+
+  assert.deepEqual(catalogSummary(products), {
+    total: 59,
+    styleSlots: 60,
+    pending: 0,
+    approved: 59,
+    rejected: 0,
+    unavailable: 0,
+    mediaReady: 0,
+    categories: 15,
+    styles: 12
+  });
 });
 
 test("catalog validation rejects duplicate identity, ASIN mismatch, and premature public visibility", () => {
@@ -158,30 +213,33 @@ test("public product reads require approval, an Associates URL, complete QA, and
   assert.equal(await readPublicAffiliateProduct(first.slug), null);
 });
 
-test("media manifest excludes rejected products and keeps the approved cohort rights-blocked", () => {
-  const products = affiliateCandidateFixture();
+test("media manifest covers the approved canonical cohort and keeps every job rights-blocked", () => {
+  const initialProducts = affiliateCandidateFixture();
+  const products = affiliateApprovedCohortFixture();
   const oneProductJobs = buildAffiliateMediaJobs(products[0]!);
   assert.equal(oneProductJobs.length, 61);
   assert.equal(oneProductJobs.filter((job) => job.kind === "presentation").length, 1);
   assert.equal(oneProductJobs.filter((job) => job.kind === "styled").length, 60);
   assert.ok(oneProductJobs.every((job) => job.status === "blocked_reference_rights"));
 
-  const rejectedProduct = products.find((product) => product.approvalStatus === "rejected")!;
+  const rejectedProduct = initialProducts.find((product) => product.approvalStatus === "rejected")!;
   assert.ok(buildAffiliateMediaJobs(rejectedProduct).every((job) => job.status === "blocked_approval"));
 
   const manifest = buildAffiliateMediaManifest(products);
-  assert.equal(manifest.candidateCount, 60);
-  assert.equal(manifest.productCount, 41);
-  assert.equal(manifest.excludedCount, 19);
-  assert.equal(manifest.presentationCount, 41);
-  assert.equal(manifest.styledCount, 2460);
-  assert.equal(manifest.totalCount, 2501);
-  assert.equal(manifest.cohortReadyForPilot, false);
+  assert.equal(manifest.candidateCount, 59);
+  assert.equal(manifest.productCount, 59);
+  assert.equal(manifest.styleSlotCount, 60);
+  assert.equal(manifest.targetStyleSlotCount, 60);
+  assert.equal(manifest.excludedCount, 0);
+  assert.equal(manifest.presentationCount, 59);
+  assert.equal(manifest.styledCount, 3540);
+  assert.equal(manifest.totalCount, 3599);
+  assert.equal(manifest.cohortReadyForPilot, true);
   assert.equal(manifest.generationAuthorized, false);
-  assert.equal(new Set(manifest.jobs.map((job) => job.id)).size, 2501);
-  assert.equal(new Set(manifest.jobs.map((job) => job.storageKey)).size, 2501);
-  assert.ok(manifest.jobs.every((job) => !rejectedProduct || job.asin !== rejectedProduct.asin));
-  assert.ok(manifest.excludedProducts.every((product) => product.approvalStatus === "rejected"));
+  assert.equal(new Set(manifest.jobs.map((job) => job.id)).size, 3599);
+  assert.equal(new Set(manifest.jobs.map((job) => job.storageKey)).size, 3599);
+  assert.ok(manifest.jobs.every((job) => job.status === "blocked_reference_rights"));
+  assert.deepEqual(manifest.excludedProducts, []);
 });
 
 test("media storage keys are deterministic and reject invalid gallery slots", () => {
@@ -246,18 +304,25 @@ test("public affiliate detail keeps media gates and swipe gallery controls expli
   assert.match(gallery, /onPointerUp/);
 });
 
-test("admin replacement queue exposes human-readable decisions without editing the canonical catalog", async () => {
+test("admin replacement record exposes human-readable owner decisions and normalized cohort counts", async () => {
   const page = await fs.readFile(path.join(process.cwd(), "app/admin/affiliate-links/page.tsx"), "utf8");
   const queue = await fs.readFile(
     path.join(process.cwd(), "components/admin/AffiliateReplacementQueue.tsx"),
     "utf8"
   );
+  const manager = await fs.readFile(
+    path.join(process.cwd(), "components/admin/AffiliateCatalogManager.tsx"),
+    "utf8"
+  );
   const styles = await fs.readFile(path.join(process.cwd(), "app/globals.css"), "utf8");
   assert.match(page, /affiliateReplacementFixture/);
-  assert.match(page, /19 are rejected with/);
-  assert.match(queue, /Replacement approval queue/);
+  assert.match(page, /60 approved style slots use/);
+  assert.match(page, /59 canonical products/);
+  assert.match(queue, /Approved replacement record/);
   assert.match(queue, /ownerRejectionReason/);
   assert.match(queue, /reuseExistingCanonical/);
+  assert.match(manager, /editorTriggerRef/);
+  assert.match(manager, /editorTriggerRef\.current\?\.focus\(\)/);
   assert.match(styles, /\.affiliate-replacement-mobile-list/);
   assert.match(styles, /@media \(max-width: 820px\)[\s\S]*\.affiliate-replacement-table-wrap/);
 });

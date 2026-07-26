@@ -155,6 +155,8 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
   const baseProductsRef = useRef(initialProducts);
   const dialogRef = useRef<HTMLDivElement>(null);
   const firstFieldRef = useRef<HTMLInputElement>(null);
+  const editorTriggerRef = useRef<HTMLElement | null>(null);
+  const editorWasOpenRef = useRef(false);
 
   useUnsavedChangesGuard(dirty || saving);
 
@@ -212,7 +214,15 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
   }, [page, pageCount]);
 
   useEffect(() => {
-    if (!editor) return undefined;
+    if (!editor) {
+      if (editorWasOpenRef.current) {
+        editorWasOpenRef.current = false;
+        editorTriggerRef.current?.focus();
+        editorTriggerRef.current = null;
+      }
+      return undefined;
+    }
+    editorWasOpenRef.current = true;
     firstFieldRef.current?.focus();
     const dialog = dialogRef.current;
     if (!dialog) return undefined;
@@ -352,6 +362,8 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
   }
 
   function openEditor(product?: AffiliateProduct) {
+    editorTriggerRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const index = product ? products.findIndex((candidate) => candidate.id === product.id) : null;
     setEditor({ index: index === -1 ? null : index, draft: structuredClone(product ?? makeBlankProduct(styles)) });
     setEditorError("");
