@@ -1,7 +1,7 @@
 import type { AffiliateProduct } from "./affiliate-catalog.ts";
 import { inspirationStyles } from "./redesign-data.ts";
 
-export const AFFILIATE_MEDIA_PROMPT_VERSION = "affiliate-product-v1";
+export const AFFILIATE_MEDIA_PROMPT_VERSION = "affiliate-product-v2";
 export const AFFILIATE_MEDIA_GENERATION_VERSION = "unassigned";
 export const AFFILIATE_MEDIA_ASPECT = "2:3";
 export const AFFILIATE_MEDIA_TARGET = { width: 1024, height: 1536 } as const;
@@ -20,6 +20,14 @@ export interface AffiliateMediaJob {
   postprocess: "segment_to_transparent_webp" | "none";
   status: "blocked_approval" | "blocked_reference_rights";
 }
+
+const GALLERY_COMPOSITIONS = [
+  "Use an environmental hero view at natural eye level with the product as the unmistakable focal point.",
+  "Use a closer material-detail view that still shows the complete product and its functional context.",
+  "Use a wider room view that establishes the bathroom style while keeping the product clearly identifiable.",
+  "Use an alternate three-quarter angle that shows how the product is used without adding a person or unsupported accessory.",
+  "Use a quiet editorial composition with a distinct crop and lighting setup while preserving the complete product identity."
+] as const;
 
 function cleanSegment(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/-{2,}/g, "-").replace(/^-|-$/g, "");
@@ -78,7 +86,8 @@ export function buildAffiliateMediaJobs(product: AffiliateProduct): AffiliateMed
         generationVersion: AFFILIATE_MEDIA_GENERATION_VERSION,
         prompt: [
           `Place the approved product ${product.name} by ${product.brand} in a ${style.name} bathroom.`,
-          `This is gallery view ${slot} of 5.`,
+          style.description,
+          `This is gallery view ${slot} of 5. ${GALLERY_COMPOSITIONS[index]}`,
           "Preserve the exact product identity, proportions, material, finish, controls, and hardware from the approved private reference set.",
           "Make the product useful and visually legible in a realistic bathroom context; do not add unsupported features, branding, safety claims, or accessories.",
           `Output ${AFFILIATE_MEDIA_TARGET.width}x${AFFILIATE_MEDIA_TARGET.height} in a ${AFFILIATE_MEDIA_ASPECT} frame.`

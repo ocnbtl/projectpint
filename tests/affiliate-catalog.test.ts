@@ -20,6 +20,7 @@ import {
   buildAffiliateMediaJobs,
   buildAffiliateMediaManifest
 } from "../lib/affiliate-media.ts";
+import { buildAffiliatePilotManifest } from "../lib/affiliate-pilot.ts";
 import { inspirationStyles } from "../lib/redesign-data.ts";
 
 async function withLocalCatalog(
@@ -240,6 +241,44 @@ test("media manifest covers the approved canonical cohort and keeps every job ri
   assert.equal(new Set(manifest.jobs.map((job) => job.storageKey)).size, 3599);
   assert.ok(manifest.jobs.every((job) => job.status === "blocked_reference_rights"));
   assert.deepEqual(manifest.excludedProducts, []);
+});
+
+test("the authorized technical pilot contains three products and exactly 33 queued jobs", () => {
+  const manifest = buildAffiliatePilotManifest(affiliateApprovedCohortFixture());
+
+  assert.equal(manifest.referenceRightsConfirmed, true);
+  assert.equal(manifest.generationAuthorized, true);
+  assert.equal(manifest.fullScaleAuthorized, false);
+  assert.equal(manifest.sourceImagesPrivateOnly, true);
+  assert.equal(manifest.executionLogRequired, true);
+  assert.equal(manifest.productCount, 3);
+  assert.equal(manifest.presentationCount, 3);
+  assert.equal(manifest.styledCount, 30);
+  assert.equal(manifest.totalCount, 33);
+  assert.equal(new Set(manifest.products.map((product) => product.asin)).size, 3);
+  assert.ok(manifest.products.every((product) => product.styleSlugs.length === 2));
+  assert.equal(new Set(manifest.jobs.map((job) => job.id)).size, 33);
+  assert.ok(manifest.jobs.every((job) => job.status === "queued"));
+  assert.ok(manifest.jobs.every((job) => job.promptVersion === "affiliate-pilot-product-v1"));
+  assert.ok(manifest.jobs.every((job) => job.generationVersion === "pilot-2026-07-26-run-01"));
+  assert.ok(manifest.jobs.every((job) => job.storageKey.startsWith("affiliate-pilot/v1/")));
+  assert.ok(manifest.jobs.every((job) => job.requiresPromptCapture));
+  assert.doesNotMatch(JSON.stringify(manifest), /\/private\/tmp|product-pint-affiliate-pilot-refs/);
+  assert.ok(
+    manifest.jobs
+      .filter((job) => job.kind === "presentation")
+      .every((job) => job.referenceInputCount === 1 && job.prompt.includes("#00FF00"))
+  );
+  assert.ok(
+    manifest.jobs
+      .filter((job) => job.kind === "styled")
+      .every(
+        (job) =>
+          job.referenceInputCount === 2 &&
+          job.prompt.includes("Product identity invariant:") &&
+          job.prompt.includes("approved private reference")
+      )
+  );
 });
 
 test("media storage keys are deterministic and reject invalid gallery slots", () => {
