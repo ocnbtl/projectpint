@@ -21,6 +21,7 @@ import {
   buildAffiliateMediaManifest
 } from "../lib/affiliate-media.ts";
 import { buildAffiliatePilotManifest } from "../lib/affiliate-pilot.ts";
+import { buildAffiliatePilotV2Manifest } from "../lib/affiliate-pilot-v2.ts";
 import { inspirationStyles } from "../lib/redesign-data.ts";
 
 async function withLocalCatalog(
@@ -279,6 +280,103 @@ test("the authorized technical pilot contains three products and exactly 33 queu
           job.prompt.includes("approved private reference")
       )
   );
+});
+
+test("the refreshed natural-photo pilot reuses approved cutouts and queues 30 materially distinct scenes", () => {
+  const manifest = buildAffiliatePilotV2Manifest(affiliateApprovedCohortFixture());
+  const presentations = manifest.jobs.filter((job) => job.kind === "presentation");
+  const styled = manifest.jobs.filter((job) => job.kind === "styled");
+
+  assert.equal(manifest.referenceRightsConfirmed, true);
+  assert.equal(manifest.generationAuthorized, true);
+  assert.equal(manifest.fullScaleAuthorized, false);
+  assert.equal(manifest.ownerApprovedPresentationReuse, true);
+  assert.equal(manifest.requestedModel, "gpt-image-2");
+  assert.equal(manifest.requestedQuality, "high");
+  assert.equal(manifest.productCount, 3);
+  assert.equal(manifest.presentationCount, 3);
+  assert.equal(manifest.reusedPresentationCount, 3);
+  assert.equal(manifest.styledCount, 30);
+  assert.equal(manifest.generationRequestedCount, 30);
+  assert.equal(manifest.totalCount, 33);
+  assert.equal(presentations.length, 3);
+  assert.equal(styled.length, 30);
+  assert.ok(presentations.every((job) => job.status === "reused_owner_approved"));
+  assert.ok(
+    presentations.every(
+      (job) =>
+        job.referenceInputCount === 0 &&
+        job.requiresPromptCapture === false &&
+        job.reusedFromStorageKey?.startsWith("affiliate-pilot/v1/")
+    )
+  );
+  assert.ok(styled.every((job) => job.status === "queued"));
+  assert.ok(
+    styled.every(
+      (job) =>
+        (job.referenceInputCount === 2 || job.referenceInputCount === 3) &&
+        job.requiresPromptCapture &&
+        job.sceneId &&
+        job.prompt.includes("recent smartphone main camera") &&
+        job.prompt.includes("same ambient light") &&
+        job.prompt.includes("not the same room with small rearrangements") &&
+        job.prompt.includes("Avoid: studio key or rim light") &&
+        job.prompt.includes("owner-accepted transparent presentation anchor")
+    )
+  );
+  assert.equal(new Set(styled.map((job) => job.sceneId)).size, 30);
+  assert.equal(new Set(styled.map((job) => job.prompt)).size, 30);
+  assert.equal(new Set(styled.map((job) => job.promptSha256)).size, 30);
+  assert.ok(manifest.jobs.every((job) => job.storageKey.startsWith("affiliate-pilot/v2/")));
+  assert.ok(
+    manifest.jobs.every(
+      (job) =>
+        job.promptVersion === "affiliate-pilot-natural-photo-v2" &&
+        job.generationVersion === "pilot-2026-07-26-run-02"
+    )
+  );
+  assert.doesNotMatch(JSON.stringify(manifest), /\/private\/tmp|affiliate-pilot-refs/);
+  assert.equal(manifest.poseGuideJobCount, 4);
+  assert.equal(manifest.poseGuideCount, 2);
+  assert.ok(
+    styled
+      .filter((job) => job.poseGuideId)
+      .every(
+        (job) =>
+          job.referenceInputCount === 3 &&
+          job.poseGuideStorageKey?.startsWith("affiliate-pilot/v2/private-pose-guides/") &&
+          job.prompt.includes("Image 3 is the reviewed private")
+      )
+  );
+  assert.match(
+    styled.find(
+      (job) =>
+        job.asin === "B0D2KK6MNS" &&
+        job.styleSlug === "boho-earth-tones" &&
+        job.slot === 5
+    )!.prompt,
+    /exactly one ordinary straight horizontal wall-to-wall shower rod/
+  );
+  assert.match(
+    styled.find(
+      (job) =>
+        job.asin === "B0829N8C9G" &&
+        job.styleSlug === "minimalist-elegance" &&
+        job.slot === 2
+    )!.prompt,
+    /plain and unbranded with no readable words/
+  );
+
+  const styleGroups = Map.groupBy(styled, (job) => job.styleSlug);
+  assert.equal(styleGroups.size, 6);
+  styleGroups.forEach((jobs) => {
+    assert.equal(jobs.length, 5);
+    assert.equal(new Set(jobs.map((job) => job.sceneId)).size, 5);
+    assert.deepEqual(
+      jobs.map((job) => job.slot).sort(),
+      [1, 2, 3, 4, 5]
+    );
+  });
 });
 
 test("media storage keys are deterministic and reject invalid gallery slots", () => {
