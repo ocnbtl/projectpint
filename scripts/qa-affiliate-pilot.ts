@@ -233,12 +233,21 @@ async function main(): Promise<void> {
     6,
     240,
     380,
-    path.join(contactRoot, "pilot-all-33.jpg")
+    path.join(contactRoot, `pilot-all-${manifest.totalCount}.jpg`)
   );
 
+  let comparisonPairCount = 0;
   if (comparisonVersion) {
-    const comparisonJobs = manifest.jobs
-      .filter((job) => job.kind === "styled")
+    const comparisonBaseJobs = manifest.jobs.filter((job) => {
+      if (job.kind !== "styled") return false;
+      const comparisonStorageKey = job.storageKey.replace(
+        `affiliate-pilot/${pilotVersion}/`,
+        `affiliate-pilot/${comparisonVersion}/`
+      );
+      return fs.existsSync(path.join(root, "output", comparisonStorageKey));
+    });
+    comparisonPairCount = comparisonBaseJobs.length;
+    const comparisonJobs = comparisonBaseJobs
       .flatMap((job) => [
         {
           ...job,
@@ -261,12 +270,16 @@ async function main(): Promise<void> {
       380,
       path.join(
         contactRoot,
-        `comparison-${comparisonVersion}-${pilotVersion}-all-30-pairs.jpg`
+        `comparison-${comparisonVersion}-${pilotVersion}-all-${comparisonPairCount}-pairs.jpg`
       )
     );
     for (const product of manifest.products) {
+      const productComparisonJobs = comparisonJobs.filter(
+        (job) => job.asin === product.asin
+      );
+      if (productComparisonJobs.length === 0) continue;
       await makeSheet(
-        comparisonJobs.filter((job) => job.asin === product.asin),
+        productComparisonJobs,
         4,
         300,
         470,
@@ -282,6 +295,7 @@ async function main(): Promise<void> {
     generatedAt: new Date().toISOString(),
     pilotVersion: manifest.pilotVersion,
     comparisonVersion,
+    comparisonPairCount,
     manifestTotal: manifest.totalCount,
     checkedTotal: technicalAssets.length,
     missing,
@@ -312,6 +326,7 @@ async function main(): Promise<void> {
         duplicateHashes: report.duplicateHashes.length,
         dimensionPassCount: report.dimensionPassCount,
         presentationAlphaPassCount: report.presentationAlphaPassCount,
+        comparisonPairCount: report.comparisonPairCount,
         contactRoot
       },
       null,

@@ -22,6 +22,7 @@ import {
 } from "../lib/affiliate-media.ts";
 import { buildAffiliatePilotManifest } from "../lib/affiliate-pilot.ts";
 import { buildAffiliatePilotV2Manifest } from "../lib/affiliate-pilot-v2.ts";
+import { buildAffiliatePilotV3Manifest } from "../lib/affiliate-pilot-v3.ts";
 import { inspirationStyles } from "../lib/redesign-data.ts";
 
 async function withLocalCatalog(
@@ -377,6 +378,154 @@ test("the refreshed natural-photo pilot reuses approved cutouts and queues 30 ma
       [1, 2, 3, 4, 5]
     );
   });
+});
+
+test("the physical-photo v3 pilot defines six products, 66 assets, and scene-specific realism gates", () => {
+  const manifest = buildAffiliatePilotV3Manifest(affiliateApprovedCohortFixture());
+  const presentations = manifest.jobs.filter((job) => job.kind === "presentation");
+  const styled = manifest.jobs.filter((job) => job.kind === "styled");
+  const reusedPresentations = presentations.filter(
+    (job) => job.status === "reused_owner_approved"
+  );
+  const generatedPresentations = presentations.filter(
+    (job) => job.status === "queued"
+  );
+
+  assert.equal(manifest.referenceRightsConfirmed, true);
+  assert.equal(manifest.generationAuthorized, true);
+  assert.equal(manifest.fullScaleAuthorized, false);
+  assert.equal(manifest.ownerApprovedPresentationReuse, true);
+  assert.equal(manifest.requestedModel, "gpt-image-2");
+  assert.equal(manifest.requestedQuality, "high");
+  assert.equal(manifest.providerModelObserved, null);
+  assert.equal(manifest.providerQualityObserved, null);
+  assert.equal(manifest.productCount, 6);
+  assert.equal(manifest.presentationCount, 6);
+  assert.equal(manifest.reusedPresentationCount, 3);
+  assert.equal(manifest.generatedPresentationCount, 3);
+  assert.equal(manifest.styledCount, 60);
+  assert.equal(manifest.generationRequestedCount, 63);
+  assert.equal(manifest.totalCount, 66);
+  assert.equal(presentations.length, 6);
+  assert.equal(styled.length, 60);
+  assert.equal(new Set(manifest.products.map((product) => product.asin)).size, 6);
+  assert.equal(new Set(manifest.jobs.map((job) => job.id)).size, 66);
+  assert.equal(new Set(manifest.jobs.map((job) => job.storageKey)).size, 66);
+  assert.equal(new Set(styled.map((job) => job.sceneId)).size, 60);
+  assert.equal(new Set(styled.map((job) => job.prompt)).size, 60);
+  assert.equal(new Set(styled.map((job) => job.promptSha256)).size, 60);
+  assert.ok(manifest.products.every((product) => product.styleSlugs.length === 2));
+  assert.ok(
+    manifest.products.every(
+      (product) =>
+        manifest.jobs.filter(
+          (job) => job.asin === product.asin && job.kind === "styled"
+        ).length === 10
+    )
+  );
+  assert.ok(
+    manifest.jobs.every((job) =>
+      job.storageKey.startsWith("affiliate-pilot/v3/")
+    )
+  );
+  assert.ok(
+    manifest.jobs.every(
+      (job) =>
+        job.promptVersion === "affiliate-pilot-physical-photo-v3" &&
+        job.generationVersion === "pilot-2026-07-27-run-03"
+    )
+  );
+  assert.equal(reusedPresentations.length, 3);
+  assert.ok(
+    reusedPresentations.every(
+      (job) =>
+        job.referenceInputCount === 0 &&
+        job.requiresPromptCapture === false &&
+        job.reusedFromStorageKey?.startsWith("affiliate-pilot/v2/")
+    )
+  );
+  assert.equal(generatedPresentations.length, 3);
+  assert.ok(
+    generatedPresentations.every(
+      (job) =>
+        job.requiresPromptCapture &&
+        job.prompt.includes("#00FF00") &&
+        job.prompt.includes("Segmentation safety:")
+    )
+  );
+  assert.ok(
+    styled.every(
+      (job) =>
+        job.status === "queued" &&
+        job.requiresPromptCapture &&
+        job.sceneId?.startsWith("v3-") &&
+        job.qaFocus &&
+        job.prompt.includes("Physical-support invariant:") &&
+        job.prompt.includes("Bathroom-architecture invariant:") &&
+        job.prompt.includes("Reflection invariant:") &&
+        job.prompt.includes("Material invariant:") &&
+        job.prompt.includes("Set-variety invariant:") &&
+        job.prompt.includes("Final physical audit before rendering:")
+    )
+  );
+  assert.doesNotMatch(
+    JSON.stringify(manifest),
+    /\/private\/tmp|affiliate-pilot-v3-refs|affiliate-pilot-refs/
+  );
+  assert.match(
+    styled.find(
+      (job) =>
+        job.asin === "B0829N8C9G" &&
+        job.styleSlug === "minimalist-elegance" &&
+        job.slot === 1
+    )!.prompt,
+    /tissue box completely supported/
+  );
+  assert.match(
+    styled.find(
+      (job) =>
+        job.asin === "B0D2KK6MNS" &&
+        job.styleSlug === "warm-editorial" &&
+        job.slot === 3
+    )!.prompt,
+    /towel must rest over its hook rather than passing through/
+  );
+  assert.match(
+    styled.find(
+      (job) =>
+        job.asin === "B0DC7VG6Z9" &&
+        job.styleSlug === "spa-greenery" &&
+        job.slot === 4
+    )!.prompt,
+    /bath mat must sit entirely outside the shower/
+  );
+  assert.match(
+    styled.find(
+      (job) =>
+        job.asin === "B08TLP2D54" &&
+        job.styleSlug === "modern-marble" &&
+        job.slot === 1
+    )!.prompt,
+    /perspective-correct continuation/
+  );
+  assert.match(
+    styled.find(
+      (job) =>
+        job.asin === "B07PFYZ3DP" &&
+        job.styleSlug === "scandinavian-clean" &&
+        job.slot === 1
+    )!.prompt,
+    /shortened middle shelf/
+  );
+  assert.match(
+    styled.find(
+      (job) =>
+        job.asin === "B07SG7BV11" &&
+        job.styleSlug === "vintage-eclectic" &&
+        job.slot === 1
+    )!.prompt,
+    /No tiled floral repeat/
+  );
 });
 
 test("media storage keys are deterministic and reject invalid gallery slots", () => {
