@@ -46,7 +46,8 @@ const sharp = createRequire(import.meta.url)("sharp") as SharpFactory;
 type PilotJob = {
   id: string;
   asin: string;
-  kind: "presentation" | "styled";
+  kind: "presentation" | "identity" | "styled";
+  identityView?: string | null;
   slot: number | null;
   storageKey: string;
   styleSlug: string | null;
@@ -100,9 +101,11 @@ function escapeXml(value: string): string {
 
 function labelFor(job: ContactSheetJob): string {
   if (job.labelOverride) return job.labelOverride;
-  return job.kind === "presentation"
-    ? `${job.asin} · presentation`
-    : `${job.asin} · ${job.styleSlug} · ${String(job.slot).padStart(2, "0")}`;
+  if (job.kind === "presentation") return `${job.asin} · presentation`;
+  if (job.kind === "identity") {
+    return `${job.asin} · identity · ${job.identityView ?? "unknown"}`;
+  }
+  return `${job.asin} · ${job.styleSlug} · ${String(job.slot).padStart(2, "0")}`;
 }
 
 async function makeTile(
@@ -220,13 +223,57 @@ async function main(): Promise<void> {
     }));
 
   for (const product of manifest.products) {
+    const productJobs = manifest.jobs.filter(
+      (job) => job.asin === product.asin
+    );
     await makeSheet(
-      manifest.jobs.filter((job) => job.asin === product.asin),
-      3,
-      320,
-      500,
+      productJobs,
+      5,
+      240,
+      380,
       path.join(contactRoot, `${product.asin}-${product.slug}.jpg`)
     );
+    const identityJobs = productJobs.filter((job) => job.kind === "identity");
+    if (identityJobs.length > 0) {
+      await makeSheet(
+        identityJobs,
+        7,
+        220,
+        350,
+        path.join(
+          contactRoot,
+          `${product.asin}-${product.slug}-identity-seven-view.jpg`
+        )
+      );
+    }
+    const styledJobs = productJobs.filter((job) => job.kind === "styled");
+    if (styledJobs.length > 0) {
+      await makeSheet(
+        styledJobs,
+        5,
+        220,
+        350,
+        path.join(
+          contactRoot,
+          `${product.asin}-${product.slug}-styled-60.jpg`
+        )
+      );
+      const styleSlugs = [
+        ...new Set(styledJobs.map((job) => job.styleSlug).filter(Boolean))
+      ];
+      for (const styleSlug of styleSlugs) {
+        await makeSheet(
+          styledJobs.filter((job) => job.styleSlug === styleSlug),
+          5,
+          260,
+          410,
+          path.join(
+            contactRoot,
+            `${product.asin}-${product.slug}-${styleSlug}.jpg`
+          )
+        );
+      }
+    }
   }
   await makeSheet(
     manifest.jobs,
@@ -304,6 +351,14 @@ async function main(): Promise<void> {
     dimensionPassCount: technicalAssets.filter(
       (asset) => asset.width === 1024 && asset.height === 1536
     ).length,
+    identityAlphaPassCount: technicalAssets.filter(
+      (asset) =>
+        (manifest.jobs.find((job) => job.id === asset.id)?.kind === "identity" ||
+          asset.id.endsWith(":presentation")) &&
+        asset.hasAlpha &&
+        asset.alphaMin === 0 &&
+        asset.alphaMax === 255
+    ).length,
     presentationAlphaPassCount: technicalAssets.filter(
       (asset) =>
         asset.id.endsWith(":presentation") &&
@@ -325,7 +380,7 @@ async function main(): Promise<void> {
         missing: report.missing.length,
         duplicateHashes: report.duplicateHashes.length,
         dimensionPassCount: report.dimensionPassCount,
-        presentationAlphaPassCount: report.presentationAlphaPassCount,
+        identityAlphaPassCount: report.identityAlphaPassCount,
         comparisonPairCount: report.comparisonPairCount,
         contactRoot
       },

@@ -23,6 +23,7 @@ import {
 import { buildAffiliatePilotManifest } from "../lib/affiliate-pilot.ts";
 import { buildAffiliatePilotV2Manifest } from "../lib/affiliate-pilot-v2.ts";
 import { buildAffiliatePilotV3Manifest } from "../lib/affiliate-pilot-v3.ts";
+import { buildAffiliatePilotV4Manifest } from "../lib/affiliate-pilot-v4.ts";
 import { inspirationStyles } from "../lib/redesign-data.ts";
 
 async function withLocalCatalog(
@@ -526,6 +527,149 @@ test("the physical-photo v3 pilot defines six products, 66 assets, and scene-spe
     )!.prompt,
     /No tiled floral repeat/
   );
+});
+
+test("the v4 identity-locked pilot defines ten products, 670 unique assets, and every requested physical gate", () => {
+  const manifest = buildAffiliatePilotV4Manifest(
+    affiliateApprovedCohortFixture()
+  );
+  const identity = manifest.jobs.filter((job) => job.kind === "identity");
+  const styled = manifest.jobs.filter((job) => job.kind === "styled");
+
+  assert.equal(manifest.referenceRightsConfirmed, true);
+  assert.equal(manifest.generationAuthorized, true);
+  assert.equal(manifest.fullScaleAuthorized, false);
+  assert.equal(manifest.regenerateAllPilotAssets, true);
+  assert.equal(manifest.requestedModel, "gpt-image-2");
+  assert.equal(manifest.requestedQuality, "high");
+  assert.equal(manifest.providerModelObserved, null);
+  assert.equal(manifest.providerQualityObserved, null);
+  assert.equal(manifest.productCount, 10);
+  assert.equal(manifest.styleCount, 12);
+  assert.equal(manifest.styleViewsPerProduct, 60);
+  assert.equal(manifest.identityViewsPerProduct, 7);
+  assert.equal(manifest.presentationCount, 10);
+  assert.equal(manifest.orthographicCount, 60);
+  assert.equal(manifest.identityCount, 70);
+  assert.equal(manifest.styledCount, 600);
+  assert.equal(manifest.generationRequestedCount, 670);
+  assert.equal(manifest.totalCount, 670);
+  assert.equal(identity.length, 70);
+  assert.equal(styled.length, 600);
+  assert.equal(new Set(manifest.products.map((product) => product.asin)).size, 10);
+  assert.equal(new Set(manifest.jobs.map((job) => job.id)).size, 670);
+  assert.equal(new Set(manifest.jobs.map((job) => job.storageKey)).size, 670);
+  assert.equal(new Set(manifest.jobs.map((job) => job.prompt)).size, 670);
+  assert.equal(new Set(manifest.jobs.map((job) => job.promptSha256)).size, 670);
+  assert.ok(manifest.jobs.every((job) => job.status === "queued"));
+  assert.ok(
+    manifest.jobs.every(
+      (job) =>
+        job.promptVersion === "affiliate-pilot-identity-physical-photo-v4" &&
+        job.generationVersion === "pilot-2026-07-27-run-04" &&
+        job.storageKey.startsWith("affiliate-pilot/v4/")
+    )
+  );
+  assert.ok(
+    manifest.products.every(
+      (product) =>
+        manifest.jobs.filter(
+          (job) => job.asin === product.asin && job.kind === "identity"
+        ).length === 7 &&
+        manifest.jobs.filter(
+          (job) => job.asin === product.asin && job.kind === "styled"
+        ).length === 60
+    )
+  );
+  assert.ok(
+    identity.every(
+      (job) =>
+        job.postprocess === "chroma_to_transparent_png" &&
+        job.prompt.includes("#00FF00") &&
+        job.prompt.includes("Countable-feature preflight:") &&
+        job.prompt.includes("Hidden-geometry policy:") &&
+        job.prompt.includes("Orientation continuity:") &&
+        job.prompt.includes("Final identity audit before rendering:")
+    )
+  );
+  assert.ok(
+    styled.every(
+      (job) =>
+        job.referenceInputCount === 3 &&
+        job.sceneId?.startsWith("v4-") &&
+        job.primarySceneReferenceView &&
+        job.prompt.includes("North American electrical invariant:") &&
+        job.prompt.includes("Reflection invariant:") &&
+        job.prompt.includes("Secondary-label invariant:") &&
+        job.prompt.includes("Set-variety invariant:") &&
+        job.prompt.includes("seven-tile V4 identity atlas") &&
+        job.prompt.includes("Final pre-render physical audit:")
+    )
+  );
+  assert.equal(new Set(styled.map((job) => job.sceneId)).size, 600);
+  assert.doesNotMatch(
+    JSON.stringify(manifest),
+    /\/private\/tmp|project-pint-affiliate-pilot-v4-refs/
+  );
+
+  const oxo = styled.find(
+    (job) =>
+      job.asin === "B0829N8C9G" &&
+      job.styleSlug === "dark-moody" &&
+      job.slot === 4
+  )!;
+  assert.match(oxo.prompt, /short, nearly horizontal forward spout/i);
+  assert.match(oxo.prompt, /NEMA 5-15R duplex GFCI/);
+
+  const curtain = styled.find(
+    (job) =>
+      job.asin === "B0D2KK6MNS" &&
+      job.styleSlug === "coastal-calm" &&
+      job.slot === 1
+  )!;
+  assert.match(curtain.prompt, /exactly twelve separate hooks/);
+  assert.match(curtain.prompt, /no top band/i);
+
+  const bench = styled.find(
+    (job) =>
+      job.asin === "B0DC7VG6Z9" &&
+      job.styleSlug === "industrial-loft" &&
+      job.slot === 3
+  )!;
+  assert.match(bench.prompt, /exactly nine front-to-back top slats/i);
+  assert.match(bench.prompt, /clear of the drain and glass/i);
+
+  const cart = styled.find(
+    (job) =>
+      job.asin === "B07PFYZ3DP" &&
+      job.styleSlug === "japandi" &&
+      job.slot === 3
+  )!;
+  assert.match(cart.prompt, /shortened middle shelf/);
+  assert.match(cart.prompt, /four casters/);
+
+  const delta = identity.find(
+    (job) =>
+      job.asin === "B008X0VM0Q" && job.identityView === "front"
+  )!;
+  assert.match(delta.prompt, /fixed non-pivoting rounded-square open C-shaped bar/);
+  assert.match(delta.prompt, /never mirror a handed product/i);
+
+  const marble = identity.find(
+    (job) =>
+      job.asin === "B000MS63E2" && job.identityView === "top"
+  )!;
+  assert.match(marble.prompt, /exactly eight raised bars/);
+  assert.match(marble.prompt, /exactly seven drainage channels/);
+
+  const caddy = styled.find(
+    (job) =>
+      job.asin === "B00176AOKM" &&
+      job.styleSlug === "spa-greenery" &&
+      job.slot === 3
+  )!;
+  assert.match(caddy.prompt, /both extension arms/);
+  assert.match(caddy.prompt, /exact left-right layout/);
 });
 
 test("media storage keys are deterministic and reject invalid gallery slots", () => {
