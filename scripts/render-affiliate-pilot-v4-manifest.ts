@@ -17,5 +17,5 @@ const outputPath = path.join(
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
 console.log(
-  `Rendered ${manifest.totalCount} pilot v4 jobs (${manifest.identityCount} identity and ${manifest.styledCount} styled) to ${outputPath}`
+  `Rendered the V4 realism-reset manifest: ${manifest.reusedIdentityCount} reviewed identity jobs reused and ${manifest.generationRequestedCount} styled jobs queued at ${outputPath}`
 );

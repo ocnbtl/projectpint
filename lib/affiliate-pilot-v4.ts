@@ -1,10 +1,19 @@
 import { createHash } from "node:crypto";
 import {
   affiliatePilotV4Authorization,
+  affiliatePilotV4CameraRecipes,
+  affiliatePilotV4ExecutionPolicy,
+  affiliatePilotV4HumanTraceRecipes,
   affiliatePilotV4IdentityViews,
+  affiliatePilotV4LightingRecipes,
+  affiliatePilotV4MaterialRecipes,
+  affiliatePilotV4RealismReset,
+  affiliatePilotV4RoomHistoryRecipes,
   affiliatePilotV4Selections,
   affiliatePilotV4ShotBlueprints,
+  affiliatePilotV4StyleVariationLanes,
   affiliatePilotV4StyleProfiles,
+  affiliatePilotV4VisualQaRubric,
   type AffiliatePilotV4IdentityView,
   type AffiliatePilotV4ProductRole,
   type AffiliatePilotV4Selection
@@ -14,9 +23,9 @@ import { inspirationStyles } from "./redesign-data.ts";
 
 export const AFFILIATE_PILOT_V4_VERSION = "affiliate-pilot-v4";
 export const AFFILIATE_PILOT_V4_PROMPT_VERSION =
-  "affiliate-pilot-identity-physical-photo-v4";
+  affiliatePilotV4RealismReset.contractVersion;
 export const AFFILIATE_PILOT_V4_GENERATION_VERSION =
-  "pilot-2026-07-27-run-04";
+  "pilot-2026-07-31-run-05";
 export const AFFILIATE_PILOT_V4_REQUESTED_MODEL = "gpt-image-2";
 export const AFFILIATE_PILOT_V4_REQUESTED_QUALITY = "high";
 export const AFFILIATE_PILOT_V4_TARGET = {
@@ -44,20 +53,25 @@ const IDENTITY_VIEW_DIRECTIONS: Record<AffiliatePilotV4IdentityView, string> = {
 
 const PHYSICAL_PHOTO_CONTRACT = [
   "Use case: photorealistic-natural.",
-  "Asset type: Project Pint affiliate product-detail gallery photograph.",
-  "Primary request: create one genuinely plausible bathroom photograph that an ordinary homeowner or interior-design editor could have captured with a recent smartphone main camera. It is not a product advertisement, synthetic interior render, real-estate listing, luxury showroom, or studio set.",
-  "Capture invariant: handheld single exposure; realistic smartphone dynamic range; modest computational sharpening; subtle fine sensor noise in darker areas; mild lens distortion or perspective convergence when physically appropriate; small compositional imperfections; natural main-camera depth of field; no fake portrait-mode cutout.",
-  "Support and collision invariant: every object has mass, gravity, a plausible center of mass, and one sufficient support. Every box, bottle, tray, towel, rug, plant, caddy, ring, and accessory rests fully on or hangs correctly from a floor, shelf, hook, rail, counter, tub rim, wall mount, or other declared support. Nothing floats, balances impossibly, accidentally overhangs, phases through, or intersects glass, doors, walls, tubs, counters, hooks, shelves, handles, plants, textiles, or another object.",
-  "Bathroom architecture invariant: depict one buildable, functional North American residential bathroom. A pedestal basin has a coherent column to the floor; a wall-hung basin has believable mounting and plumbing; a vanity basin is correctly inset or mounted. Shower heads connect to real arms or hoses, controls and drains are complete, glass has coherent edges and supports, rods mount to walls, doors have jambs, hinges, latch, correctly placed knob or lever, and real swing clearance, cabinets and drawers have complete consistent hardware, and the camera occupies accessible room volume rather than a wall, cabinet, glass panel, mirror, or impossible void.",
-  "North American electrical invariant: omit electrical devices unless useful to the composition. Any visible bathroom receptacle is a correctly proportioned U.S. NEMA 5-15R duplex GFCI with two vertical blade slots and one round ground per receptacle plus coherent TEST and RESET controls in one normal wall plate. Any visible switch is one standard U.S. Decora rocker or toggle in a conventional plate. Never invent slot patterns, hybrid foreign outlets, extra holes, melted plates, or impossible mirror duplicates.",
-  "Reflection invariant: every mirror and reflective surface depicts only forms and light sources that truly exist opposite it in this exact room, with correct reversed position, perspective, occlusion, scale, orientation, and color. Reflect the featured product whenever ray geometry requires it. Do not invent phantom towels, windows, lights, doors, rooms, cameras, duplicate fixtures, or duplicate products. Reflected material texture must be as coherent as directly viewed texture.",
-  "Material invariant: use stochastic nonrepeating natural detail. Tile, marble, wood, plaster, terrazzo, metal, rugs, foliage, and fabric must not use cloned patches, crystalline noise, tiled grain, copied veining, repeated fractals, or repeated folds. Preserve real roughness, seams, thickness, weave, grain direction, leaf structure, joinery, hardware, and contact shadows.",
-  "Exposure invariant: expose the product and room together under exactly the same ambient light, color spill, white balance, and shadow environment. The product is never independently brightened, glowing, haloed, pasted in, cleaner, smoother, sharper, or more saturated than its surroundings. Its diffuse color, reflected color, contrast, specular hue, highlight rolloff, shadow softness, and contact shadow belong to the scene.",
-  "Set-variety invariant: within this style's five-image set, use a materially different physical room, wall arrangement, palette emphasis, camera position and height, time or weather, towel color and placement, prop grouping, rug, plant use, and architectural shell. Do not return the same room or camera with minor decor swaps.",
-  "Secondary-label invariant: plain unbranded secondary props are preferred. A short real-looking label or graphic may appear occasionally only when every character is crisp, intentional, correctly spelled, and geometrically attached to its container. Never use garbled pseudo-text, fuzzy symbols, counterfeit marks, or accidental third-party branding.",
-  "Product identity invariant: render exactly one approved canonical product at plausible scale, with no duplicate, mutation, mirror reversal, alternate variation, invented feature, permanent accessory, packaging, added claim, or new mark.",
-  "Avoid: studio key or rim light; commercial product lighting; centered catalog pose; showroom emptiness; perfect bilateral symmetry; flawless magazine styling; HDR-expanded shadows; clipped product highlights; cinematic teal-orange grading; excessive bokeh; CGI smoothness; gravity errors; collision errors; impossible reflections; incomplete plumbing; broken doors; incorrect outlets or switches; repeated architecture; or near-duplicate compositions."
-].join(" ");
+  "Asset type: candid iPhone bathroom snapshot for a Project Pint affiliate gallery.",
+  "Primary request: photograph a believable occupied home bathroom; the featured product merely happens to be present. The room and recent human use are the subject, never the product.",
+  "Capture priority: believable household photograph first, decorative polish second. Keep modest framing mistakes, mild perspective convergence, ordinary phone sharpening, fine shadow noise, limited highlight recovery, and no fake portrait blur.",
+  "Anti-stock invariant: do not center or hero-light the product, clear every surface, align every prop, repeat a catalog composition, or make the room resemble a luxury listing, showroom, advertisement, or synthetic interior render.",
+  "Physical invariant: use one buildable North American bathroom. Anything visible has support and clearance; any visible sink, tub, shower, door, cabinet, glass edge, plumbing fixture, outlet, switch, or reflection is complete and coherent. Omit risky fixtures rather than crop or invent them.",
+  "Material invariant: prefer matte, honed, worn, and directionally textured surfaces. Preserve seams, thickness, grain, nap, weave, contact compression, water variation, and irregular roughness. No cloned patches, tiled veins, repeated folds, procedural ribbing, crystalline noise, or blanket gloss.",
+  "Exposure invariant: product and room share one camera exposure, white balance, color spill, focus behavior, shadow softness, noise, and highlight rolloff. The product is not cleaner, sharper, brighter, or more saturated than its surroundings.",
+  "Identity invariant: show exactly one reviewed canonical product at ordinary household scale, correctly supported and handed, with no duplicate, mutation, invented feature, packaging, new mark, or alternate variation.",
+  "Secondary-object invariant: use plain unbranded objects with no readable labels, pseudo-text, logos, or decorative typography.",
+  "Set-variety invariant: every five-scene set uses five different physical rooms, camera positions, light sources, room histories, palette emphases, human traces, and material irregularities."
+].join("\n");
+
+const SLOT_COMPOSITION_INTENTS = [
+  "Wide room-context frame from reachable doorway or threshold space. Keep the product off the optical center and let ordinary architecture occupy most of the image.",
+  "Closer functional room view from reachable standing space, but not a product hero. Let one foreground or edge element make the framing feel found rather than staged.",
+  "Slightly elevated diagonal from a different dry standing position, revealing a genuinely different wall and floor plan from slots 1 and 2.",
+  "Lower candid viewpoint from real open floor or authorized dry tub volume, with one foreground edge or mild occlusion and no impossible camera position.",
+  "Candid side or partial-obstruction composition from normal accessible room volume, such as peeking past a real jamb, cabinet edge, or hanging towel."
+] as const;
 
 const ROLE_PLACEMENTS: Record<
   AffiliatePilotV4ProductRole,
@@ -71,18 +85,18 @@ const ROLE_PLACEMENTS: Record<
     "Use a candid side-biased placement near one lived-in object, but keep the dispenser vertical, completely supported, and visually distinct from secondary bottles."
   ],
   "solid-shower-curtain": [
-    "Show the full shower opening and complete header with exactly twelve separate hooks through exactly twelve openings on one straight rod; use unequal folds and no top band.",
-    "Show a closer, partly drawn curtain with only part of the header intentionally outside the frame; the visible fabric bunches asymmetrically with nonrepeating folds.",
-    "Show the full header again with exactly twelve hooks, a different left-right opening amount, and a plain weighted hem following gravity.",
-    "Use a physically possible reverse view from dry tub volume with the top naturally out of frame; reveal fabric thickness, cross-grain wrinkles, and a plausible tub rim.",
-    "Use a doorway view with either all twelve correctly countable hooks or a deliberate crop before the count begins; never show an incorrect partial full-header count."
+    "Show one newly generated full shower drape with exactly twelve separate hooks through exactly twelve openings on one straight rod. Simulate this scene's folds from twelve independent suspension points; do not reuse a drape, fold silhouette, or product cutout from another scene.",
+    "Use a closer partly drawn side view with the entire countable header outside the upper frame before the first hook. Let the visible fabric gather asymmetrically with localized compression, cross-grain tension, changing fold depth, and one ordinary side edge.",
+    "Show a second newly generated full header with exactly twelve hooks, but use a materially different left-right opening amount and a fresh gravity drape. No fold peak, trough, hem wave, or wrinkle map may repeat slot 1.",
+    "Use a physically possible reverse view from dry tub volume with the entire header outside frame. Reveal plain reverse weave, side thickness, localized cross-grain wrinkles, unequal folds, and a plausible tub rim without reusing another scene's textile silhouette.",
+    "Use a doorway or partial-obstruction view with the entire countable header outside frame before the first hook. Preserve one weighted hem and scene-specific irregular folds; never reuse a prior curtain cutout."
   ],
   "patterned-shower-curtain": [
-    "Show the full shower opening and complete header with exactly twelve hooks through exactly twelve openings; preserve major floral landmarks through irregular folds and use no top band.",
-    "Show a closer partly drawn curtain with the outer header intentionally cropped; preserve motif scale and prevent tiled flower repetition.",
-    "Show the full header again with exactly twelve hooks and a different asymmetric drape; every large blossom remains part of the same reference hierarchy.",
-    "Use a reverse view from physically open dry tub volume, with the top outside frame and correct thin-polyester light transmission without changing the colorway.",
-    "Use a realistic threshold view with all twelve hooks correctly countable or the header clearly outside the frame; never substitute a different floral panel."
+    "Show one newly generated full shower drape with exactly twelve hooks through exactly twelve openings. Preserve major floral landmarks through an original gravity drape and never reuse a textile silhouette or product cutout.",
+    "Show a closer partly drawn curtain with the entire countable header outside frame before the first hook. Preserve motif scale, fabric thickness, and asymmetric compression without tiling flowers.",
+    "Show a second newly generated full header with exactly twelve hooks and a materially different opening amount. Preserve the same floral hierarchy but create fresh folds, wrinkle paths, and hem waves.",
+    "Use a reverse view from physically open dry tub volume with the entire header outside frame and correct thin-polyester light transmission, a fresh drape, and no changed colorway.",
+    "Use a realistic threshold view with the entire countable header outside frame before the first hook. Preserve the canonical floral panel while changing room, camera, and gravity state."
   ],
   "shower-bench": [
     "Place all four feet on a level dry floor beside the shower, leaving the lower shelf empty and the exact nine front-to-back top slats visible.",
@@ -171,12 +185,13 @@ type AffiliatePilotV4IdentityJob = {
   prompt: string;
   promptSha256: string;
   postprocess: "chroma_to_transparent_png";
-  status: "queued";
+  status: "reused_reviewed";
   referenceInputCount: number;
   referencePlan: string;
-  requiresPromptCapture: true;
+  requiresPromptCapture: false;
   requestedModel: typeof AFFILIATE_PILOT_V4_REQUESTED_MODEL;
   requestedQuality: typeof AFFILIATE_PILOT_V4_REQUESTED_QUALITY;
+  reusedFromGenerationVersion: string;
   sceneId: null;
   qaFocus: string;
   atlasStorageKey: string;
@@ -207,6 +222,20 @@ type AffiliatePilotV4StyledJob = {
   qaFocus: string;
   atlasStorageKey: string;
   primarySceneReferenceView: AffiliatePilotV4IdentityView;
+  cameraRecipe: string;
+  lightingRecipe: string;
+  roomHistoryRecipe: string;
+  humanTraceRecipe: string;
+  materialRecipe: string;
+  styleVariationLane: string;
+  generationStrategy:
+    | "direct_identity_locked_room_first"
+    | "fresh_scene_specific_textile_full_header"
+    | "fresh_scene_specific_textile_hidden_header";
+  providerAttemptBudget: number;
+  reusableProductCompositeAllowed: false;
+  localPixelSurgeryAllowed: false;
+  localCropPolicy: "not_allowed";
 };
 
 export type AffiliatePilotV4Job =
@@ -215,6 +244,39 @@ export type AffiliatePilotV4Job =
 
 function sha256(value: string): string {
   return createHash("sha256").update(value).digest("hex");
+}
+
+function recipeFor(
+  values: readonly string[],
+  seed: string,
+  slot: number,
+  salt: string
+): string {
+  const offset = Number.parseInt(sha256(`${salt}:${seed}`).slice(0, 8), 16);
+  return values[(offset + (slot - 1) * 3) % values.length]!;
+}
+
+function generationStrategyFor(
+  role: AffiliatePilotV4ProductRole,
+  slot: number
+): AffiliatePilotV4StyledJob["generationStrategy"] {
+  if (role !== "solid-shower-curtain" && role !== "patterned-shower-curtain") {
+    return "direct_identity_locked_room_first";
+  }
+  return slot === 1 || slot === 3
+    ? "fresh_scene_specific_textile_full_header"
+    : "fresh_scene_specific_textile_hidden_header";
+}
+
+function incidentalFramingFor(role: AffiliatePilotV4ProductRole): string {
+  if (
+    role === "solid-shower-curtain" ||
+    role === "patterned-shower-curtain" ||
+    role === "wall-mirror"
+  ) {
+    return "The product is naturally large, but do not frame it as a centered hero. Let room architecture, circulation, foreground edges, and ordinary use remain visually important.";
+  }
+  return "Keep the product off center in the midground at ordinary household scale, generally about 8-20 percent of frame height. It must be identifiable without becoming the visual subject or receiving a cleaner exposure.";
 }
 
 function cleanSegment(value: string): string {
@@ -288,6 +350,13 @@ function buildStyledPrompt(
   prompt: string;
   qaFocus: string;
   primarySceneReferenceView: AffiliatePilotV4IdentityView;
+  cameraRecipe: string;
+  lightingRecipe: string;
+  roomHistoryRecipe: string;
+  humanTraceRecipe: string;
+  materialRecipe: string;
+  styleVariationLane: string;
+  generationStrategy: AffiliatePilotV4StyledJob["generationStrategy"];
 } {
   const profile =
     affiliatePilotV4StyleProfiles[
@@ -299,37 +368,91 @@ function buildStyledPrompt(
   const primarySceneReferenceView =
     SCENE_REFERENCE_VIEW_BY_ROLE[selection.productRole][slot - 1];
   const sceneId = `v4-${selection.asin}-${style.slug}-${String(slot).padStart(2, "0")}`;
+  const recipeSeed = `${selection.asin}:${style.slug}`;
+  const cameraRecipe = recipeFor(
+    affiliatePilotV4CameraRecipes,
+    recipeSeed,
+    slot,
+    "camera"
+  );
+  const lightingRecipe = recipeFor(
+    affiliatePilotV4LightingRecipes,
+    recipeSeed,
+    slot,
+    "lighting"
+  );
+  const roomHistoryRecipe = recipeFor(
+    affiliatePilotV4RoomHistoryRecipes,
+    recipeSeed,
+    slot,
+    "room"
+  );
+  const humanTraceRecipe = recipeFor(
+    affiliatePilotV4HumanTraceRecipes,
+    recipeSeed,
+    slot,
+    "human"
+  );
+  const materialRecipe = recipeFor(
+    affiliatePilotV4MaterialRecipes,
+    recipeSeed,
+    slot,
+    "material"
+  );
+  const styleVariationLane = recipeFor(
+    affiliatePilotV4StyleVariationLanes,
+    recipeSeed,
+    slot,
+    "style"
+  );
+  const generationStrategy = generationStrategyFor(
+    selection.productRole,
+    slot
+  );
   const qaFocus = [
+    "Realism: score at least 3/4 for iPhone plausibility, incidental-product framing, nonrepeating materials, human irregularity, nonliteral style interpretation, and set-level light/room variety.",
+    "Hard reject: AI-stock polish, centered hero framing, repeated product cutout or textile drape, procedural texture, blanket gloss, showroom staging, uniform HDR, or symmetric prop layout.",
     `Identity: ${countableChecklist(selection)}.`,
     `Placement: ${placement}`,
     `Room: ${shot.reflectionPlan}`,
-    "Global: correct U.S. electrical devices if visible; complete cabinet handles, doors, plumbing, supports, nonrepeating textures, shared exposure, and no collisions."
+    "Physical: complete visible plumbing, doors, supports and reflections; no pseudo-text, branding, collisions, floating objects, or malformed electrical devices."
   ].join(" ");
 
   return {
     primarySceneReferenceView,
+    cameraRecipe,
+    lightingRecipe,
+    roomHistoryRecipe,
+    humanTraceRecipe,
+    materialRecipe,
+    styleVariationLane,
+    generationStrategy,
     qaFocus,
     prompt: [
       PHYSICAL_PHOTO_CONTRACT,
       `Scene identity: ${sceneId}. This exact physical room and composition must not be reused elsewhere in the set.`,
-      `Featured product: ${product.name} by ${product.brand}.`,
+      `Room history: ${roomHistoryRecipe}`,
+      `iPhone capture: ${cameraRecipe}`,
+      `Composition: ${SLOT_COMPOSITION_INTENTS[slot - 1]} ${incidentalFramingFor(selection.productRole)}`,
+      `Available light: ${lightingRecipe}`,
+      `Human trace: ${humanTraceRecipe}`,
+      `Material behavior: ${materialRecipe}`,
+      `Style direction: ${style.name}. ${style.description}`,
+      `Style reference, not a checklist: ${profile.palette}. ${profile.architecture}.`,
+      `Style variation lane: ${styleVariationLane}`,
+      `Optional style vocabulary: choose at most two natural items from this list, only if the room needs them: ${profile.livedIn}.`,
+      `Featured product present in the room: ${product.name} by ${product.brand}.`,
       `Product identity contract: ${selection.identityPrompt}`,
       `Countable-feature preflight: ${countableChecklist(selection)}.`,
       `Hidden-geometry policy: ${selection.hiddenGeometryPolicy}`,
       `Product placement invariant: ${selection.placementInvariant}`,
       `Scene-specific product placement: ${placement}`,
-      `Style direction: ${style.name}. ${style.description}`,
-      `Style palette: ${profile.palette}.`,
-      `Style architecture: ${profile.architecture}.`,
-      `Style-specific lived-in vocabulary: ${profile.livedIn}.`,
-      `Composition and camera: ${shot.camera}`,
-      `Lighting and weather: ${shot.lighting}`,
-      `Human trace and set dressing: ${shot.activity}`,
       `Reflection and door plan: ${shot.reflectionPlan}`,
-      `Reference-input contract: input image 1 is the reviewed seven-tile V4 identity atlas containing presentation, front, back, left, right, top, and bottom views of one accepted campaign specimen. Input image 2 is its reviewed ${primarySceneReferenceView} transparent identity view, chosen for this camera. Input image 3 is the reviewed canonical presentation anchor. Use all three only to preserve one exact physical product; never reproduce chroma green, atlas layout, labels, source background, source room, or display hardware.`,
+      `Input image roles: Image 1 is the reviewed seven-view identity atlas. Image 2 is the reviewed ${primarySceneReferenceView} identity view for this camera. Image 3 is the reviewed presentation anchor. Use them only for product identity; do not copy their backdrop, atlas layout, display pose, chroma color, lighting, or prior fabric drape into the room.`,
+      `Generation strategy: ${generationStrategy}. Generate this scene's product state natively inside this room. Reusing or compositing a product cutout, fold silhouette, textile map, or prior accepted scene is forbidden.`,
       `Scene-specific QA target: ${qaFocus}`,
-      "Final pre-render physical audit: first trace every object's support and center of mass; then trace every wall, floor, sink, tub, shower, glass edge, plumbing run, door swing, cabinet handle, hook, outlet, and switch; then ray-check every mirror; then count the product's exact features; then compare product and room exposure; then compare this room and camera against the other four slots and materially change any repeated setup before rendering.",
-      "Constraints: exactly one canonical featured product; safe, functional, plausible placement; no people or hands; no packaging; no invented feature, claim, variation, permanent accessory, label, pattern, finish, or duplicate; no text overlay or watermark.",
+      "Final audit: first ask whether this could be mistaken for an ordinary person's good iPhone bathroom photo. Then check product identity, scale, support, visible construction, reflections, material repetition, exposure integration, text, and whether any object or styling looks too perfectly arranged.",
+      "Constraints: exactly one canonical featured product; no people or hands; no packaging; no product claim, alternate variation, added label, duplicate, text overlay, or watermark.",
       `Output: one high-quality 1024x1536 portrait image in a ${AFFILIATE_PILOT_V4_TARGET.aspect} frame.`
     ].join("\n")
   };
@@ -379,7 +502,7 @@ export function buildAffiliatePilotV4Manifest(
         prompt,
         promptSha256: sha256(prompt),
         postprocess: "chroma_to_transparent_png",
-        status: "queued",
+        status: "reused_reviewed",
         referenceInputCount:
           selection.privateReferenceCount +
           (identityView === "presentation" ? 0 : 1),
@@ -387,9 +510,11 @@ export function buildAffiliatePilotV4Manifest(
           identityView === "presentation"
             ? `Use ${selection.privateReferenceCount} owner-authorized private canonical source image(s).`
             : `Use ${selection.privateReferenceCount} owner-authorized private source image(s) plus the accepted V4 presentation anchor.`,
-        requiresPromptCapture: true,
+        requiresPromptCapture: false,
         requestedModel: AFFILIATE_PILOT_V4_REQUESTED_MODEL,
         requestedQuality: AFFILIATE_PILOT_V4_REQUESTED_QUALITY,
+        reusedFromGenerationVersion:
+          affiliatePilotV4RealismReset.supersedesGenerationVersion,
         sceneId: null,
         qaFocus: `Exact ${identityView} geometry; ${countableChecklist(selection)}; transparent-edge readiness; no unsupported hidden features.`,
         atlasStorageKey,
@@ -399,8 +524,18 @@ export function buildAffiliatePilotV4Manifest(
 
     inspirationStyles.forEach((style) => {
       for (let slot = 1; slot <= 5; slot += 1) {
-        const { prompt, qaFocus, primarySceneReferenceView } =
-          buildStyledPrompt(product, selection, style, slot);
+        const {
+          prompt,
+          qaFocus,
+          primarySceneReferenceView,
+          cameraRecipe,
+          lightingRecipe,
+          roomHistoryRecipe,
+          humanTraceRecipe,
+          materialRecipe,
+          styleVariationLane,
+          generationStrategy
+        } = buildStyledPrompt(product, selection, style, slot);
         jobs.push({
           id: `${product.id}:${style.slug}:${slot}`,
           productId: product.id,
@@ -425,7 +560,19 @@ export function buildAffiliatePilotV4Manifest(
           sceneId: `v4-${selection.asin}-${style.slug}-${String(slot).padStart(2, "0")}`,
           qaFocus,
           atlasStorageKey,
-          primarySceneReferenceView
+          primarySceneReferenceView,
+          cameraRecipe,
+          lightingRecipe,
+          roomHistoryRecipe,
+          humanTraceRecipe,
+          materialRecipe,
+          styleVariationLane,
+          generationStrategy,
+          providerAttemptBudget:
+            affiliatePilotV4ExecutionPolicy.providerAttemptBudgetPerAsset,
+          reusableProductCompositeAllowed: false,
+          localPixelSurgeryAllowed: false,
+          localCropPolicy: "not_allowed"
         });
       }
     });
@@ -487,6 +634,9 @@ export function buildAffiliatePilotV4Manifest(
     providerMetadataNote:
       "The built-in image-generation surface does not expose selected model or quality metadata. Requested values are workflow intent; provider values remain unobserved.",
     ...affiliatePilotV4Authorization,
+    realismReset: affiliatePilotV4RealismReset,
+    executionPolicy: affiliatePilotV4ExecutionPolicy,
+    visualQaRubric: affiliatePilotV4VisualQaRubric,
     executionLogRequired: true,
     exactPromptCaptureRequired: true,
     perAssetVisualReviewRequired: true,
@@ -502,8 +652,9 @@ export function buildAffiliatePilotV4Manifest(
       (job) => job.identityView !== "presentation"
     ).length,
     identityCount: identityJobs.length,
+    reusedIdentityCount: identityJobs.length,
     styledCount: styledJobs.length,
-    generationRequestedCount: jobs.length,
+    generationRequestedCount: styledJobs.length,
     totalCount: jobs.length,
     target: AFFILIATE_PILOT_V4_TARGET,
     products: productsManifest,

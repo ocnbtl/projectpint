@@ -3,8 +3,10 @@ export const affiliatePilotV4Authorization = {
   generationAuthorized: true,
   fullScaleAuthorized: false,
   sourceImagesPrivateOnly: true,
-  regenerateAllPilotAssets: true,
-  authorizedAt: "2026-07-27T16:00:00-04:00"
+  regenerateAllPilotAssets: false,
+  regenerateAllStyledAssets: true,
+  reuseReviewedIdentityAssets: true,
+  authorizedAt: "2026-07-31T05:00:00-04:00"
 } as const;
 
 export const affiliatePilotV4IdentityViews = [
@@ -301,6 +303,130 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
       "Adds a wide asymmetric extendable product with multiple fixed features, dual-rim support, and strict water-adjacent physics."
   }
 ] as const;
+
+export const affiliatePilotV4RealismReset = {
+  contractVersion: "affiliate-pilot-real-bathroom-v4.1",
+  supersedesPromptVersion: "affiliate-pilot-identity-physical-photo-v4",
+  supersedesGenerationVersion: "pilot-2026-07-27-run-04",
+  resetAuthorizedAt: "2026-07-31T05:00:00-04:00",
+  resetScope: "all 600 styled bathroom scenes",
+  preserveReviewedIdentityAssets: true,
+  preserveSupersededEvidence: true,
+  reason:
+    "Owner review found AI-stock polish, repeated lighting and room formulas, literal style stereotypes, procedural material texture, repeated curtain folds, and an unsustainable retry/compositing rate."
+} as const;
+
+export const affiliatePilotV4ExecutionPolicy = {
+  providerAttemptBudgetPerAsset: 2,
+  providerAttemptBudgetPerFiveSceneSet: 12,
+  systemicFailureThreshold: 3,
+  reusableProductCompositeAllowed: false,
+  localPixelSurgeryAllowed: false,
+  localCropAllowedOnlyWhenManifestExplicitlyAuthorizesIt: true,
+  contactSheetGateRequiredBeforeNextSet: true,
+  directProviderFinalPreferred: true,
+  rootCauseRevisionRequiredAfterSystemicFailure: true
+} as const;
+
+export const affiliatePilotV4CameraRecipes = [
+  "iPhone 15 Pro main 1x camera, 24 mm equivalent, held at chest height with a slight one-degree roll and mild uncorrected vertical convergence; no tripod and no portrait mode.",
+  "iPhone 14 main 1x camera, about 26 mm equivalent, held one step inside the doorway and a little off center; one architectural edge may be loosely clipped.",
+  "iPhone 15 Pro 2x camera, about 48 mm equivalent, used from across reachable dry floor for a compressed candid detail that still reads as part of a room.",
+  "iPhone 13 mini main camera, about 26 mm equivalent, held around upper-waist height after stepping around an ordinary obstacle; accept a slightly loose crop.",
+  "iPhone 15 Pro 0.5x camera, about 13 mm equivalent, used only because the bathroom is genuinely tight; retain modest edge stretch and do not perfectly correct the verticals.",
+  "iPhone 14 Pro main 1x camera, 24 mm equivalent, from seated or low standing height with a real foreground edge creating depth; keep background detail rather than fake bokeh.",
+  "iPhone 15 main 1x camera, about 26 mm equivalent, held just below shoulder height with a small downward tilt and natural auto-leveling that is not geometrically perfect.",
+  "iPhone 13 main 1x camera, about 26 mm equivalent, quickly framed in portrait orientation so a towel, jamb, or cabinet edge intrudes slightly without hiding the product.",
+  "iPhone SE main camera, about 28 mm equivalent, with more limited highlight recovery, visible fine shadow noise, and ordinary computational sharpening.",
+  "iPhone 15 Pro main 1x camera, 24 mm equivalent, captured like a Live Photo moment with tiny hand-position imperfection and no artificial depth isolation."
+] as const;
+
+export const affiliatePilotV4LightingRecipes = [
+  "Cloudy north-window daylight with the electric lights off; the window is a little brighter than the room and shadow corners retain fine phone noise.",
+  "Low early-morning sun entering from one side, creating one imperfect hard-edged patch and partial highlight clipping while the rest of the room stays cooler.",
+  "Rainy midday window light with subdued contrast, a slightly cool automatic white balance, and no warm practical light.",
+  "One ordinary warm wall sconce at dusk plus faint cool window spill; mixed white balance is visible but not stylized or teal-orange.",
+  "Nighttime household overhead light only, with realistic falloff, darker corners, and no cinematic fill or glowing product.",
+  "Late-afternoon light partly blocked by a neighboring building or tree, producing irregular bands that continue across product and room.",
+  "Bright overcast daylight from an open door with the window outside frame; exposure favors the room and allows one small bright boundary.",
+  "A single shaded table or wall lamp before sunrise, with muted warm light, weak ambient blue, and ordinary phone shadow noise.",
+  "Midday light through a practical roller shade, with uneven fabric transmission, soft edge falloff, and neutral auto white balance.",
+  "Recently switched-on vanity light mixed with residual daylight; imperfect household color temperatures remain instead of being professionally neutralized."
+] as const;
+
+export const affiliatePilotV4RoomHistoryRecipes = [
+  "A compact owner-occupied bathroom updated in stages: safe recent plumbing beside one retained older finish and small signs of ordinary use.",
+  "A modest rental bathroom with sound but not luxurious fixtures, painted trim, practical storage, and one reversible personal improvement.",
+  "A 1990s family bathroom selectively refreshed rather than gut-renovated, with believable cabinet depth and a little wear at high-touch edges.",
+  "A narrow city apartment bathroom whose layout solves real space constraints, with no showroom-scale clearances or oversized fixtures.",
+  "A small bungalow bathroom retaining one period detail while the wet-zone construction and plumbing are current and safe.",
+  "A townhouse guest bathroom that is clean but lightly used, with one mismatched household item and restrained decoration.",
+  "A busy shared bathroom after a quick tidy, with complete circulation and storage but not every textile or object perfectly aligned.",
+  "A practical basement or secondary bathroom improved by its owner, with honest ventilation, simple materials, and no luxury staging.",
+  "An older ensuite with accumulated furniture-like storage and repaired finishes, photographed as it actually exists rather than styled for sale.",
+  "A recently renovated ordinary bathroom already showing normal life: softened towels, a water mark or two, and slight variation in grout or paint sheen."
+] as const;
+
+export const affiliatePilotV4HumanTraceRecipes = [
+  "One hand towel hangs a little unevenly and a plain toothbrush cup has been set down slightly off square.",
+  "One drawer remains open by two or three inches and a folded washcloth is not perfectly aligned with the counter edge.",
+  "A bath mat sits slightly skewed after use and one plain pump bottle is turned away from the camera.",
+  "A robe or towel carries one natural compressed fold, while slippers point in different directions but remain fully supported.",
+  "A small damp patch darkens part of one towel and a plain soap bar shows one softened used edge.",
+  "A cabinet door is almost, but not completely, closed and one everyday grooming object rests where a person actually left it.",
+  "A drinking glass or ceramic cup sits near the sink with a faint water ring; nearby objects are spaced irregularly rather than decoratively.",
+  "A child's bath toy, step stool, contact case, or hair tie appears as one ordinary nondecorative interruption.",
+  "One towel has been refolded imperfectly and a low basket contains two unlike household items without label text.",
+  "The room is clean but not reset: one object is missing from an otherwise logical grouping and one textile edge is casually tucked."
+] as const;
+
+export const affiliatePilotV4MaterialRecipes = [
+  "Favor matte and honed surfaces: slight grout-value variation, tiny edge wear, nonuniform plaster absorption, and no blanket glossy coating.",
+  "Wood grain changes naturally from board to board, with believable end grain, joinery, and a faint high-touch sheen only where hands contact it.",
+  "Fabric shows irregular yarn thickness, cross-grain tension, unequal folds, localized compression, and no cloned fold waveform or procedural ribbing.",
+  "Stone is honed rather than mirror polished, with sparse nonrepeating veins that continue through perspective and never tile.",
+  "Glazed tile varies subtly in face and reflection while grout lines remain constructed, imperfectly toned, and geometrically coherent.",
+  "Painted trim and cabinetry have low-sheen brush or roller character with tiny high-touch wear, not uniformly perfect lacquer.",
+  "Metal keeps real roughness, fingerprints or water-softened highlights where plausible, and never becomes chrome unless the product requires chrome.",
+  "Towels and rugs have directional nap, compressed contact areas, irregular edges, and no identical repeating loops or fringe.",
+  "Older ceramic and enamel surfaces stay sound but show gentle use variation, small water spotting, and restrained nonuniform reflection.",
+  "Natural foliage varies leaf angle, scale, translucency, and minor blemish without repeating clusters, crystalline noise, or decorative cloning."
+] as const;
+
+export const affiliatePilotV4StyleVariationLanes = [
+  "Express the style mainly through architecture and joinery; keep the wall color quiet and avoid the style's most obvious signature color.",
+  "Express the style through two material choices and one textile, not through matched decor or literal themed wallpaper.",
+  "Let one retained older element carry the style while the remaining fixtures are ordinary, safe, and visually restrained.",
+  "Use a mostly neutral room with one off-palette household object; style coherence should come from proportion, texture, and editing.",
+  "Interpret the style as an achievable owner update in a rental or modest home, not as a luxury designer installation.",
+  "Mix one adjacent design influence into the style while preserving its core mood; avoid a catalog set assembled from matching pieces.",
+  "Use the style in floor, trim, or hardware decisions while allowing walls and towels to depart from the expected color formula.",
+  "Show a lived-in version of the style several years after installation, with gentle material aging and accumulated ordinary objects.",
+  "Use fewer style cues at larger scale rather than many small decorative props; leave some surfaces visually unresolved or plain.",
+  "Treat the style name as an atmosphere, not a checklist: one convincing room history matters more than literal color matching."
+] as const;
+
+export const affiliatePilotV4VisualQaRubric = {
+  minimumScorePerDimension: 3,
+  dimensions: [
+    "reads as a real iPhone household photograph",
+    "bathroom remains the subject and product feels incidental",
+    "lighting is plausible, specific, and distinct within the set",
+    "materials have nonrepeating roughness and believable wear",
+    "composition includes restrained human irregularity",
+    "style is legible without literal color or decor stereotypes",
+    "product identity and physical construction remain correct"
+  ],
+  hardRejects: [
+    "AI-stock or real-estate-listing polish",
+    "centered product-hero composition",
+    "reused product cutout or repeated textile drape",
+    "cloned folds, tiled grain, repeated veining, or procedural texture",
+    "uniform HDR, blanket gloss, or product-only lighting",
+    "symmetrically staged props or implausibly perfect room reset",
+    "pseudo-text, branding drift, impossible support, incomplete plumbing, or reflection errors"
+  ]
+} as const;
 
 export const affiliatePilotV4StyleProfiles = {
   "minimalist-elegance": {

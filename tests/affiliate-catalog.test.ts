@@ -529,7 +529,7 @@ test("the physical-photo v3 pilot defines six products, 66 assets, and scene-spe
   );
 });
 
-test("the v4 identity-locked pilot defines ten products, 670 unique assets, and every requested physical gate", () => {
+test("the v4 realism reset reuses reviewed identities and queues 600 varied room-first scenes", () => {
   const manifest = buildAffiliatePilotV4Manifest(
     affiliateApprovedCohortFixture()
   );
@@ -539,7 +539,9 @@ test("the v4 identity-locked pilot defines ten products, 670 unique assets, and 
   assert.equal(manifest.referenceRightsConfirmed, true);
   assert.equal(manifest.generationAuthorized, true);
   assert.equal(manifest.fullScaleAuthorized, false);
-  assert.equal(manifest.regenerateAllPilotAssets, true);
+  assert.equal(manifest.regenerateAllPilotAssets, false);
+  assert.equal(manifest.regenerateAllStyledAssets, true);
+  assert.equal(manifest.reuseReviewedIdentityAssets, true);
   assert.equal(manifest.requestedModel, "gpt-image-2");
   assert.equal(manifest.requestedQuality, "high");
   assert.equal(manifest.providerModelObserved, null);
@@ -551,8 +553,9 @@ test("the v4 identity-locked pilot defines ten products, 670 unique assets, and 
   assert.equal(manifest.presentationCount, 10);
   assert.equal(manifest.orthographicCount, 60);
   assert.equal(manifest.identityCount, 70);
+  assert.equal(manifest.reusedIdentityCount, 70);
   assert.equal(manifest.styledCount, 600);
-  assert.equal(manifest.generationRequestedCount, 670);
+  assert.equal(manifest.generationRequestedCount, 600);
   assert.equal(manifest.totalCount, 670);
   assert.equal(identity.length, 70);
   assert.equal(styled.length, 600);
@@ -561,15 +564,24 @@ test("the v4 identity-locked pilot defines ten products, 670 unique assets, and 
   assert.equal(new Set(manifest.jobs.map((job) => job.storageKey)).size, 670);
   assert.equal(new Set(manifest.jobs.map((job) => job.prompt)).size, 670);
   assert.equal(new Set(manifest.jobs.map((job) => job.promptSha256)).size, 670);
-  assert.ok(manifest.jobs.every((job) => job.status === "queued"));
+  assert.ok(identity.every((job) => job.status === "reused_reviewed"));
+  assert.ok(styled.every((job) => job.status === "queued"));
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-identity-physical-photo-v4" &&
-        job.generationVersion === "pilot-2026-07-27-run-04" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.1" &&
+        job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
   );
+  assert.equal(
+    manifest.realismReset.supersedesGenerationVersion,
+    "pilot-2026-07-27-run-04"
+  );
+  assert.equal(manifest.executionPolicy.providerAttemptBudgetPerAsset, 2);
+  assert.equal(manifest.executionPolicy.reusableProductCompositeAllowed, false);
+  assert.equal(manifest.executionPolicy.localPixelSurgeryAllowed, false);
+  assert.equal(manifest.visualQaRubric.minimumScorePerDimension, 3);
   assert.ok(
     manifest.products.every(
       (product) =>
@@ -589,7 +601,9 @@ test("the v4 identity-locked pilot defines ten products, 670 unique assets, and 
         job.prompt.includes("Countable-feature preflight:") &&
         job.prompt.includes("Hidden-geometry policy:") &&
         job.prompt.includes("Orientation continuity:") &&
-        job.prompt.includes("Final identity audit before rendering:")
+        job.prompt.includes("Final identity audit before rendering:") &&
+        job.requiresPromptCapture === false &&
+        job.reusedFromGenerationVersion === "pilot-2026-07-27-run-04"
     )
   );
   assert.ok(
@@ -598,15 +612,37 @@ test("the v4 identity-locked pilot defines ten products, 670 unique assets, and 
         job.referenceInputCount === 3 &&
         job.sceneId?.startsWith("v4-") &&
         job.primarySceneReferenceView &&
-        job.prompt.includes("North American electrical invariant:") &&
-        job.prompt.includes("Reflection invariant:") &&
-        job.prompt.includes("Secondary-label invariant:") &&
+        job.prompt.includes("Primary request: photograph a believable occupied home bathroom") &&
+        job.prompt.includes("iPhone capture:") &&
+        job.prompt.includes("Room history:") &&
+        job.prompt.includes("Human trace:") &&
+        job.prompt.includes("Material behavior:") &&
+        job.prompt.includes("Style variation lane:") &&
+        job.prompt.includes("Anti-stock invariant:") &&
         job.prompt.includes("Set-variety invariant:") &&
-        job.prompt.includes("seven-tile V4 identity atlas") &&
-        job.prompt.includes("Final pre-render physical audit:")
+        job.prompt.includes("Input image roles:") &&
+        job.prompt.includes("Reusing or compositing a product cutout") &&
+        job.providerAttemptBudget === 2 &&
+        job.reusableProductCompositeAllowed === false &&
+        job.localPixelSurgeryAllowed === false &&
+        job.localCropPolicy === "not_allowed"
     )
   );
   assert.equal(new Set(styled.map((job) => job.sceneId)).size, 600);
+  const fiveSceneSets = Map.groupBy(
+    styled,
+    (job) => `${job.asin}:${job.styleSlug}`
+  );
+  assert.equal(fiveSceneSets.size, 120);
+  fiveSceneSets.forEach((jobs) => {
+    assert.equal(jobs.length, 5);
+    assert.equal(new Set(jobs.map((job) => job.cameraRecipe)).size, 5);
+    assert.equal(new Set(jobs.map((job) => job.lightingRecipe)).size, 5);
+    assert.equal(new Set(jobs.map((job) => job.roomHistoryRecipe)).size, 5);
+    assert.equal(new Set(jobs.map((job) => job.humanTraceRecipe)).size, 5);
+    assert.equal(new Set(jobs.map((job) => job.materialRecipe)).size, 5);
+    assert.equal(new Set(jobs.map((job) => job.styleVariationLane)).size, 5);
+  });
   assert.doesNotMatch(
     JSON.stringify(manifest),
     /\/private\/tmp|project-pint-affiliate-pilot-v4-refs/
@@ -619,7 +655,7 @@ test("the v4 identity-locked pilot defines ten products, 670 unique assets, and 
       job.slot === 4
   )!;
   assert.match(oxo.prompt, /short, nearly horizontal forward spout/i);
-  assert.match(oxo.prompt, /NEMA 5-15R duplex GFCI/);
+  assert.match(oxo.prompt, /product merely happens to be present/i);
 
   const curtain = styled.find(
     (job) =>
@@ -628,7 +664,23 @@ test("the v4 identity-locked pilot defines ten products, 670 unique assets, and 
       job.slot === 1
   )!;
   assert.match(curtain.prompt, /exactly twelve separate hooks/);
-  assert.match(curtain.prompt, /no top band/i);
+  assert.match(curtain.prompt, /no separate top band/i);
+  assert.match(curtain.prompt, /do not reuse a drape, fold silhouette, or product cutout/i);
+  assert.equal(
+    curtain.generationStrategy,
+    "fresh_scene_specific_textile_full_header"
+  );
+  const curtainClose = styled.find(
+    (job) =>
+      job.asin === "B0D2KK6MNS" &&
+      job.styleSlug === "coastal-calm" &&
+      job.slot === 2
+  )!;
+  assert.match(curtainClose.prompt, /entire countable header outside/i);
+  assert.equal(
+    curtainClose.generationStrategy,
+    "fresh_scene_specific_textile_hidden_header"
+  );
 
   const bench = styled.find(
     (job) =>
