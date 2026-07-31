@@ -574,7 +574,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.20" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.21" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -705,6 +705,11 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(
     manifest.executionPolicy.textileRoomPlatePracticalLightingPolicy,
     "hardwired_fixture_outside_wet_zone_with_no_visible_supply_hardware"
+  );
+  assert.equal(
+    manifest.executionPolicy
+      .textileRoomPlateCameraVolumeMustMatchFinalPlacement,
+    true
   );
   assert.equal(
     manifest.executionPolicy.providerNativeRoomPlateCorrectionAllowed,
@@ -934,6 +939,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(curtain.nativeHeaderAuditEditPrompt, null);
   assert.equal(curtain.finalizationEditGenerationCount, 0);
   assert.match(curtain.roomPlateSupportPrompt!, /room-only iPhone plate/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /reachable dry-floor camera position outside the tub/i);
   assert.match(curtain.roomPlateSupportPrompt!, /below the would-be suspension line/i);
   assert.match(curtain.roomPlateSupportPrompt!, /complete rectangular shower opening.+hard rejection/i);
   assert.match(curtain.roomPlateSupportPrompt!, /full shower lintel, soffit, ceiling band/i);
@@ -1013,6 +1019,25 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(
     curtainClose.identityReferenceCropPolicy,
     "not_applicable"
+  );
+
+  const curtainReverse = styled.find(
+    (job) =>
+      job.asin === "B0D2KK6MNS" &&
+      job.styleSlug === "coastal-calm" &&
+      job.slot === 4
+  )!;
+  assert.match(
+    curtainReverse.roomPlateSupportPrompt!,
+    /camera position inside an open, completely dry tub volume/i
+  );
+  assert.match(
+    curtainReverse.roomPlateSupportPrompt!,
+    /look obliquely toward the room and reverse side of the future curtain/i
+  );
+  assert.doesNotMatch(
+    curtainReverse.roomPlateSupportPrompt!,
+    /reachable dry-floor camera position outside the tub/i
   );
 
   const patternedCurtain = styled.find(

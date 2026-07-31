@@ -391,6 +391,10 @@ function buildTextileRoomPlatePrompt(
   materialRecipe: string,
   styleVariationLane: string
 ): string {
+  const cameraVolumeContract =
+    slot === 4
+      ? "Preserve loose phone framing, mild convergence or roll, and a physically reachable camera position inside an open, completely dry tub volume. The camera must look obliquely toward the room and reverse side of the future curtain, with a plausible tub rim and one shower-interior edge; do not move the camera onto the bathroom floor or doorway."
+      : "Preserve loose phone framing, mild convergence or roll, and a reachable dry-floor camera position outside the tub.";
   return [
     "Use case: create-image.",
     "Asset type: internal one-use room-only iPhone plate for a Project Pint bathroom scene, not a final product image.",
@@ -402,7 +406,7 @@ function buildTextileRoomPlatePrompt(
     "Electrical safety gate: omit every outlet, receptacle, switch, wall plate, cord, charger, plug, power strip, hair tool, and portable electrical device from the frame unless this manifest scene explicitly requires a code-safe U.S. GFCI installation. A fixed lighting recipe may use only a code-safe hardwired wall or ceiling fixture outside the wet zone, with no visible cord, plug, junction, supply hardware, or ambiguous wall plate. Never generate a standard duplex receptacle in a bathroom wet-area composition.",
     `Room history: ${roomHistoryRecipe}`,
     `iPhone capture: ${cameraRecipe}`,
-    `Composition: ${SLOT_COMPOSITION_INTENTS[slot - 1]} Preserve loose phone framing, mild convergence or roll, and a reachable dry-floor camera position. Do not make a centered front elevation, corrected real-estate photograph, catalog angle, or symmetrical room.`,
+    `Composition: ${SLOT_COMPOSITION_INTENTS[slot - 1]} ${cameraVolumeContract} Do not make a centered front elevation, corrected real-estate photograph, catalog angle, or symmetrical room.`,
     `Available light: ${lightingRecipe}`,
     `Exact human-trace ceiling: ${humanTraceRecipe} Show only the movable human traces explicitly named in this sentence. Do not invent any additional sign of use, storage item, toiletry, towel, container, cleaning product, or decorative object. Fixed wear, repair, grout variation, scuffs, and nonuniform paint may supply age without increasing the object count. Place every named trace outside the reserved shower insertion corridor.`,
     `Material behavior: ${materialRecipe}`,
