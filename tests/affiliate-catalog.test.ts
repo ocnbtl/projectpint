@@ -574,7 +574,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.19" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.20" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -701,6 +701,10 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(
     manifest.executionPolicy.textileRoomPlateElectricalDevicePolicy,
     "omit_unless_manifest_explicitly_requires_code_safe_gfci"
+  );
+  assert.equal(
+    manifest.executionPolicy.textileRoomPlatePracticalLightingPolicy,
+    "hardwired_fixture_outside_wet_zone_with_no_visible_supply_hardware"
   );
   assert.equal(
     manifest.executionPolicy.providerNativeRoomPlateCorrectionAllowed,
@@ -833,6 +837,13 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     )
   );
   assert.equal(new Set(styled.map((job) => job.sceneId)).size, 600);
+  assert.ok(
+    styled.every(
+      (job) =>
+        !/table lamp/i.test(job.lightingRecipe) &&
+        !/Natural foliage varies leaf angle/i.test(job.materialRecipe)
+    )
+  );
   const fiveSceneSets = Map.groupBy(
     styled,
     (job) => `${job.asin}:${job.styleSlug}`
@@ -911,6 +922,10 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     curtain.roomPlateCorrectionPrompt!,
     /featured .+ remains completely absent/i
   );
+  assert.match(
+    curtain.roomPlateCorrectionPrompt!,
+    /fixed light.+code-safe hardwired wall or ceiling fixture outside the wet zone/i
+  );
   assert.equal(curtain.providerNativeRoomPlateEditRequired, true);
   assert.equal(curtain.nativeHeaderAuditEditRequired, false);
   assert.equal(curtain.nativeHeaderAuditEditInputCount, 0);
@@ -925,6 +940,10 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(curtain.roomPlateSupportPrompt!, /continuous empty vertical corridor/i);
   assert.match(curtain.roomPlateSupportPrompt!, /no more than eight percent of total frame area/i);
   assert.match(curtain.roomPlateSupportPrompt!, /omit every outlet, receptacle, switch, wall plate/i);
+  assert.match(
+    curtain.roomPlateSupportPrompt!,
+    /fixed lighting recipe may use only a code-safe hardwired wall or ceiling fixture outside the wet zone/i
+  );
   assert.match(curtain.roomPlateSupportPrompt!, /every named trace outside the reserved shower insertion corridor/i);
   assert.match(curtain.roomPlateSupportPrompt!, /Exact human-trace ceiling/i);
   assert.match(curtain.roomPlateSupportPrompt!, /Do not invent any additional sign of use/i);
