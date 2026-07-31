@@ -213,7 +213,7 @@ type AffiliatePilotV4StyledJob = {
   promptSha256: string;
   postprocess: "none";
   status: "queued";
-  referenceInputCount: 3;
+  referenceInputCount: 3 | 4 | 5;
   referencePlan: string;
   requiresPromptCapture: true;
   requestedModel: typeof AFFILIATE_PILOT_V4_REQUESTED_MODEL;
@@ -230,12 +230,17 @@ type AffiliatePilotV4StyledJob = {
   styleVariationLane: string;
   generationStrategy:
     | "direct_identity_locked_room_first"
-    | "fresh_scene_specific_textile_full_header"
-    | "fresh_scene_specific_textile_hidden_header";
+    | "exact_source_locked_textile_full_header"
+    | "exact_source_locked_textile_hidden_header";
   providerAttemptBudget: number;
   reusableProductCompositeAllowed: false;
   localPixelSurgeryAllowed: false;
   localCropPolicy: "not_allowed";
+  exactProductMaterialReferenceRequired: boolean;
+  exactProductHeaderReferenceRequired: boolean;
+  sourceReferenceCropPolicy:
+    | "not_applicable"
+    | "recorded_crop_to_exclude_listing_overlay_only";
 };
 
 export type AffiliatePilotV4Job =
@@ -264,8 +269,12 @@ function generationStrategyFor(
     return "direct_identity_locked_room_first";
   }
   return slot === 1 || slot === 3
-    ? "fresh_scene_specific_textile_full_header"
-    : "fresh_scene_specific_textile_hidden_header";
+    ? "exact_source_locked_textile_full_header"
+    : "exact_source_locked_textile_hidden_header";
+}
+
+function isTextileRole(role: AffiliatePilotV4ProductRole): boolean {
+  return role === "solid-shower-curtain" || role === "patterned-shower-curtain";
 }
 
 function incidentalFramingFor(role: AffiliatePilotV4ProductRole): string {
@@ -357,6 +366,10 @@ function buildStyledPrompt(
   materialRecipe: string;
   styleVariationLane: string;
   generationStrategy: AffiliatePilotV4StyledJob["generationStrategy"];
+  referenceInputCount: AffiliatePilotV4StyledJob["referenceInputCount"];
+  referencePlan: string;
+  textileRole: boolean;
+  fullHeaderTextile: boolean;
 } {
   const profile =
     affiliatePilotV4StyleProfiles[
@@ -409,6 +422,15 @@ function buildStyledPrompt(
     selection.productRole,
     slot
   );
+  const textileRole = isTextileRole(selection.productRole);
+  const fullHeaderTextile = textileRole && (slot === 1 || slot === 3);
+  const referenceInputCount = fullHeaderTextile ? 5 : textileRole ? 4 : 3;
+  const referencePlan = textileRole
+    ? `Use the reviewed seven-view identity atlas, the scene-selected orthographic identity view, the reviewed canonical presentation anchor, and one reviewed exact-product listing material detail.${fullHeaderTextile ? " Also use one reviewed exact-product listing header-construction image." : ""}`
+    : "Use the reviewed seven-view identity atlas, the scene-selected orthographic identity view, and the reviewed canonical presentation anchor.";
+  const inputImageRoles = textileRole
+    ? `Input image roles: Image 1 is the reviewed seven-view identity atlas. Image 2 is the reviewed ${primarySceneReferenceView} identity view for this camera. Image 3 is the reviewed presentation anchor. Image 4 is a reviewed exact-product listing crop for weave, color, thickness, and surface roughness only; ignore any listing layout or excluded overlay. ${fullHeaderTextile ? "Image 5 is a reviewed exact-product listing image for grommet, hook, and header construction only." : "The complete countable header remains outside the final frame."} Use Images 1-3 only for stable product identity, and Images 4${fullHeaderTextile ? "-5" : ""} to correct synthetic textile behavior. Do not copy any reference backdrop, room, display pose, lighting, or existing fold silhouette into the bathroom.`
+    : `Input image roles: Image 1 is the reviewed seven-view identity atlas. Image 2 is the reviewed ${primarySceneReferenceView} identity view for this camera. Image 3 is the reviewed presentation anchor. Use them only for product identity; do not copy their backdrop, atlas layout, display pose, chroma color, lighting, or prior fabric drape into the room.`;
   const qaFocus = [
     "Realism: score at least 3/4 for iPhone plausibility, incidental-product framing, nonrepeating materials, human irregularity, nonliteral style interpretation, and set-level light/room variety.",
     "Hard reject: AI-stock polish, centered hero framing, repeated product cutout or textile drape, procedural texture, blanket gloss, showroom staging, uniform HDR, or symmetric prop layout.",
@@ -427,6 +449,10 @@ function buildStyledPrompt(
     materialRecipe,
     styleVariationLane,
     generationStrategy,
+    referenceInputCount,
+    referencePlan,
+    textileRole,
+    fullHeaderTextile,
     qaFocus,
     prompt: [
       PHYSICAL_PHOTO_CONTRACT,
@@ -448,7 +474,7 @@ function buildStyledPrompt(
       `Product placement invariant: ${selection.placementInvariant}`,
       `Scene-specific product placement: ${placement}`,
       `Reflection and door plan: ${shot.reflectionPlan}`,
-      `Input image roles: Image 1 is the reviewed seven-view identity atlas. Image 2 is the reviewed ${primarySceneReferenceView} identity view for this camera. Image 3 is the reviewed presentation anchor. Use them only for product identity; do not copy their backdrop, atlas layout, display pose, chroma color, lighting, or prior fabric drape into the room.`,
+      inputImageRoles,
       `Generation strategy: ${generationStrategy}. Generate this scene's product state natively inside this room. Reusing or compositing a product cutout, fold silhouette, textile map, or prior accepted scene is forbidden.`,
       `Scene-specific QA target: ${qaFocus}`,
       "Final audit: first ask whether this could be mistaken for an ordinary person's good iPhone bathroom photo. Then check product identity, scale, support, visible construction, reflections, material repetition, exposure integration, text, and whether any object or styling looks too perfectly arranged.",
@@ -534,7 +560,11 @@ export function buildAffiliatePilotV4Manifest(
           humanTraceRecipe,
           materialRecipe,
           styleVariationLane,
-          generationStrategy
+          generationStrategy,
+          referenceInputCount,
+          referencePlan,
+          textileRole,
+          fullHeaderTextile
         } = buildStyledPrompt(product, selection, style, slot);
         jobs.push({
           id: `${product.id}:${style.slug}:${slot}`,
@@ -551,9 +581,8 @@ export function buildAffiliatePilotV4Manifest(
           promptSha256: sha256(prompt),
           postprocess: "none",
           status: "queued",
-          referenceInputCount: 3,
-          referencePlan:
-            "Use the reviewed seven-view identity atlas, the scene-selected orthographic identity view, and the reviewed canonical presentation anchor.",
+          referenceInputCount,
+          referencePlan,
           requiresPromptCapture: true,
           requestedModel: AFFILIATE_PILOT_V4_REQUESTED_MODEL,
           requestedQuality: AFFILIATE_PILOT_V4_REQUESTED_QUALITY,
@@ -572,7 +601,12 @@ export function buildAffiliatePilotV4Manifest(
             affiliatePilotV4ExecutionPolicy.providerAttemptBudgetPerAsset,
           reusableProductCompositeAllowed: false,
           localPixelSurgeryAllowed: false,
-          localCropPolicy: "not_allowed"
+          localCropPolicy: "not_allowed",
+          exactProductMaterialReferenceRequired: textileRole,
+          exactProductHeaderReferenceRequired: fullHeaderTextile,
+          sourceReferenceCropPolicy: textileRole
+            ? "recorded_crop_to_exclude_listing_overlay_only"
+            : "not_applicable"
         });
       }
     });

@@ -24,15 +24,19 @@ Owner and full-set review found four systemic problems:
 - Reject AI-stock polish, centered hero framing, symmetric prop layouts, uniform HDR, blanket gloss, procedural texture, and showroom cleanliness.
 - Never reuse or composite a product cutout, textile silhouette, fold map, or prior accepted scene.
 - Never use local pixel surgery, seam cloning, texture normalization, product relighting, or pseudo-text patching.
-- Allow at most two provider attempts per asset and twelve provider attempts per five-scene set.
+- Allow at most two provider attempts per asset and prompt/reference strategy, and twelve provider attempts per five-scene set. An asset budget resets only after a logged root strategy revision.
 - After three failures with the same cause, stop the set and revise the root prompt or generation strategy before making another image.
 - Review every image at full size, then review the five-scene contact sheet before advancing.
 
 ## Curtain-specific correction
 
-Full-header slots 1 and 3 must be newly generated drapes with twelve independent suspension points and twelve one-to-one hooks. Their fold peaks, troughs, wrinkle paths, opening amount, and hem wave must differ.
+The first two prompt-only proof retries failed with the same inherited defect: the generated curtain identity pack encouraged satin-like tubular folds, while the visible header lost the exact twelve-point construction. More final-scene retries are prohibited until the reference strategy changes.
 
-Slots 2, 4, and 5 keep the entire countable header outside the frame before the first hook. They still require a fresh scene-specific gravity drape, real side thickness, irregular yarn behavior, cross-grain tension, and one weighted hem. No prior curtain source may be reused.
+Every textile scene now adds one human-reviewed exact-product listing material detail. It governs weave, color, thickness, and surface roughness but never supplies a reusable fold map or room. Full-header slots 1 and 3 also add one reviewed exact-product header-construction image and must generate a native new drape with twelve independent suspension points and twelve one-to-one hooks. Their fold peaks, troughs, wrinkle paths, opening amount, and hem wave must differ.
+
+Slots 2, 4, and 5 keep the entire countable header outside the frame before the first hook. They still require a fresh scene-specific gravity drape, real side thickness, irregular yarn behavior, cross-grain tension, and one weighted hem. No prior generated curtain source may be reused.
+
+A source-reference crop is allowed only to remove listing text, icons, or callout layout that lies outside the material or construction evidence. The original source, URL, crop bounds, and before/after hashes must be preserved in the private execution evidence. This exception never permits cropping, retouching, relighting, compositing, or local pixel repair of a final scene.
 
 ## Visual acceptance rubric
 

@@ -569,7 +569,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.1" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.2" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -579,6 +579,11 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     "pilot-2026-07-27-run-04"
   );
   assert.equal(manifest.executionPolicy.providerAttemptBudgetPerAsset, 2);
+  assert.equal(
+    manifest.executionPolicy
+      .providerAttemptBudgetResetsOnlyAfterLoggedRootStrategyRevision,
+    true
+  );
   assert.equal(manifest.executionPolicy.reusableProductCompositeAllowed, false);
   assert.equal(manifest.executionPolicy.localPixelSurgeryAllowed, false);
   assert.equal(manifest.visualQaRubric.minimumScorePerDimension, 3);
@@ -609,7 +614,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     styled.every(
       (job) =>
-        job.referenceInputCount === 3 &&
+        [3, 4, 5].includes(job.referenceInputCount) &&
         job.sceneId?.startsWith("v4-") &&
         job.primarySceneReferenceView &&
         job.prompt.includes("Primary request: photograph a believable occupied home bathroom") &&
@@ -625,7 +630,11 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
         job.providerAttemptBudget === 2 &&
         job.reusableProductCompositeAllowed === false &&
         job.localPixelSurgeryAllowed === false &&
-        job.localCropPolicy === "not_allowed"
+        job.localCropPolicy === "not_allowed" &&
+        (job.referenceInputCount === 3
+          ? job.sourceReferenceCropPolicy === "not_applicable"
+          : job.sourceReferenceCropPolicy ===
+            "recorded_crop_to_exclude_listing_overlay_only")
     )
   );
   assert.equal(new Set(styled.map((job) => job.sceneId)).size, 600);
@@ -668,8 +677,13 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(curtain.prompt, /do not reuse a drape, fold silhouette, or product cutout/i);
   assert.equal(
     curtain.generationStrategy,
-    "fresh_scene_specific_textile_full_header"
+    "exact_source_locked_textile_full_header"
   );
+  assert.equal(curtain.referenceInputCount, 5);
+  assert.equal(curtain.exactProductMaterialReferenceRequired, true);
+  assert.equal(curtain.exactProductHeaderReferenceRequired, true);
+  assert.match(curtain.prompt, /exact-product listing crop/i);
+  assert.match(curtain.prompt, /grommet, hook, and header construction/i);
   const curtainClose = styled.find(
     (job) =>
       job.asin === "B0D2KK6MNS" &&
@@ -679,8 +693,11 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(curtainClose.prompt, /entire countable header outside/i);
   assert.equal(
     curtainClose.generationStrategy,
-    "fresh_scene_specific_textile_hidden_header"
+    "exact_source_locked_textile_hidden_header"
   );
+  assert.equal(curtainClose.referenceInputCount, 4);
+  assert.equal(curtainClose.exactProductMaterialReferenceRequired, true);
+  assert.equal(curtainClose.exactProductHeaderReferenceRequired, false);
 
   const bench = styled.find(
     (job) =>

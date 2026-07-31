@@ -87,7 +87,11 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
     asin: "B0D2KK6MNS",
     homeStyleSlug: "boho-earth-tones",
     productRole: "solid-shower-curtain",
-    referenceSourceUrls: ["https://www.amazon.com/dp/B0D2KK6MNS"],
+    referenceSourceUrls: [
+      "https://www.amazon.com/dp/B0D2KK6MNS",
+      "https://www.noon.com/uae-en/koufall-boho-shower-curtain-terracotta-rust-colored-linen-fabric-cloth-waterproof-western-bohemian-shower-curtain-set-with-hooks-for-bathroom-decor/Z3CFB7955B4AC6ACDA0EEZ/p/",
+      "https://www.ebay.com/itm/147181131187"
+    ],
     privateReferenceCount: 1,
     identityPrompt:
       "Exactly one 72-by-72-inch full-length solid muted terracotta-rust linen-blend shower curtain. It has a subtle irregular woven texture, exactly twelve reinforced top openings, plain side seams, and one plain weighted bottom hem. It has no separate top band. When hung, use exactly twelve separate simple silver hooks on one straight wall-mounted rod, tiny natural sags between suspension points, unequal fold widths and depths, cross-grain wrinkles, and changing fold amplitude from top to hem. Never convert the folds into repeated tubes or fractals and never add a pattern, stripe, border, ruffle, tassel, fringe, tieback, embroidery, ombre, valance, extra panel, or alternate color.",
@@ -305,7 +309,7 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
 ] as const;
 
 export const affiliatePilotV4RealismReset = {
-  contractVersion: "affiliate-pilot-real-bathroom-v4.1",
+  contractVersion: "affiliate-pilot-real-bathroom-v4.2",
   supersedesPromptVersion: "affiliate-pilot-identity-physical-photo-v4",
   supersedesGenerationVersion: "pilot-2026-07-27-run-04",
   resetAuthorizedAt: "2026-07-31T05:00:00-04:00",
@@ -313,11 +317,14 @@ export const affiliatePilotV4RealismReset = {
   preserveReviewedIdentityAssets: true,
   preserveSupersededEvidence: true,
   reason:
-    "Owner review found AI-stock polish, repeated lighting and room formulas, literal style stereotypes, procedural material texture, repeated curtain folds, and an unsustainable retry/compositing rate."
+    "Owner review found AI-stock polish, repeated lighting and room formulas, literal style stereotypes, procedural material texture, repeated curtain folds, and an unsustainable retry/compositing rate.",
+  rootCauseRevision:
+    "Two prompt-only proof retries showed that the generated curtain identity views propagated synthetic tubular folds and incorrect header counts. Textile scenes now require reviewed exact-product listing evidence for material and, when visible, header construction."
 } as const;
 
 export const affiliatePilotV4ExecutionPolicy = {
   providerAttemptBudgetPerAsset: 2,
+  providerAttemptBudgetResetsOnlyAfterLoggedRootStrategyRevision: true,
   providerAttemptBudgetPerFiveSceneSet: 12,
   systemicFailureThreshold: 3,
   reusableProductCompositeAllowed: false,
@@ -325,7 +332,11 @@ export const affiliatePilotV4ExecutionPolicy = {
   localCropAllowedOnlyWhenManifestExplicitlyAuthorizesIt: true,
   contactSheetGateRequiredBeforeNextSet: true,
   directProviderFinalPreferred: true,
-  rootCauseRevisionRequiredAfterSystemicFailure: true
+  rootCauseRevisionRequiredAfterSystemicFailure: true,
+  exactProductSourceReferenceRequiredForTextiles: true,
+  sourceReferenceCropAllowedForOverlayExclusionOnly: true,
+  sourceReferenceCropMustBeLogged: true,
+  maxReferenceInputsForTextiles: 5
 } as const;
 
 export const affiliatePilotV4CameraRecipes = [
