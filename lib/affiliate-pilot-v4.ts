@@ -233,7 +233,7 @@ type AffiliatePilotV4StyledJob = {
   styleVariationLane: string;
   generationStrategy:
     | "direct_identity_locked_room_first"
-    | "two_support_textile_header_and_body_full_header"
+    | "room_plate_edit_two_support_textile_full_header"
     | "two_stage_one_use_textile_body_hidden_header";
   providerAttemptBudget: number;
   reusableProductCompositeAllowed: false;
@@ -258,7 +258,14 @@ type AffiliatePilotV4StyledJob = {
   headerSupportReferenceInputCount: 0 | 3;
   headerSupportReferencePrompt: string | null;
   headerSupportReferencePromptSha256: string | null;
-  supportReferenceGenerationCount: 0 | 1 | 2;
+  roomPlateSupportRequired: boolean;
+  roomPlateSupportInputCount: 0;
+  roomPlateSupportPrompt: string | null;
+  roomPlateSupportPromptSha256: string | null;
+  roomPlateProviderAttemptBudget: number;
+  roomPlateReuseAllowed: false;
+  providerNativeRoomPlateEditRequired: boolean;
+  supportReferenceGenerationCount: 0 | 1 | 3;
   supportReferenceCropPolicy:
     | "not_applicable"
     | "recorded_role_isolation_crops_required";
@@ -290,7 +297,7 @@ function generationStrategyFor(
     return "direct_identity_locked_room_first";
   }
   return slot === 1 || slot === 3
-    ? "two_support_textile_header_and_body_full_header"
+    ? "room_plate_edit_two_support_textile_full_header"
     : "two_stage_one_use_textile_body_hidden_header";
 }
 
@@ -345,6 +352,46 @@ function buildTextileHeaderSupportPrompt(
     "Input roles: Image 1 is the reviewed front identity view for exact product color, twelve-opening count, and top-edge identity only; body fold rhythm is irrelevant. Image 2 is a reviewed exact-product listing material/detail crop for color, weave or print behavior, and thickness. Image 3 is the reviewed exact-product header-construction crop for hook/grommet relationship only; its partial visible count does not govern the required total.",
     "Composition: isolated header construction reference only, no bathroom, no tub, no props, no text, no labels, no watermark, no person, and no dramatic product lighting. A recorded crop will exclude the body below the header before final-scene use.",
     "Output: one high-quality 1024x1536 portrait PNG-ready reference."
+  ].join("\n");
+}
+
+function buildTextileRoomPlatePrompt(
+  product: AffiliateProduct,
+  style: (typeof inspirationStyles)[number],
+  profile: {
+    readonly palette: string;
+    readonly architecture: string;
+    readonly livedIn: string;
+  },
+  sceneId: string,
+  slot: number,
+  cameraRecipe: string,
+  lightingRecipe: string,
+  roomHistoryRecipe: string,
+  humanTraceRecipe: string,
+  materialRecipe: string,
+  styleVariationLane: string
+): string {
+  return [
+    "Use case: create-image.",
+    "Asset type: internal one-use room-only iPhone plate for a Project Pint bathroom scene, not a final product image.",
+    `Scene-specific room plate identity: ${sceneId}. This plate may be used only by this scene and must never be reused or locally composited.`,
+    "Primary request: photograph a believable occupied home bathroom before its shower curtain is hung. The room, its ordinary use, and its imperfect phone capture are the subject.",
+    `The featured ${product.name} by ${product.brand} must be completely absent. Include no shower curtain, liner, textile crossing the shower opening, loose hook, ring, packaging, label, logo, or readable or pseudo-text.`,
+    "Installation zone: show one complete functional tub or shower with one bare straight wall-mounted rod and both simple mounts visible. The bare opening must be physically unobstructed and large enough to receive the curtain later. Put the shower zone off center and generally within 25-45 percent of the frame width; room architecture, circulation, an imperfect foreground edge, and ordinary household use must remain more visually important.",
+    `Room history: ${roomHistoryRecipe}`,
+    `iPhone capture: ${cameraRecipe}`,
+    `Composition: ${SLOT_COMPOSITION_INTENTS[slot - 1]} Preserve loose phone framing, mild convergence or roll, and a reachable dry-floor camera position. Do not make a centered front elevation, corrected real-estate photograph, catalog angle, or symmetrical room.`,
+    `Available light: ${lightingRecipe}`,
+    `Human trace: ${humanTraceRecipe} Add at least two other independent practical signs of use or age, chosen for this physical room rather than as decor. Leave surfaces partly occupied and spacing irregular.`,
+    `Material behavior: ${materialRecipe}`,
+    `Style direction: ${style.name}. ${style.description}`,
+    `Style reference, not a checklist: ${profile.palette}. ${profile.architecture}.`,
+    `Style variation lane: ${styleVariationLane}`,
+    `Optional style vocabulary: use at most one practical item from this list, only if the room needs it: ${profile.livedIn}. Never assemble a coordinated plant-art-rug, basket-tray, or matching-textile vignette.`,
+    "Physical audit: visible plumbing, tub or shower edges, doors, storage, supports, outlets, switches, reflections, and circulation must be complete and coherent. Prefer matte, worn, directionally textured, and nonrepeating surfaces. No blanket gloss, tiled veins, repeated wood grain, procedural grout, impossible reflections, floating objects, or malformed fixtures.",
+    "Plate-lock purpose: a later provider-native edit will add the reviewed curtain only inside the empty shower opening. Make the room photograph strong enough to preserve unchanged; do not reserve a blank product-photography backdrop or light the empty rod as a hero.",
+    "Output: one high-quality 1024x1536 portrait room-only image in a 2:3 frame."
   ].join("\n");
 }
 
@@ -444,6 +491,7 @@ function buildStyledPrompt(
   hiddenHeaderTextile: boolean;
   supportReferencePrompt: string | null;
   headerSupportReferencePrompt: string | null;
+  roomPlateSupportPrompt: string | null;
 } {
   const profile =
     affiliatePilotV4StyleProfiles[
@@ -514,14 +562,29 @@ function buildStyledPrompt(
   const headerSupportReferencePrompt = fullHeaderTextile
     ? buildTextileHeaderSupportPrompt(product, selection, sceneId)
     : null;
+  const roomPlateSupportPrompt = fullHeaderTextile
+    ? buildTextileRoomPlatePrompt(
+        product,
+        style,
+        profile,
+        sceneId,
+        slot,
+        cameraRecipe,
+        lightingRecipe,
+        roomHistoryRecipe,
+        humanTraceRecipe,
+        materialRecipe,
+        styleVariationLane
+      )
+    : null;
   const referenceInputCount = 3;
   const referencePlan = fullHeaderTextile
-    ? "Use this job's reviewed one-use twelve-point header-count scaffold crop, its separate reviewed one-use body-and-hem support crop, and one reviewed exact-product listing material/detail crop."
+    ? "Use this job's reviewed one-use room-only iPhone plate as the locked edit base, its reviewed one-use twelve-point header-count scaffold crop, and its separate reviewed one-use body-and-hem support crop."
     : hiddenHeaderTextile
       ? "Use this job's reviewed one-use scene-specific body-and-hem support reference, a recorded crop of the scene-selected identity view that excludes all invisible header geometry, and one reviewed exact-product listing material/detail crop."
     : "Use the reviewed seven-view identity atlas, the scene-selected orthographic identity view, and the reviewed canonical presentation anchor.";
   const inputImageRoles = fullHeaderTextile
-    ? "Input image roles: Image 1 is the reviewed one-use header-count scaffold crop for the complete straight rod, both mounts, and exactly twelve one-to-one hooks/openings only; its body is excluded. Image 2 is the separate reviewed one-use body-and-hem support crop for fresh fold masses, seams, cross-grain tension, and weighted hem only; its top edge is excluded. Image 3 is the reviewed exact-product listing material/detail crop for weave or print behavior, color, thickness, and surface roughness. Reconcile these roles into one native curtain inside the room. Do not paste, composite, relight, or reuse either support."
+    ? "Input image roles: Image 1 is the reviewed one-use room-only iPhone plate and the locked photographic base. Preserve its camera position, framing, room geometry, light direction, exposure, objects, wear, and irregularity. Image 2 is the reviewed one-use header-count scaffold crop for the complete straight rod, both mounts, and exactly twelve one-to-one hooks/openings only; its body is excluded. Image 3 is the separate reviewed one-use body-and-hem support crop for exact-product material, fresh fold masses, seams, cross-grain tension, and weighted hem only; its top edge is excluded. Use a provider-native edit to add one coherent curtain only inside the empty shower opening. Do not redesign, restage, widen, clean, relight, or recrop the room, and do not paste or locally composite either support."
     : hiddenHeaderTextile
       ? "Input image roles: Image 1 is the reviewed one-use scene-specific body-and-hem drape support generated only for this job; use its fresh gravity state but do not paste or composite it. Image 2 is a recorded crop of the scene-selected identity view with all header geometry removed; use it only for side seam, thickness, color, print identity when applicable, and weighted hem, never its old fold rhythm. Image 3 is the reviewed exact-product listing material/detail crop for weave or print behavior, color, thickness, and surface roughness. Generate the bathroom and curtain natively. The rod, hooks, openings, and top edge remain outside frame."
     : `Input image roles: Image 1 is the reviewed seven-view identity atlas. Image 2 is the reviewed ${primarySceneReferenceView} identity view for this camera. Image 3 is the reviewed presentation anchor. Use them only for product identity; do not copy their backdrop, atlas layout, display pose, chroma color, lighting, or prior fabric drape into the room.`;
@@ -550,6 +613,7 @@ function buildStyledPrompt(
     hiddenHeaderTextile,
     supportReferencePrompt,
     headerSupportReferencePrompt,
+    roomPlateSupportPrompt,
     qaFocus,
     prompt: [
       PHYSICAL_PHOTO_CONTRACT,
@@ -572,7 +636,7 @@ function buildStyledPrompt(
       `Scene-specific product placement: ${placement}`,
       `Reflection and door plan: ${shot.reflectionPlan}`,
       inputImageRoles,
-      `Generation strategy: ${generationStrategy}. Generate this scene's product state natively inside this room. Reusing or compositing a product cutout, fold silhouette, textile map, or prior accepted scene is forbidden.`,
+      `Generation strategy: ${generationStrategy}. ${fullHeaderTextile ? "Edit the reviewed room plate natively and alter only the empty shower opening enough to hang the product; the room plate must remain recognizably unchanged." : "Generate this scene's product state natively inside this room."} Reusing or locally compositing a product cutout, fold silhouette, textile map, room plate, or prior accepted scene is forbidden.`,
       `Scene-specific QA target: ${qaFocus}`,
       "Final audit: first ask whether this could be mistaken for an ordinary person's good iPhone bathroom photo. Then check product identity, scale, support, visible construction, reflections, material repetition, exposure integration, text, and whether any object or styling looks too perfectly arranged.",
       "Constraints: exactly one canonical featured product; no people or hands; no packaging; no product claim, alternate variation, added label, duplicate, text overlay, or watermark.",
@@ -664,7 +728,8 @@ export function buildAffiliatePilotV4Manifest(
           fullHeaderTextile,
           hiddenHeaderTextile,
           supportReferencePrompt,
-          headerSupportReferencePrompt
+          headerSupportReferencePrompt,
+          roomPlateSupportPrompt
         } = buildStyledPrompt(product, selection, style, slot);
         jobs.push({
           id: `${product.id}:${style.slug}:${slot}`,
@@ -726,8 +791,18 @@ export function buildAffiliatePilotV4Manifest(
           headerSupportReferencePromptSha256: headerSupportReferencePrompt
             ? sha256(headerSupportReferencePrompt)
             : null,
+          roomPlateSupportRequired: fullHeaderTextile,
+          roomPlateSupportInputCount: 0,
+          roomPlateSupportPrompt,
+          roomPlateSupportPromptSha256: roomPlateSupportPrompt
+            ? sha256(roomPlateSupportPrompt)
+            : null,
+          roomPlateProviderAttemptBudget:
+            affiliatePilotV4ExecutionPolicy.roomPlateProviderAttemptBudget,
+          roomPlateReuseAllowed: false,
+          providerNativeRoomPlateEditRequired: fullHeaderTextile,
           supportReferenceGenerationCount: fullHeaderTextile
-            ? 2
+            ? 3
             : hiddenHeaderTextile
               ? 1
               : 0,
@@ -760,6 +835,9 @@ export function buildAffiliatePilotV4Manifest(
   );
   const headerSupportReferenceJobs = styledJobs.filter(
     (job) => job.headerSupportReferenceRequired
+  );
+  const roomPlateSupportJobs = styledJobs.filter(
+    (job) => job.roomPlateSupportRequired
   );
   const supportReferenceGenerationRequestedCount = styledJobs.reduce(
     (count, job) => count + job.supportReferenceGenerationCount,
@@ -794,10 +872,14 @@ export function buildAffiliatePilotV4Manifest(
         (job) => job.headerSupportReferencePromptSha256
       )
     ).size !== headerSupportReferenceJobs.length ||
-    supportReferenceGenerationRequestedCount !== 168
+    roomPlateSupportJobs.length !== 48 ||
+    new Set(
+      roomPlateSupportJobs.map((job) => job.roomPlateSupportPromptSha256)
+    ).size !== roomPlateSupportJobs.length ||
+    supportReferenceGenerationRequestedCount !== 216
   ) {
     throw new Error(
-      "Pilot v4 requires 120 unique body supports plus 48 unique full-header count scaffolds."
+      "Pilot v4 requires 120 unique body supports, 48 unique full-header count scaffolds, and 48 unique room-only plates."
     );
   }
   if (
@@ -844,6 +926,7 @@ export function buildAffiliatePilotV4Manifest(
     styledCount: styledJobs.length,
     generationRequestedCount: styledJobs.length,
     supportReferenceGenerationRequestedCount,
+    roomPlateGenerationRequestedCount: roomPlateSupportJobs.length,
     totalProviderGenerationRequestFloor:
       styledJobs.length + supportReferenceGenerationRequestedCount,
     totalCount: jobs.length,

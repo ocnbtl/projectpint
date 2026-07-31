@@ -553,8 +553,9 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(manifest.presentationCount, 10);
   assert.equal(manifest.orthographicCount, 60);
   assert.equal(manifest.identityCount, 70);
-  assert.equal(manifest.supportReferenceGenerationRequestedCount, 168);
-  assert.equal(manifest.totalProviderGenerationRequestFloor, 768);
+  assert.equal(manifest.supportReferenceGenerationRequestedCount, 216);
+  assert.equal(manifest.roomPlateGenerationRequestedCount, 48);
+  assert.equal(manifest.totalProviderGenerationRequestFloor, 816);
   assert.equal(manifest.reusedIdentityCount, 70);
   assert.equal(manifest.styledCount, 600);
   assert.equal(manifest.generationRequestedCount, 600);
@@ -571,7 +572,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.6" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.7" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -590,9 +591,19 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
       .oneUseSceneSpecificHeaderCountSupportRequiredForFullHeader,
     true
   );
+  assert.equal(
+    manifest.executionPolicy.oneUseSceneSpecificRoomPlateRequiredForFullHeader,
+    true
+  );
   assert.equal(manifest.executionPolicy.supportReferenceProviderAttemptBudget, 2);
+  assert.equal(manifest.executionPolicy.roomPlateProviderAttemptBudget, 2);
   assert.equal(manifest.executionPolicy.supportReferenceReuseAllowed, false);
   assert.equal(manifest.executionPolicy.supportReferenceCompositingAllowed, false);
+  assert.equal(manifest.executionPolicy.roomPlateReuseAllowed, false);
+  assert.equal(
+    manifest.executionPolicy.providerNativeRoomPlateEditRequiredForFullHeader,
+    true
+  );
   assert.equal(
     manifest.executionPolicy
       .providerAttemptBudgetResetsOnlyAfterLoggedRootStrategyRevision,
@@ -643,7 +654,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
         job.prompt.includes("Decor-limit invariant:") &&
         job.prompt.includes("Set-variety invariant:") &&
         job.prompt.includes("Input image roles:") &&
-        job.prompt.includes("Reusing or compositing a product cutout") &&
+        job.prompt.includes("Reusing or locally compositing a product cutout") &&
         job.providerAttemptBudget === 2 &&
         job.reusableProductCompositeAllowed === false &&
         job.localPixelSurgeryAllowed === false &&
@@ -694,18 +705,29 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(curtain.prompt, /do not reuse a drape, fold silhouette, or product cutout/i);
   assert.equal(
     curtain.generationStrategy,
-    "two_support_textile_header_and_body_full_header"
+    "room_plate_edit_two_support_textile_full_header"
   );
   assert.equal(curtain.referenceInputCount, 3);
   assert.equal(curtain.exactProductMaterialReferenceRequired, true);
   assert.equal(curtain.exactProductHeaderReferenceRequired, true);
   assert.match(curtain.prompt, /header-count scaffold crop/i);
   assert.match(curtain.prompt, /body-and-hem support crop/i);
+  assert.match(curtain.prompt, /room-only iPhone plate/i);
+  assert.match(curtain.prompt, /locked photographic base/i);
+  assert.match(curtain.prompt, /alter only the empty shower opening/i);
   assert.equal(curtain.supportReferenceRequired, true);
   assert.equal(curtain.supportReferenceInputCount, 2);
   assert.equal(curtain.headerSupportReferenceRequired, true);
   assert.equal(curtain.headerSupportReferenceInputCount, 3);
-  assert.equal(curtain.supportReferenceGenerationCount, 2);
+  assert.equal(curtain.roomPlateSupportRequired, true);
+  assert.equal(curtain.roomPlateSupportInputCount, 0);
+  assert.equal(curtain.roomPlateProviderAttemptBudget, 2);
+  assert.equal(curtain.roomPlateReuseAllowed, false);
+  assert.equal(curtain.providerNativeRoomPlateEditRequired, true);
+  assert.match(curtain.roomPlateSupportPrompt!, /room-only iPhone plate/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /bare straight wall-mounted rod/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /25-45 percent of the frame width/i);
+  assert.equal(curtain.supportReferenceGenerationCount, 3);
   assert.equal(
     curtain.supportReferenceCropPolicy,
     "recorded_role_isolation_crops_required"
@@ -738,6 +760,9 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(curtainClose.headerSupportReferenceRequired, false);
   assert.equal(curtainClose.headerSupportReferenceInputCount, 0);
   assert.equal(curtainClose.headerSupportReferencePrompt, null);
+  assert.equal(curtainClose.roomPlateSupportRequired, false);
+  assert.equal(curtainClose.roomPlateSupportPrompt, null);
+  assert.equal(curtainClose.providerNativeRoomPlateEditRequired, false);
   assert.equal(curtainClose.supportReferenceGenerationCount, 1);
   assert.equal(
     curtainClose.identityReferenceCropPolicy,
