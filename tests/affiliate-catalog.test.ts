@@ -573,7 +573,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.13" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.14" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -629,6 +629,15 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   );
   assert.equal(
     manifest.executionPolicy.oneUseSceneSpecificRoomPlateRequiredForStyledTextiles,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.textileRoomPlateMustEnterFrameBelowSuspensionLine,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy
+      .textileRoomPlateVisibleCompleteShowerLintelIsHardReject,
     true
   );
   assert.equal(manifest.executionPolicy.supportReferenceProviderAttemptBudget, 2);
@@ -798,8 +807,11 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(curtain.nativeHeaderAuditEditPrompt, null);
   assert.equal(curtain.finalizationEditGenerationCount, 0);
   assert.match(curtain.roomPlateSupportPrompt!, /room-only iPhone plate/i);
-  assert.match(curtain.roomPlateSupportPrompt!, /entire would-be rod.+above the upper frame/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /below the would-be suspension line/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /complete rectangular shower opening.+hard rejection/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /full shower lintel, soffit, ceiling band/i);
   assert.match(curtain.prompt, /locked photographic base/i);
+  assert.match(curtain.prompt, /below-suspension-line feasibility gate/i);
   assert.match(curtain.prompt, /alter only the empty lower shower opening/i);
   assert.equal(curtain.supportReferenceGenerationCount, 2);
   assert.equal(

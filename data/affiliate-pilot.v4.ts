@@ -309,7 +309,7 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
 ] as const;
 
 export const affiliatePilotV4RealismReset = {
-  contractVersion: "affiliate-pilot-real-bathroom-v4.13",
+  contractVersion: "affiliate-pilot-real-bathroom-v4.14",
   supersedesPromptVersion: "affiliate-pilot-identity-physical-photo-v4",
   supersedesGenerationVersion: "pilot-2026-07-27-run-04",
   resetAuthorizedAt: "2026-07-31T05:00:00-04:00",
@@ -319,7 +319,7 @@ export const affiliatePilotV4RealismReset = {
   reason:
     "Owner review found AI-stock polish, repeated lighting and room formulas, literal style stereotypes, procedural material texture, repeated curtain folds, and an unsustainable retry/compositing rate.",
   rootCauseRevision:
-    "Two prompt-only proof retries showed that generated curtain identity views propagated synthetic tubular folds and incorrect header counts. Exact-product listing evidence corrected material behavior, and mandatory de-staging corrected real-estate polish. Hidden-header proofs then required one-use body supports and room plates. Four provider-native header passes could not preserve twelve visible positions, so styled scenes keep the complete countable header outside frame while reviewed identities remain authoritative. Deformation-gated supports fixed periodic folds, and removing identity drapes from final conditioning stopped them from returning. The base deformation prompt then produced the same impossible invisible mid-height tie in scene 03 and scene 04. Every support now keeps all compression suspended from above frame and treats any knot, tieback, clip, side attachment, singular waist, or convergence point as a hard reject. Mid-body changes must come only from ordinary slack and fabric stiffness."
+    "Two prompt-only proof retries showed that generated curtain identities propagated synthetic folds and incorrect header counts. Exact-product evidence, de-staging, one-use room plates, and deformation-gated supports corrected material, composition, and gravity. Four native header passes could not preserve twelve visible positions, so styled scenes keep the complete countable header outside frame while reviewed identities remain authoritative. Removing generated identity drapes from final conditioning stopped their periodic silhouette from returning. The first scene-04 final then proved that a room plate showing the complete shower alcove lintel makes outside-frame suspension physically impossible: the edit must reveal a top edge. Every textile room plate now has a feasibility gate requiring the camera crop to intersect the shower below the would-be suspension line; a visible full lintel, soffit, or upper shower opening is rejected before product insertion."
 } as const;
 
 export const affiliatePilotV4ExecutionPolicy = {
@@ -348,6 +348,8 @@ export const affiliatePilotV4ExecutionPolicy = {
   oneUseSceneSpecificHeaderCountSupportRequiredForFullHeader: false,
   oneUseSceneSpecificRoomPlateRequiredForFullHeader: false,
   oneUseSceneSpecificRoomPlateRequiredForStyledTextiles: true,
+  textileRoomPlateMustEnterFrameBelowSuspensionLine: true,
+  textileRoomPlateVisibleCompleteShowerLintelIsHardReject: true,
   supportReferenceProviderAttemptBudget: 2,
   roomPlateProviderAttemptBudget: 2,
   supportReferenceReuseAllowed: false,
