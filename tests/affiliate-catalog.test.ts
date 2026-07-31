@@ -573,7 +573,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.15" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.16" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -655,6 +655,24 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     manifest.executionPolicy
       .textileRoomPlateVisibleCompleteShowerLintelIsHardReject,
     true
+  );
+  assert.equal(
+    manifest.executionPolicy.textileRoomPlateClearInsertionCorridorRequired,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy
+      .textileRoomPlateHumanTracesMustAvoidInsertionCorridor,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy
+      .textileRoomPlateMaximumForegroundIntrusionFrameFraction,
+    0.08
+  );
+  assert.equal(
+    manifest.executionPolicy.textileRoomPlateElectricalDevicePolicy,
+    "omit_unless_manifest_explicitly_requires_code_safe_gfci"
   );
   assert.equal(manifest.executionPolicy.supportReferenceProviderAttemptBudget, 2);
   assert.equal(manifest.executionPolicy.roomPlateProviderAttemptBudget, 2);
@@ -826,6 +844,10 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(curtain.roomPlateSupportPrompt!, /below the would-be suspension line/i);
   assert.match(curtain.roomPlateSupportPrompt!, /complete rectangular shower opening.+hard rejection/i);
   assert.match(curtain.roomPlateSupportPrompt!, /full shower lintel, soffit, ceiling band/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /continuous empty vertical corridor/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /no more than eight percent of total frame area/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /omit every outlet, receptacle, switch, wall plate/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /every trace outside the reserved shower insertion corridor/i);
   assert.match(curtain.prompt, /locked photographic base/i);
   assert.match(curtain.prompt, /below-suspension-line feasibility gate/i);
   assert.match(curtain.prompt, /alter only the empty lower shower opening/i);

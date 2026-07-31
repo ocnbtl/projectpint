@@ -309,7 +309,7 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
 ] as const;
 
 export const affiliatePilotV4RealismReset = {
-  contractVersion: "affiliate-pilot-real-bathroom-v4.15",
+  contractVersion: "affiliate-pilot-real-bathroom-v4.16",
   supersedesPromptVersion: "affiliate-pilot-identity-physical-photo-v4",
   supersedesGenerationVersion: "pilot-2026-07-27-run-04",
   resetAuthorizedAt: "2026-07-31T05:00:00-04:00",
@@ -319,7 +319,7 @@ export const affiliatePilotV4RealismReset = {
   reason:
     "Owner review found AI-stock polish, repeated lighting and room formulas, literal style stereotypes, procedural material texture, repeated curtain folds, and an unsustainable retry/compositing rate.",
   rootCauseRevision:
-    "Two prompt-only proof retries showed that generated curtain identities propagated synthetic folds and incorrect header counts. Exact-product evidence, de-staging, one-use room plates, and deformation-gated supports corrected material, composition, and gravity. Four native header passes could not preserve twelve visible positions, so styled scenes keep the complete countable header outside frame while reviewed identities remain authoritative. Removing generated identity drapes from final conditioning stopped their periodic silhouette from returning. Scene 04 then exposed two more root failures. A room plate showing the complete shower alcove lintel made outside-frame suspension physically impossible, so every textile plate now intersects the shower below the would-be suspension line. After that correction, forcing multiple large mid-body direction changes alternated between repeated vertical tubes and an implausible diagonal swag with a short free hem. Textile variation is now constrained to quiet gravity: a broad face plus a few unequal mostly vertical compressions, gradual width or depth changes, at most one subtle merge or split, no large diagonal trough, and no free hem at or above the tub rim."
+    "Two prompt-only proof retries showed that generated curtain identities propagated synthetic folds and incorrect header counts. Exact-product evidence, de-staging, one-use room plates, and deformation-gated supports corrected material, composition, and gravity. Four native header passes could not preserve twelve visible positions, so styled scenes keep the complete countable header outside frame while reviewed identities remain authoritative. Removing generated identity drapes from final conditioning stopped their periodic silhouette from returning. Scene 04 then exposed two more root failures. A room plate showing the complete shower alcove lintel made outside-frame suspension physically impossible, so every textile plate now intersects the shower below the would-be suspension line. After that correction, forcing multiple large mid-body direction changes alternated between repeated vertical tubes and an implausible diagonal swag with a short free hem. Textile variation is now constrained to quiet gravity: a broad face plus a few unequal mostly vertical compressions, gradual width or depth changes, at most one subtle merge or split, no large diagonal trough, and no free hem at or above the tub rim. Scene 05 then proved that below-suspension framing alone is insufficient: an oversized foreground towel can occupy the exact product insertion strip, and incidental generated receptacles can violate the wet-area electrical gate. Every room plate now reserves a continuous clear insertion corridor from the top frame into the tub, keeps all human traces and foreground intrusions on the opposite side, caps those intrusions at eight percent of frame area, and omits electrical devices unless a manifest scene explicitly requires a code-safe GFCI."
 } as const;
 
 export const affiliatePilotV4ExecutionPolicy = {
@@ -355,6 +355,11 @@ export const affiliatePilotV4ExecutionPolicy = {
   oneUseSceneSpecificRoomPlateRequiredForStyledTextiles: true,
   textileRoomPlateMustEnterFrameBelowSuspensionLine: true,
   textileRoomPlateVisibleCompleteShowerLintelIsHardReject: true,
+  textileRoomPlateClearInsertionCorridorRequired: true,
+  textileRoomPlateHumanTracesMustAvoidInsertionCorridor: true,
+  textileRoomPlateMaximumForegroundIntrusionFrameFraction: 0.08,
+  textileRoomPlateElectricalDevicePolicy:
+    "omit_unless_manifest_explicitly_requires_code_safe_gfci",
   supportReferenceProviderAttemptBudget: 2,
   roomPlateProviderAttemptBudget: 2,
   supportReferenceReuseAllowed: false,
