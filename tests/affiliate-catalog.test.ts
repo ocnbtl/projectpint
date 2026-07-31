@@ -574,7 +574,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.21" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.22" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -709,6 +709,11 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(
     manifest.executionPolicy
       .textileRoomPlateCameraVolumeMustMatchFinalPlacement,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy
+      .textileReverseViewAllowsFixedBackgroundOcclusionInCurtainPlane,
     true
   );
   assert.equal(
@@ -1035,9 +1040,25 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     curtainReverse.roomPlateSupportPrompt!,
     /look obliquely toward the room and reverse side of the future curtain/i
   );
+  assert.match(
+    curtainReverse.roomPlateSupportPrompt!,
+    /Reverse-view occlusion-plane gate/i
+  );
+  assert.match(
+    curtainReverse.roomPlateSupportPrompt!,
+    /fixed wall, floor, tile, baseboard, or tub pixels may be visible behind this empty plane/i
+  );
   assert.doesNotMatch(
     curtainReverse.roomPlateSupportPrompt!,
     /reachable dry-floor camera position outside the tub/i
+  );
+  assert.match(
+    curtainReverse.roomPlateCorrectionPrompt!,
+    /A later curtain may occlude only fixed background pixels inside its silhouette/i
+  );
+  assert.match(
+    curtainReverse.prompt,
+    /Natural occlusion of uninterrupted fixed wall, floor, tile, baseboard, or tub pixels inside the curtain silhouette is physically expected/i
   );
 
   const patternedCurtain = styled.find(
