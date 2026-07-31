@@ -569,7 +569,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.3" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.4" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -696,8 +696,11 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(curtainClose.prompt, /entire countable header outside/i);
   assert.equal(
     curtainClose.generationStrategy,
-    "exact_source_locked_textile_hidden_header"
+    "exact_source_locked_textile_hidden_header_gathered_oblique"
   );
+  assert.match(curtainClose.prompt, /35.+55 percent open/i);
+  assert.match(curtainClose.prompt, /no more than 45 percent of the panel width/i);
+  assert.match(curtainClose.prompt, /shower-interior edge/i);
   assert.equal(curtainClose.referenceInputCount, 4);
   assert.equal(curtainClose.exactProductMaterialReferenceRequired, true);
   assert.equal(curtainClose.exactProductHeaderReferenceRequired, false);

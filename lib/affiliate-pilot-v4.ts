@@ -89,17 +89,17 @@ const ROLE_PLACEMENTS: Record<
   ],
   "solid-shower-curtain": [
     "Show one newly generated full shower drape with exactly twelve separate hooks through exactly twelve openings on one straight rod. Simulate this scene's folds from twelve independent suspension points; do not reuse a drape, fold silhouette, or product cutout from another scene.",
-    "Use a closer partly drawn side view with the entire countable header outside the upper frame before the first hook. Let the visible fabric gather asymmetrically with localized compression, cross-grain tension, changing fold depth, and one ordinary side edge.",
+    "Use a closer oblique side view with the curtain pulled 35-55 percent open and gathered asymmetrically to one side. Keep the entire countable header outside the upper frame before the first hook and show no more than 45 percent of the panel width. Reveal one real tub or shower-interior edge behind it. The visible fabric must form localized compression, cross-grain tension, changing fold depth, and one ordinary side edge, never a broad flat curtain wall.",
     "Show a second newly generated full header with exactly twelve hooks, but use a materially different left-right opening amount and a fresh gravity drape. No fold peak, trough, hem wave, or wrinkle map may repeat slot 1.",
-    "Use a physically possible reverse view from dry tub volume with the entire header outside frame. Reveal plain reverse weave, side thickness, localized cross-grain wrinkles, unequal folds, and a plausible tub rim without reusing another scene's textile silhouette.",
-    "Use a doorway or partial-obstruction view with the entire countable header outside frame before the first hook. Preserve one weighted hem and scene-specific irregular folds; never reuse a prior curtain cutout."
+    "Use a physically possible oblique reverse view from dry tub volume with the curtain pulled partly open and gathered toward the far side; keep the entire header outside frame. Reveal plain reverse weave, one shower-interior edge, side thickness, localized cross-grain wrinkles, unequal compressed folds, and a plausible tub rim without a broad flat textile wall or reused silhouette.",
+    "Use a doorway or partial-obstruction view with the curtain pulled 35-55 percent open and asymmetrically gathered to one side. Keep the entire countable header outside frame before the first hook, show no more than 45 percent of panel width, preserve one weighted hem and scene-specific compressed folds, and never reuse a prior curtain cutout."
   ],
   "patterned-shower-curtain": [
     "Show one newly generated full shower drape with exactly twelve hooks through exactly twelve openings. Preserve major floral landmarks through an original gravity drape and never reuse a textile silhouette or product cutout.",
-    "Show a closer partly drawn curtain with the entire countable header outside frame before the first hook. Preserve motif scale, fabric thickness, and asymmetric compression without tiling flowers.",
+    "Show a closer oblique side view with the curtain pulled 35-55 percent open and asymmetrically gathered to one side. Keep the entire countable header outside frame before the first hook, show no more than 45 percent of panel width, reveal one shower-interior edge, and preserve motif scale, fabric thickness, and localized compression without tiling flowers or creating a broad flat curtain wall.",
     "Show a second newly generated full header with exactly twelve hooks and a materially different opening amount. Preserve the same floral hierarchy but create fresh folds, wrinkle paths, and hem waves.",
-    "Use a reverse view from physically open dry tub volume with the entire header outside frame and correct thin-polyester light transmission, a fresh drape, and no changed colorway.",
-    "Use a realistic threshold view with the entire countable header outside frame before the first hook. Preserve the canonical floral panel while changing room, camera, and gravity state."
+    "Use an oblique reverse view from physically open dry tub volume with the curtain partly open and gathered toward the far side. Keep the entire header outside frame, reveal one shower-interior edge, and preserve correct thin-polyester light transmission, localized compressed folds, a fresh drape, and the same colorway.",
+    "Use a realistic threshold view with the curtain pulled 35-55 percent open and asymmetrically gathered to one side. Keep the entire countable header outside frame before the first hook, show no more than 45 percent of panel width, and preserve the canonical floral panel while changing room, camera, and gravity state."
   ],
   "shower-bench": [
     "Place all four feet on a level dry floor beside the shower, leaving the lower shelf empty and the exact nine front-to-back top slats visible.",
@@ -234,7 +234,7 @@ type AffiliatePilotV4StyledJob = {
   generationStrategy:
     | "direct_identity_locked_room_first"
     | "exact_source_locked_textile_full_header"
-    | "exact_source_locked_textile_hidden_header";
+    | "exact_source_locked_textile_hidden_header_gathered_oblique";
   providerAttemptBudget: number;
   reusableProductCompositeAllowed: false;
   localPixelSurgeryAllowed: false;
@@ -273,7 +273,7 @@ function generationStrategyFor(
   }
   return slot === 1 || slot === 3
     ? "exact_source_locked_textile_full_header"
-    : "exact_source_locked_textile_hidden_header";
+    : "exact_source_locked_textile_hidden_header_gathered_oblique";
 }
 
 function isTextileRole(role: AffiliatePilotV4ProductRole): boolean {

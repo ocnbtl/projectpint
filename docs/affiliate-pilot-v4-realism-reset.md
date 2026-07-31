@@ -40,6 +40,8 @@ Every textile scene now adds one human-reviewed exact-product listing material d
 
 Slots 2, 4, and 5 keep the entire countable header outside the frame before the first hook. They still require a fresh scene-specific gravity drape, real side thickness, irregular yarn behavior, cross-grain tension, and one weighted hem. No prior generated curtain source may be reused.
 
+The initial hidden-header proof exposed an incomplete header; its corrected crop then became a broad wall of periodic vertical folds. Hidden-header slots therefore use an oblique side composition with the curtain 35-55 percent open, asymmetrically gathered to one side, no more than 45 percent of panel width visible, and one real shower-interior edge behind it. This is a structural composition change, not another wording-only retry.
+
 A source-reference crop is allowed only to remove listing text, icons, or callout layout that lies outside the material or construction evidence. The original source, URL, crop bounds, and before/after hashes must be preserved in the private execution evidence. This exception never permits cropping, retouching, relighting, compositing, or local pixel repair of a final scene.
 
 ## Visual acceptance rubric
