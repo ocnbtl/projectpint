@@ -22,6 +22,8 @@ Owner and full-set review found four systemic problems:
 - Treat style as atmosphere and design logic, not a mandatory wall color or decor checklist.
 - Prefer matte, honed, worn, directionally textured materials with real seams, compression, grain, nap, and nonuniform roughness.
 - Reject AI-stock polish, centered hero framing, symmetric prop layouts, uniform HDR, blanket gloss, procedural texture, and showroom cleanliness.
+- Require at least two visible phone-capture imperfections and three independent nondecorative signs of daily use or age in every scene.
+- Allow at most one optional decorative style cue. Plants, art, baskets, and coordinated decor never satisfy the human-use requirement.
 - Never reuse or composite a product cutout, textile silhouette, fold map, or prior accepted scene.
 - Never use local pixel surgery, seam cloning, texture normalization, product relighting, or pseudo-text patching.
 - Allow at most two provider attempts per asset and prompt/reference strategy, and twelve provider attempts per five-scene set. An asset budget resets only after a logged root strategy revision.
@@ -31,6 +33,8 @@ Owner and full-set review found four systemic problems:
 ## Curtain-specific correction
 
 The first two prompt-only proof retries failed with the same inherited defect: the generated curtain identity pack encouraged satin-like tubular folds, while the visible header lost the exact twelve-point construction. More final-scene retries are prohibited until the reference strategy changes.
+
+The first exact-source proof corrected the curtain but still looked like a staged real-estate image. A targeted de-staging retry passed: it retained the product construction while adding a threshold edge, imperfect perspective, an open drawer, handled towel, ordinary sink objects, mismatched older finishes, and a skewed mat. Those successful constraints are now mandatory in the v4.3 base contract rather than one-off retry language.
 
 Every textile scene now adds one human-reviewed exact-product listing material detail. It governs weave, color, thickness, and surface roughness but never supplies a reusable fold map or room. Full-header slots 1 and 3 also add one reviewed exact-product header-construction image and must generate a native new drape with twelve independent suspension points and twelve one-to-one hooks. Their fold peaks, troughs, wrinkle paths, opening amount, and hem wave must differ.
 

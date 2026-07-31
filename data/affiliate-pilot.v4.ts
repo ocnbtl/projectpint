@@ -309,7 +309,7 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
 ] as const;
 
 export const affiliatePilotV4RealismReset = {
-  contractVersion: "affiliate-pilot-real-bathroom-v4.2",
+  contractVersion: "affiliate-pilot-real-bathroom-v4.3",
   supersedesPromptVersion: "affiliate-pilot-identity-physical-photo-v4",
   supersedesGenerationVersion: "pilot-2026-07-27-run-04",
   resetAuthorizedAt: "2026-07-31T05:00:00-04:00",
@@ -319,7 +319,7 @@ export const affiliatePilotV4RealismReset = {
   reason:
     "Owner review found AI-stock polish, repeated lighting and room formulas, literal style stereotypes, procedural material texture, repeated curtain folds, and an unsustainable retry/compositing rate.",
   rootCauseRevision:
-    "Two prompt-only proof retries showed that the generated curtain identity views propagated synthetic tubular folds and incorrect header counts. Textile scenes now require reviewed exact-product listing evidence for material and, when visible, header construction."
+    "Two prompt-only proof retries showed that the generated curtain identity views propagated synthetic tubular folds and incorrect header counts. Textile scenes now require reviewed exact-product listing evidence for material and, when visible, header construction. The first exact-source proof then exposed residual real-estate polish, so the successful de-staging correction is now a mandatory photo-authenticity contract for every scene."
 } as const;
 
 export const affiliatePilotV4ExecutionPolicy = {
