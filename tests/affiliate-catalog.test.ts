@@ -573,7 +573,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.10" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.11" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -585,6 +585,20 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(manifest.executionPolicy.providerAttemptBudgetPerAsset, 2);
   assert.equal(
     manifest.executionPolicy.oneUseSceneSpecificTextileBodySupportRequired,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy
+      .textileBodySupportFullHeightParallelChannelsAreHardReject,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.textileBodySupportMinimumMidBodyDeformationBreaks,
+    2
+  );
+  assert.equal(
+    manifest.executionPolicy
+      .textileBodySupportRequiresMultiHeightSilhouetteChanges,
     true
   );
   assert.equal(
@@ -775,7 +789,10 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     curtain.supportReferenceCropPolicy,
     "not_applicable"
   );
-  assert.match(curtain.supportReferencePrompt!, /four to seven unequal fold masses/i);
+  assert.match(curtain.supportReferencePrompt!, /three to five plainly unequal primary masses/i);
+  assert.match(curtain.supportReferencePrompt!, /two or more different mid-body heights/i);
+  assert.match(curtain.supportReferencePrompt!, /no set of similar fold channels may run uninterrupted/i);
+  assert.match(curtain.prompt, /never smooth those breaks into uninterrupted full-height channels/i);
   assert.equal(
     curtain.identityReferenceCropPolicy,
     "recorded_body_hem_crop_excluding_invisible_header"
@@ -802,7 +819,8 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(curtainClose.supportReferenceReuseAllowed, false);
   assert.equal(curtainClose.supportReferenceCompositingAllowed, false);
   assert.match(curtainClose.supportReferencePrompt!, /one-use physical-state reference/i);
-  assert.match(curtainClose.supportReferencePrompt!, /four to seven unequal fold masses/i);
+  assert.match(curtainClose.supportReferencePrompt!, /three to five plainly unequal primary masses/i);
+  assert.match(curtainClose.supportReferencePrompt!, /change the gathered silhouette width at three heights/i);
   assert.equal(curtainClose.headerSupportReferenceRequired, false);
   assert.equal(curtainClose.headerSupportReferenceInputCount, 0);
   assert.equal(curtainClose.headerSupportReferencePrompt, null);

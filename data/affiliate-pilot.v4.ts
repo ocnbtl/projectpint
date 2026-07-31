@@ -309,7 +309,7 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
 ] as const;
 
 export const affiliatePilotV4RealismReset = {
-  contractVersion: "affiliate-pilot-real-bathroom-v4.10",
+  contractVersion: "affiliate-pilot-real-bathroom-v4.11",
   supersedesPromptVersion: "affiliate-pilot-identity-physical-photo-v4",
   supersedesGenerationVersion: "pilot-2026-07-27-run-04",
   resetAuthorizedAt: "2026-07-31T05:00:00-04:00",
@@ -319,7 +319,7 @@ export const affiliatePilotV4RealismReset = {
   reason:
     "Owner review found AI-stock polish, repeated lighting and room formulas, literal style stereotypes, procedural material texture, repeated curtain folds, and an unsustainable retry/compositing rate.",
   rootCauseRevision:
-    "Two prompt-only proof retries showed that generated curtain identity views propagated synthetic tubular folds and incorrect header counts. Exact-product listing evidence corrected material behavior, and mandatory de-staging corrected real-estate polish. Hidden-header proofs then required a one-use body-and-hem support reference. Splitting full-header count and body supports fixed count construction, but feeding both isolated product supports into a blank generation still caused a full-frame product-first room and procedural folds. A reviewed one-use room-only iPhone plate fixed that composition failure, but two placement edits collapsed the twelve-point scaffold to ten and then nine positions. Two additional provider-native header-only audit edits still produced ten positions. Hiding the complete countable header preserved identity honestly, but two direct hidden-header finals still generated pseudo-text or a coordinated editorial vignette while omitting the assigned human trace. Every styled textile scene now begins with a reviewed one-use hidden-header room plate, then uses a provider-native edit with the unique gathered body support and header-free identity crop. Room realism and product insertion are independently gated; any visible header geometry, restaging, or room-plate drift is rejected."
+    "Two prompt-only proof retries showed that generated curtain identity views propagated synthetic tubular folds and incorrect header counts. Exact-product listing evidence corrected material behavior, and mandatory de-staging corrected real-estate polish. Hidden-header proofs then required a one-use body-and-hem support reference. Splitting full-header count and body supports fixed count construction, but feeding both isolated product supports into a blank generation still caused a full-frame product-first room and procedural folds. A reviewed one-use room-only iPhone plate fixed that composition failure, but two placement edits collapsed the twelve-point scaffold to ten and then nine positions. Two additional provider-native header-only audit edits still produced ten positions. Hiding the complete countable header preserved identity honestly, but two direct hidden-header finals still generated pseudo-text or a coordinated editorial vignette while omitting the assigned human trace. Room-first hidden-header edits fixed staging, but two v4.10 finals exposed that the previously accepted body support itself contained long parallel channels and conditioned the final toward catalog drape. Every styled textile scene now begins with a reviewed one-use hidden-header room plate and a body support that visibly breaks full-height channels at least twice before a provider-native lower-shower edit. Room realism, body deformation, and product insertion are independently gated."
 } as const;
 
 export const affiliatePilotV4ExecutionPolicy = {
@@ -338,6 +338,9 @@ export const affiliatePilotV4ExecutionPolicy = {
   sourceReferenceCropMustBeLogged: true,
   maxReferenceInputsForTextiles: 3,
   oneUseSceneSpecificTextileBodySupportRequired: true,
+  textileBodySupportFullHeightParallelChannelsAreHardReject: true,
+  textileBodySupportMinimumMidBodyDeformationBreaks: 2,
+  textileBodySupportRequiresMultiHeightSilhouetteChanges: true,
   oneUseSceneSpecificHeaderCountSupportRequiredForFullHeader: false,
   oneUseSceneSpecificRoomPlateRequiredForFullHeader: false,
   oneUseSceneSpecificRoomPlateRequiredForStyledTextiles: true,
