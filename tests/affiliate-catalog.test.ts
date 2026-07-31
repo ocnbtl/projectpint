@@ -553,10 +553,10 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(manifest.presentationCount, 10);
   assert.equal(manifest.orthographicCount, 60);
   assert.equal(manifest.identityCount, 70);
-  assert.equal(manifest.supportReferenceGenerationRequestedCount, 216);
-  assert.equal(manifest.roomPlateGenerationRequestedCount, 48);
-  assert.equal(manifest.finalizationEditGenerationRequestedCount, 48);
-  assert.equal(manifest.totalProviderGenerationRequestFloor, 864);
+  assert.equal(manifest.supportReferenceGenerationRequestedCount, 120);
+  assert.equal(manifest.roomPlateGenerationRequestedCount, 0);
+  assert.equal(manifest.finalizationEditGenerationRequestedCount, 0);
+  assert.equal(manifest.totalProviderGenerationRequestFloor, 720);
   assert.equal(manifest.reusedIdentityCount, 70);
   assert.equal(manifest.styledCount, 600);
   assert.equal(manifest.generationRequestedCount, 600);
@@ -573,7 +573,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.8" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.9" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -590,11 +590,11 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(
     manifest.executionPolicy
       .oneUseSceneSpecificHeaderCountSupportRequiredForFullHeader,
-    true
+    false
   );
   assert.equal(
     manifest.executionPolicy.oneUseSceneSpecificRoomPlateRequiredForFullHeader,
-    true
+    false
   );
   assert.equal(manifest.executionPolicy.supportReferenceProviderAttemptBudget, 2);
   assert.equal(manifest.executionPolicy.roomPlateProviderAttemptBudget, 2);
@@ -603,12 +603,12 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(manifest.executionPolicy.roomPlateReuseAllowed, false);
   assert.equal(
     manifest.executionPolicy.providerNativeRoomPlateEditRequiredForFullHeader,
-    true
+    false
   );
   assert.equal(
     manifest.executionPolicy
       .providerNativeHeaderAuditEditRequiredForFullHeader,
-    true
+    false
   );
   assert.equal(
     manifest.executionPolicy.providerNativeHeaderAuditEditAttemptBudget,
@@ -617,6 +617,22 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(
     manifest.executionPolicy.providerNativeHeaderAuditEditReuseAllowed,
     false
+  );
+  assert.equal(
+    manifest.executionPolicy.styledTextileHeaderVisibilityPolicy,
+    "entire_countable_header_outside_frame"
+  );
+  assert.equal(
+    manifest.executionPolicy.reviewedIdentityEvidenceRequiredForExactHeaderCount,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.visibleCountableTextileHeaderIsHardReject,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.headerCountProviderLimitationObserved,
+    true
   );
   assert.equal(
     manifest.executionPolicy
@@ -714,48 +730,45 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
       job.styleSlug === "coastal-calm" &&
       job.slot === 1
   )!;
-  assert.match(curtain.prompt, /exactly twelve separate hooks/);
+  assert.match(curtain.prompt, /exactly twelve separate (?:simple silver )?hooks/);
   assert.match(curtain.prompt, /no separate top band/i);
-  assert.match(curtain.prompt, /do not reuse a drape, fold silhouette, or product cutout/i);
+  assert.match(curtain.prompt, /entire countable header.+outside/i);
+  assert.match(curtain.prompt, /zero rod, mount, hook, reinforced opening, or top-edge pixels/i);
   assert.equal(
     curtain.generationStrategy,
-    "room_plate_two_pass_native_textile_full_header"
+    "two_stage_one_use_textile_body_hidden_header"
   );
   assert.equal(curtain.referenceInputCount, 3);
   assert.equal(curtain.exactProductMaterialReferenceRequired, true);
-  assert.equal(curtain.exactProductHeaderReferenceRequired, true);
-  assert.match(curtain.prompt, /header-count scaffold crop/i);
-  assert.match(curtain.prompt, /body-and-hem support crop/i);
-  assert.match(curtain.prompt, /room-only iPhone plate/i);
-  assert.match(curtain.prompt, /locked photographic base/i);
-  assert.match(curtain.prompt, /alter only the empty shower opening/i);
+  assert.equal(curtain.exactProductHeaderReferenceRequired, false);
+  assert.match(curtain.prompt, /body-and-hem drape support/i);
   assert.equal(curtain.supportReferenceRequired, true);
   assert.equal(curtain.supportReferenceInputCount, 2);
-  assert.equal(curtain.headerSupportReferenceRequired, true);
-  assert.equal(curtain.headerSupportReferenceInputCount, 3);
-  assert.equal(curtain.roomPlateSupportRequired, true);
+  assert.equal(curtain.headerSupportReferenceRequired, false);
+  assert.equal(curtain.headerSupportReferenceInputCount, 0);
+  assert.equal(curtain.headerSupportReferencePrompt, null);
+  assert.equal(curtain.roomPlateSupportRequired, false);
   assert.equal(curtain.roomPlateSupportInputCount, 0);
   assert.equal(curtain.roomPlateProviderAttemptBudget, 2);
   assert.equal(curtain.roomPlateReuseAllowed, false);
-  assert.equal(curtain.providerNativeRoomPlateEditRequired, true);
-  assert.equal(curtain.nativeHeaderAuditEditRequired, true);
-  assert.equal(curtain.nativeHeaderAuditEditInputCount, 3);
+  assert.equal(curtain.providerNativeRoomPlateEditRequired, false);
+  assert.equal(curtain.nativeHeaderAuditEditRequired, false);
+  assert.equal(curtain.nativeHeaderAuditEditInputCount, 0);
   assert.equal(curtain.nativeHeaderAuditEditProviderAttemptBudget, 2);
   assert.equal(curtain.nativeHeaderAuditEditReuseAllowed, false);
-  assert.match(curtain.nativeHeaderAuditEditPrompt!, /narrow header construction/i);
-  assert.match(curtain.nativeHeaderAuditEditPrompt!, /four left \+ four center \+ four right/i);
-  assert.match(curtain.nativeHeaderAuditEditPrompt!, /preserve Image 1 everywhere else/i);
-  assert.equal(curtain.finalizationEditGenerationCount, 1);
-  assert.match(curtain.roomPlateSupportPrompt!, /room-only iPhone plate/i);
-  assert.match(curtain.roomPlateSupportPrompt!, /bare straight wall-mounted rod/i);
-  assert.match(curtain.roomPlateSupportPrompt!, /25-45 percent of the frame width/i);
-  assert.equal(curtain.supportReferenceGenerationCount, 3);
+  assert.equal(curtain.nativeHeaderAuditEditPrompt, null);
+  assert.equal(curtain.finalizationEditGenerationCount, 0);
+  assert.equal(curtain.roomPlateSupportPrompt, null);
+  assert.equal(curtain.supportReferenceGenerationCount, 1);
   assert.equal(
     curtain.supportReferenceCropPolicy,
-    "recorded_role_isolation_crops_required"
+    "not_applicable"
   );
-  assert.match(curtain.supportReferencePrompt!, /five to seven unequal fold masses/i);
-  assert.match(curtain.headerSupportReferencePrompt!, /4 \+ 4 \+ 4 = 12/i);
+  assert.match(curtain.supportReferencePrompt!, /four to seven unequal fold masses/i);
+  assert.equal(
+    curtain.identityReferenceCropPolicy,
+    "recorded_body_hem_crop_excluding_invisible_header"
+  );
   const curtainClose = styled.find(
     (job) =>
       job.asin === "B0D2KK6MNS" &&

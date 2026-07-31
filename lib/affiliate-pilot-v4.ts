@@ -88,16 +88,16 @@ const ROLE_PLACEMENTS: Record<
     "Use a candid side-biased placement near one lived-in object, but keep the dispenser vertical, completely supported, and visually distinct from secondary bottles."
   ],
   "solid-shower-curtain": [
-    "Show one newly generated full shower drape with exactly twelve separate hooks through exactly twelve openings on one straight rod. Simulate this scene's folds from twelve independent suspension points; do not reuse a drape, fold silhouette, or product cutout from another scene.",
+    "Use a wide doorway view with the curtain pulled 30-45 percent open and gathered asymmetrically toward the left. Keep the entire countable header, first hook, rod, and top edge outside the upper frame. Show no more than 45 percent of panel width, one ordinary side edge, the weighted hem, and a real shower-interior edge with fresh localized compression rather than a broad textile wall.",
     "Use a closer oblique side view with the curtain pulled 35-55 percent open and gathered asymmetrically to one side. Keep the entire countable header outside the upper frame before the first hook and show no more than 45 percent of the panel width. Reveal one real tub or shower-interior edge behind it. The visible fabric must form localized compression, cross-grain tension, changing fold depth, and one ordinary side edge, never a broad flat curtain wall.",
-    "Show a second newly generated full header with exactly twelve hooks, but use a materially different left-right opening amount and a fresh gravity drape. No fold peak, trough, hem wave, or wrinkle map may repeat slot 1.",
+    "Use a slightly elevated opposite-side room view with the curtain pulled 50-65 percent open and gathered toward the right. Keep the entire countable header, rod, openings, hooks, and top edge outside frame. Show a different shower-interior edge, one side seam, the weighted hem, and a fresh gravity state whose folds and wrinkle paths do not repeat slots 1 or 2.",
     "Use a physically possible oblique reverse view from dry tub volume with the curtain pulled partly open and gathered toward the far side; keep the entire header outside frame. Reveal plain reverse weave, one shower-interior edge, side thickness, localized cross-grain wrinkles, unequal compressed folds, and a plausible tub rim without a broad flat textile wall or reused silhouette.",
     "Use a doorway or partial-obstruction view with the curtain pulled 35-55 percent open and asymmetrically gathered to one side. Keep the entire countable header outside frame before the first hook, show no more than 45 percent of panel width, preserve one weighted hem and scene-specific compressed folds, and never reuse a prior curtain cutout."
   ],
   "patterned-shower-curtain": [
-    "Show one newly generated full shower drape with exactly twelve hooks through exactly twelve openings. Preserve major floral landmarks through an original gravity drape and never reuse a textile silhouette or product cutout.",
+    "Use a wide doorway view with the curtain pulled 30-45 percent open and gathered asymmetrically toward the left. Keep the entire countable header, first hook, rod, and top edge outside the upper frame. Show no more than 45 percent of panel width, one ordinary side edge, the weighted hem, a real shower-interior edge, and only a nonrepeating partial read of the canonical floral hierarchy.",
     "Show a closer oblique side view with the curtain pulled 35-55 percent open and asymmetrically gathered to one side. Keep the entire countable header outside frame before the first hook, show no more than 45 percent of panel width, reveal one shower-interior edge, and preserve motif scale, fabric thickness, and localized compression without tiling flowers or creating a broad flat curtain wall.",
-    "Show a second newly generated full header with exactly twelve hooks and a materially different opening amount. Preserve the same floral hierarchy but create fresh folds, wrinkle paths, and hem waves.",
+    "Use a slightly elevated opposite-side room view with the curtain pulled 50-65 percent open and gathered toward the right. Keep the entire countable header, rod, openings, hooks, and top edge outside frame. Show a different shower-interior edge, one side seam, the weighted hem, and a fresh partial floral read without repeated landmarks, tiled motifs, or reused folds.",
     "Use an oblique reverse view from physically open dry tub volume with the curtain partly open and gathered toward the far side. Keep the entire header outside frame, reveal one shower-interior edge, and preserve correct thin-polyester light transmission, localized compressed folds, a fresh drape, and the same colorway.",
     "Use a realistic threshold view with the curtain pulled 35-55 percent open and asymmetrically gathered to one side. Keep the entire countable header outside frame before the first hook, show no more than 45 percent of panel width, and preserve the canonical floral panel while changing room, camera, and gravity state."
   ],
@@ -163,11 +163,11 @@ const SCENE_REFERENCE_VIEW_BY_ROLE: Record<
   ]
 > = {
   "countertop-dispenser": ["front", "right", "top", "back", "left"],
-  "solid-shower-curtain": ["front", "right", "top", "back", "left"],
+  "solid-shower-curtain": ["front", "right", "back", "back", "left"],
   "shower-bench": ["front", "right", "top", "left", "back"],
   "wall-mirror": ["front", "left", "top", "right", "back"],
   "rolling-cart": ["front", "back", "top", "right", "left"],
-  "patterned-shower-curtain": ["front", "right", "top", "back", "left"],
+  "patterned-shower-curtain": ["front", "right", "back", "back", "left"],
   "wall-towel-ring": ["front", "right", "top", "left", "back"],
   "countertop-soap-dish": ["front", "right", "top", "left", "back"],
   "hanging-live-plant": ["front", "right", "top", "left", "back"],
@@ -298,14 +298,12 @@ function recipeFor(
 
 function generationStrategyFor(
   role: AffiliatePilotV4ProductRole,
-  slot: number
+  _slot: number
 ): AffiliatePilotV4StyledJob["generationStrategy"] {
   if (role !== "solid-shower-curtain" && role !== "patterned-shower-curtain") {
     return "direct_identity_locked_room_first";
   }
-  return slot === 1 || slot === 3
-    ? "room_plate_two_pass_native_textile_full_header"
-    : "two_stage_one_use_textile_body_hidden_header";
+  return "two_stage_one_use_textile_body_hidden_header";
 }
 
 function isTextileRole(role: AffiliatePilotV4ProductRole): boolean {
@@ -579,8 +577,8 @@ function buildStyledPrompt(
     slot
   );
   const textileRole = isTextileRole(selection.productRole);
-  const fullHeaderTextile = textileRole && (slot === 1 || slot === 3);
-  const hiddenHeaderTextile = textileRole && !fullHeaderTextile;
+  const fullHeaderTextile = false;
+  const hiddenHeaderTextile = textileRole;
   const supportIdentityReferenceView = fullHeaderTextile
     ? "front"
     : primarySceneReferenceView;
@@ -624,11 +622,14 @@ function buildStyledPrompt(
     ? "Input image roles: Image 1 is the reviewed one-use room-only iPhone plate and the locked photographic base. Preserve its camera position, framing, room geometry, light direction, exposure, objects, wear, and irregularity. Image 2 is the reviewed one-use header-count scaffold crop for the complete straight rod, both mounts, and exactly twelve one-to-one hooks/openings only; its body is excluded. Image 3 is the separate reviewed one-use body-and-hem support crop for exact-product material, fresh fold masses, seams, cross-grain tension, and weighted hem only; its top edge is excluded. Use a provider-native edit to add one coherent curtain only inside the empty shower opening. Do not redesign, restage, widen, clean, relight, or recrop the room, and do not paste or locally composite either support."
     : hiddenHeaderTextile
       ? "Input image roles: Image 1 is the reviewed one-use scene-specific body-and-hem drape support generated only for this job; use its fresh gravity state but do not paste or composite it. Image 2 is a recorded crop of the scene-selected identity view with all header geometry removed; use it only for side seam, thickness, color, print identity when applicable, and weighted hem, never its old fold rhythm. Image 3 is the reviewed exact-product listing material/detail crop for weave or print behavior, color, thickness, and surface roughness. Generate the bathroom and curtain natively. The rod, hooks, openings, and top edge remain outside frame."
-    : `Input image roles: Image 1 is the reviewed seven-view identity atlas. Image 2 is the reviewed ${primarySceneReferenceView} identity view for this camera. Image 3 is the reviewed presentation anchor. Use them only for product identity; do not copy their backdrop, atlas layout, display pose, chroma color, lighting, or prior fabric drape into the room.`;
+      : `Input image roles: Image 1 is the reviewed seven-view identity atlas. Image 2 is the reviewed ${primarySceneReferenceView} identity view for this camera. Image 3 is the reviewed presentation anchor. Use them only for product identity; do not copy their backdrop, atlas layout, display pose, chroma color, lighting, or prior fabric drape into the room.`;
+  const identityQa = textileRole
+    ? "Identity: the exact twelve-opening and twelve-hook total remains verified in the reviewed identity evidence. The styled scene must reveal zero rod, mount, hook, reinforced opening, or top-edge pixels; any visible header geometry is a hard reject. Preserve the reviewed body color or print, side seam, fabric thickness, and weighted hem without inventing a visible count."
+    : `Identity: ${countableChecklist(selection)}.`;
   const qaFocus = [
     "Realism: score at least 3/4 for iPhone plausibility, incidental-product framing, nonrepeating materials, human irregularity, nonliteral style interpretation, and set-level light/room variety.",
     "Hard reject: AI-stock polish, centered hero framing, repeated product cutout or textile drape, procedural texture, blanket gloss, showroom staging, uniform HDR, or symmetric prop layout.",
-    `Identity: ${countableChecklist(selection)}.`,
+    identityQa,
     `Placement: ${placement}`,
     `Room: ${shot.reflectionPlan}`,
     "Physical: complete visible plumbing, doors, supports and reflections; no pseudo-text, branding, collisions, floating objects, or malformed electrical devices."
@@ -923,27 +924,14 @@ export function buildAffiliatePilotV4Manifest(
     new Set(
       bodySupportReferenceJobs.map((job) => job.supportReferencePromptSha256)
     ).size !== bodySupportReferenceJobs.length ||
-    headerSupportReferenceJobs.length !== 48 ||
-    new Set(
-      headerSupportReferenceJobs.map(
-        (job) => job.headerSupportReferencePromptSha256
-      )
-    ).size !== headerSupportReferenceJobs.length ||
-    roomPlateSupportJobs.length !== 48 ||
-    new Set(
-      roomPlateSupportJobs.map((job) => job.roomPlateSupportPromptSha256)
-    ).size !== roomPlateSupportJobs.length ||
-    nativeHeaderAuditEditJobs.length !== 48 ||
-    new Set(
-      nativeHeaderAuditEditJobs.map(
-        (job) => job.nativeHeaderAuditEditPromptSha256
-      )
-    ).size !== nativeHeaderAuditEditJobs.length ||
-    finalizationEditGenerationRequestedCount !== 48 ||
-    supportReferenceGenerationRequestedCount !== 216
+    headerSupportReferenceJobs.length !== 0 ||
+    roomPlateSupportJobs.length !== 0 ||
+    nativeHeaderAuditEditJobs.length !== 0 ||
+    finalizationEditGenerationRequestedCount !== 0 ||
+    supportReferenceGenerationRequestedCount !== 120
   ) {
     throw new Error(
-      "Pilot v4 requires 120 unique body supports, 48 unique full-header count scaffolds, 48 unique room-only plates, and 48 unique provider-native header audit edits."
+      "Pilot v4 requires 120 unique textile body supports and forbids visible-header, room-plate, and header-audit styled jobs."
     );
   }
   if (
