@@ -574,7 +574,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.17" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.18" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -587,6 +587,20 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(
     manifest.executionPolicy.oneUseSceneSpecificTextileBodySupportRequired,
     true
+  );
+  assert.equal(manifest.executionPolicy.solidTextileBodySupportInputCount, 1);
+  assert.equal(
+    manifest.executionPolicy.solidTextileBodySupportIdentityDrapeInputAllowed,
+    false
+  );
+  assert.equal(manifest.executionPolicy.patternedTextileBodySupportInputCount, 2);
+  assert.equal(
+    manifest.executionPolicy.textileBodySupportBroadFaceMinimumFraction,
+    0.7
+  );
+  assert.equal(
+    manifest.executionPolicy.textileBodySupportMaximumFullHeightCompressionChannels,
+    1
   );
   assert.equal(
     manifest.executionPolicy
@@ -621,7 +635,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   );
   assert.equal(
     manifest.executionPolicy.textileBodySupportFoldVariationMode,
-    "subtle_width_depth_change_with_single_merge_or_split"
+    "mostly_relaxed_broad_face_with_single_fading_asymmetric_displacement"
   );
   assert.equal(
     manifest.executionPolicy.textileFinalFreeHemAtOrAboveTubRimIsHardReject,
@@ -853,7 +867,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(curtain.exactProductHeaderReferenceRequired, false);
   assert.match(curtain.prompt, /body-and-hem support/i);
   assert.equal(curtain.supportReferenceRequired, true);
-  assert.equal(curtain.supportReferenceInputCount, 2);
+  assert.equal(curtain.supportReferenceInputCount, 1);
   assert.equal(curtain.headerSupportReferenceRequired, false);
   assert.equal(curtain.headerSupportReferenceInputCount, 0);
   assert.equal(curtain.headerSupportReferencePrompt, null);
@@ -907,13 +921,15 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     curtain.supportReferenceCropPolicy,
     "not_applicable"
   );
-  assert.match(curtain.supportReferencePrompt!, /one broad shallow face plus one to three plainly unequal/i);
-  assert.match(curtain.supportReferencePrompt!, /at most one trough may subtly merge or split once/i);
-  assert.match(curtain.supportReferencePrompt!, /natural verticality is correct/i);
-  assert.match(curtain.supportReferencePrompt!, /every fold and compressed mass descends from gathered suspension points above/i);
+  assert.match(curtain.supportReferencePrompt!, /broad cloth face covering at least seventy percent/i);
+  assert.match(curtain.supportReferencePrompt!, /at most one compression trough may persist for the full visible height/i);
+  assert.match(curtain.supportReferencePrompt!, /two or more adjacent full-height channels/i);
+  assert.match(curtain.supportReferencePrompt!, /No generated identity drape is supplied or allowed/i);
+  assert.match(curtain.supportReferencePrompt!, /Image 1 is the reviewed exact-product listing material\/detail crop/i);
   assert.match(curtain.supportReferencePrompt!, /no tieback, knot, bow, band, cord, clip/i);
   assert.match(curtain.supportReferencePrompt!, /large diagonal trough, U-shaped scoop, swag, loop/i);
-  assert.match(curtain.prompt, /Natural vertical folds are correct/i);
+  assert.match(curtain.prompt, /one mostly broad cloth face/i);
+  assert.match(curtain.prompt, /two or more adjacent uninterrupted channels/i);
   assert.match(curtain.prompt, /free hem ending at or above the tub rim/i);
   assert.match(curtain.prompt, /continuing naturally below the tub rim/i);
   assert.match(curtain.prompt, /Image 3 is the reviewed exact-product material\/detail crop/i);
@@ -940,12 +956,12 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(curtainClose.exactProductMaterialReferenceRequired, true);
   assert.equal(curtainClose.exactProductHeaderReferenceRequired, false);
   assert.equal(curtainClose.supportReferenceRequired, true);
-  assert.equal(curtainClose.supportReferenceInputCount, 2);
+  assert.equal(curtainClose.supportReferenceInputCount, 1);
   assert.equal(curtainClose.supportReferenceReuseAllowed, false);
   assert.equal(curtainClose.supportReferenceCompositingAllowed, false);
   assert.match(curtainClose.supportReferencePrompt!, /one-use physical-state reference/i);
-  assert.match(curtainClose.supportReferencePrompt!, /one broad shallow face plus one to three plainly unequal/i);
-  assert.match(curtainClose.supportReferencePrompt!, /at most one trough may subtly merge or split once/i);
+  assert.match(curtainClose.supportReferencePrompt!, /broad cloth face covering at least seventy percent/i);
+  assert.match(curtainClose.supportReferencePrompt!, /No generated identity drape is supplied or allowed/i);
   assert.equal(curtainClose.headerSupportReferenceRequired, false);
   assert.equal(curtainClose.headerSupportReferenceInputCount, 0);
   assert.equal(curtainClose.headerSupportReferencePrompt, null);
@@ -959,6 +975,22 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(
     curtainClose.identityReferenceCropPolicy,
     "not_applicable"
+  );
+
+  const patternedCurtain = styled.find(
+    (job) =>
+      job.asin === "B07SG7BV11" &&
+      job.styleSlug === "vintage-eclectic" &&
+      job.slot === 1
+  )!;
+  assert.equal(patternedCurtain.supportReferenceInputCount, 2);
+  assert.match(
+    patternedCurtain.supportReferencePrompt!,
+    /Image 1 is the reviewed .+ identity view for print motif hierarchy/i
+  );
+  assert.match(
+    patternedCurtain.supportReferencePrompt!,
+    /explicitly discard its silhouette, periodic fold rhythm/i
   );
 
   const bench = styled.find(

@@ -48,6 +48,14 @@ Full-header proof exposed a different tradeoff: one isolated support achieved th
 
 A source-reference crop is allowed only to remove listing text, icons, or callout layout that lies outside the material or construction evidence. The original source, URL, crop bounds, and before/after hashes must be preserved in the private execution evidence. This exception never permits cropping, retouching, relighting, compositing, or local pixel repair of a final scene.
 
+### V4.18 solid-curtain conditioning correction
+
+Scene 01 reproduced the same catalog-fold defect in both allowed V4.17 body-support attempts. The targeted final retry preserved the weave, color, seam, hem, and quiet vertical gravity, but still produced three adjacent channels that remained nearly equal and full height. That repeated result is recorded as a strategy failure, not an invitation to spend more retries.
+
+The remaining contradictory input was the reviewed front identity image: its product identity was useful, but its periodic generated drape was a much stronger visual cue than the instruction to discard the fold rhythm. Solid-curtain body supports therefore no longer receive any generated identity-drape image. They receive only the reviewed exact-product material crop, which contains weave, yarn variation, color, thickness, and roughness without a reusable silhouette.
+
+The solid-curtain body contract also stops asking the model for a row of “one to three compressions.” The target is now a mostly relaxed sheet: one broad face covering at least seventy percent of visible width, no more than one full-height trough, and one asymmetric displacement that changes width and fades into the face by the lower third. Two neighboring channels traceable from upper crop to hem are a hard reject. The reviewed identity remains authoritative evidence for the separate twelve-opening and twelve-hook construction, which stays completely outside styled-scene framing.
+
 ## Visual acceptance rubric
 
 Every final needs at least 3/4 in:
