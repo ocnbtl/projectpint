@@ -216,7 +216,7 @@ type AffiliatePilotV4StyledJob = {
   promptSha256: string;
   postprocess: "none";
   status: "queued";
-  referenceInputCount: 3 | 4 | 5;
+  referenceInputCount: 3 | 5;
   referencePlan: string;
   requiresPromptCapture: true;
   requestedModel: typeof AFFILIATE_PILOT_V4_REQUESTED_MODEL;
@@ -234,7 +234,7 @@ type AffiliatePilotV4StyledJob = {
   generationStrategy:
     | "direct_identity_locked_room_first"
     | "exact_source_locked_textile_full_header"
-    | "exact_source_locked_textile_hidden_header_gathered_oblique";
+    | "two_stage_one_use_textile_body_hidden_header";
   providerAttemptBudget: number;
   reusableProductCompositeAllowed: false;
   localPixelSurgeryAllowed: false;
@@ -244,6 +244,16 @@ type AffiliatePilotV4StyledJob = {
   sourceReferenceCropPolicy:
     | "not_applicable"
     | "recorded_crop_to_exclude_listing_overlay_only";
+  identityReferenceCropPolicy:
+    | "not_applicable"
+    | "recorded_body_hem_crop_excluding_invisible_header";
+  supportReferenceRequired: boolean;
+  supportReferenceInputCount: 0 | 2;
+  supportReferencePrompt: string | null;
+  supportReferencePromptSha256: string | null;
+  supportReferenceProviderAttemptBudget: number;
+  supportReferenceReuseAllowed: false;
+  supportReferenceCompositingAllowed: false;
 };
 
 export type AffiliatePilotV4Job =
@@ -273,11 +283,35 @@ function generationStrategyFor(
   }
   return slot === 1 || slot === 3
     ? "exact_source_locked_textile_full_header"
-    : "exact_source_locked_textile_hidden_header_gathered_oblique";
+    : "two_stage_one_use_textile_body_hidden_header";
 }
 
 function isTextileRole(role: AffiliatePilotV4ProductRole): boolean {
   return role === "solid-shower-curtain" || role === "patterned-shower-curtain";
+}
+
+function buildHiddenTextileSupportPrompt(
+  product: AffiliateProduct,
+  selection: AffiliatePilotV4Selection,
+  sceneId: string,
+  primarySceneReferenceView: AffiliatePilotV4IdentityView
+): string {
+  const patternInstruction =
+    selection.productRole === "patterned-shower-curtain"
+      ? "Preserve the canonical motif hierarchy, scale, colorway, and landmark relationships from Image 1 without tiling, cloning, or stretching the print."
+      : "Keep the panel solid muted terracotta-rust with no added pattern, stripe, border, ombre, or decoration.";
+  return [
+    "Use case: internal one-use physical-state reference for one Project Pint bathroom scene, not a final product photograph.",
+    `Scene-specific support identity: ${sceneId}. This support image may be used only by this scene and must never be reused or composited.`,
+    "Asset type: isolated textile body-and-hem drape study on a plain neutral light-gray background.",
+    `Create the exact ${product.name} by ${product.brand} shown in the references, but show only the camera-visible body, ordinary side seam, and weighted bottom hem. The rod, mounts, hooks, grommets, reinforced openings, and complete top edge must be outside the upper frame and absent.`,
+    "Physical state: the curtain has been pulled 35-55 percent open and gathered asymmetrically to one side. Show no more than 45 percent of total panel width. Preserve one free ordinary side edge and the weighted hem.",
+    "Generate a genuinely new gravity state: four to seven unequal fold masses, one deeper compressed pocket near one side, changing fold depth, localized diagonal and cross-grain tension, irregular spacing, small nonparallel wrinkle paths, and a nonperiodic hem wave. Never create an evenly spaced row of vertical tubes, pleats, repeated arcs, cloned grooves, or a reusable catalog silhouette.",
+    patternInstruction,
+    `Input roles: Image 1 is the reviewed ${primarySceneReferenceView} identity view for overall side seam, thickness, color family, print identity when applicable, and weighted hem only; explicitly discard its periodic fold rhythm and all visible header geometry. Image 2 is a reviewed exact-product listing material/detail crop for weave, yarn or print variation, color, thickness, and surface roughness.`,
+    "Composition: one complete camera-visible body-and-hem section centered with generous neutral margin, no room, no tub, no props, no text, no labels, no watermark, no person, and no shadow that implies a cutout pasted into a bathroom.",
+    "Output: one high-quality 1024x1536 portrait PNG-ready reference."
+  ].join("\n");
 }
 
 function incidentalFramingFor(role: AffiliatePilotV4ProductRole): string {
@@ -373,6 +407,8 @@ function buildStyledPrompt(
   referencePlan: string;
   textileRole: boolean;
   fullHeaderTextile: boolean;
+  hiddenHeaderTextile: boolean;
+  supportReferencePrompt: string | null;
 } {
   const profile =
     affiliatePilotV4StyleProfiles[
@@ -427,12 +463,25 @@ function buildStyledPrompt(
   );
   const textileRole = isTextileRole(selection.productRole);
   const fullHeaderTextile = textileRole && (slot === 1 || slot === 3);
-  const referenceInputCount = fullHeaderTextile ? 5 : textileRole ? 4 : 3;
-  const referencePlan = textileRole
-    ? `Use the reviewed seven-view identity atlas, the scene-selected orthographic identity view, the reviewed canonical presentation anchor, and one reviewed exact-product listing material detail.${fullHeaderTextile ? " Also use one reviewed exact-product listing header-construction image." : ""}`
+  const hiddenHeaderTextile = textileRole && !fullHeaderTextile;
+  const supportReferencePrompt = hiddenHeaderTextile
+    ? buildHiddenTextileSupportPrompt(
+        product,
+        selection,
+        sceneId,
+        primarySceneReferenceView
+      )
+    : null;
+  const referenceInputCount = fullHeaderTextile ? 5 : 3;
+  const referencePlan = fullHeaderTextile
+    ? "Use the reviewed seven-view identity atlas, the scene-selected orthographic identity view, the reviewed canonical presentation anchor, one reviewed exact-product listing material detail, and one reviewed exact-product listing header-construction image."
+    : hiddenHeaderTextile
+      ? "Use this job's reviewed one-use scene-specific body-and-hem support reference, a recorded crop of the scene-selected identity view that excludes all invisible header geometry, and one reviewed exact-product listing material/detail crop."
     : "Use the reviewed seven-view identity atlas, the scene-selected orthographic identity view, and the reviewed canonical presentation anchor.";
-  const inputImageRoles = textileRole
-    ? `Input image roles: Image 1 is the reviewed seven-view identity atlas. Image 2 is the reviewed ${primarySceneReferenceView} identity view for this camera. Image 3 is the reviewed presentation anchor. Image 4 is a reviewed exact-product listing crop for weave, color, thickness, and surface roughness only; ignore any listing layout or excluded overlay. ${fullHeaderTextile ? "Image 5 is a reviewed exact-product listing image for grommet, hook, and header construction only." : "The complete countable header remains outside the final frame."} Use Images 1-3 only for stable product identity, and Images 4${fullHeaderTextile ? "-5" : ""} to correct synthetic textile behavior. Do not copy any reference backdrop, room, display pose, lighting, or existing fold silhouette into the bathroom.`
+  const inputImageRoles = fullHeaderTextile
+    ? `Input image roles: Image 1 is the reviewed seven-view identity atlas. Image 2 is the reviewed ${primarySceneReferenceView} identity view for this camera. Image 3 is the reviewed presentation anchor. Image 4 is a reviewed exact-product listing crop for weave, color, thickness, and surface roughness only; ignore any listing layout or excluded overlay. Image 5 is a reviewed exact-product listing image for grommet, hook, and header construction only. Use Images 1-3 only for stable product identity, and Images 4-5 to correct synthetic textile behavior. Do not copy any reference backdrop, room, display pose, lighting, or existing fold silhouette into the bathroom.`
+    : hiddenHeaderTextile
+      ? "Input image roles: Image 1 is the reviewed one-use scene-specific body-and-hem drape support generated only for this job; use its fresh gravity state but do not paste or composite it. Image 2 is a recorded crop of the scene-selected identity view with all header geometry removed; use it only for side seam, thickness, color, print identity when applicable, and weighted hem, never its old fold rhythm. Image 3 is the reviewed exact-product listing material/detail crop for weave or print behavior, color, thickness, and surface roughness. Generate the bathroom and curtain natively. The rod, hooks, openings, and top edge remain outside frame."
     : `Input image roles: Image 1 is the reviewed seven-view identity atlas. Image 2 is the reviewed ${primarySceneReferenceView} identity view for this camera. Image 3 is the reviewed presentation anchor. Use them only for product identity; do not copy their backdrop, atlas layout, display pose, chroma color, lighting, or prior fabric drape into the room.`;
   const qaFocus = [
     "Realism: score at least 3/4 for iPhone plausibility, incidental-product framing, nonrepeating materials, human irregularity, nonliteral style interpretation, and set-level light/room variety.",
@@ -456,6 +505,8 @@ function buildStyledPrompt(
     referencePlan,
     textileRole,
     fullHeaderTextile,
+    hiddenHeaderTextile,
+    supportReferencePrompt,
     qaFocus,
     prompt: [
       PHYSICAL_PHOTO_CONTRACT,
@@ -567,7 +618,9 @@ export function buildAffiliatePilotV4Manifest(
           referenceInputCount,
           referencePlan,
           textileRole,
-          fullHeaderTextile
+          fullHeaderTextile,
+          hiddenHeaderTextile,
+          supportReferencePrompt
         } = buildStyledPrompt(product, selection, style, slot);
         jobs.push({
           id: `${product.id}:${style.slug}:${slot}`,
@@ -609,7 +662,20 @@ export function buildAffiliatePilotV4Manifest(
           exactProductHeaderReferenceRequired: fullHeaderTextile,
           sourceReferenceCropPolicy: textileRole
             ? "recorded_crop_to_exclude_listing_overlay_only"
-            : "not_applicable"
+            : "not_applicable",
+          identityReferenceCropPolicy: hiddenHeaderTextile
+            ? "recorded_body_hem_crop_excluding_invisible_header"
+            : "not_applicable",
+          supportReferenceRequired: hiddenHeaderTextile,
+          supportReferenceInputCount: hiddenHeaderTextile ? 2 : 0,
+          supportReferencePrompt,
+          supportReferencePromptSha256: supportReferencePrompt
+            ? sha256(supportReferencePrompt)
+            : null,
+          supportReferenceProviderAttemptBudget:
+            affiliatePilotV4ExecutionPolicy.supportReferenceProviderAttemptBudget,
+          supportReferenceReuseAllowed: false,
+          supportReferenceCompositingAllowed: false
         });
       }
     });
@@ -631,6 +697,9 @@ export function buildAffiliatePilotV4Manifest(
 
   const identityJobs = jobs.filter((job) => job.kind === "identity");
   const styledJobs = jobs.filter((job) => job.kind === "styled");
+  const supportReferenceJobs = styledJobs.filter(
+    (job) => job.supportReferenceRequired
+  );
   if (
     jobs.length !== 670 ||
     identityJobs.length !== 70 ||
@@ -648,6 +717,16 @@ export function buildAffiliatePilotV4Manifest(
   }
   if (new Set(jobs.map((job) => job.promptSha256)).size !== jobs.length) {
     throw new Error("Pilot v4 exact prompts must be unique.");
+  }
+  if (
+    supportReferenceJobs.length !== 72 ||
+    new Set(
+      supportReferenceJobs.map((job) => job.supportReferencePromptSha256)
+    ).size !== supportReferenceJobs.length
+  ) {
+    throw new Error(
+      "Pilot v4 requires 72 unique one-use hidden-header textile support references."
+    );
   }
   if (
     productsManifest.some(
@@ -692,6 +771,9 @@ export function buildAffiliatePilotV4Manifest(
     reusedIdentityCount: identityJobs.length,
     styledCount: styledJobs.length,
     generationRequestedCount: styledJobs.length,
+    supportReferenceGenerationRequestedCount: supportReferenceJobs.length,
+    totalProviderGenerationRequestFloor:
+      styledJobs.length + supportReferenceJobs.length,
     totalCount: jobs.length,
     target: AFFILIATE_PILOT_V4_TARGET,
     products: productsManifest,

@@ -553,6 +553,8 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(manifest.presentationCount, 10);
   assert.equal(manifest.orthographicCount, 60);
   assert.equal(manifest.identityCount, 70);
+  assert.equal(manifest.supportReferenceGenerationRequestedCount, 72);
+  assert.equal(manifest.totalProviderGenerationRequestFloor, 672);
   assert.equal(manifest.reusedIdentityCount, 70);
   assert.equal(manifest.styledCount, 600);
   assert.equal(manifest.generationRequestedCount, 600);
@@ -569,7 +571,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.4" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.5" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -579,6 +581,14 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     "pilot-2026-07-27-run-04"
   );
   assert.equal(manifest.executionPolicy.providerAttemptBudgetPerAsset, 2);
+  assert.equal(
+    manifest.executionPolicy
+      .oneUseSceneSpecificTextileSupportRequiredForHiddenHeader,
+    true
+  );
+  assert.equal(manifest.executionPolicy.supportReferenceProviderAttemptBudget, 2);
+  assert.equal(manifest.executionPolicy.supportReferenceReuseAllowed, false);
+  assert.equal(manifest.executionPolicy.supportReferenceCompositingAllowed, false);
   assert.equal(
     manifest.executionPolicy
       .providerAttemptBudgetResetsOnlyAfterLoggedRootStrategyRevision,
@@ -614,7 +624,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     styled.every(
       (job) =>
-        [3, 4, 5].includes(job.referenceInputCount) &&
+        [3, 5].includes(job.referenceInputCount) &&
         job.sceneId?.startsWith("v4-") &&
         job.primarySceneReferenceView &&
         job.prompt.includes("Primary request: photograph a believable occupied home bathroom") &&
@@ -634,10 +644,12 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
         job.reusableProductCompositeAllowed === false &&
         job.localPixelSurgeryAllowed === false &&
         job.localCropPolicy === "not_allowed" &&
-        (job.referenceInputCount === 3
-          ? job.sourceReferenceCropPolicy === "not_applicable"
-          : job.sourceReferenceCropPolicy ===
-            "recorded_crop_to_exclude_listing_overlay_only")
+        (job.referenceInputCount === 5
+          ? job.sourceReferenceCropPolicy ===
+            "recorded_crop_to_exclude_listing_overlay_only"
+          : ["not_applicable", "recorded_crop_to_exclude_listing_overlay_only"].includes(
+              job.sourceReferenceCropPolicy
+            ))
     )
   );
   assert.equal(new Set(styled.map((job) => job.sceneId)).size, 600);
@@ -696,14 +708,24 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(curtainClose.prompt, /entire countable header outside/i);
   assert.equal(
     curtainClose.generationStrategy,
-    "exact_source_locked_textile_hidden_header_gathered_oblique"
+    "two_stage_one_use_textile_body_hidden_header"
   );
   assert.match(curtainClose.prompt, /35.+55 percent open/i);
   assert.match(curtainClose.prompt, /no more than 45 percent of the panel width/i);
   assert.match(curtainClose.prompt, /shower-interior edge/i);
-  assert.equal(curtainClose.referenceInputCount, 4);
+  assert.equal(curtainClose.referenceInputCount, 3);
   assert.equal(curtainClose.exactProductMaterialReferenceRequired, true);
   assert.equal(curtainClose.exactProductHeaderReferenceRequired, false);
+  assert.equal(curtainClose.supportReferenceRequired, true);
+  assert.equal(curtainClose.supportReferenceInputCount, 2);
+  assert.equal(curtainClose.supportReferenceReuseAllowed, false);
+  assert.equal(curtainClose.supportReferenceCompositingAllowed, false);
+  assert.match(curtainClose.supportReferencePrompt!, /one-use physical-state reference/i);
+  assert.match(curtainClose.supportReferencePrompt!, /four to seven unequal fold masses/i);
+  assert.equal(
+    curtainClose.identityReferenceCropPolicy,
+    "recorded_body_hem_crop_excluding_invisible_header"
+  );
 
   const bench = styled.find(
     (job) =>
