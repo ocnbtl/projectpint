@@ -64,7 +64,7 @@ const PHYSICAL_PHOTO_CONTRACT = [
   "Material invariant: prefer matte, honed, worn, and directionally textured surfaces. Preserve seams, thickness, grain, nap, weave, contact compression, water variation, and irregular roughness. No cloned patches, tiled veins, repeated folds, procedural ribbing, crystalline noise, or blanket gloss.",
   "Exposure invariant: product and room share one camera exposure, white balance, color spill, focus behavior, shadow softness, noise, and highlight rolloff. The product is not cleaner, sharper, brighter, or more saturated than its surroundings.",
   "Identity invariant: show exactly one reviewed canonical product at ordinary household scale, correctly supported and handed, with no duplicate, mutation, invented feature, packaging, new mark, or alternate variation.",
-  "Secondary-object invariant: use plain unbranded objects with no readable labels, pseudo-text, logos, or decorative typography.",
+  "Secondary-object invariant: use plain unbranded objects with no readable labels, label-shaped graphics, pseudo-text, logos, or decorative typography. No secondary object may share the featured product's category or silhouette. For toiletries, prefer unlabeled cups, brushes, cloths, or loose ordinary items; omit bottles, tubes, and packages when a truly blank surface cannot be guaranteed.",
   "Set-variety invariant: every five-scene set uses five different physical rooms, camera positions, light sources, room histories, palette emphases, human traces, and material irregularities."
 ].join("\n");
 
@@ -280,6 +280,16 @@ type AffiliatePilotV4StyledJob = {
   nativeHeaderAuditEditPromptSha256: string | null;
   nativeHeaderAuditEditProviderAttemptBudget: number;
   nativeHeaderAuditEditReuseAllowed: false;
+  nonTextileNearPassCorrectionAllowed: boolean;
+  nonTextileNearPassCorrectionInputCount: 0 | 3;
+  nonTextileNearPassCorrectionPrompt: string | null;
+  nonTextileNearPassCorrectionPromptSha256: string | null;
+  nonTextileNearPassCorrectionProviderAttemptBudget: number;
+  nonTextileNearPassCorrectionRequiresSameSceneNearPass: boolean;
+  nonTextileNearPassCorrectionMustPreservePassingPixels: boolean;
+  nonTextileNearPassCorrectionMayEditOnlyDocumentedHardRejectPixels: boolean;
+  nonTextileNearPassCorrectionReuseAllowed: false;
+  nonTextileNearPassCorrectionCompositingAllowed: false;
   finalizationEditGenerationCount: 0 | 1;
   supportReferenceGenerationCount: 0 | 1 | 2 | 3;
   supportReferenceCropPolicy:
@@ -470,6 +480,31 @@ function buildNativeHeaderAuditEditPrompt(
   ].join("\n");
 }
 
+function buildNonTextileNearPassCorrectionPrompt(
+  product: AffiliateProduct,
+  selection: AffiliatePilotV4Selection,
+  sceneId: string,
+  primarySceneReferenceView: AffiliatePilotV4IdentityView
+): string {
+  return [
+    "Use case: edit-image.",
+    "Asset type: one-use provider-native same-scene correction for a reviewed non-textile Project Pint near-pass.",
+    `Scene-specific correction identity: ${sceneId}. This correction and every input are restricted to this exact scene and may never be reused or composited elsewhere.`,
+    `Featured product: ${product.name} by ${product.brand}.`,
+    "Input image roles: Image 1 is the full-size-reviewed same-scene near-pass and the immutable base photograph. It governs the complete room, camera, crop, perspective, architecture, plumbing, support surfaces, object count, assigned human traces, material wear, reflections, light direction, exposure, shadows, highlights, color spill, focus, noise, and every passing product pixel. Image 2 is the reviewed seven-view identity atlas and governs complete canonical product geometry, handedness, counts, material boundaries, and hidden-feature continuity. Image 3 is the reviewed " +
+      primarySceneReferenceView +
+      " identity view and governs only the documented failed product geometry visible from this camera.",
+    "Edit scope: change only the smallest pixels required by the separately supplied documented hard-reject list. A product correction must remain inside the existing product footprint unless a missing canonical protrusion requires a minimal local extension. A secondary-object correction may remove or neutralize only a specifically documented same-category, label-bearing, logo-bearing, or pseudo-text object, restoring the immediately surrounding wall, ledge, counter, or container surface without inventing decor.",
+    "Immutable-base gate: do not redesign, restage, clean, relight, reframe, recrop, widen, move, replace, or sharpen the room. Preserve every passing room boundary, fixture, towel, mat, basket, grooming item, wear mark, shadow, reflection, highlight, phone artifact, and unlabeled object. Any material room redraw is a hard rejection.",
+    `Identity gate: ${selection.identityPrompt}`,
+    `Countable-feature gate: ${countableChecklist(selection)}.`,
+    "Ambiguity gate: exactly one object may share the featured product's category or recognizable silhouette. Add no bottle, pump, dispenser, package, label-shaped graphic, readable text, pseudo-text, logo, alternate mark, duplicate, or decorative typography.",
+    "Integration gate: corrected pixels must share Image 1's exact scale, perspective, support, exposure, white balance, color spill, shadow softness, focus, noise, highlight rolloff, and material roughness. The corrected product may not become larger, cleaner, brighter, sharper, more centered, or more saturated.",
+    "Constraints: provider-native edit only; no local pixel surgery, reusable cutout, compositing, new room object, person, hand, packaging, claim, text overlay, or watermark.",
+    "Technical output gate: output exactly 1024 pixels wide by exactly 1536 pixels high. Preserve the original portrait framing; any one-pixel width or height deviation is a hard rejection."
+  ].join("\n");
+}
+
 function incidentalFramingFor(role: AffiliatePilotV4ProductRole): string {
   if (
     role === "solid-shower-curtain" ||
@@ -569,6 +604,7 @@ function buildStyledPrompt(
   roomPlateSupportPrompt: string | null;
   roomPlateCorrectionPrompt: string | null;
   nativeHeaderAuditEditPrompt: string | null;
+  nonTextileNearPassCorrectionPrompt: string | null;
 } {
   const profile =
     affiliatePilotV4StyleProfiles[
@@ -660,6 +696,14 @@ function buildStyledPrompt(
   const nativeHeaderAuditEditPrompt = fullHeaderTextile
     ? buildNativeHeaderAuditEditPrompt(product, selection, sceneId)
     : null;
+  const nonTextileNearPassCorrectionPrompt = !textileRole
+    ? buildNonTextileNearPassCorrectionPrompt(
+        product,
+        selection,
+        sceneId,
+        primarySceneReferenceView
+      )
+    : null;
   const referenceInputCount = 3;
   const referencePlan = fullHeaderTextile
     ? "Use this job's reviewed one-use room-only iPhone plate as the locked edit base, its reviewed one-use twelve-point header-count scaffold crop, and its separate reviewed one-use body-and-hem support crop."
@@ -705,6 +749,7 @@ function buildStyledPrompt(
     roomPlateSupportPrompt,
     roomPlateCorrectionPrompt,
     nativeHeaderAuditEditPrompt,
+    nonTextileNearPassCorrectionPrompt,
     qaFocus,
     prompt: [
       PHYSICAL_PHOTO_CONTRACT,
@@ -822,7 +867,8 @@ export function buildAffiliatePilotV4Manifest(
           headerSupportReferencePrompt,
           roomPlateSupportPrompt,
           roomPlateCorrectionPrompt,
-          nativeHeaderAuditEditPrompt
+          nativeHeaderAuditEditPrompt,
+          nonTextileNearPassCorrectionPrompt
         } = buildStyledPrompt(product, selection, style, slot);
         jobs.push({
           id: `${product.id}:${style.slug}:${slot}`,
@@ -928,6 +974,33 @@ export function buildAffiliatePilotV4Manifest(
             affiliatePilotV4ExecutionPolicy
               .providerNativeHeaderAuditEditAttemptBudget,
           nativeHeaderAuditEditReuseAllowed: false,
+          nonTextileNearPassCorrectionAllowed:
+            !textileRole &&
+            affiliatePilotV4ExecutionPolicy
+              .providerNativeNonTextileNearPassCorrectionAllowed,
+          nonTextileNearPassCorrectionInputCount: textileRole ? 0 : 3,
+          nonTextileNearPassCorrectionPrompt,
+          nonTextileNearPassCorrectionPromptSha256:
+            nonTextileNearPassCorrectionPrompt
+              ? sha256(nonTextileNearPassCorrectionPrompt)
+              : null,
+          nonTextileNearPassCorrectionProviderAttemptBudget:
+            affiliatePilotV4ExecutionPolicy
+              .nonTextileNearPassCorrectionProviderAttemptBudget,
+          nonTextileNearPassCorrectionRequiresSameSceneNearPass:
+            !textileRole &&
+            affiliatePilotV4ExecutionPolicy
+              .nonTextileNearPassCorrectionRequiresFullSizeReviewedSameSceneSource,
+          nonTextileNearPassCorrectionMustPreservePassingPixels:
+            !textileRole &&
+            affiliatePilotV4ExecutionPolicy
+              .nonTextileNearPassCorrectionMustPreservePassingPixels,
+          nonTextileNearPassCorrectionMayEditOnlyDocumentedHardRejectPixels:
+            !textileRole &&
+            affiliatePilotV4ExecutionPolicy
+              .nonTextileNearPassCorrectionMayEditOnlyDocumentedHardRejectPixels,
+          nonTextileNearPassCorrectionReuseAllowed: false,
+          nonTextileNearPassCorrectionCompositingAllowed: false,
           finalizationEditGenerationCount: fullHeaderTextile ? 1 : 0,
           supportReferenceGenerationCount: fullHeaderTextile
             ? 3
@@ -973,6 +1046,9 @@ export function buildAffiliatePilotV4Manifest(
   const nativeHeaderAuditEditJobs = styledJobs.filter(
     (job) => job.nativeHeaderAuditEditRequired
   );
+  const nonTextileNearPassCorrectionJobs = styledJobs.filter(
+    (job) => job.nonTextileNearPassCorrectionAllowed
+  );
   const supportReferenceGenerationRequestedCount = styledJobs.reduce(
     (count, job) => count + job.supportReferenceGenerationCount,
     0
@@ -1016,11 +1092,17 @@ export function buildAffiliatePilotV4Manifest(
       )
     ).size !== roomPlateCorrectionJobs.length ||
     nativeHeaderAuditEditJobs.length !== 0 ||
+    nonTextileNearPassCorrectionJobs.length !== 480 ||
+    new Set(
+      nonTextileNearPassCorrectionJobs.map(
+        (job) => job.nonTextileNearPassCorrectionPromptSha256
+      )
+    ).size !== nonTextileNearPassCorrectionJobs.length ||
     finalizationEditGenerationRequestedCount !== 0 ||
     supportReferenceGenerationRequestedCount !== 240
   ) {
     throw new Error(
-      "Pilot v4 requires 120 unique textile body supports, 120 unique hidden-header room plates, and 120 same-scene room-plate correction contracts, and forbids visible-header and header-audit styled jobs."
+      "Pilot v4 requires 120 unique textile body supports, 120 unique hidden-header room plates, 120 same-scene room-plate correction contracts, and 480 unique non-textile near-pass correction contracts, and forbids visible-header and header-audit styled jobs."
     );
   }
   if (
@@ -1069,6 +1151,8 @@ export function buildAffiliatePilotV4Manifest(
     supportReferenceGenerationRequestedCount,
     roomPlateGenerationRequestedCount: roomPlateSupportJobs.length,
     roomPlateCorrectionEligibleCount: roomPlateCorrectionJobs.length,
+    nonTextileNearPassCorrectionEligibleCount:
+      nonTextileNearPassCorrectionJobs.length,
     finalizationEditGenerationRequestedCount,
     totalProviderGenerationRequestFloor:
       styledJobs.length +

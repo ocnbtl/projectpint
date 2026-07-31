@@ -556,6 +556,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(manifest.supportReferenceGenerationRequestedCount, 240);
   assert.equal(manifest.roomPlateGenerationRequestedCount, 120);
   assert.equal(manifest.roomPlateCorrectionEligibleCount, 120);
+  assert.equal(manifest.nonTextileNearPassCorrectionEligibleCount, 480);
   assert.equal(manifest.finalizationEditGenerationRequestedCount, 0);
   assert.equal(manifest.totalProviderGenerationRequestFloor, 840);
   assert.equal(manifest.reusedIdentityCount, 70);
@@ -574,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.24" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.25" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -808,6 +809,44 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   );
   assert.equal(
     manifest.executionPolicy
+      .providerNativeNonTextileNearPassCorrectionAllowed,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.nonTextileNearPassCorrectionInputCount,
+    3
+  );
+  assert.equal(
+    manifest.executionPolicy
+      .nonTextileNearPassCorrectionProviderAttemptBudget,
+    1
+  );
+  assert.equal(
+    manifest.executionPolicy
+      .nonTextileNearPassCorrectionRequiresFullSizeReviewedSameSceneSource,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy
+      .nonTextileNearPassCorrectionMustPreservePassingPixels,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy
+      .nonTextileNearPassCorrectionMayEditOnlyDocumentedHardRejectPixels,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.nonTextileNearPassCorrectionReuseAllowed,
+    false
+  );
+  assert.equal(
+    manifest.executionPolicy
+      .nonTextileNearPassCorrectionCompositingAllowed,
+    false
+  );
+  assert.equal(
+    manifest.executionPolicy
       .providerAttemptBudgetResetsOnlyAfterLoggedRootStrategyRevision,
     true
   );
@@ -893,6 +932,43 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     JSON.stringify(manifest),
     /\/private\/tmp|project-pint-affiliate-pilot-v4-refs/
   );
+  const nonTextileJobs = styled.filter(
+    (job) =>
+      job.asin !== "B0D2KK6MNS" &&
+      job.asin !== "B07SG7BV11"
+  );
+  const textileJobs = styled.filter(
+    (job) =>
+      job.asin === "B0D2KK6MNS" ||
+      job.asin === "B07SG7BV11"
+  );
+  assert.equal(nonTextileJobs.length, 480);
+  assert.equal(textileJobs.length, 120);
+  assert.ok(
+    nonTextileJobs.every(
+      (job) =>
+        job.nonTextileNearPassCorrectionAllowed === true &&
+        job.nonTextileNearPassCorrectionInputCount === 3 &&
+        job.nonTextileNearPassCorrectionPrompt &&
+        job.nonTextileNearPassCorrectionPromptSha256 &&
+        job.nonTextileNearPassCorrectionProviderAttemptBudget === 1 &&
+        job.nonTextileNearPassCorrectionRequiresSameSceneNearPass === true &&
+        job.nonTextileNearPassCorrectionMustPreservePassingPixels === true &&
+        job.nonTextileNearPassCorrectionMayEditOnlyDocumentedHardRejectPixels ===
+          true &&
+        job.nonTextileNearPassCorrectionReuseAllowed === false &&
+        job.nonTextileNearPassCorrectionCompositingAllowed === false
+    )
+  );
+  assert.ok(
+    textileJobs.every(
+      (job) =>
+        job.nonTextileNearPassCorrectionAllowed === false &&
+        job.nonTextileNearPassCorrectionInputCount === 0 &&
+        job.nonTextileNearPassCorrectionPrompt === null &&
+        job.nonTextileNearPassCorrectionPromptSha256 === null
+    )
+  );
 
   const oxo = styled.find(
     (job) =>
@@ -902,6 +978,32 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   )!;
   assert.match(oxo.prompt, /short, nearly horizontal forward spout/i);
   assert.match(oxo.prompt, /product merely happens to be present/i);
+  assert.match(oxo.prompt, /No secondary object may share the featured product's category or silhouette/i);
+  assert.match(oxo.prompt, /omit bottles, tubes, and packages/i);
+  assert.match(
+    oxo.nonTextileNearPassCorrectionPrompt!,
+    /same-scene near-pass and the immutable base photograph/i
+  );
+  assert.match(
+    oxo.nonTextileNearPassCorrectionPrompt!,
+    /change only the smallest pixels required by the separately supplied documented hard-reject list/i
+  );
+  assert.match(
+    oxo.nonTextileNearPassCorrectionPrompt!,
+    /Image 2 is the reviewed seven-view identity atlas/i
+  );
+  assert.match(
+    oxo.nonTextileNearPassCorrectionPrompt!,
+    /Image 3 is the reviewed back identity view/i
+  );
+  assert.match(
+    oxo.nonTextileNearPassCorrectionPrompt!,
+    /Any material room redraw is a hard rejection/i
+  );
+  assert.match(
+    oxo.nonTextileNearPassCorrectionPrompt!,
+    /label-bearing, logo-bearing, or pseudo-text object/i
+  );
 
   const curtain = styled.find(
     (job) =>
