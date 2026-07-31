@@ -309,7 +309,7 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
 ] as const;
 
 export const affiliatePilotV4RealismReset = {
-  contractVersion: "affiliate-pilot-real-bathroom-v4.12",
+  contractVersion: "affiliate-pilot-real-bathroom-v4.13",
   supersedesPromptVersion: "affiliate-pilot-identity-physical-photo-v4",
   supersedesGenerationVersion: "pilot-2026-07-27-run-04",
   resetAuthorizedAt: "2026-07-31T05:00:00-04:00",
@@ -319,7 +319,7 @@ export const affiliatePilotV4RealismReset = {
   reason:
     "Owner review found AI-stock polish, repeated lighting and room formulas, literal style stereotypes, procedural material texture, repeated curtain folds, and an unsustainable retry/compositing rate.",
   rootCauseRevision:
-    "Two prompt-only proof retries showed that generated curtain identity views propagated synthetic tubular folds and incorrect header counts. Exact-product listing evidence corrected material behavior, and mandatory de-staging corrected real-estate polish. Hidden-header proofs then required a one-use body-and-hem support reference. Splitting full-header count and body supports fixed count construction, but feeding both isolated product supports into a blank generation still caused a full-frame product-first room and procedural folds. A reviewed one-use room-only iPhone plate fixed that composition failure, but four provider-native header passes could not preserve twelve visible positions. Hiding the countable header preserved identity honestly. Room-first hidden-header edits fixed staging, and deformation-gated supports fixed upstream fold QA, but two v4.11 finals showed that the remaining header-free identity crop still reintroduced visible hardware and its original periodic drape. Every styled textile scene now begins with a reviewed one-use hidden-header room plate and a deformation-gated body support generated from identity evidence. The final edit receives that room plate, the reviewed support, and the exact material crop only; no generated identity drape is allowed in final conditioning."
+    "Two prompt-only proof retries showed that generated curtain identity views propagated synthetic tubular folds and incorrect header counts. Exact-product listing evidence corrected material behavior, and mandatory de-staging corrected real-estate polish. Hidden-header proofs then required one-use body supports and room plates. Four provider-native header passes could not preserve twelve visible positions, so styled scenes keep the complete countable header outside frame while reviewed identities remain authoritative. Deformation-gated supports fixed periodic folds, and removing identity drapes from final conditioning stopped them from returning. The base deformation prompt then produced the same impossible invisible mid-height tie in scene 03 and scene 04. Every support now keeps all compression suspended from above frame and treats any knot, tieback, clip, side attachment, singular waist, or convergence point as a hard reject. Mid-body changes must come only from ordinary slack and fabric stiffness."
 } as const;
 
 export const affiliatePilotV4ExecutionPolicy = {
@@ -341,6 +341,8 @@ export const affiliatePilotV4ExecutionPolicy = {
   textileBodySupportFullHeightParallelChannelsAreHardReject: true,
   textileBodySupportMinimumMidBodyDeformationBreaks: 2,
   textileBodySupportRequiresMultiHeightSilhouetteChanges: true,
+  textileBodySupportCompressionOrigin: "suspension_above_frame_only",
+  textileBodySupportUnsupportedLateralPinchIsHardReject: true,
   textileFinalIdentityDrapeReferenceAllowed: false,
   reviewedBodySupportCarriesIdentityToTextileFinal: true,
   oneUseSceneSpecificHeaderCountSupportRequiredForFullHeader: false,

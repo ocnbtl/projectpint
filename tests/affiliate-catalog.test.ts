@@ -573,7 +573,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.12" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.13" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -599,6 +599,15 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(
     manifest.executionPolicy
       .textileBodySupportRequiresMultiHeightSilhouetteChanges,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.textileBodySupportCompressionOrigin,
+    "suspension_above_frame_only"
+  );
+  assert.equal(
+    manifest.executionPolicy
+      .textileBodySupportUnsupportedLateralPinchIsHardReject,
     true
   );
   assert.equal(
@@ -800,6 +809,9 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(curtain.supportReferencePrompt!, /three to five plainly unequal primary masses/i);
   assert.match(curtain.supportReferencePrompt!, /two or more different mid-body heights/i);
   assert.match(curtain.supportReferencePrompt!, /no set of similar fold channels may run uninterrupted/i);
+  assert.match(curtain.supportReferencePrompt!, /every fold and compressed mass descends from gathered suspension points above/i);
+  assert.match(curtain.supportReferencePrompt!, /no tieback, knot, bow, band, cord, clip/i);
+  assert.match(curtain.supportReferencePrompt!, /never unsupported lateral force/i);
   assert.match(curtain.prompt, /never smooth those breaks into uninterrupted full-height channels/i);
   assert.match(curtain.prompt, /Image 3 is the reviewed exact-product material\/detail crop/i);
   assert.match(curtain.prompt, /no reusable product silhouette or header/i);
