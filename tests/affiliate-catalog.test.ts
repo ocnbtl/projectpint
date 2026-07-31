@@ -575,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.25" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.26" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -819,7 +819,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(
     manifest.executionPolicy
       .nonTextileNearPassCorrectionProviderAttemptBudget,
-    1
+    2
   );
   assert.equal(
     manifest.executionPolicy
@@ -834,6 +834,11 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(
     manifest.executionPolicy
       .nonTextileNearPassCorrectionMayEditOnlyDocumentedHardRejectPixels,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy
+      .nonTextileNearPassCorrectionRequiresCameraProjectedHandednessDirective,
     true
   );
   assert.equal(
@@ -951,7 +956,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
         job.nonTextileNearPassCorrectionInputCount === 3 &&
         job.nonTextileNearPassCorrectionPrompt &&
         job.nonTextileNearPassCorrectionPromptSha256 &&
-        job.nonTextileNearPassCorrectionProviderAttemptBudget === 1 &&
+        job.nonTextileNearPassCorrectionProviderAttemptBudget === 2 &&
         job.nonTextileNearPassCorrectionRequiresSameSceneNearPass === true &&
         job.nonTextileNearPassCorrectionMustPreservePassingPixels === true &&
         job.nonTextileNearPassCorrectionMayEditOnlyDocumentedHardRejectPixels ===
@@ -999,6 +1004,14 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(
     oxo.nonTextileNearPassCorrectionPrompt!,
     /Any material room redraw is a hard rejection/i
+  );
+  assert.match(
+    oxo.nonTextileNearPassCorrectionPrompt!,
+    /Camera-projected handedness gate/i
+  );
+  assert.match(
+    oxo.nonTextileNearPassCorrectionPrompt!,
+    /required viewer-space projection for this exact camera/i
   );
   assert.match(
     oxo.nonTextileNearPassCorrectionPrompt!,
