@@ -233,7 +233,7 @@ type AffiliatePilotV4StyledJob = {
   styleVariationLane: string;
   generationStrategy:
     | "direct_identity_locked_room_first"
-    | "room_plate_edit_two_support_textile_full_header"
+    | "room_plate_two_pass_native_textile_full_header"
     | "two_stage_one_use_textile_body_hidden_header";
   providerAttemptBudget: number;
   reusableProductCompositeAllowed: false;
@@ -265,6 +265,13 @@ type AffiliatePilotV4StyledJob = {
   roomPlateProviderAttemptBudget: number;
   roomPlateReuseAllowed: false;
   providerNativeRoomPlateEditRequired: boolean;
+  nativeHeaderAuditEditRequired: boolean;
+  nativeHeaderAuditEditInputCount: 0 | 3;
+  nativeHeaderAuditEditPrompt: string | null;
+  nativeHeaderAuditEditPromptSha256: string | null;
+  nativeHeaderAuditEditProviderAttemptBudget: number;
+  nativeHeaderAuditEditReuseAllowed: false;
+  finalizationEditGenerationCount: 0 | 1;
   supportReferenceGenerationCount: 0 | 1 | 3;
   supportReferenceCropPolicy:
     | "not_applicable"
@@ -297,7 +304,7 @@ function generationStrategyFor(
     return "direct_identity_locked_room_first";
   }
   return slot === 1 || slot === 3
-    ? "room_plate_edit_two_support_textile_full_header"
+    ? "room_plate_two_pass_native_textile_full_header"
     : "two_stage_one_use_textile_body_hidden_header";
 }
 
@@ -392,6 +399,32 @@ function buildTextileRoomPlatePrompt(
     "Physical audit: visible plumbing, tub or shower edges, doors, storage, supports, outlets, switches, reflections, and circulation must be complete and coherent. Prefer matte, worn, directionally textured, and nonrepeating surfaces. No blanket gloss, tiled veins, repeated wood grain, procedural grout, impossible reflections, floating objects, or malformed fixtures.",
     "Plate-lock purpose: a later provider-native edit will add the reviewed curtain only inside the empty shower opening. Make the room photograph strong enough to preserve unchanged; do not reserve a blank product-photography backdrop or light the empty rod as a hero.",
     "Output: one high-quality 1024x1536 portrait room-only image in a 2:3 frame."
+  ].join("\n");
+}
+
+function buildNativeHeaderAuditEditPrompt(
+  product: AffiliateProduct,
+  selection: AffiliatePilotV4Selection,
+  sceneId: string
+): string {
+  const patternInstruction =
+    selection.productRole === "patterned-shower-curtain"
+      ? "Continue the existing canonical motif across the narrow edited header without resizing, tiling, mirroring, cloning, or shifting the body print."
+      : "Keep the existing solid muted terracotta-rust color and dry woven surface; add no pattern, stripe, border, ombre, or decoration.";
+  return [
+    "Use case: edit-image.",
+    "Asset type: final provider-native full-header construction audit for one Project Pint bathroom scene.",
+    `Scene-specific finalization identity: ${sceneId}. This edit and every input are one-use evidence for this scene only.`,
+    `Primary request: correct only the narrow header construction of the already placed ${product.name} by ${product.brand} in Image 1.`,
+    "Input image roles: Image 1 is the reviewed room-placement candidate and governs the complete final image, curtain body, hem, room, camera, exposure, noise, objects, wear, and human irregularity. Image 2 is the reviewed scene-specific twelve-point header scaffold and governs only the straight rod, both mounts, exactly twelve hooks, exactly twelve openings, and direct hook-to-opening relationship. Image 3 is the reviewed room-only plate and is a preservation reference for every non-product pixel; do not restore its empty shower opening.",
+    "Edit scope: modify only the smallest narrow strip needed between the rod and the existing curtain body. Preserve Image 1 everywhere else, including every architectural edge, cabinet, open door or drawer, pump, towel, switch, tub edge, floor mark, mat corner, shadow, highlight, phone artifact, body fold, side seam, and weighted hem. Do not redesign, restage, clean, relight, reframe, recrop, widen, or move the room or curtain body.",
+    "Count gate: exactly twelve reinforced top openings and exactly twelve separate simple silver hooks, one hook through each opening. Audit four left + four center + four right = 12. The sixth and seventh positions straddle the panel centerline. Show all twelve distinctly between the two visible mounts, with no hidden, partial, thirteenth, missing, doubled, fused, or empty position.",
+    "Construction gate: openings pass directly through the same uninterrupted curtain body. No separate top band, reinforcement strip, cuff, valance, doubled panel, repeated scallop, evenly repeated header wave, added seam, or change to the existing side edges.",
+    patternInstruction,
+    "Integration gate: the corrected header shares Image 1's exact perspective, warm overhead falloff, exposure, white balance, texture scale, focus, noise, and metal roughness. It must look photographed in the same original iPhone capture, never pasted, sharper, brighter, or more regular than the body.",
+    `Final identity audit: ${countableChecklist(selection)}. Reject the edit internally if the count is not exactly twelve or if anything outside the narrow header strip changes materially.`,
+    "Constraints: provider-native edit only; no local compositing, reusable header, text, label, logo, watermark, person, hand, packaging, duplicate product, alternate variation, or additional bathroom object.",
+    "Output: one final high-quality 1024x1536 portrait image in a 2:3 frame."
   ].join("\n");
 }
 
@@ -492,6 +525,7 @@ function buildStyledPrompt(
   supportReferencePrompt: string | null;
   headerSupportReferencePrompt: string | null;
   roomPlateSupportPrompt: string | null;
+  nativeHeaderAuditEditPrompt: string | null;
 } {
   const profile =
     affiliatePilotV4StyleProfiles[
@@ -577,6 +611,9 @@ function buildStyledPrompt(
         styleVariationLane
       )
     : null;
+  const nativeHeaderAuditEditPrompt = fullHeaderTextile
+    ? buildNativeHeaderAuditEditPrompt(product, selection, sceneId)
+    : null;
   const referenceInputCount = 3;
   const referencePlan = fullHeaderTextile
     ? "Use this job's reviewed one-use room-only iPhone plate as the locked edit base, its reviewed one-use twelve-point header-count scaffold crop, and its separate reviewed one-use body-and-hem support crop."
@@ -614,6 +651,7 @@ function buildStyledPrompt(
     supportReferencePrompt,
     headerSupportReferencePrompt,
     roomPlateSupportPrompt,
+    nativeHeaderAuditEditPrompt,
     qaFocus,
     prompt: [
       PHYSICAL_PHOTO_CONTRACT,
@@ -636,7 +674,7 @@ function buildStyledPrompt(
       `Scene-specific product placement: ${placement}`,
       `Reflection and door plan: ${shot.reflectionPlan}`,
       inputImageRoles,
-      `Generation strategy: ${generationStrategy}. ${fullHeaderTextile ? "Edit the reviewed room plate natively and alter only the empty shower opening enough to hang the product; the room plate must remain recognizably unchanged." : "Generate this scene's product state natively inside this room."} Reusing or locally compositing a product cutout, fold silhouette, textile map, room plate, or prior accepted scene is forbidden.`,
+      `Generation strategy: ${generationStrategy}. ${fullHeaderTextile ? "First edit the reviewed room plate natively and alter only the empty shower opening enough to place the complete product; the room plate must remain recognizably unchanged. Treat this as the placement pass. A second provider-native audit edit will then correct only the narrow header strip and produce the accepted final." : "Generate this scene's product state natively inside this room."} Reusing or locally compositing a product cutout, fold silhouette, textile map, room plate, or prior accepted scene is forbidden.`,
       `Scene-specific QA target: ${qaFocus}`,
       "Final audit: first ask whether this could be mistaken for an ordinary person's good iPhone bathroom photo. Then check product identity, scale, support, visible construction, reflections, material repetition, exposure integration, text, and whether any object or styling looks too perfectly arranged.",
       "Constraints: exactly one canonical featured product; no people or hands; no packaging; no product claim, alternate variation, added label, duplicate, text overlay, or watermark.",
@@ -729,7 +767,8 @@ export function buildAffiliatePilotV4Manifest(
           hiddenHeaderTextile,
           supportReferencePrompt,
           headerSupportReferencePrompt,
-          roomPlateSupportPrompt
+          roomPlateSupportPrompt,
+          nativeHeaderAuditEditPrompt
         } = buildStyledPrompt(product, selection, style, slot);
         jobs.push({
           id: `${product.id}:${style.slug}:${slot}`,
@@ -801,6 +840,17 @@ export function buildAffiliatePilotV4Manifest(
             affiliatePilotV4ExecutionPolicy.roomPlateProviderAttemptBudget,
           roomPlateReuseAllowed: false,
           providerNativeRoomPlateEditRequired: fullHeaderTextile,
+          nativeHeaderAuditEditRequired: fullHeaderTextile,
+          nativeHeaderAuditEditInputCount: fullHeaderTextile ? 3 : 0,
+          nativeHeaderAuditEditPrompt,
+          nativeHeaderAuditEditPromptSha256: nativeHeaderAuditEditPrompt
+            ? sha256(nativeHeaderAuditEditPrompt)
+            : null,
+          nativeHeaderAuditEditProviderAttemptBudget:
+            affiliatePilotV4ExecutionPolicy
+              .providerNativeHeaderAuditEditAttemptBudget,
+          nativeHeaderAuditEditReuseAllowed: false,
+          finalizationEditGenerationCount: fullHeaderTextile ? 1 : 0,
           supportReferenceGenerationCount: fullHeaderTextile
             ? 3
             : hiddenHeaderTextile
@@ -839,8 +889,15 @@ export function buildAffiliatePilotV4Manifest(
   const roomPlateSupportJobs = styledJobs.filter(
     (job) => job.roomPlateSupportRequired
   );
+  const nativeHeaderAuditEditJobs = styledJobs.filter(
+    (job) => job.nativeHeaderAuditEditRequired
+  );
   const supportReferenceGenerationRequestedCount = styledJobs.reduce(
     (count, job) => count + job.supportReferenceGenerationCount,
+    0
+  );
+  const finalizationEditGenerationRequestedCount = styledJobs.reduce(
+    (count, job) => count + job.finalizationEditGenerationCount,
     0
   );
   if (
@@ -876,10 +933,17 @@ export function buildAffiliatePilotV4Manifest(
     new Set(
       roomPlateSupportJobs.map((job) => job.roomPlateSupportPromptSha256)
     ).size !== roomPlateSupportJobs.length ||
+    nativeHeaderAuditEditJobs.length !== 48 ||
+    new Set(
+      nativeHeaderAuditEditJobs.map(
+        (job) => job.nativeHeaderAuditEditPromptSha256
+      )
+    ).size !== nativeHeaderAuditEditJobs.length ||
+    finalizationEditGenerationRequestedCount !== 48 ||
     supportReferenceGenerationRequestedCount !== 216
   ) {
     throw new Error(
-      "Pilot v4 requires 120 unique body supports, 48 unique full-header count scaffolds, and 48 unique room-only plates."
+      "Pilot v4 requires 120 unique body supports, 48 unique full-header count scaffolds, 48 unique room-only plates, and 48 unique provider-native header audit edits."
     );
   }
   if (
@@ -927,8 +991,11 @@ export function buildAffiliatePilotV4Manifest(
     generationRequestedCount: styledJobs.length,
     supportReferenceGenerationRequestedCount,
     roomPlateGenerationRequestedCount: roomPlateSupportJobs.length,
+    finalizationEditGenerationRequestedCount,
     totalProviderGenerationRequestFloor:
-      styledJobs.length + supportReferenceGenerationRequestedCount,
+      styledJobs.length +
+      supportReferenceGenerationRequestedCount +
+      finalizationEditGenerationRequestedCount,
     totalCount: jobs.length,
     target: AFFILIATE_PILOT_V4_TARGET,
     products: productsManifest,
