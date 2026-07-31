@@ -555,6 +555,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(manifest.identityCount, 70);
   assert.equal(manifest.supportReferenceGenerationRequestedCount, 240);
   assert.equal(manifest.roomPlateGenerationRequestedCount, 120);
+  assert.equal(manifest.roomPlateCorrectionEligibleCount, 120);
   assert.equal(manifest.finalizationEditGenerationRequestedCount, 0);
   assert.equal(manifest.totalProviderGenerationRequestFloor, 840);
   assert.equal(manifest.reusedIdentityCount, 70);
@@ -573,7 +574,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.16" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.17" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -673,6 +674,33 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(
     manifest.executionPolicy.textileRoomPlateElectricalDevicePolicy,
     "omit_unless_manifest_explicitly_requires_code_safe_gfci"
+  );
+  assert.equal(
+    manifest.executionPolicy.providerNativeRoomPlateCorrectionAllowed,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.roomPlateSecondAttemptMayCorrectSameSceneNearPass,
+    true
+  );
+  assert.equal(manifest.executionPolicy.roomPlateCorrectionInputCount, 1);
+  assert.equal(
+    manifest.executionPolicy.roomPlateCorrectionProviderAttemptBudget,
+    1
+  );
+  assert.equal(
+    manifest.executionPolicy
+      .roomPlateCorrectionRequiresFullSizeReviewedSameSceneSource,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.roomPlateCorrectionMustPreservePassingPixels,
+    true
+  );
+  assert.equal(manifest.executionPolicy.roomPlateCorrectionReuseAllowed, false);
+  assert.equal(
+    manifest.executionPolicy.roomPlateCorrectionCompositingAllowed,
+    false
   );
   assert.equal(manifest.executionPolicy.supportReferenceProviderAttemptBudget, 2);
   assert.equal(manifest.executionPolicy.roomPlateProviderAttemptBudget, 2);
@@ -833,6 +861,29 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(curtain.roomPlateSupportInputCount, 0);
   assert.equal(curtain.roomPlateProviderAttemptBudget, 2);
   assert.equal(curtain.roomPlateReuseAllowed, false);
+  assert.equal(curtain.roomPlateCorrectionAllowed, true);
+  assert.equal(curtain.roomPlateCorrectionInputCount, 1);
+  assert.equal(curtain.roomPlateCorrectionProviderAttemptBudget, 1);
+  assert.equal(curtain.roomPlateCorrectionRequiresSameSceneNearPass, true);
+  assert.equal(curtain.roomPlateCorrectionMustPreservePassingPixels, true);
+  assert.equal(curtain.roomPlateCorrectionReuseAllowed, false);
+  assert.equal(curtain.roomPlateCorrectionCompositingAllowed, false);
+  assert.match(
+    curtain.roomPlateCorrectionPrompt!,
+    /provider-native bounded correction/i
+  );
+  assert.match(
+    curtain.roomPlateCorrectionPrompt!,
+    /alter only the smallest documented hard-reject region/i
+  );
+  assert.match(
+    curtain.roomPlateCorrectionPrompt!,
+    /preserve Image 1's camera position, crop, lens behavior/i
+  );
+  assert.match(
+    curtain.roomPlateCorrectionPrompt!,
+    /featured .+ remains completely absent/i
+  );
   assert.equal(curtain.providerNativeRoomPlateEditRequired, true);
   assert.equal(curtain.nativeHeaderAuditEditRequired, false);
   assert.equal(curtain.nativeHeaderAuditEditInputCount, 0);

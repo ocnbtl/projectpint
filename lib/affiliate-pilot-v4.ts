@@ -264,6 +264,15 @@ type AffiliatePilotV4StyledJob = {
   roomPlateSupportPromptSha256: string | null;
   roomPlateProviderAttemptBudget: number;
   roomPlateReuseAllowed: false;
+  roomPlateCorrectionAllowed: boolean;
+  roomPlateCorrectionInputCount: 0 | 1;
+  roomPlateCorrectionPrompt: string | null;
+  roomPlateCorrectionPromptSha256: string | null;
+  roomPlateCorrectionProviderAttemptBudget: number;
+  roomPlateCorrectionRequiresSameSceneNearPass: boolean;
+  roomPlateCorrectionMustPreservePassingPixels: boolean;
+  roomPlateCorrectionReuseAllowed: false;
+  roomPlateCorrectionCompositingAllowed: false;
   providerNativeRoomPlateEditRequired: boolean;
   nativeHeaderAuditEditRequired: boolean;
   nativeHeaderAuditEditInputCount: 0 | 3;
@@ -403,6 +412,24 @@ function buildTextileRoomPlatePrompt(
   ].join("\n");
 }
 
+function buildTextileRoomPlateCorrectionPrompt(
+  product: AffiliateProduct,
+  sceneId: string
+): string {
+  return [
+    "Use case: edit-image.",
+    "Asset type: provider-native bounded correction of one reviewed same-scene room-only iPhone plate, not a new room and not a final product image.",
+    `Scene-specific room plate identity: ${sceneId}. Image 1 is a full-size-reviewed near-pass for this exact scene and may never be used by another scene.`,
+    "Preservation contract: preserve Image 1's camera position, crop, lens behavior, architecture, plumbing, tub, vanity, window, door, floor, trim, light direction, exposure, noise, color response, wear, mat, basket, towel, ordinary objects, shadows, highlights, and every other passing pixel. Do not restage, redesign, clean, widen, recrop, relight, recolor, beautify, or replace the room.",
+    "Correction scope: alter only the smallest documented hard-reject region named in the appended runtime correction directive. The directive must come from the recorded full-size review of Image 1. Do not make any unrequested improvement and do not edit a soft caveat.",
+    `Product absence: the featured ${product.name} by ${product.brand} remains completely absent. Include no shower curtain, liner, textile crossing the shower opening, loose hook, ring, rod, mount, reinforced opening, top edge, packaging, label, logo, readable text, or pseudo-text.`,
+    "Insertion-corridor result: leave one continuous empty rigid-architecture corridor from the top image border already below suspension through the lower shower opening and behind the tub or shower wall. No fabric, towel, door, jamb, cabinet, basket, plant, art, bottle, fixture, reflection, or other object may cross it.",
+    "Safety result: include no outlet, receptacle, switch, wall plate, cord, plug, charger, power strip, hair tool, or electrical device unless the appended directive explicitly requires a code-safe U.S. GFCI.",
+    "Method boundary: this must be one coherent provider-native image edit. Local compositing, masking, cloning, patching, cropping, or post-generation pixel surgery is forbidden.",
+    "Output: one corrected high-quality 1024x1536 portrait room-only image in a 2:3 frame."
+  ].join("\n");
+}
+
 function buildNativeHeaderAuditEditPrompt(
   product: AffiliateProduct,
   selection: AffiliatePilotV4Selection,
@@ -526,6 +553,7 @@ function buildStyledPrompt(
   supportReferencePrompt: string | null;
   headerSupportReferencePrompt: string | null;
   roomPlateSupportPrompt: string | null;
+  roomPlateCorrectionPrompt: string | null;
   nativeHeaderAuditEditPrompt: string | null;
 } {
   const profile =
@@ -612,6 +640,9 @@ function buildStyledPrompt(
         styleVariationLane
       )
     : null;
+  const roomPlateCorrectionPrompt = textileRole
+    ? buildTextileRoomPlateCorrectionPrompt(product, sceneId)
+    : null;
   const nativeHeaderAuditEditPrompt = fullHeaderTextile
     ? buildNativeHeaderAuditEditPrompt(product, selection, sceneId)
     : null;
@@ -658,6 +689,7 @@ function buildStyledPrompt(
     supportReferencePrompt,
     headerSupportReferencePrompt,
     roomPlateSupportPrompt,
+    roomPlateCorrectionPrompt,
     nativeHeaderAuditEditPrompt,
     qaFocus,
     prompt: [
@@ -775,6 +807,7 @@ export function buildAffiliatePilotV4Manifest(
           supportReferencePrompt,
           headerSupportReferencePrompt,
           roomPlateSupportPrompt,
+          roomPlateCorrectionPrompt,
           nativeHeaderAuditEditPrompt
         } = buildStyledPrompt(product, selection, style, slot);
         jobs.push({
@@ -844,6 +877,28 @@ export function buildAffiliatePilotV4Manifest(
           roomPlateProviderAttemptBudget:
             affiliatePilotV4ExecutionPolicy.roomPlateProviderAttemptBudget,
           roomPlateReuseAllowed: false,
+          roomPlateCorrectionAllowed:
+            textileRole &&
+            affiliatePilotV4ExecutionPolicy
+              .providerNativeRoomPlateCorrectionAllowed,
+          roomPlateCorrectionInputCount: textileRole ? 1 : 0,
+          roomPlateCorrectionPrompt,
+          roomPlateCorrectionPromptSha256: roomPlateCorrectionPrompt
+            ? sha256(roomPlateCorrectionPrompt)
+            : null,
+          roomPlateCorrectionProviderAttemptBudget:
+            affiliatePilotV4ExecutionPolicy
+              .roomPlateCorrectionProviderAttemptBudget,
+          roomPlateCorrectionRequiresSameSceneNearPass:
+            textileRole &&
+            affiliatePilotV4ExecutionPolicy
+              .roomPlateCorrectionRequiresFullSizeReviewedSameSceneSource,
+          roomPlateCorrectionMustPreservePassingPixels:
+            textileRole &&
+            affiliatePilotV4ExecutionPolicy
+              .roomPlateCorrectionMustPreservePassingPixels,
+          roomPlateCorrectionReuseAllowed: false,
+          roomPlateCorrectionCompositingAllowed: false,
           providerNativeRoomPlateEditRequired: textileRole,
           nativeHeaderAuditEditRequired: fullHeaderTextile,
           nativeHeaderAuditEditInputCount: fullHeaderTextile ? 3 : 0,
@@ -894,6 +949,9 @@ export function buildAffiliatePilotV4Manifest(
   const roomPlateSupportJobs = styledJobs.filter(
     (job) => job.roomPlateSupportRequired
   );
+  const roomPlateCorrectionJobs = styledJobs.filter(
+    (job) => job.roomPlateCorrectionAllowed
+  );
   const nativeHeaderAuditEditJobs = styledJobs.filter(
     (job) => job.nativeHeaderAuditEditRequired
   );
@@ -933,12 +991,18 @@ export function buildAffiliatePilotV4Manifest(
     new Set(
       roomPlateSupportJobs.map((job) => job.roomPlateSupportPromptSha256)
     ).size !== roomPlateSupportJobs.length ||
+    roomPlateCorrectionJobs.length !== 120 ||
+    new Set(
+      roomPlateCorrectionJobs.map(
+        (job) => job.roomPlateCorrectionPromptSha256
+      )
+    ).size !== roomPlateCorrectionJobs.length ||
     nativeHeaderAuditEditJobs.length !== 0 ||
     finalizationEditGenerationRequestedCount !== 0 ||
     supportReferenceGenerationRequestedCount !== 240
   ) {
     throw new Error(
-      "Pilot v4 requires 120 unique textile body supports plus 120 unique hidden-header room plates, and forbids visible-header and header-audit styled jobs."
+      "Pilot v4 requires 120 unique textile body supports, 120 unique hidden-header room plates, and 120 same-scene room-plate correction contracts, and forbids visible-header and header-audit styled jobs."
     );
   }
   if (
@@ -986,6 +1050,7 @@ export function buildAffiliatePilotV4Manifest(
     generationRequestedCount: styledJobs.length,
     supportReferenceGenerationRequestedCount,
     roomPlateGenerationRequestedCount: roomPlateSupportJobs.length,
+    roomPlateCorrectionEligibleCount: roomPlateCorrectionJobs.length,
     finalizationEditGenerationRequestedCount,
     totalProviderGenerationRequestFloor:
       styledJobs.length +
