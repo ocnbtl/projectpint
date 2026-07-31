@@ -574,7 +574,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.23" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.24" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -639,6 +639,22 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   );
   assert.equal(
     manifest.executionPolicy.textileFinalFreeHemAtOrAboveTubRimIsHardReject,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.textileFinalImmutableRoomPlateBaseRequired,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.textileFinalRoomPlateGeometryRedrawIsHardReject,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.textileFinalSecondFullHeightChannelIsHardReject,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.textileFinalExactCanvasRequired,
     true
   );
   assert.equal(
@@ -968,6 +984,10 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(curtain.roomPlateSupportPrompt!, /no more than five groups/i);
   assert.match(curtain.roomPlateSupportPrompt!, /fixed architectural or material choice/i);
   assert.match(curtain.prompt, /locked photographic base/i);
+  assert.match(curtain.prompt, /immutable base photograph/i);
+  assert.match(curtain.prompt, /constrained local provider edit/i);
+  assert.match(curtain.prompt, /not a room re-render/i);
+  assert.match(curtain.prompt, /redrawing any of those room elements is a hard rejection/i);
   assert.match(curtain.prompt, /below-suspension-line feasibility gate/i);
   assert.match(curtain.prompt, /alter only the empty lower shower opening/i);
   assert.equal(curtain.supportReferenceGenerationCount, 2);
@@ -983,11 +1003,13 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(curtain.supportReferencePrompt!, /no tieback, knot, bow, band, cord, clip/i);
   assert.match(curtain.supportReferencePrompt!, /large diagonal trough, U-shaped scoop, swag, loop/i);
   assert.match(curtain.prompt, /one mostly broad cloth face/i);
-  assert.match(curtain.prompt, /two or more adjacent uninterrupted channels/i);
+  assert.match(curtain.prompt, /A second adjacent uninterrupted full-height channel is a hard rejection/i);
   assert.match(curtain.prompt, /free hem ending at or above the tub rim/i);
   assert.match(curtain.prompt, /continuing naturally below the tub rim/i);
   assert.match(curtain.prompt, /Image 3 is the reviewed exact-product material\/detail crop/i);
   assert.match(curtain.prompt, /no reusable product silhouette or header/i);
+  assert.match(curtain.prompt, /exactly 1024 pixels wide by exactly 1536 pixels high/i);
+  assert.match(curtain.supportReferencePrompt!, /Any one-pixel width or height deviation is a hard rejection/i);
   assert.equal(
     curtain.identityReferenceCropPolicy,
     "not_applicable"
