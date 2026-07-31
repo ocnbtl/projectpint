@@ -574,7 +574,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.18" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.19" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -684,6 +684,19 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     manifest.executionPolicy
       .textileRoomPlateMaximumForegroundIntrusionFrameFraction,
     0.08
+  );
+  assert.equal(manifest.executionPolicy.textileRoomPlateDecorativeObjectCount, 0);
+  assert.equal(
+    manifest.executionPolicy.textileRoomPlateMaximumMovableObjectGroups,
+    5
+  );
+  assert.equal(
+    manifest.executionPolicy.textileRoomPlateAdditionalHumanTraceCount,
+    0
+  );
+  assert.equal(
+    manifest.executionPolicy.textileRoomPlateStyleCueMode,
+    "one_fixed_architectural_or_material_cue_only"
   );
   assert.equal(
     manifest.executionPolicy.textileRoomPlateElectricalDevicePolicy,
@@ -912,7 +925,13 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(curtain.roomPlateSupportPrompt!, /continuous empty vertical corridor/i);
   assert.match(curtain.roomPlateSupportPrompt!, /no more than eight percent of total frame area/i);
   assert.match(curtain.roomPlateSupportPrompt!, /omit every outlet, receptacle, switch, wall plate/i);
-  assert.match(curtain.roomPlateSupportPrompt!, /every trace outside the reserved shower insertion corridor/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /every named trace outside the reserved shower insertion corridor/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /Exact human-trace ceiling/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /Do not invent any additional sign of use/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /Zero-decor gate/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /no plant, flower, vase, art/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /no more than five groups/i);
+  assert.match(curtain.roomPlateSupportPrompt!, /fixed architectural or material choice/i);
   assert.match(curtain.prompt, /locked photographic base/i);
   assert.match(curtain.prompt, /below-suspension-line feasibility gate/i);
   assert.match(curtain.prompt, /alter only the empty lower shower opening/i);

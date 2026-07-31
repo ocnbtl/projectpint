@@ -56,6 +56,14 @@ The remaining contradictory input was the reviewed front identity image: its pro
 
 The solid-curtain body contract also stops asking the model for a row of “one to three compressions.” The target is now a mostly relaxed sheet: one broad face covering at least seventy percent of visible width, no more than one full-height trough, and one asymmetric displacement that changes width and fades into the face by the lower third. Two neighboring channels traceable from upper crop to hem are a hard reject. The reviewed identity remains authoritative evidence for the separate twelve-opening and twelve-hook construction, which stays completely outside styled-scene framing.
 
+### V4.19 room-plate object-budget correction
+
+Fresh room plates for scenes 01, 02, and 03 independently repeated the same upstream failure: plausible phone cameras and clearable shower geometry were surrounded by coordinated plants, baskets, vases, shelves, display towels, bottles, trays, and matching textiles. The third occurrence triggered the systemic-failure stop.
+
+The cause was additive prompt language. Each plate received a style description, palette, lived-in vocabulary, an assigned human trace, and a request for at least two more signs of use. A closing anti-vignette sentence did not counteract those positive object cues.
+
+Textile room plates now treat the assigned human-trace sentence as an exact ceiling. No additional movable sign of use may be invented. Age comes from fixed wear, repairs, grout, scuffs, and paint variation. Style may enter through one fixed architectural or material cue only; the palette cannot become a matching object set. Decorative objects are zero, and an explicit pre-output audit limits the assigned human traces plus one functional floor textile to five semantic object groups. A stocked shelf, filled basket, display-towel stack, or toiletry cluster counts as multiple groups unless the exact grouping is named by the assigned trace; unauthorized groups must be removed rather than rearranged.
+
 ## Visual acceptance rubric
 
 Every final needs at least 3/4 in:
