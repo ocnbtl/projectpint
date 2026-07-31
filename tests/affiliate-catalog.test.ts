@@ -553,8 +553,8 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(manifest.presentationCount, 10);
   assert.equal(manifest.orthographicCount, 60);
   assert.equal(manifest.identityCount, 70);
-  assert.equal(manifest.supportReferenceGenerationRequestedCount, 72);
-  assert.equal(manifest.totalProviderGenerationRequestFloor, 672);
+  assert.equal(manifest.supportReferenceGenerationRequestedCount, 168);
+  assert.equal(manifest.totalProviderGenerationRequestFloor, 768);
   assert.equal(manifest.reusedIdentityCount, 70);
   assert.equal(manifest.styledCount, 600);
   assert.equal(manifest.generationRequestedCount, 600);
@@ -571,7 +571,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.5" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.6" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -582,8 +582,12 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   );
   assert.equal(manifest.executionPolicy.providerAttemptBudgetPerAsset, 2);
   assert.equal(
+    manifest.executionPolicy.oneUseSceneSpecificTextileBodySupportRequired,
+    true
+  );
+  assert.equal(
     manifest.executionPolicy
-      .oneUseSceneSpecificTextileSupportRequiredForHiddenHeader,
+      .oneUseSceneSpecificHeaderCountSupportRequiredForFullHeader,
     true
   );
   assert.equal(manifest.executionPolicy.supportReferenceProviderAttemptBudget, 2);
@@ -624,7 +628,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     styled.every(
       (job) =>
-        [3, 5].includes(job.referenceInputCount) &&
+        job.referenceInputCount === 3 &&
         job.sceneId?.startsWith("v4-") &&
         job.primarySceneReferenceView &&
         job.prompt.includes("Primary request: photograph a believable occupied home bathroom") &&
@@ -644,12 +648,10 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
         job.reusableProductCompositeAllowed === false &&
         job.localPixelSurgeryAllowed === false &&
         job.localCropPolicy === "not_allowed" &&
-        (job.referenceInputCount === 5
+        (job.exactProductMaterialReferenceRequired
           ? job.sourceReferenceCropPolicy ===
             "recorded_crop_to_exclude_listing_overlay_only"
-          : ["not_applicable", "recorded_crop_to_exclude_listing_overlay_only"].includes(
-              job.sourceReferenceCropPolicy
-            ))
+          : job.sourceReferenceCropPolicy === "not_applicable")
     )
   );
   assert.equal(new Set(styled.map((job) => job.sceneId)).size, 600);
@@ -692,13 +694,24 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(curtain.prompt, /do not reuse a drape, fold silhouette, or product cutout/i);
   assert.equal(
     curtain.generationStrategy,
-    "exact_source_locked_textile_full_header"
+    "two_support_textile_header_and_body_full_header"
   );
-  assert.equal(curtain.referenceInputCount, 5);
+  assert.equal(curtain.referenceInputCount, 3);
   assert.equal(curtain.exactProductMaterialReferenceRequired, true);
   assert.equal(curtain.exactProductHeaderReferenceRequired, true);
-  assert.match(curtain.prompt, /exact-product listing crop/i);
-  assert.match(curtain.prompt, /grommet, hook, and header construction/i);
+  assert.match(curtain.prompt, /header-count scaffold crop/i);
+  assert.match(curtain.prompt, /body-and-hem support crop/i);
+  assert.equal(curtain.supportReferenceRequired, true);
+  assert.equal(curtain.supportReferenceInputCount, 2);
+  assert.equal(curtain.headerSupportReferenceRequired, true);
+  assert.equal(curtain.headerSupportReferenceInputCount, 3);
+  assert.equal(curtain.supportReferenceGenerationCount, 2);
+  assert.equal(
+    curtain.supportReferenceCropPolicy,
+    "recorded_role_isolation_crops_required"
+  );
+  assert.match(curtain.supportReferencePrompt!, /five to seven unequal fold masses/i);
+  assert.match(curtain.headerSupportReferencePrompt!, /4 \+ 4 \+ 4 = 12/i);
   const curtainClose = styled.find(
     (job) =>
       job.asin === "B0D2KK6MNS" &&
@@ -722,6 +735,10 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(curtainClose.supportReferenceCompositingAllowed, false);
   assert.match(curtainClose.supportReferencePrompt!, /one-use physical-state reference/i);
   assert.match(curtainClose.supportReferencePrompt!, /four to seven unequal fold masses/i);
+  assert.equal(curtainClose.headerSupportReferenceRequired, false);
+  assert.equal(curtainClose.headerSupportReferenceInputCount, 0);
+  assert.equal(curtainClose.headerSupportReferencePrompt, null);
+  assert.equal(curtainClose.supportReferenceGenerationCount, 1);
   assert.equal(
     curtainClose.identityReferenceCropPolicy,
     "recorded_body_hem_crop_excluding_invisible_header"

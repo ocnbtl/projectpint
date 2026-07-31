@@ -309,7 +309,7 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
 ] as const;
 
 export const affiliatePilotV4RealismReset = {
-  contractVersion: "affiliate-pilot-real-bathroom-v4.5",
+  contractVersion: "affiliate-pilot-real-bathroom-v4.6",
   supersedesPromptVersion: "affiliate-pilot-identity-physical-photo-v4",
   supersedesGenerationVersion: "pilot-2026-07-27-run-04",
   resetAuthorizedAt: "2026-07-31T05:00:00-04:00",
@@ -319,7 +319,7 @@ export const affiliatePilotV4RealismReset = {
   reason:
     "Owner review found AI-stock polish, repeated lighting and room formulas, literal style stereotypes, procedural material texture, repeated curtain folds, and an unsustainable retry/compositing rate.",
   rootCauseRevision:
-    "Two prompt-only proof retries showed that the generated curtain identity views propagated synthetic tubular folds and incorrect header counts. Textile scenes now require reviewed exact-product listing evidence for material and, when visible, header construction. The first exact-source proof then exposed residual real-estate polish, so the successful de-staging correction is mandatory for every scene. Hidden-header proofs still inherited the identity pack's full header and periodic fold map, so those slots now use a reviewed one-use scene-specific body-and-hem support reference, an identity crop that excludes invisible header geometry, and an asymmetrically gathered oblique state."
+    "Two prompt-only proof retries showed that generated curtain identity views propagated synthetic tubular folds and incorrect header counts. Exact-product listing evidence corrected material behavior, and mandatory de-staging corrected real-estate polish. Hidden-header proofs then required a one-use body-and-hem support reference. Full-header proof still traded hook count against fold realism, so those scenes now separate a reviewed twelve-point header-count scaffold from a reviewed irregular body-and-hem support. Final bathrooms use role-isolated support crops and exact material evidence, never composites."
 } as const;
 
 export const affiliatePilotV4ExecutionPolicy = {
@@ -337,7 +337,8 @@ export const affiliatePilotV4ExecutionPolicy = {
   sourceReferenceCropAllowedForOverlayExclusionOnly: true,
   sourceReferenceCropMustBeLogged: true,
   maxReferenceInputsForTextiles: 5,
-  oneUseSceneSpecificTextileSupportRequiredForHiddenHeader: true,
+  oneUseSceneSpecificTextileBodySupportRequired: true,
+  oneUseSceneSpecificHeaderCountSupportRequiredForFullHeader: true,
   supportReferenceProviderAttemptBudget: 2,
   supportReferenceReuseAllowed: false,
   supportReferenceCompositingAllowed: false,

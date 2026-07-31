@@ -233,7 +233,7 @@ type AffiliatePilotV4StyledJob = {
   styleVariationLane: string;
   generationStrategy:
     | "direct_identity_locked_room_first"
-    | "exact_source_locked_textile_full_header"
+    | "two_support_textile_header_and_body_full_header"
     | "two_stage_one_use_textile_body_hidden_header";
   providerAttemptBudget: number;
   reusableProductCompositeAllowed: false;
@@ -254,6 +254,14 @@ type AffiliatePilotV4StyledJob = {
   supportReferenceProviderAttemptBudget: number;
   supportReferenceReuseAllowed: false;
   supportReferenceCompositingAllowed: false;
+  headerSupportReferenceRequired: boolean;
+  headerSupportReferenceInputCount: 0 | 3;
+  headerSupportReferencePrompt: string | null;
+  headerSupportReferencePromptSha256: string | null;
+  supportReferenceGenerationCount: 0 | 1 | 2;
+  supportReferenceCropPolicy:
+    | "not_applicable"
+    | "recorded_role_isolation_crops_required";
 };
 
 export type AffiliatePilotV4Job =
@@ -282,7 +290,7 @@ function generationStrategyFor(
     return "direct_identity_locked_room_first";
   }
   return slot === 1 || slot === 3
-    ? "exact_source_locked_textile_full_header"
+    ? "two_support_textile_header_and_body_full_header"
     : "two_stage_one_use_textile_body_hidden_header";
 }
 
@@ -290,26 +298,52 @@ function isTextileRole(role: AffiliatePilotV4ProductRole): boolean {
   return role === "solid-shower-curtain" || role === "patterned-shower-curtain";
 }
 
-function buildHiddenTextileSupportPrompt(
+function buildTextileBodySupportPrompt(
   product: AffiliateProduct,
   selection: AffiliatePilotV4Selection,
   sceneId: string,
-  primarySceneReferenceView: AffiliatePilotV4IdentityView
+  identityReferenceView: AffiliatePilotV4IdentityView,
+  fullHeaderTextile: boolean
 ): string {
   const patternInstruction =
     selection.productRole === "patterned-shower-curtain"
       ? "Preserve the canonical motif hierarchy, scale, colorway, and landmark relationships from Image 1 without tiling, cloning, or stretching the print."
       : "Keep the panel solid muted terracotta-rust with no added pattern, stripe, border, ombre, or decoration.";
+  const physicalState = fullHeaderTextile
+    ? "Show the complete camera-visible panel body, both ordinary side seams, and the complete weighted bottom hem. The unseen twelve suspension points spread the panel across most of its width, but one side carries more compression. Use five to seven unequal fold masses, changing peak and trough depth, one deep localized pocket away from center, two diagonal or cross-grain tension paths, several small nonparallel wrinkles, and a nonperiodic weighted-hem wave."
+    : "The curtain has been pulled 35-55 percent open and gathered asymmetrically to one side. Show no more than 45 percent of total panel width. Preserve one free ordinary side edge and the weighted hem. Use four to seven unequal fold masses, one deeper compressed pocket near one side, changing fold depth, localized diagonal and cross-grain tension, irregular spacing, small nonparallel wrinkle paths, and a nonperiodic hem wave.";
   return [
     "Use case: internal one-use physical-state reference for one Project Pint bathroom scene, not a final product photograph.",
-    `Scene-specific support identity: ${sceneId}. This support image may be used only by this scene and must never be reused or composited.`,
+    `Scene-specific body support identity: ${sceneId}. This support image may be used only by this scene and must never be reused or composited.`,
     "Asset type: isolated textile body-and-hem drape study on a plain neutral light-gray background.",
-    `Create the exact ${product.name} by ${product.brand} shown in the references, but show only the camera-visible body, ordinary side seam, and weighted bottom hem. The rod, mounts, hooks, grommets, reinforced openings, and complete top edge must be outside the upper frame and absent.`,
-    "Physical state: the curtain has been pulled 35-55 percent open and gathered asymmetrically to one side. Show no more than 45 percent of total panel width. Preserve one free ordinary side edge and the weighted hem.",
-    "Generate a genuinely new gravity state: four to seven unequal fold masses, one deeper compressed pocket near one side, changing fold depth, localized diagonal and cross-grain tension, irregular spacing, small nonparallel wrinkle paths, and a nonperiodic hem wave. Never create an evenly spaced row of vertical tubes, pleats, repeated arcs, cloned grooves, or a reusable catalog silhouette.",
+    `Create the exact ${product.name} by ${product.brand} shown in the references, but show only the camera-visible body, applicable ordinary side seams, and weighted bottom hem. The rod, mounts, hooks, grommets, reinforced openings, and complete top edge must be outside the upper frame and absent.`,
+    `Fresh gravity state: ${physicalState}`,
+    "Never create bilateral symmetry, an evenly spaced row of vertical tubes, pleats, repeated arcs, cloned grooves, or a reusable catalog silhouette.",
     patternInstruction,
-    `Input roles: Image 1 is the reviewed ${primarySceneReferenceView} identity view for overall side seam, thickness, color family, print identity when applicable, and weighted hem only; explicitly discard its periodic fold rhythm and all visible header geometry. Image 2 is a reviewed exact-product listing material/detail crop for weave, yarn or print variation, color, thickness, and surface roughness.`,
+    `Input roles: Image 1 is the reviewed ${identityReferenceView} identity view for overall side seam, thickness, color family, print identity when applicable, and weighted hem only; explicitly discard its periodic fold rhythm and all visible header geometry. Image 2 is a reviewed exact-product listing material/detail crop for weave, yarn or print variation, color, thickness, and surface roughness.`,
     "Composition: one complete camera-visible body-and-hem section centered with generous neutral margin, no room, no tub, no props, no text, no labels, no watermark, no person, and no shadow that implies a cutout pasted into a bathroom.",
+    "Output: one high-quality 1024x1536 portrait PNG-ready reference."
+  ].join("\n");
+}
+
+function buildTextileHeaderSupportPrompt(
+  product: AffiliateProduct,
+  selection: AffiliatePilotV4Selection,
+  sceneId: string
+): string {
+  const patternInstruction =
+    selection.productRole === "patterned-shower-curtain"
+      ? "Preserve the canonical top-row motif scale, colorway, and landmark relationships without tiling or stretching the print."
+      : "Keep the header solid muted terracotta-rust with no added pattern, stripe, border, ombre, or decoration.";
+  return [
+    "Use case: internal one-use header-count scaffold for one Project Pint bathroom scene, not a final product photograph.",
+    `Scene-specific header support identity: ${sceneId}. This support may be used only by this scene and must never be reused or composited.`,
+    "Asset type: isolated full-header construction study on a plain neutral light-gray background.",
+    `Create exactly one ${product.name} by ${product.brand}. Show one complete straight metal rod, both simple mounts, and the complete top edge with generous margin.`,
+    "Count is the primary gate: exactly twelve reinforced openings and exactly twelve separate simple hooks, one hook through each opening. Audit them as four left, four center, and four right positions for 4 + 4 + 4 = 12, but do not render numbers, dividers, group gaps, or labels. The sixth and seventh hooks straddle the panel centerline. No thirteenth or partial hook, missing hook, double hook, empty opening, or separate top band.",
+    patternInstruction,
+    "Input roles: Image 1 is the reviewed front identity view for exact product color, twelve-opening count, and top-edge identity only; body fold rhythm is irrelevant. Image 2 is a reviewed exact-product listing material/detail crop for color, weave or print behavior, and thickness. Image 3 is the reviewed exact-product header-construction crop for hook/grommet relationship only; its partial visible count does not govern the required total.",
+    "Composition: isolated header construction reference only, no bathroom, no tub, no props, no text, no labels, no watermark, no person, and no dramatic product lighting. A recorded crop will exclude the body below the header before final-scene use.",
     "Output: one high-quality 1024x1536 portrait PNG-ready reference."
   ].join("\n");
 }
@@ -409,6 +443,7 @@ function buildStyledPrompt(
   fullHeaderTextile: boolean;
   hiddenHeaderTextile: boolean;
   supportReferencePrompt: string | null;
+  headerSupportReferencePrompt: string | null;
 } {
   const profile =
     affiliatePilotV4StyleProfiles[
@@ -464,22 +499,29 @@ function buildStyledPrompt(
   const textileRole = isTextileRole(selection.productRole);
   const fullHeaderTextile = textileRole && (slot === 1 || slot === 3);
   const hiddenHeaderTextile = textileRole && !fullHeaderTextile;
-  const supportReferencePrompt = hiddenHeaderTextile
-    ? buildHiddenTextileSupportPrompt(
+  const supportIdentityReferenceView = fullHeaderTextile
+    ? "front"
+    : primarySceneReferenceView;
+  const supportReferencePrompt = textileRole
+    ? buildTextileBodySupportPrompt(
         product,
         selection,
         sceneId,
-        primarySceneReferenceView
+        supportIdentityReferenceView,
+        fullHeaderTextile
       )
     : null;
-  const referenceInputCount = fullHeaderTextile ? 5 : 3;
+  const headerSupportReferencePrompt = fullHeaderTextile
+    ? buildTextileHeaderSupportPrompt(product, selection, sceneId)
+    : null;
+  const referenceInputCount = 3;
   const referencePlan = fullHeaderTextile
-    ? "Use the reviewed seven-view identity atlas, the scene-selected orthographic identity view, the reviewed canonical presentation anchor, one reviewed exact-product listing material detail, and one reviewed exact-product listing header-construction image."
+    ? "Use this job's reviewed one-use twelve-point header-count scaffold crop, its separate reviewed one-use body-and-hem support crop, and one reviewed exact-product listing material/detail crop."
     : hiddenHeaderTextile
       ? "Use this job's reviewed one-use scene-specific body-and-hem support reference, a recorded crop of the scene-selected identity view that excludes all invisible header geometry, and one reviewed exact-product listing material/detail crop."
     : "Use the reviewed seven-view identity atlas, the scene-selected orthographic identity view, and the reviewed canonical presentation anchor.";
   const inputImageRoles = fullHeaderTextile
-    ? `Input image roles: Image 1 is the reviewed seven-view identity atlas. Image 2 is the reviewed ${primarySceneReferenceView} identity view for this camera. Image 3 is the reviewed presentation anchor. Image 4 is a reviewed exact-product listing crop for weave, color, thickness, and surface roughness only; ignore any listing layout or excluded overlay. Image 5 is a reviewed exact-product listing image for grommet, hook, and header construction only. Use Images 1-3 only for stable product identity, and Images 4-5 to correct synthetic textile behavior. Do not copy any reference backdrop, room, display pose, lighting, or existing fold silhouette into the bathroom.`
+    ? "Input image roles: Image 1 is the reviewed one-use header-count scaffold crop for the complete straight rod, both mounts, and exactly twelve one-to-one hooks/openings only; its body is excluded. Image 2 is the separate reviewed one-use body-and-hem support crop for fresh fold masses, seams, cross-grain tension, and weighted hem only; its top edge is excluded. Image 3 is the reviewed exact-product listing material/detail crop for weave or print behavior, color, thickness, and surface roughness. Reconcile these roles into one native curtain inside the room. Do not paste, composite, relight, or reuse either support."
     : hiddenHeaderTextile
       ? "Input image roles: Image 1 is the reviewed one-use scene-specific body-and-hem drape support generated only for this job; use its fresh gravity state but do not paste or composite it. Image 2 is a recorded crop of the scene-selected identity view with all header geometry removed; use it only for side seam, thickness, color, print identity when applicable, and weighted hem, never its old fold rhythm. Image 3 is the reviewed exact-product listing material/detail crop for weave or print behavior, color, thickness, and surface roughness. Generate the bathroom and curtain natively. The rod, hooks, openings, and top edge remain outside frame."
     : `Input image roles: Image 1 is the reviewed seven-view identity atlas. Image 2 is the reviewed ${primarySceneReferenceView} identity view for this camera. Image 3 is the reviewed presentation anchor. Use them only for product identity; do not copy their backdrop, atlas layout, display pose, chroma color, lighting, or prior fabric drape into the room.`;
@@ -507,6 +549,7 @@ function buildStyledPrompt(
     fullHeaderTextile,
     hiddenHeaderTextile,
     supportReferencePrompt,
+    headerSupportReferencePrompt,
     qaFocus,
     prompt: [
       PHYSICAL_PHOTO_CONTRACT,
@@ -620,7 +663,8 @@ export function buildAffiliatePilotV4Manifest(
           textileRole,
           fullHeaderTextile,
           hiddenHeaderTextile,
-          supportReferencePrompt
+          supportReferencePrompt,
+          headerSupportReferencePrompt
         } = buildStyledPrompt(product, selection, style, slot);
         jobs.push({
           id: `${product.id}:${style.slug}:${slot}`,
@@ -666,8 +710,8 @@ export function buildAffiliatePilotV4Manifest(
           identityReferenceCropPolicy: hiddenHeaderTextile
             ? "recorded_body_hem_crop_excluding_invisible_header"
             : "not_applicable",
-          supportReferenceRequired: hiddenHeaderTextile,
-          supportReferenceInputCount: hiddenHeaderTextile ? 2 : 0,
+          supportReferenceRequired: textileRole,
+          supportReferenceInputCount: textileRole ? 2 : 0,
           supportReferencePrompt,
           supportReferencePromptSha256: supportReferencePrompt
             ? sha256(supportReferencePrompt)
@@ -675,7 +719,21 @@ export function buildAffiliatePilotV4Manifest(
           supportReferenceProviderAttemptBudget:
             affiliatePilotV4ExecutionPolicy.supportReferenceProviderAttemptBudget,
           supportReferenceReuseAllowed: false,
-          supportReferenceCompositingAllowed: false
+          supportReferenceCompositingAllowed: false,
+          headerSupportReferenceRequired: fullHeaderTextile,
+          headerSupportReferenceInputCount: fullHeaderTextile ? 3 : 0,
+          headerSupportReferencePrompt,
+          headerSupportReferencePromptSha256: headerSupportReferencePrompt
+            ? sha256(headerSupportReferencePrompt)
+            : null,
+          supportReferenceGenerationCount: fullHeaderTextile
+            ? 2
+            : hiddenHeaderTextile
+              ? 1
+              : 0,
+          supportReferenceCropPolicy: fullHeaderTextile
+            ? "recorded_role_isolation_crops_required"
+            : "not_applicable"
         });
       }
     });
@@ -697,8 +755,15 @@ export function buildAffiliatePilotV4Manifest(
 
   const identityJobs = jobs.filter((job) => job.kind === "identity");
   const styledJobs = jobs.filter((job) => job.kind === "styled");
-  const supportReferenceJobs = styledJobs.filter(
+  const bodySupportReferenceJobs = styledJobs.filter(
     (job) => job.supportReferenceRequired
+  );
+  const headerSupportReferenceJobs = styledJobs.filter(
+    (job) => job.headerSupportReferenceRequired
+  );
+  const supportReferenceGenerationRequestedCount = styledJobs.reduce(
+    (count, job) => count + job.supportReferenceGenerationCount,
+    0
   );
   if (
     jobs.length !== 670 ||
@@ -719,13 +784,20 @@ export function buildAffiliatePilotV4Manifest(
     throw new Error("Pilot v4 exact prompts must be unique.");
   }
   if (
-    supportReferenceJobs.length !== 72 ||
+    bodySupportReferenceJobs.length !== 120 ||
     new Set(
-      supportReferenceJobs.map((job) => job.supportReferencePromptSha256)
-    ).size !== supportReferenceJobs.length
+      bodySupportReferenceJobs.map((job) => job.supportReferencePromptSha256)
+    ).size !== bodySupportReferenceJobs.length ||
+    headerSupportReferenceJobs.length !== 48 ||
+    new Set(
+      headerSupportReferenceJobs.map(
+        (job) => job.headerSupportReferencePromptSha256
+      )
+    ).size !== headerSupportReferenceJobs.length ||
+    supportReferenceGenerationRequestedCount !== 168
   ) {
     throw new Error(
-      "Pilot v4 requires 72 unique one-use hidden-header textile support references."
+      "Pilot v4 requires 120 unique body supports plus 48 unique full-header count scaffolds."
     );
   }
   if (
@@ -771,9 +843,9 @@ export function buildAffiliatePilotV4Manifest(
     reusedIdentityCount: identityJobs.length,
     styledCount: styledJobs.length,
     generationRequestedCount: styledJobs.length,
-    supportReferenceGenerationRequestedCount: supportReferenceJobs.length,
+    supportReferenceGenerationRequestedCount,
     totalProviderGenerationRequestFloor:
-      styledJobs.length + supportReferenceJobs.length,
+      styledJobs.length + supportReferenceGenerationRequestedCount,
     totalCount: jobs.length,
     target: AFFILIATE_PILOT_V4_TARGET,
     products: productsManifest,
