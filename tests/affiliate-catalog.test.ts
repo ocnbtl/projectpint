@@ -573,7 +573,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.11" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.12" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -599,6 +599,14 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(
     manifest.executionPolicy
       .textileBodySupportRequiresMultiHeightSilhouetteChanges,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.textileFinalIdentityDrapeReferenceAllowed,
+    false
+  );
+  assert.equal(
+    manifest.executionPolicy.reviewedBodySupportCarriesIdentityToTextileFinal,
     true
   );
   assert.equal(
@@ -758,7 +766,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(curtain.prompt, /zero rod, mount, hook, reinforced opening, or top-edge pixels/i);
   assert.equal(
     curtain.generationStrategy,
-    "room_plate_edit_one_use_textile_body_hidden_header"
+    "room_plate_edit_deformation_gated_material_locked_textile_body_hidden_header"
   );
   assert.equal(curtain.referenceInputCount, 3);
   assert.equal(curtain.exactProductMaterialReferenceRequired, true);
@@ -793,9 +801,11 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(curtain.supportReferencePrompt!, /two or more different mid-body heights/i);
   assert.match(curtain.supportReferencePrompt!, /no set of similar fold channels may run uninterrupted/i);
   assert.match(curtain.prompt, /never smooth those breaks into uninterrupted full-height channels/i);
+  assert.match(curtain.prompt, /Image 3 is the reviewed exact-product material\/detail crop/i);
+  assert.match(curtain.prompt, /no reusable product silhouette or header/i);
   assert.equal(
     curtain.identityReferenceCropPolicy,
-    "recorded_body_hem_crop_excluding_invisible_header"
+    "not_applicable"
   );
   const curtainClose = styled.find(
     (job) =>
@@ -806,7 +816,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(curtainClose.prompt, /entire countable header outside/i);
   assert.equal(
     curtainClose.generationStrategy,
-    "room_plate_edit_one_use_textile_body_hidden_header"
+    "room_plate_edit_deformation_gated_material_locked_textile_body_hidden_header"
   );
   assert.match(curtainClose.prompt, /35.+55 percent open/i);
   assert.match(curtainClose.prompt, /no more than 45 percent of the panel width/i);
@@ -833,7 +843,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(curtainClose.supportReferenceGenerationCount, 2);
   assert.equal(
     curtainClose.identityReferenceCropPolicy,
-    "recorded_body_hem_crop_excluding_invisible_header"
+    "not_applicable"
   );
 
   const bench = styled.find(

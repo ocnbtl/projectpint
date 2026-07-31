@@ -234,7 +234,7 @@ type AffiliatePilotV4StyledJob = {
   generationStrategy:
     | "direct_identity_locked_room_first"
     | "room_plate_two_pass_native_textile_full_header"
-    | "room_plate_edit_one_use_textile_body_hidden_header";
+    | "room_plate_edit_deformation_gated_material_locked_textile_body_hidden_header";
   providerAttemptBudget: number;
   reusableProductCompositeAllowed: false;
   localPixelSurgeryAllowed: false;
@@ -303,7 +303,7 @@ function generationStrategyFor(
   if (role !== "solid-shower-curtain" && role !== "patterned-shower-curtain") {
     return "direct_identity_locked_room_first";
   }
-  return "room_plate_edit_one_use_textile_body_hidden_header";
+  return "room_plate_edit_deformation_gated_material_locked_textile_body_hidden_header";
 }
 
 function isTextileRole(role: AffiliatePilotV4ProductRole): boolean {
@@ -616,12 +616,12 @@ function buildStyledPrompt(
   const referencePlan = fullHeaderTextile
     ? "Use this job's reviewed one-use room-only iPhone plate as the locked edit base, its reviewed one-use twelve-point header-count scaffold crop, and its separate reviewed one-use body-and-hem support crop."
     : hiddenHeaderTextile
-      ? "Use this job's reviewed one-use hidden-header room plate as the locked edit base, its reviewed one-use scene-specific body-and-hem support reference, and a recorded crop of the scene-selected identity view that excludes all header geometry. Exact-product material evidence is already locked into the reviewed body support."
+      ? "Use this job's reviewed one-use hidden-header room plate as the locked edit base, its reviewed one-use deformation-gated body-and-hem support, and the reviewed exact-product material/detail crop. Product identity, side seam, thickness, color or print, and weighted hem are locked upstream when the support is generated and reviewed from identity evidence; no generated identity drape may condition the final."
     : "Use the reviewed seven-view identity atlas, the scene-selected orthographic identity view, and the reviewed canonical presentation anchor.";
   const inputImageRoles = fullHeaderTextile
     ? "Input image roles: Image 1 is the reviewed one-use room-only iPhone plate and the locked photographic base. Preserve its camera position, framing, room geometry, light direction, exposure, objects, wear, and irregularity. Image 2 is the reviewed one-use header-count scaffold crop for the complete straight rod, both mounts, and exactly twelve one-to-one hooks/openings only; its body is excluded. Image 3 is the separate reviewed one-use body-and-hem support crop for exact-product material, fresh fold masses, seams, cross-grain tension, and weighted hem only; its top edge is excluded. Use a provider-native edit to add one coherent curtain only inside the empty shower opening. Do not redesign, restage, widen, clean, relight, or recrop the room, and do not paste or locally composite either support."
     : hiddenHeaderTextile
-      ? "Input image roles: Image 1 is the reviewed one-use hidden-header room plate and the locked photographic base. Preserve its camera position, framing, architecture, plumbing, light direction, exposure, objects, wear, labels, and human irregularity. Image 2 is the reviewed one-use scene-specific body-and-hem support generated only for this job; preserve its visibly unequal primary masses, at least two mid-body direction or depth breaks, multi-height silhouette changes, exact-product material, and fresh gravity state without pasting or compositing it. Never smooth those breaks into uninterrupted full-height channels. Image 3 is a recorded crop of the scene-selected identity view with all header geometry removed; use it only for side seam, thickness, color, print identity when applicable, and weighted hem, never its old fold rhythm. Use a provider-native edit to add only the gathered curtain body inside the empty lower shower opening. The rod, mounts, hooks, openings, and top edge remain outside frame. Do not redesign, restage, widen, clean, relight, or recrop the room."
+      ? "Input image roles: Image 1 is the reviewed one-use hidden-header room plate and the locked photographic base. Preserve its camera position, framing, architecture, plumbing, light direction, exposure, objects, wear, labels, and human irregularity. Image 2 is the reviewed one-use scene-specific body-and-hem support generated and accepted from identity evidence for this job; it alone governs side seam, thickness, color or print identity, weighted hem, visibly unequal primary masses, at least two mid-body direction or depth breaks, multi-height silhouette changes, and fresh gravity state. Never smooth those breaks into uninterrupted full-height channels. Image 3 is the reviewed exact-product material/detail crop and governs only weave or print behavior, color, thickness, and surface roughness; it contains no reusable product silhouette or header. Use a provider-native edit to add only the gathered curtain body inside the empty lower shower opening. The rod, mounts, hooks, openings, and top edge remain outside frame. Do not redesign, restage, widen, clean, relight, or recrop the room."
       : `Input image roles: Image 1 is the reviewed seven-view identity atlas. Image 2 is the reviewed ${primarySceneReferenceView} identity view for this camera. Image 3 is the reviewed presentation anchor. Use them only for product identity; do not copy their backdrop, atlas layout, display pose, chroma color, lighting, or prior fabric drape into the room.`;
   const identityQa = textileRole
     ? "Identity: the exact twelve-opening and twelve-hook total remains verified in the reviewed identity evidence. The styled scene must reveal zero rod, mount, hook, reinforced opening, or top-edge pixels; any visible header geometry is a hard reject. Preserve the reviewed body color or print, side seam, fabric thickness, and weighted hem without inventing a visible count."
@@ -812,9 +812,7 @@ export function buildAffiliatePilotV4Manifest(
           sourceReferenceCropPolicy: textileRole
             ? "recorded_crop_to_exclude_listing_overlay_only"
             : "not_applicable",
-          identityReferenceCropPolicy: hiddenHeaderTextile
-            ? "recorded_body_hem_crop_excluding_invisible_header"
-            : "not_applicable",
+          identityReferenceCropPolicy: "not_applicable",
           supportReferenceRequired: textileRole,
           supportReferenceInputCount: textileRole ? 2 : 0,
           supportReferencePrompt,
