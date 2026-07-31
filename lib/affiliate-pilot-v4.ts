@@ -81,11 +81,11 @@ const ROLE_PLACEMENTS: Record<
   readonly [string, string, string, string, string]
 > = {
   "countertop-dispenser": [
-    "Place it upright near the sink on a fully supporting vanity, canonical front turned about 15 degrees toward the camera; the short spout remains nearly horizontal.",
-    "Use a closer opposite-side view with a natural 35–55 degree rotation, pump reachable from the basin, and no independent highlight on the steel.",
-    "Show a higher oblique view that reveals the pump and base band together while keeping every edge on the counter and the spout angle exact.",
-    "Use a restrained rear-three-quarter orientation that still makes the pump geometry legible; if a mirror can see it, include its correct reversed reflection.",
-    "Use a candid side-biased placement near one lived-in object, but keep the dispenser vertical, completely supported, and visually distinct from secondary bottles."
+    "Place it upright near the sink on a fully supporting vanity, canonical front turned about 15 degrees toward the camera; the short spout remains nearly horizontal and projects toward the viewer's right in this front-biased camera.",
+    "Use a closer opposite-side view with a natural 35–55 degree rotation, pump reachable from the basin, and no independent highlight on the steel; the reviewed right-view short spout projects toward the viewer's left.",
+    "Show a higher oblique view that reveals the pump and base band together while keeping every edge on the counter; the reviewed top-view short spout remains nearly horizontal and projects toward the viewer's right.",
+    "Use a restrained rear-three-quarter orientation that still makes the pump geometry legible; the reviewed back-view short spout projects toward the viewer's left, and if a mirror can see it, include its correct reversed reflection.",
+    "Use a candid side-biased placement near one lived-in object, but keep the dispenser vertical, completely supported, and visually distinct from secondary containers; the reviewed left-view short spout projects toward the viewer's right."
   ],
   "solid-shower-curtain": [
     "Use a wide doorway view with the curtain pulled 30-45 percent open and gathered asymmetrically toward the left. Keep the entire countable header, first hook, rod, and top edge outside the upper frame. Show no more than 45 percent of panel width, one ordinary side edge, the weighted hem, and a real shower-interior edge with fresh localized compression rather than a broad textile wall.",

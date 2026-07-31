@@ -575,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.26" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.27" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -842,6 +842,16 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     true
   );
   assert.equal(
+    manifest.executionPolicy
+      .countertopDispenserViewerSpaceHandednessBySlotRequired,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy
+      .humanTraceMayNotConflictWithFeaturedProductCategoryInvariant,
+    true
+  );
+  assert.equal(
     manifest.executionPolicy.nonTextileNearPassCorrectionReuseAllowed,
     false
   );
@@ -916,7 +926,8 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     styled.every(
       (job) =>
         !/table lamp/i.test(job.lightingRecipe) &&
-        !/Natural foliage varies leaf angle/i.test(job.materialRecipe)
+        !/Natural foliage varies leaf angle/i.test(job.materialRecipe) &&
+        !/plain pump bottle/i.test(job.humanTraceRecipe)
     )
   );
   const fiveSceneSets = Map.groupBy(
@@ -1017,6 +1028,23 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     oxo.nonTextileNearPassCorrectionPrompt!,
     /label-bearing, logo-bearing, or pseudo-text object/i
   );
+  const oxoMinimalist = styled
+    .filter(
+      (job) =>
+        job.asin === "B0829N8C9G" &&
+        job.styleSlug === "minimalist-elegance"
+    )
+    .sort((a, b) => a.slot - b.slot);
+  assert.equal(oxoMinimalist.length, 5);
+  assert.match(
+    oxoMinimalist[0]!.prompt,
+    /viewer'?s right in this front-biased camera/i
+  );
+  assert.match(oxoMinimalist[1]!.prompt, /right-view short spout projects toward the viewer'?s left/i);
+  assert.match(oxoMinimalist[2]!.prompt, /top-view short spout.+viewer'?s right/i);
+  assert.match(oxoMinimalist[3]!.prompt, /back-view short spout projects toward the viewer'?s left/i);
+  assert.match(oxoMinimalist[4]!.prompt, /left-view short spout projects toward the viewer'?s right/i);
+  assert.match(oxoMinimalist[4]!.humanTraceRecipe, /plain grooming brush/i);
 
   const curtain = styled.find(
     (job) =>
