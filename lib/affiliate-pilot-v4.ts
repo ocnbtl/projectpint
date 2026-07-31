@@ -234,7 +234,7 @@ type AffiliatePilotV4StyledJob = {
   generationStrategy:
     | "direct_identity_locked_room_first"
     | "room_plate_two_pass_native_textile_full_header"
-    | "two_stage_one_use_textile_body_hidden_header";
+    | "room_plate_edit_one_use_textile_body_hidden_header";
   providerAttemptBudget: number;
   reusableProductCompositeAllowed: false;
   localPixelSurgeryAllowed: false;
@@ -272,7 +272,7 @@ type AffiliatePilotV4StyledJob = {
   nativeHeaderAuditEditProviderAttemptBudget: number;
   nativeHeaderAuditEditReuseAllowed: false;
   finalizationEditGenerationCount: 0 | 1;
-  supportReferenceGenerationCount: 0 | 1 | 3;
+  supportReferenceGenerationCount: 0 | 1 | 2 | 3;
   supportReferenceCropPolicy:
     | "not_applicable"
     | "recorded_role_isolation_crops_required";
@@ -303,7 +303,7 @@ function generationStrategyFor(
   if (role !== "solid-shower-curtain" && role !== "patterned-shower-curtain") {
     return "direct_identity_locked_room_first";
   }
-  return "two_stage_one_use_textile_body_hidden_header";
+  return "room_plate_edit_one_use_textile_body_hidden_header";
 }
 
 function isTextileRole(role: AffiliatePilotV4ProductRole): boolean {
@@ -383,7 +383,7 @@ function buildTextileRoomPlatePrompt(
     `Scene-specific room plate identity: ${sceneId}. This plate may be used only by this scene and must never be reused or locally composited.`,
     "Primary request: photograph a believable occupied home bathroom before its shower curtain is hung. The room, its ordinary use, and its imperfect phone capture are the subject.",
     `The featured ${product.name} by ${product.brand} must be completely absent. Include no shower curtain, liner, textile crossing the shower opening, loose hook, ring, packaging, label, logo, or readable or pseudo-text.`,
-    "Installation zone: show one complete functional tub or shower with one bare straight wall-mounted rod and both simple mounts visible. The bare opening must be physically unobstructed and large enough to receive the curtain later. Put the shower zone off center and generally within 25-45 percent of the frame width; room architecture, circulation, an imperfect foreground edge, and ordinary household use must remain more visually important.",
+    "Installation zone: show one complete functional tub or shower and one unobstructed shower-interior edge, but keep the entire would-be rod, mounts, hooks, openings, and curtain top edge above the upper frame before the first visible suspension point. Include no rod fragment or mounting hardware. The empty lower shower opening must be physically coherent and large enough to receive a gathered curtain body later. Put the shower zone off center and generally within 25-45 percent of the frame width; room architecture, circulation, an imperfect foreground edge, and ordinary household use must remain more visually important.",
     `Room history: ${roomHistoryRecipe}`,
     `iPhone capture: ${cameraRecipe}`,
     `Composition: ${SLOT_COMPOSITION_INTENTS[slot - 1]} Preserve loose phone framing, mild convergence or roll, and a reachable dry-floor camera position. Do not make a centered front elevation, corrected real-estate photograph, catalog angle, or symmetrical room.`,
@@ -395,7 +395,7 @@ function buildTextileRoomPlatePrompt(
     `Style variation lane: ${styleVariationLane}`,
     `Optional style vocabulary: use at most one practical item from this list, only if the room needs it: ${profile.livedIn}. Never assemble a coordinated plant-art-rug, basket-tray, or matching-textile vignette.`,
     "Physical audit: visible plumbing, tub or shower edges, doors, storage, supports, outlets, switches, reflections, and circulation must be complete and coherent. Prefer matte, worn, directionally textured, and nonrepeating surfaces. No blanket gloss, tiled veins, repeated wood grain, procedural grout, impossible reflections, floating objects, or malformed fixtures.",
-    "Plate-lock purpose: a later provider-native edit will add the reviewed curtain only inside the empty shower opening. Make the room photograph strong enough to preserve unchanged; do not reserve a blank product-photography backdrop or light the empty rod as a hero.",
+    "Plate-lock purpose: a later provider-native edit will add only the reviewed gathered curtain body inside the empty lower shower opening while the complete header remains outside frame. Make the room photograph strong enough to preserve unchanged; do not reserve a blank product-photography backdrop or light the shower opening as a hero.",
     "Output: one high-quality 1024x1536 portrait room-only image in a 2:3 frame."
   ].join("\n");
 }
@@ -594,7 +594,7 @@ function buildStyledPrompt(
   const headerSupportReferencePrompt = fullHeaderTextile
     ? buildTextileHeaderSupportPrompt(product, selection, sceneId)
     : null;
-  const roomPlateSupportPrompt = fullHeaderTextile
+  const roomPlateSupportPrompt = textileRole
     ? buildTextileRoomPlatePrompt(
         product,
         style,
@@ -616,12 +616,12 @@ function buildStyledPrompt(
   const referencePlan = fullHeaderTextile
     ? "Use this job's reviewed one-use room-only iPhone plate as the locked edit base, its reviewed one-use twelve-point header-count scaffold crop, and its separate reviewed one-use body-and-hem support crop."
     : hiddenHeaderTextile
-      ? "Use this job's reviewed one-use scene-specific body-and-hem support reference, a recorded crop of the scene-selected identity view that excludes all invisible header geometry, and one reviewed exact-product listing material/detail crop."
+      ? "Use this job's reviewed one-use hidden-header room plate as the locked edit base, its reviewed one-use scene-specific body-and-hem support reference, and a recorded crop of the scene-selected identity view that excludes all header geometry. Exact-product material evidence is already locked into the reviewed body support."
     : "Use the reviewed seven-view identity atlas, the scene-selected orthographic identity view, and the reviewed canonical presentation anchor.";
   const inputImageRoles = fullHeaderTextile
     ? "Input image roles: Image 1 is the reviewed one-use room-only iPhone plate and the locked photographic base. Preserve its camera position, framing, room geometry, light direction, exposure, objects, wear, and irregularity. Image 2 is the reviewed one-use header-count scaffold crop for the complete straight rod, both mounts, and exactly twelve one-to-one hooks/openings only; its body is excluded. Image 3 is the separate reviewed one-use body-and-hem support crop for exact-product material, fresh fold masses, seams, cross-grain tension, and weighted hem only; its top edge is excluded. Use a provider-native edit to add one coherent curtain only inside the empty shower opening. Do not redesign, restage, widen, clean, relight, or recrop the room, and do not paste or locally composite either support."
     : hiddenHeaderTextile
-      ? "Input image roles: Image 1 is the reviewed one-use scene-specific body-and-hem drape support generated only for this job; use its fresh gravity state but do not paste or composite it. Image 2 is a recorded crop of the scene-selected identity view with all header geometry removed; use it only for side seam, thickness, color, print identity when applicable, and weighted hem, never its old fold rhythm. Image 3 is the reviewed exact-product listing material/detail crop for weave or print behavior, color, thickness, and surface roughness. Generate the bathroom and curtain natively. The rod, hooks, openings, and top edge remain outside frame."
+      ? "Input image roles: Image 1 is the reviewed one-use hidden-header room plate and the locked photographic base. Preserve its camera position, framing, architecture, plumbing, light direction, exposure, objects, wear, labels, and human irregularity. Image 2 is the reviewed one-use scene-specific body-and-hem support generated only for this job; use its exact-product material and fresh gravity state but do not paste or composite it. Image 3 is a recorded crop of the scene-selected identity view with all header geometry removed; use it only for side seam, thickness, color, print identity when applicable, and weighted hem, never its old fold rhythm. Use a provider-native edit to add only the gathered curtain body inside the empty lower shower opening. The rod, mounts, hooks, openings, and top edge remain outside frame. Do not redesign, restage, widen, clean, relight, or recrop the room."
       : `Input image roles: Image 1 is the reviewed seven-view identity atlas. Image 2 is the reviewed ${primarySceneReferenceView} identity view for this camera. Image 3 is the reviewed presentation anchor. Use them only for product identity; do not copy their backdrop, atlas layout, display pose, chroma color, lighting, or prior fabric drape into the room.`;
   const identityQa = textileRole
     ? "Identity: the exact twelve-opening and twelve-hook total remains verified in the reviewed identity evidence. The styled scene must reveal zero rod, mount, hook, reinforced opening, or top-edge pixels; any visible header geometry is a hard reject. Preserve the reviewed body color or print, side seam, fabric thickness, and weighted hem without inventing a visible count."
@@ -675,7 +675,7 @@ function buildStyledPrompt(
       `Scene-specific product placement: ${placement}`,
       `Reflection and door plan: ${shot.reflectionPlan}`,
       inputImageRoles,
-      `Generation strategy: ${generationStrategy}. ${fullHeaderTextile ? "First edit the reviewed room plate natively and alter only the empty shower opening enough to place the complete product; the room plate must remain recognizably unchanged. Treat this as the placement pass. A second provider-native audit edit will then correct only the narrow header strip and produce the accepted final." : "Generate this scene's product state natively inside this room."} Reusing or locally compositing a product cutout, fold silhouette, textile map, room plate, or prior accepted scene is forbidden.`,
+      `Generation strategy: ${generationStrategy}. ${fullHeaderTextile ? "First edit the reviewed room plate natively and alter only the empty shower opening enough to place the complete product; the room plate must remain recognizably unchanged. Treat this as the placement pass. A second provider-native audit edit will then correct only the narrow header strip and produce the accepted final." : hiddenHeaderTextile ? "Edit the reviewed hidden-header room plate natively and alter only the empty lower shower opening enough to place the gathered body; the room plate must remain recognizably unchanged and the complete header must remain outside frame." : "Generate this scene's product state natively inside this room."} Reusing or locally compositing a product cutout, fold silhouette, textile map, room plate, or prior accepted scene is forbidden.`,
       `Scene-specific QA target: ${qaFocus}`,
       "Final audit: first ask whether this could be mistaken for an ordinary person's good iPhone bathroom photo. Then check product identity, scale, support, visible construction, reflections, material repetition, exposure integration, text, and whether any object or styling looks too perfectly arranged.",
       "Constraints: exactly one canonical featured product; no people or hands; no packaging; no product claim, alternate variation, added label, duplicate, text overlay, or watermark.",
@@ -831,7 +831,7 @@ export function buildAffiliatePilotV4Manifest(
           headerSupportReferencePromptSha256: headerSupportReferencePrompt
             ? sha256(headerSupportReferencePrompt)
             : null,
-          roomPlateSupportRequired: fullHeaderTextile,
+          roomPlateSupportRequired: textileRole,
           roomPlateSupportInputCount: 0,
           roomPlateSupportPrompt,
           roomPlateSupportPromptSha256: roomPlateSupportPrompt
@@ -840,7 +840,7 @@ export function buildAffiliatePilotV4Manifest(
           roomPlateProviderAttemptBudget:
             affiliatePilotV4ExecutionPolicy.roomPlateProviderAttemptBudget,
           roomPlateReuseAllowed: false,
-          providerNativeRoomPlateEditRequired: fullHeaderTextile,
+          providerNativeRoomPlateEditRequired: textileRole,
           nativeHeaderAuditEditRequired: fullHeaderTextile,
           nativeHeaderAuditEditInputCount: fullHeaderTextile ? 3 : 0,
           nativeHeaderAuditEditPrompt,
@@ -855,7 +855,7 @@ export function buildAffiliatePilotV4Manifest(
           supportReferenceGenerationCount: fullHeaderTextile
             ? 3
             : hiddenHeaderTextile
-              ? 1
+              ? 2
               : 0,
           supportReferenceCropPolicy: fullHeaderTextile
             ? "recorded_role_isolation_crops_required"
@@ -925,13 +925,16 @@ export function buildAffiliatePilotV4Manifest(
       bodySupportReferenceJobs.map((job) => job.supportReferencePromptSha256)
     ).size !== bodySupportReferenceJobs.length ||
     headerSupportReferenceJobs.length !== 0 ||
-    roomPlateSupportJobs.length !== 0 ||
+    roomPlateSupportJobs.length !== 120 ||
+    new Set(
+      roomPlateSupportJobs.map((job) => job.roomPlateSupportPromptSha256)
+    ).size !== roomPlateSupportJobs.length ||
     nativeHeaderAuditEditJobs.length !== 0 ||
     finalizationEditGenerationRequestedCount !== 0 ||
-    supportReferenceGenerationRequestedCount !== 120
+    supportReferenceGenerationRequestedCount !== 240
   ) {
     throw new Error(
-      "Pilot v4 requires 120 unique textile body supports and forbids visible-header, room-plate, and header-audit styled jobs."
+      "Pilot v4 requires 120 unique textile body supports plus 120 unique hidden-header room plates, and forbids visible-header and header-audit styled jobs."
     );
   }
   if (
