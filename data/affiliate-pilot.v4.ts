@@ -309,7 +309,7 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
 ] as const;
 
 export const affiliatePilotV4RealismReset = {
-  contractVersion: "affiliate-pilot-real-bathroom-v4.14",
+  contractVersion: "affiliate-pilot-real-bathroom-v4.15",
   supersedesPromptVersion: "affiliate-pilot-identity-physical-photo-v4",
   supersedesGenerationVersion: "pilot-2026-07-27-run-04",
   resetAuthorizedAt: "2026-07-31T05:00:00-04:00",
@@ -319,7 +319,7 @@ export const affiliatePilotV4RealismReset = {
   reason:
     "Owner review found AI-stock polish, repeated lighting and room formulas, literal style stereotypes, procedural material texture, repeated curtain folds, and an unsustainable retry/compositing rate.",
   rootCauseRevision:
-    "Two prompt-only proof retries showed that generated curtain identities propagated synthetic folds and incorrect header counts. Exact-product evidence, de-staging, one-use room plates, and deformation-gated supports corrected material, composition, and gravity. Four native header passes could not preserve twelve visible positions, so styled scenes keep the complete countable header outside frame while reviewed identities remain authoritative. Removing generated identity drapes from final conditioning stopped their periodic silhouette from returning. The first scene-04 final then proved that a room plate showing the complete shower alcove lintel makes outside-frame suspension physically impossible: the edit must reveal a top edge. Every textile room plate now has a feasibility gate requiring the camera crop to intersect the shower below the would-be suspension line; a visible full lintel, soffit, or upper shower opening is rejected before product insertion."
+    "Two prompt-only proof retries showed that generated curtain identities propagated synthetic folds and incorrect header counts. Exact-product evidence, de-staging, one-use room plates, and deformation-gated supports corrected material, composition, and gravity. Four native header passes could not preserve twelve visible positions, so styled scenes keep the complete countable header outside frame while reviewed identities remain authoritative. Removing generated identity drapes from final conditioning stopped their periodic silhouette from returning. Scene 04 then exposed two more root failures. A room plate showing the complete shower alcove lintel made outside-frame suspension physically impossible, so every textile plate now intersects the shower below the would-be suspension line. After that correction, forcing multiple large mid-body direction changes alternated between repeated vertical tubes and an implausible diagonal swag with a short free hem. Textile variation is now constrained to quiet gravity: a broad face plus a few unequal mostly vertical compressions, gradual width or depth changes, at most one subtle merge or split, no large diagonal trough, and no free hem at or above the tub rim."
 } as const;
 
 export const affiliatePilotV4ExecutionPolicy = {
@@ -339,10 +339,15 @@ export const affiliatePilotV4ExecutionPolicy = {
   maxReferenceInputsForTextiles: 3,
   oneUseSceneSpecificTextileBodySupportRequired: true,
   textileBodySupportFullHeightParallelChannelsAreHardReject: true,
-  textileBodySupportMinimumMidBodyDeformationBreaks: 2,
+  textileBodySupportMinimumMidBodyDeformationBreaks: 1,
   textileBodySupportRequiresMultiHeightSilhouetteChanges: true,
   textileBodySupportCompressionOrigin: "suspension_above_frame_only",
   textileBodySupportUnsupportedLateralPinchIsHardReject: true,
+  textileBodySupportQuietGravityRequired: true,
+  textileBodySupportLargeDiagonalTroughIsHardReject: true,
+  textileBodySupportFoldVariationMode:
+    "subtle_width_depth_change_with_single_merge_or_split",
+  textileFinalFreeHemAtOrAboveTubRimIsHardReject: true,
   textileFinalIdentityDrapeReferenceAllowed: false,
   reviewedBodySupportCarriesIdentityToTextileFinal: true,
   oneUseSceneSpecificHeaderCountSupportRequiredForFullHeader: false,

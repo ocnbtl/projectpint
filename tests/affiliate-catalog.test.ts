@@ -573,7 +573,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.14" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.15" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -594,7 +594,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   );
   assert.equal(
     manifest.executionPolicy.textileBodySupportMinimumMidBodyDeformationBreaks,
-    2
+    1
   );
   assert.equal(
     manifest.executionPolicy
@@ -608,6 +608,22 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(
     manifest.executionPolicy
       .textileBodySupportUnsupportedLateralPinchIsHardReject,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.textileBodySupportQuietGravityRequired,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.textileBodySupportLargeDiagonalTroughIsHardReject,
+    true
+  );
+  assert.equal(
+    manifest.executionPolicy.textileBodySupportFoldVariationMode,
+    "subtle_width_depth_change_with_single_merge_or_split"
+  );
+  assert.equal(
+    manifest.executionPolicy.textileFinalFreeHemAtOrAboveTubRimIsHardReject,
     true
   );
   assert.equal(
@@ -818,13 +834,15 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     curtain.supportReferenceCropPolicy,
     "not_applicable"
   );
-  assert.match(curtain.supportReferencePrompt!, /three to five plainly unequal primary masses/i);
-  assert.match(curtain.supportReferencePrompt!, /two or more different mid-body heights/i);
-  assert.match(curtain.supportReferencePrompt!, /no set of similar fold channels may run uninterrupted/i);
+  assert.match(curtain.supportReferencePrompt!, /one broad shallow face plus one to three plainly unequal/i);
+  assert.match(curtain.supportReferencePrompt!, /at most one trough may subtly merge or split once/i);
+  assert.match(curtain.supportReferencePrompt!, /natural verticality is correct/i);
   assert.match(curtain.supportReferencePrompt!, /every fold and compressed mass descends from gathered suspension points above/i);
   assert.match(curtain.supportReferencePrompt!, /no tieback, knot, bow, band, cord, clip/i);
-  assert.match(curtain.supportReferencePrompt!, /never unsupported lateral force/i);
-  assert.match(curtain.prompt, /never smooth those breaks into uninterrupted full-height channels/i);
+  assert.match(curtain.supportReferencePrompt!, /large diagonal trough, U-shaped scoop, swag, loop/i);
+  assert.match(curtain.prompt, /Natural vertical folds are correct/i);
+  assert.match(curtain.prompt, /free hem ending at or above the tub rim/i);
+  assert.match(curtain.prompt, /continuing naturally below the tub rim/i);
   assert.match(curtain.prompt, /Image 3 is the reviewed exact-product material\/detail crop/i);
   assert.match(curtain.prompt, /no reusable product silhouette or header/i);
   assert.equal(
@@ -853,8 +871,8 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.equal(curtainClose.supportReferenceReuseAllowed, false);
   assert.equal(curtainClose.supportReferenceCompositingAllowed, false);
   assert.match(curtainClose.supportReferencePrompt!, /one-use physical-state reference/i);
-  assert.match(curtainClose.supportReferencePrompt!, /three to five plainly unequal primary masses/i);
-  assert.match(curtainClose.supportReferencePrompt!, /change the gathered silhouette width at three heights/i);
+  assert.match(curtainClose.supportReferencePrompt!, /one broad shallow face plus one to three plainly unequal/i);
+  assert.match(curtainClose.supportReferencePrompt!, /at most one trough may subtly merge or split once/i);
   assert.equal(curtainClose.headerSupportReferenceRequired, false);
   assert.equal(curtainClose.headerSupportReferenceInputCount, 0);
   assert.equal(curtainClose.headerSupportReferencePrompt, null);
