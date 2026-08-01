@@ -575,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.30" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.31" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -955,9 +955,25 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
         job.prompt.includes("Fixed-surface authority:") &&
         job.prompt.includes("Set-diversity hard gate:") &&
         job.prompt.includes("Movable-object ceiling:") &&
+        job.prompt.includes(
+          "The style name and legacy description are thematic labels"
+        ) &&
         !job.prompt.includes("Optional style vocabulary:")
     )
   );
+  for (const style of inspirationStyles) {
+    const styleJobs = styled.filter((job) => job.styleSlug === style.slug);
+    assert.equal(styleJobs.length, 50);
+    assert.ok(
+      styleJobs.every(
+        (job) =>
+          job.prompt.includes(
+            `Style direction: ${style.name} atmosphere only.`
+          ) && !job.prompt.includes(style.description)
+      ),
+      `styled prompts must suppress the legacy ${style.name} description`
+    );
+  }
   const modernMarbleJobs = styled.filter(
     (job) => job.styleSlug === "modern-marble"
   );
@@ -965,9 +981,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     modernMarbleJobs.every(
       (job) =>
-        job.prompt.includes(
-          "The style name is not permission to add marble"
-        ) &&
+        job.prompt.includes("Modern Marble atmosphere only.") &&
         job.prompt.includes(
           "the assigned fixed-surface lane alone decides whether any stone is visible"
         ) &&

@@ -738,9 +738,7 @@ function buildStyledPrompt(
     ? "Identity: the exact twelve-opening and twelve-hook total remains verified in the reviewed identity evidence. The styled scene must reveal zero rod, mount, hook, reinforced opening, or top-edge pixels; any visible header geometry is a hard reject. Preserve the reviewed body color or print, side seam, fabric thickness, and weighted hem without inventing a visible count."
     : `Identity: ${countableChecklist(selection)}.`;
   const styleDirection =
-    style.slug === "modern-marble"
-      ? "Modern Marble atmosphere only. The style name is not permission to add marble, marble-look, stone veining, white-gray Carrara, or a luxury-showroom formula. The assigned fixed-surface lane below is the sole authority for whether any visible surface may carry stone or veins."
-      : `${style.name}. ${style.description}`;
+    `${style.name} atmosphere only. The style name and legacy description are thematic labels, not permission to add stereotyped colors, signature materials, decorative props, plants, art, steam, atmospheric effects, or a showroom formula. The assigned fixed-surface lane and Human trace below are the sole authorities for fixed style expression and movable household objects.`;
   const qaFocus = [
     "Realism: score at least 3/4 for iPhone plausibility, incidental-product framing, nonrepeating materials, human irregularity, nonliteral style interpretation, and set-level light/room variety.",
     "Hard reject: AI-stock polish, centered hero framing, repeated product cutout or textile drape, procedural texture, blanket gloss, showroom staging, uniform HDR, symmetric prop layout, or a dominant signature surface-and-palette combination repeated elsewhere in the five-scene set.",
