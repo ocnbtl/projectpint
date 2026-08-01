@@ -11,6 +11,7 @@ import {
   affiliatePilotV4RoomHistoryRecipes,
   affiliatePilotV4Selections,
   affiliatePilotV4ShotBlueprints,
+  affiliatePilotV4StyleSetExpressionLanes,
   affiliatePilotV4StyleVariationLanes,
   affiliatePilotV4StyleProfiles,
   affiliatePilotV4VisualQaRubric,
@@ -231,6 +232,7 @@ type AffiliatePilotV4StyledJob = {
   humanTraceRecipe: string;
   materialRecipe: string;
   styleVariationLane: string;
+  styleSetExpressionLane: string;
   generationStrategy:
     | "direct_identity_locked_room_first"
     | "room_plate_two_pass_native_textile_full_header"
@@ -400,7 +402,8 @@ function buildTextileRoomPlatePrompt(
   roomHistoryRecipe: string,
   humanTraceRecipe: string,
   materialRecipe: string,
-  styleVariationLane: string
+  styleVariationLane: string,
+  styleSetExpressionLane: string
 ): string {
   const cameraVolumeContract =
     "Preserve loose phone framing, mild convergence or roll, and a reachable dry-floor camera position outside the tub.";
@@ -427,7 +430,9 @@ function buildTextileRoomPlatePrompt(
     `Material behavior: ${materialRecipe}`,
     `Fixed-surface style direction: ${style.name}. Interpret the style only through one fixed architectural or material choice derived from this description: ${style.description}`,
     `Fixed style reference, not a palette or shopping list: ${profile.architecture}. The palette '${profile.palette}' may influence existing wall or fixed-surface undertones only; never instantiate it as matching movable objects or textiles.`,
+    `Set-level fixed-surface expression lane: ${styleSetExpressionLane}`,
     `Fixed-surface variation lane: ${styleVariationLane} Apply this lane to architecture, room history, or a built-in finish only.`,
+    "Set-diversity hard gate: use the style's most obvious signature color or material on at most one major fixed surface in this scene. Floor, vanity top, wet-zone wall, and main painted wall may not all repeat one signature finish. Across the five-scene set, repeating the same dominant fixed-surface category plus palette emphasis is a hard rejection.",
     "Zero-decor gate: include no plant, flower, vase, art, framed print, decorative bowl, tray, candle, basket used as decor, display shelf, stacked or rolled display towel, matching textile set, coordinated container, styled toiletries, open product packaging, label, or pseudo-text. Storage furniture may exist when required by room history, but its shelves and top remain visually quiet rather than merchandised.",
     "Movable-object audit: count semantic object groups before output. The exact assigned human traces plus any single functional floor textile may total no more than five groups in the entire frame. A grouped stack, filled basket, stocked shelf, toiletry cluster, or coordinated arrangement counts as multiple groups and fails unless that exact grouping is explicitly named by the assigned human-trace sentence. If the count exceeds five, remove extras rather than rearranging them.",
     "Physical audit: visible plumbing, tub or shower edges, doors, storage, supports, reflections, and circulation must be complete and coherent. Portable electrical devices are absent; any explicitly required fixed light is hardwired outside the wet zone with no visible supply hardware. Prefer matte, worn, directionally textured, and nonrepeating surfaces. No blanket gloss, tiled veins, repeated wood grain, procedural grout, impossible reflections, floating objects, or malformed fixtures.",
@@ -594,6 +599,7 @@ function buildStyledPrompt(
   humanTraceRecipe: string;
   materialRecipe: string;
   styleVariationLane: string;
+  styleSetExpressionLane: string;
   generationStrategy: AffiliatePilotV4StyledJob["generationStrategy"];
   referenceInputCount: AffiliatePilotV4StyledJob["referenceInputCount"];
   referencePlan: string;
@@ -654,6 +660,11 @@ function buildStyledPrompt(
     slot,
     "style"
   );
+  const styleSetExpressionLane =
+    affiliatePilotV4StyleSetExpressionLanes[slot - 1];
+  if (!styleSetExpressionLane) {
+    throw new Error(`Pilot v4 has no set-level style lane for slot ${slot}.`);
+  }
   const generationStrategy = generationStrategyFor(
     selection.productRole,
     slot
@@ -688,7 +699,8 @@ function buildStyledPrompt(
         roomHistoryRecipe,
         humanTraceRecipe,
         materialRecipe,
-        styleVariationLane
+        styleVariationLane,
+        styleSetExpressionLane
       )
     : null;
   const roomPlateCorrectionPrompt = textileRole
@@ -721,7 +733,7 @@ function buildStyledPrompt(
     : `Identity: ${countableChecklist(selection)}.`;
   const qaFocus = [
     "Realism: score at least 3/4 for iPhone plausibility, incidental-product framing, nonrepeating materials, human irregularity, nonliteral style interpretation, and set-level light/room variety.",
-    "Hard reject: AI-stock polish, centered hero framing, repeated product cutout or textile drape, procedural texture, blanket gloss, showroom staging, uniform HDR, or symmetric prop layout.",
+    "Hard reject: AI-stock polish, centered hero framing, repeated product cutout or textile drape, procedural texture, blanket gloss, showroom staging, uniform HDR, symmetric prop layout, or a dominant signature surface-and-palette combination repeated elsewhere in the five-scene set.",
     identityQa,
     textileRole
       ? "Textile gravity: keep one mostly relaxed broad face covering at least seventy percent of visible width. Allow at most one full-height trough, and require one asymmetric displacement to change width and fade into the broad face by the lower third. Reject two adjacent uninterrupted channels, equal tubes, parallel stripes, rigid planes, large diagonal troughs, U-shaped scoops, swags, loops, folded-over masses, unsupported pinches, or a free weighted hem ending at or above the tub rim."
@@ -739,6 +751,7 @@ function buildStyledPrompt(
     humanTraceRecipe,
     materialRecipe,
     styleVariationLane,
+    styleSetExpressionLane,
     generationStrategy,
     referenceInputCount,
     referencePlan,
@@ -763,8 +776,10 @@ function buildStyledPrompt(
       `Material behavior: ${materialRecipe}`,
       `Style direction: ${style.name}. ${style.description}`,
       `Style reference, not a checklist: ${profile.palette}. ${profile.architecture}.`,
+      `Set-level fixed-surface expression lane: ${styleSetExpressionLane}`,
       `Style variation lane: ${styleVariationLane}`,
-      `Optional style vocabulary: choose at most one natural item from this list, only if the room needs it and it does not create a coordinated vignette: ${profile.livedIn}.`,
+      "Set-diversity hard gate: use the style's most obvious signature color or material on at most one major fixed surface in this scene. Floor, vanity top, wet-zone wall, and main painted wall may not all repeat one signature finish. Across the five-scene set, repeating the same dominant fixed-surface category plus palette emphasis is a hard rejection.",
+      "Movable-object ceiling: the assigned Human trace sentence is the only source of movable household objects. Do not add optional style props, decor, stocked storage, plants, bottles, tubes, packages, jars, candles, art, trays, baskets, or toiletry clusters. When the assigned trace names a grooming item, use one plain brush, comb, cup, cloth, hair tie, or loose unlabeled object rather than a container.",
       `Featured product present in the room: ${product.name} by ${product.brand}.`,
       `Product identity contract: ${selection.identityPrompt}`,
       `Countable-feature preflight: ${countableChecklist(selection)}.`,
@@ -858,6 +873,7 @@ export function buildAffiliatePilotV4Manifest(
           humanTraceRecipe,
           materialRecipe,
           styleVariationLane,
+          styleSetExpressionLane,
           generationStrategy,
           referenceInputCount,
           referencePlan,
@@ -901,6 +917,7 @@ export function buildAffiliatePilotV4Manifest(
           humanTraceRecipe,
           materialRecipe,
           styleVariationLane,
+          styleSetExpressionLane,
           generationStrategy,
           providerAttemptBudget:
             affiliatePilotV4ExecutionPolicy.providerAttemptBudgetPerAsset,

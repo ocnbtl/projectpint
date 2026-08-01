@@ -575,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.27" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.28" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -943,7 +943,34 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     assert.equal(new Set(jobs.map((job) => job.humanTraceRecipe)).size, 5);
     assert.equal(new Set(jobs.map((job) => job.materialRecipe)).size, 5);
     assert.equal(new Set(jobs.map((job) => job.styleVariationLane)).size, 5);
+    assert.equal(
+      new Set(jobs.map((job) => job.styleSetExpressionLane)).size,
+      5
+    );
   });
+  assert.ok(
+    styled.every(
+      (job) =>
+        job.prompt.includes("Set-level fixed-surface expression lane:") &&
+        job.prompt.includes("Set-diversity hard gate:") &&
+        job.prompt.includes("Movable-object ceiling:") &&
+        !job.prompt.includes("Optional style vocabulary:")
+    )
+  );
+  const modernMarbleJobs = styled.filter(
+    (job) => job.styleSlug === "modern-marble"
+  );
+  assert.equal(modernMarbleJobs.length, 50);
+  assert.ok(
+    modernMarbleJobs.every(
+      (job) =>
+        job.prompt.includes(
+          "use marble or marble-look on at most one major fixed surface"
+        ) &&
+        job.prompt.includes("do not default every scene to white Carrara") &&
+        !job.prompt.includes("one skincare bottle")
+    )
+  );
   assert.doesNotMatch(
     JSON.stringify(manifest),
     /\/private\/tmp|project-pint-affiliate-pilot-v4-refs/
