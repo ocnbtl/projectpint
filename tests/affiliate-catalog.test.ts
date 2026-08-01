@@ -575,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.37" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.38" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -940,6 +940,25 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
         !/nearby objects|basket contains|everyday grooming object/i.test(
           job.humanTraceRecipe
         )
+    )
+  );
+  const closedCabinetHumanTraceJobs = styled.filter((job) =>
+    /slightly off level/i.test(job.humanTraceRecipe)
+  );
+  assert.ok(closedCabinetHumanTraceJobs.length > 0);
+  assert.ok(
+    closedCabinetHumanTraceJobs.every(
+      (job) =>
+        /every cabinet and drawer is fully closed/i.test(
+          job.humanTraceRecipe
+        ) &&
+        /noticeable angle/i.test(job.humanTraceRecipe) &&
+        /no other movable object/i.test(job.humanTraceRecipe)
+    )
+  );
+  assert.ok(
+    styled.every(
+      (job) => !/drawer remains open by about two inches/i.test(job.prompt)
     )
   );
   const fiveSceneSets = Map.groupBy(
