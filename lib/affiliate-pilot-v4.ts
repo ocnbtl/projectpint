@@ -12,6 +12,7 @@ import {
   affiliatePilotV4Selections,
   affiliatePilotV4ShotBlueprints,
   affiliatePilotV4StyleSetExpressionLanes,
+  affiliatePilotV4StyleSpecificSetExpressionOverrides,
   affiliatePilotV4StyleVariationLanes,
   affiliatePilotV4StyleProfiles,
   affiliatePilotV4VisualQaRubric,
@@ -660,7 +661,12 @@ function buildStyledPrompt(
     slot,
     "style"
   );
+  const styleSpecificSetExpressionLanes =
+    affiliatePilotV4StyleSpecificSetExpressionOverrides[
+      style.slug as keyof typeof affiliatePilotV4StyleSpecificSetExpressionOverrides
+    ];
   const styleSetExpressionLane =
+    styleSpecificSetExpressionLanes?.[slot - 1] ??
     affiliatePilotV4StyleSetExpressionLanes[slot - 1];
   if (!styleSetExpressionLane) {
     throw new Error(`Pilot v4 has no set-level style lane for slot ${slot}.`);

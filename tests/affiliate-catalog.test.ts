@@ -575,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.28" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.29" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -968,7 +968,25 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
           "use marble or marble-look on at most one major fixed surface"
         ) &&
         job.prompt.includes("do not default every scene to white Carrara") &&
+        job.styleSetExpressionLane.includes("REQUIRED:") &&
+        /zero(?:[- ]stone)?[- ]vein/i.test(job.styleSetExpressionLane) &&
         !job.prompt.includes("one skincare bottle")
+    )
+  );
+  const modernMarbleSlotOne = modernMarbleJobs.filter(
+    (job) => job.slot === 1
+  );
+  assert.equal(modernMarbleSlotOne.length, 10);
+  assert.ok(
+    modernMarbleSlotOne.every(
+      (job) =>
+        job.styleSetExpressionLane.includes("COUNTER-ONLY STONE LANE") &&
+        job.styleSetExpressionLane.includes(
+          "floor with zero stone veins"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "wet-zone wall with zero stone veins"
+        )
     )
   );
   assert.doesNotMatch(
