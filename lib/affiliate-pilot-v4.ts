@@ -740,8 +740,10 @@ function buildStyledPrompt(
   const styleDirection =
     `${style.name} atmosphere only. The style name and legacy description are thematic labels, not permission to add stereotyped colors, signature materials, decorative props, plants, art, steam, atmospheric effects, or a showroom formula. The assigned fixed-surface lane and Human trace below are the sole authorities for fixed style expression and movable household objects.`;
   const compositionIntent =
-    selection.productRole === "countertop-dispenser" && slot === 2
-      ? "Broad functional bathroom view from reachable standing space, not a counter close-up. Show at least two coherent non-vanity room zones such as the toilet plus tub or shower, doorway plus floor circulation, or wet zone plus storage. Keep the vanity at no more than the lower half of the frame. Put the dispenser in an outer image third, never at the visual center, and keep it about 8–14 percent of frame height. The towel and toothbrush cup are ordinary traces, not a styled vignette around the product."
+    selection.productRole === "countertop-dispenser" && slot === 1
+      ? "Wide functional bathroom view from reachable low standing or seated-height space, never a vanity close-up. Show at least two coherent non-vanity room zones such as toilet plus tub or shower, doorway plus floor circulation, or wet zone plus storage. Keep the vanity at no more than the lower half of the frame. Put the dispenser in an outer image third, never at the visual center, and keep it about 8–14 percent of frame height. The exact assigned human-trace groups are ordinary traces, not a styled vignette around the product."
+      : selection.productRole === "countertop-dispenser" && slot === 2
+      ? "Broad functional bathroom view from reachable standing space, not a counter close-up. Show at least two coherent non-vanity room zones such as the toilet plus tub or shower, doorway plus floor circulation, or wet zone plus storage. Keep the vanity at no more than the lower half of the frame. Put the dispenser in an outer image third, never at the visual center, and keep it about 8–14 percent of frame height. The exact assigned human-trace groups are ordinary traces, not a styled vignette around the product."
       : SLOT_COMPOSITION_INTENTS[slot - 1]!;
   const qaFocus = [
     "Realism: score at least 3/4 for iPhone plausibility, incidental-product framing, nonrepeating materials, human irregularity, nonliteral style interpretation, and set-level light/room variety.",

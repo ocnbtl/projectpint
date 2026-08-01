@@ -575,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.36" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.37" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -1079,8 +1079,9 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     brassTerrazzoJobs.every(
       (job) =>
-        job.styleSetExpressionLane.includes("REQUIRED:") &&
-        /zero[- ]chips?/i.test(job.styleSetExpressionLane)
+        job.styleSetExpressionLane.includes("REQUIRED SURFACES:") &&
+        /zero[- ]chips?/i.test(job.styleSetExpressionLane) &&
+        /EXACT BRASS (?:FAMILY|LIMIT)/.test(job.styleSetExpressionLane)
     )
   );
   const brassTerrazzoSlotOne = brassTerrazzoJobs.filter(
@@ -1098,6 +1099,45 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
         ) &&
         job.styleSetExpressionLane.includes(
           "wet-zone wall = plain solid-color"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "champagne brass is allowed only on the sink faucet and its own handles"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "mirror frame, cabinet pulls and knobs, room-door hardware"
+        )
+    )
+  );
+  const brassTerrazzoSlotTwo = brassTerrazzoJobs.filter(
+    (job) => job.slot === 2
+  );
+  assert.equal(brassTerrazzoSlotTwo.length, 10);
+  assert.ok(
+    brassTerrazzoSlotTwo.every(
+      (job) =>
+        job.styleSetExpressionLane.includes(
+          "WET-ZONE-ONLY TERRAZZO LANE"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "champagne brass is allowed only on the shower or tub controls and matching spout"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "sink faucet, mirror frame, cabinet pulls and knobs"
+        )
+    )
+  );
+  const brassTerrazzoSlotThree = brassTerrazzoJobs.filter(
+    (job) => job.slot === 3
+  );
+  assert.equal(brassTerrazzoSlotThree.length, 10);
+  assert.ok(
+    brassTerrazzoSlotThree.every(
+      (job) =>
+        job.styleSetExpressionLane.includes(
+          "FLOOR-ONLY TERRAZZO LANE"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "champagne brass is allowed only on the vanity cabinet pulls and knobs"
         )
     )
   );
@@ -1115,7 +1155,10 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
           "Visible terrazzo, chip aggregate, confetti pattern, and speckled stone are forbidden everywhere"
         ) &&
         job.styleSetExpressionLane.includes(
-          "no second warm-metal fixture family"
+          "champagne brass is allowed only on the vanity cabinet pulls and knobs"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "sink faucet, mirror frame, room-door hardware"
         )
     )
   );
@@ -1130,7 +1173,10 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
           "ALTERNATE-PALETTE JOINERY LANE"
         ) &&
         job.styleSetExpressionLane.includes(
-          "Visible terrazzo, chip aggregate, and repeated brass are forbidden"
+          "Visible terrazzo and chip aggregate are forbidden"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "choose either one single small brass cabinet knob or one narrow fixed brass trim accent, never both"
         ) &&
         job.styleSetExpressionLane.includes(
           "all have zero chips"
@@ -1238,6 +1284,27 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(oxoMinimalist[3]!.prompt, /back-view short spout projects toward the viewer'?s left/i);
   assert.match(oxoMinimalist[4]!.prompt, /left-view short spout projects toward the viewer'?s right/i);
   assert.match(oxoMinimalist[4]!.humanTraceRecipe, /plain grooming brush/i);
+  const oxoSlotOne = styled.filter(
+    (job) => job.asin === "B0829N8C9G" && job.slot === 1
+  );
+  assert.equal(oxoSlotOne.length, 12);
+  assert.ok(
+    oxoSlotOne.every(
+      (job) =>
+        job.prompt.includes(
+          "Wide functional bathroom view from reachable low standing or seated-height space, never a vanity close-up."
+        ) &&
+        job.prompt.includes("at least two coherent non-vanity room zones") &&
+        job.prompt.includes(
+          "Keep the vanity at no more than the lower half of the frame."
+        ) &&
+        job.prompt.includes("outer image third") &&
+        job.prompt.includes("8–14 percent of frame height") &&
+        job.prompt.includes(
+          "The exact assigned human-trace groups are ordinary traces"
+        )
+    )
+  );
   const oxoSlotTwo = styled.filter(
     (job) => job.asin === "B0829N8C9G" && job.slot === 2
   );
