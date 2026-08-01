@@ -575,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.34" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.35" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -1173,6 +1173,21 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(oxoMinimalist[3]!.prompt, /back-view short spout projects toward the viewer'?s left/i);
   assert.match(oxoMinimalist[4]!.prompt, /left-view short spout projects toward the viewer'?s right/i);
   assert.match(oxoMinimalist[4]!.humanTraceRecipe, /plain grooming brush/i);
+  const oxoSlotTwo = styled.filter(
+    (job) => job.asin === "B0829N8C9G" && job.slot === 2
+  );
+  assert.equal(oxoSlotTwo.length, 12);
+  assert.ok(
+    oxoSlotTwo.every(
+      (job) =>
+        job.prompt.includes(
+          "Broad functional bathroom view from reachable standing space, not a counter close-up."
+        ) &&
+        job.prompt.includes("at least two coherent non-vanity room zones") &&
+        job.prompt.includes("outer image third") &&
+        job.prompt.includes("8–14 percent of frame height")
+    )
+  );
 
   const curtain = styled.find(
     (job) =>
