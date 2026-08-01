@@ -492,6 +492,16 @@ function buildNonTextileNearPassCorrectionPrompt(
   sceneId: string,
   primarySceneReferenceView: AffiliatePilotV4IdentityView
 ): string {
+  const correctionIdentityChecklist = styledCountableChecklist(
+    selection,
+    primarySceneReferenceView,
+    "Image 3"
+  );
+  const correctionSceneViewVisibilityGate = sceneViewVisibilityGate(
+    selection,
+    primarySceneReferenceView,
+    "Image 3"
+  );
   return [
     "Use case: edit-image.",
     "Asset type: one-use provider-native same-scene correction for a reviewed non-textile Project Pint near-pass.",
@@ -499,12 +509,13 @@ function buildNonTextileNearPassCorrectionPrompt(
     `Featured product: ${product.name} by ${product.brand}.`,
     "Input image roles: Image 1 is the full-size-reviewed same-scene near-pass and the immutable base photograph. It governs the complete room, camera, crop, perspective, architecture, plumbing, support surfaces, object count, assigned human traces, material wear, reflections, light direction, exposure, shadows, highlights, color spill, focus, noise, and every passing product pixel. Image 2 is the reviewed seven-view identity atlas and governs complete canonical product geometry, handedness, counts, material boundaries, and hidden-feature continuity. Image 3 is the reviewed " +
       primarySceneReferenceView +
-      " identity view and governs only the documented failed product geometry visible from this camera.",
+      " identity view and is authoritative for the documented failed product geometry plus which product surfaces and features are visible from this camera.",
     "Edit scope: change only the smallest pixels required by the separately supplied documented hard-reject list. A product correction must remain inside the existing product footprint unless a missing canonical protrusion requires a minimal local extension. A secondary-object correction may remove or neutralize only a specifically documented same-category, label-bearing, logo-bearing, or pseudo-text object, restoring the immediately surrounding wall, ledge, counter, or container surface without inventing decor.",
     "Immutable-base gate: do not redesign, restage, clean, relight, reframe, recrop, widen, move, replace, or sharpen the room. Preserve every passing room boundary, fixture, towel, mat, basket, grooming item, wear mark, shadow, reflection, highlight, phone artifact, and unlabeled object. Any material room redraw is a hard rejection.",
-    "Camera-projected handedness gate: when a documented failure concerns left-right orientation, the separately supplied correction directive must state the required viewer-space projection for this exact camera. Follow that explicit viewer-space direction while preserving the visible canonical front, mark position, support, and every other product feature. Never mirror the product, swap a handed feature, or infer left-right from an unrelated room axis.",
+    "Camera-projected handedness gate: when a documented failure concerns left-right orientation, the separately supplied correction directive must state the required viewer-space projection for this exact camera. Follow that explicit viewer-space direction while preserving the exact visible surfaces authorized by Image 3, the support, and every other passing product feature. Never rotate the product to expose a hidden face, mirror the product, swap a handed feature, or infer left-right from an unrelated room axis.",
     `Identity gate: ${selection.identityPrompt}`,
-    `Countable-feature gate: ${countableChecklist(selection)}.`,
+    `Countable-feature gate: ${correctionIdentityChecklist}.`,
+    `Scene-view visibility gate: ${correctionSceneViewVisibilityGate}`,
     "Ambiguity gate: exactly one object may share the featured product's category or recognizable silhouette. Add no bottle, pump, dispenser, package, label-shaped graphic, readable text, pseudo-text, logo, alternate mark, duplicate, or decorative typography.",
     "Integration gate: corrected pixels must share Image 1's exact scale, perspective, support, exposure, white balance, color spill, shadow softness, focus, noise, highlight rolloff, and material roughness. The corrected product may not become larger, cleaner, brighter, sharper, more centered, or more saturated.",
     "Constraints: provider-native edit only; no local pixel surgery, reusable cutout, compositing, new room object, person, hand, packaging, claim, text overlay, or watermark.",
@@ -562,7 +573,8 @@ function countableChecklist(selection: AffiliatePilotV4Selection): string {
 
 function styledCountableChecklist(
   selection: AffiliatePilotV4Selection,
-  primarySceneReferenceView: AffiliatePilotV4IdentityView
+  primarySceneReferenceView: AffiliatePilotV4IdentityView,
+  referenceImageLabel = "Image 2"
 ): string {
   if (
     selection.asin === "B0829N8C9G" &&
@@ -570,7 +582,7 @@ function styledCountableChecklist(
   ) {
     return [
       "one pump head",
-      "one short nearly horizontal spout projecting toward the viewer's left exactly as Image 2 shows",
+      `one short nearly horizontal spout projecting toward the viewer's left exactly as ${referenceImageLabel} shows`,
       "one blue-tinted base band",
       "zero visible oval front marks because the visible steel surface is the plain continuous canonical rear"
     ]
@@ -582,10 +594,11 @@ function styledCountableChecklist(
 
 function sceneViewVisibilityGate(
   selection: AffiliatePilotV4Selection,
-  primarySceneReferenceView: AffiliatePilotV4IdentityView
+  primarySceneReferenceView: AffiliatePilotV4IdentityView,
+  referenceImageLabel = "Image 2"
 ): string {
   const base =
-    `Image 2's reviewed ${primarySceneReferenceView} identity view is authoritative for which product surfaces and features are visible from this camera. ` +
+    `${referenceImageLabel}'s reviewed ${primarySceneReferenceView} identity view is authoritative for which product surfaces and features are visible from this camera. ` +
     "Never rotate or mirror the product to expose a feature that belongs on a hidden face, and never copy a hidden feature onto the visible surface.";
   if (
     selection.asin === "B0829N8C9G" &&
@@ -593,7 +606,7 @@ function sceneViewVisibilityGate(
   ) {
     return (
       base +
-      " Show the plain continuous rear brushed-steel surface with no visible oval front mark. The short pump spout must project toward the viewer's left exactly as Image 2 shows; a visible front mark or viewer-right spout is a hard rejection."
+      ` Show the plain continuous rear brushed-steel surface with no visible oval front mark. The short pump spout must project toward the viewer's left exactly as ${referenceImageLabel} shows; a visible front mark or viewer-right spout is a hard rejection.`
     );
   }
   return base;

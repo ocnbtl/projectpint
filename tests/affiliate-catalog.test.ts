@@ -575,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.40" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.41" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -1272,6 +1272,10 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
       job.slot === 4
   )!;
   assert.match(oxo.prompt, /short, nearly horizontal forward spout/i);
+  assert.match(
+    oxo.prompt,
+    /oval mark belongs only to the front surface.+absent from the canonical back/i
+  );
   assert.match(oxo.prompt, /product merely happens to be present/i);
   assert.match(oxo.prompt, /No secondary object may share the featured product's category or silhouette/i);
   assert.match(oxo.prompt, /omit bottles, tubes, and packages/i);
@@ -1302,6 +1306,26 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(
     oxo.nonTextileNearPassCorrectionPrompt!,
     /required viewer-space projection for this exact camera/i
+  );
+  assert.match(
+    oxo.nonTextileNearPassCorrectionPrompt!,
+    /Image 3's reviewed back identity view is authoritative/i
+  );
+  assert.match(
+    oxo.nonTextileNearPassCorrectionPrompt!,
+    /zero visible oval front marks/i
+  );
+  assert.match(
+    oxo.nonTextileNearPassCorrectionPrompt!,
+    /plain continuous rear brushed-steel surface/i
+  );
+  assert.match(
+    oxo.nonTextileNearPassCorrectionPrompt!,
+    /spout must project toward the viewer'?s left exactly as Image 3 shows/i
+  );
+  assert.doesNotMatch(
+    oxo.nonTextileNearPassCorrectionPrompt!,
+    /preserving the visible canonical front/i
   );
   assert.match(
     oxo.nonTextileNearPassCorrectionPrompt!,
