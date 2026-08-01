@@ -575,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.32" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.33" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -1035,6 +1035,36 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
         ) &&
         job.styleSetExpressionLane.includes(
           "every wet-zone wall = plain solid-color tile or plaster with zero veins"
+        )
+    )
+  );
+  const spaGreeneryJobs = styled.filter(
+    (job) => job.styleSlug === "spa-greenery"
+  );
+  assert.equal(spaGreeneryJobs.length, 50);
+  assert.ok(
+    spaGreeneryJobs.every(
+      (job) =>
+        job.styleSetExpressionLane.includes("REQUIRED:") &&
+        /zero (?:signature )?green/i.test(job.styleSetExpressionLane) &&
+        job.styleSetExpressionLane.includes("Add no plant.")
+    )
+  );
+  const spaGreenerySlotOne = spaGreeneryJobs.filter(
+    (job) => job.slot === 1
+  );
+  assert.equal(spaGreenerySlotOne.length, 10);
+  assert.ok(
+    spaGreenerySlotOne.every(
+      (job) =>
+        job.styleSetExpressionLane.includes(
+          "COUNTER-OR-BACKSPLASH GREEN LANE"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "main wall = ordinary warm white, cream, or light neutral gray paint with zero green"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "wet-zone wall = plain white, cream, or warm gray with zero green"
         )
     )
   );
