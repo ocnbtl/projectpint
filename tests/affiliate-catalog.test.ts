@@ -575,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.29" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.30" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -952,6 +952,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     styled.every(
       (job) =>
         job.prompt.includes("Set-level fixed-surface expression lane:") &&
+        job.prompt.includes("Fixed-surface authority:") &&
         job.prompt.includes("Set-diversity hard gate:") &&
         job.prompt.includes("Movable-object ceiling:") &&
         !job.prompt.includes("Optional style vocabulary:")
@@ -965,9 +966,14 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
     modernMarbleJobs.every(
       (job) =>
         job.prompt.includes(
-          "use marble or marble-look on at most one major fixed surface"
+          "The style name is not permission to add marble"
         ) &&
-        job.prompt.includes("do not default every scene to white Carrara") &&
+        job.prompt.includes(
+          "the assigned fixed-surface lane alone decides whether any stone is visible"
+        ) &&
+        !job.prompt.includes(
+          "Style direction: Modern Marble. Veined stone, cool tones"
+        ) &&
         job.styleSetExpressionLane.includes("REQUIRED:") &&
         /zero(?:[- ]stone)?[- ]vein/i.test(job.styleSetExpressionLane) &&
         !job.prompt.includes("one skincare bottle")
@@ -986,6 +992,27 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
         ) &&
         job.styleSetExpressionLane.includes(
           "wet-zone wall with zero stone veins"
+        )
+    )
+  );
+  const modernMarbleSlotThree = modernMarbleJobs.filter(
+    (job) => job.slot === 3
+  );
+  assert.equal(modernMarbleSlotThree.length, 10);
+  assert.ok(
+    modernMarbleSlotThree.every(
+      (job) =>
+        job.styleSetExpressionLane.includes(
+          "HARDWARE-AND-PERIOD-DETAIL LANE"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "Visible marble, marble-look, stone veining, and white-gray Carrara are forbidden everywhere"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "vanity counter = solid unpatterned zero-vein finish"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "every wet-zone wall = plain solid-color tile or plaster with zero veins"
         )
     )
   );

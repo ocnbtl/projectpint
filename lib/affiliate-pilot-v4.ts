@@ -737,9 +737,14 @@ function buildStyledPrompt(
   const identityQa = textileRole
     ? "Identity: the exact twelve-opening and twelve-hook total remains verified in the reviewed identity evidence. The styled scene must reveal zero rod, mount, hook, reinforced opening, or top-edge pixels; any visible header geometry is a hard reject. Preserve the reviewed body color or print, side seam, fabric thickness, and weighted hem without inventing a visible count."
     : `Identity: ${countableChecklist(selection)}.`;
+  const styleDirection =
+    style.slug === "modern-marble"
+      ? "Modern Marble atmosphere only. The style name is not permission to add marble, marble-look, stone veining, white-gray Carrara, or a luxury-showroom formula. The assigned fixed-surface lane below is the sole authority for whether any visible surface may carry stone or veins."
+      : `${style.name}. ${style.description}`;
   const qaFocus = [
     "Realism: score at least 3/4 for iPhone plausibility, incidental-product framing, nonrepeating materials, human irregularity, nonliteral style interpretation, and set-level light/room variety.",
     "Hard reject: AI-stock polish, centered hero framing, repeated product cutout or textile drape, procedural texture, blanket gloss, showroom staging, uniform HDR, symmetric prop layout, or a dominant signature surface-and-palette combination repeated elsewhere in the five-scene set.",
+    "Fixed-surface conformance: audit the vanity counter, floor, wet-zone wall, and main wall separately against the authoritative set-level lane; any vein or signature finish on a forbidden surface is a hard rejection.",
     identityQa,
     textileRole
       ? "Textile gravity: keep one mostly relaxed broad face covering at least seventy percent of visible width. Allow at most one full-height trough, and require one asymmetric displacement to change width and fade into the broad face by the lower third. Reject two adjacent uninterrupted channels, equal tubes, parallel stripes, rigid planes, large diagonal troughs, U-shaped scoops, swags, loops, folded-over masses, unsupported pinches, or a free weighted hem ending at or above the tub rim."
@@ -780,9 +785,10 @@ function buildStyledPrompt(
       `Available light: ${lightingRecipe}`,
       `Human trace: ${humanTraceRecipe}`,
       `Material behavior: ${materialRecipe}`,
-      `Style direction: ${style.name}. ${style.description}`,
+      `Style direction: ${styleDirection}`,
       `Style reference, not a checklist: ${profile.palette}. ${profile.architecture}.`,
       `Set-level fixed-surface expression lane: ${styleSetExpressionLane}`,
+      "Fixed-surface authority: the set-level lane overrides the style name, generic style description, palette associations, and learned stock-photo defaults. Before output, inspect the vanity counter, floor, wet-zone wall, and main wall one by one; a prohibited vein or signature finish on any surface is a hard rejection, not a minor caveat.",
       `Style variation lane: ${styleVariationLane}`,
       "Set-diversity hard gate: use the style's most obvious signature color or material on at most one major fixed surface in this scene. Floor, vanity top, wet-zone wall, and main painted wall may not all repeat one signature finish. Across the five-scene set, repeating the same dominant fixed-surface category plus palette emphasis is a hard rejection.",
       "Movable-object ceiling: the assigned Human trace sentence is the only source of movable household objects. Do not add optional style props, decor, stocked storage, plants, bottles, tubes, packages, jars, candles, art, trays, baskets, or toiletry clusters. When the assigned trace names a grooming item, use one plain brush, comb, cup, cloth, hair tie, or loose unlabeled object rather than a container.",
