@@ -575,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.31" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.32" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -907,7 +907,15 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
         job.prompt.includes("Anti-stock invariant:") &&
         job.prompt.includes("Phone-evidence invariant:") &&
         job.prompt.includes("Daily-use invariant:") &&
+        job.prompt.includes(
+          "the assigned Human trace supplies every movable object"
+        ) &&
         job.prompt.includes("Decor-limit invariant:") &&
+        job.prompt.includes("Add zero optional decorative objects") &&
+        job.prompt.includes("Human-trace parsing hard gate:") &&
+        job.prompt.includes(
+          "show exactly one code-safe U.S. bathroom GFCI"
+        ) &&
         job.prompt.includes("Set-variety invariant:") &&
         job.prompt.includes("Input image roles:") &&
         job.prompt.includes("Reusing or locally compositing a product cutout") &&
