@@ -575,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.33" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.34" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -935,7 +935,11 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
       (job) =>
         !/table lamp/i.test(job.lightingRecipe) &&
         !/Natural foliage varies leaf angle/i.test(job.materialRecipe) &&
-        !/plain pump bottle/i.test(job.humanTraceRecipe)
+        !/plain pump bottle/i.test(job.humanTraceRecipe) &&
+        !/\bor\b/i.test(job.humanTraceRecipe) &&
+        !/nearby objects|basket contains|everyday grooming object/i.test(
+          job.humanTraceRecipe
+        )
     )
   );
   const fiveSceneSets = Map.groupBy(
