@@ -575,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.35" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.36" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -1069,6 +1069,71 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
         ) &&
         job.styleSetExpressionLane.includes(
           "wet-zone wall = plain white, cream, or warm gray with zero green"
+      )
+    )
+  );
+  const brassTerrazzoJobs = styled.filter(
+    (job) => job.styleSlug === "brass-terrazzo"
+  );
+  assert.equal(brassTerrazzoJobs.length, 50);
+  assert.ok(
+    brassTerrazzoJobs.every(
+      (job) =>
+        job.styleSetExpressionLane.includes("REQUIRED:") &&
+        /zero[- ]chips?/i.test(job.styleSetExpressionLane)
+    )
+  );
+  const brassTerrazzoSlotOne = brassTerrazzoJobs.filter(
+    (job) => job.slot === 1
+  );
+  assert.equal(brassTerrazzoSlotOne.length, 10);
+  assert.ok(
+    brassTerrazzoSlotOne.every(
+      (job) =>
+        job.styleSetExpressionLane.includes(
+          "COUNTER-ONLY TERRAZZO LANE"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "floor = plain solid-color"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "wet-zone wall = plain solid-color"
+        )
+    )
+  );
+  const brassTerrazzoSlotFour = brassTerrazzoJobs.filter(
+    (job) => job.slot === 4
+  );
+  assert.equal(brassTerrazzoSlotFour.length, 10);
+  assert.ok(
+    brassTerrazzoSlotFour.every(
+      (job) =>
+        job.styleSetExpressionLane.includes(
+          "BRASS-ONLY OWNER-UPDATE LANE"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "Visible terrazzo, chip aggregate, confetti pattern, and speckled stone are forbidden everywhere"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "no second warm-metal fixture family"
+        )
+    )
+  );
+  const brassTerrazzoSlotFive = brassTerrazzoJobs.filter(
+    (job) => job.slot === 5
+  );
+  assert.equal(brassTerrazzoSlotFive.length, 10);
+  assert.ok(
+    brassTerrazzoSlotFive.every(
+      (job) =>
+        job.styleSetExpressionLane.includes(
+          "ALTERNATE-PALETTE JOINERY LANE"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "Visible terrazzo, chip aggregate, and repeated brass are forbidden"
+        ) &&
+        job.styleSetExpressionLane.includes(
+          "all have zero chips"
         )
     )
   );
