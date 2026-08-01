@@ -1,79 +1,87 @@
-# Affiliate Pilot V4 Realism Reset
+# Affiliate Pilot V4 Evidence-Pool Reset
 
-This is an implementation record for the owner-directed V4 styled-scene reset, not a project handoff.
+Status: run 05 is preserved as owner-superseded evidence. Run 06 is blocked on fresh exact-SKU research. No old identity view or styled scene is reusable.
 
-## Why run 04 was superseded
+## Why run 05 was superseded
 
-The first 116 accepted styled scenes required 369 recorded attempts: 175 provider calls and 194 local operations. Only 37 provider outputs were accepted directly, while 79 finals depended on local compositing or repair. The ledger contains 233 rejected attempts.
+Run 05 spent 157 provider calls, 40 root strategy revisions, support images, room plates, same-scene corrections, and repeated retries to reach 23 assistant-accepted styled outputs. The owner rejected both the realism and the operating model. The final pending candidate remains unreviewed inside the archived run and was not promoted to any acceptance state.
 
-Owner and full-set review found four systemic problems:
+The new root contract addresses five failures:
 
-1. The same five camera, lighting, and activity templates were reused across all product/style combinations, so rooms changed decor without changing photographic behavior.
-2. Mechanical identity gates dominated the prompt and review. The featured product remained centered, equally exposed, and visually cleaner than the room.
-3. Style profiles were interpreted as literal palettes and prop kits, producing blue coastal rooms, uniformly dark moody rooms, and other catalog-like stereotypes.
-4. Reusing accepted product cutouts solved count or handedness failures but created pasted lighting, repeated silhouettes, and—most visibly—identical curtain folds in unrelated rooms.
+1. Generated identity packs were treated as stronger evidence than the exact products justified.
+2. Per-scene support images and productless room plates consumed calls without reliably improving product presence or realism.
+3. Same-scene repairs optimized individual images while slowing creation of a broad candidate pool.
+4. Repeated prop restrictions and anti-showroom language produced new visual formulas, weak themes, or rooms that looked damaged.
+5. Assistant acceptance was stored too close to final approval even though the owner makes the final selection.
 
-## Run 05 contract
+## Run 06 gates
 
-- Keep the 70 reviewed identity references; regenerate all 600 bathroom scenes.
-- Write room-first prompts. The bathroom and evidence of recent human use are the subject; the product is incidental.
-- Assign deterministic but varied iPhone camera, lens, room-history, lighting, human-trace, material, and style-interpretation recipes to every scene.
-- Use five distinct recipes in every product/style set.
-- Treat style as atmosphere and design logic, not a mandatory wall color or decor checklist.
-- Prefer matte, honed, worn, directionally textured materials with real seams, compression, grain, nap, and nonuniform roughness.
-- Reject AI-stock polish, centered hero framing, symmetric prop layouts, uniform HDR, blanket gloss, procedural texture, and showroom cleanliness.
-- Require at least two visible phone-capture imperfections and three independent nondecorative signs of daily use or age in every scene.
-- Allow at most one optional decorative style cue. Plants, art, baskets, and coordinated decor never satisfy the human-use requirement.
-- Never reuse or composite a product cutout, textile silhouette, fold map, or prior accepted scene.
-- Never use local pixel surgery, seam cloning, texture normalization, product relighting, or pseudo-text patching.
-- Allow at most two provider attempts per asset and prompt/reference strategy, and twelve provider attempts per five-scene set. An asset budget resets only after a logged root strategy revision.
-- After three failures with the same cause, stop the set and revise the root prompt or generation strategy before making another image.
-- Review every image at full size, then review the five-scene contact sheet before advancing.
+### 1. Exact-product dossiers
 
-## Curtain-specific correction
+Before identity generation, create one private dossier for each of the ten exact ASINs. Every dossier must record:
 
-The first two prompt-only proof retries failed with the same inherited defect: the generated curtain identity pack encouraged satin-like tubular folds, while the visible header lost the exact twelve-point construction. More final-scene retries are prohibited until the reference strategy changes.
+- exact SKU and variation identity;
+- material and finish;
+- dimensions and proportions;
+- topology and countable features;
+- pattern, grain, or specimen-variation boundary;
+- mounting, support, and ordinary use;
+- orientation and handedness;
+- evidence-backed hidden geometry;
+- explicit unknowns and contradictions;
+- claim-level source links, access times, and hashes for every private reference.
 
-The first exact-source proof corrected the curtain but still looked like a staged real-estate image. A targeted de-staging retry passed: it retained the product construction while adding a threshold edge, imperfect perspective, an open drawer, handled towel, ordinary sink objects, mismatched older finishes, and a skewed mat. Those successful constraints are now mandatory in the v4.3 base contract rather than one-off retry language.
+Prefer the manufacturer exact-SKU page or manual, then major exact-SKU retailer listings, then independent exact-SKU retailer listings. Generated images are never product-fact evidence. An unresolved identity-critical field blocks that product.
 
-Every textile scene now adds one human-reviewed exact-product listing material detail. It governs weave, color, thickness, and surface roughness but never supplies a reusable fold map or room. Full-header slots 1 and 3 also add one reviewed exact-product header-construction image and must generate a native new drape with twelve independent suspension points and twelve one-to-one hooks. Their fold peaks, troughs, wrinkle paths, opening amount, and hem wave must differ.
+### 2. New seven-view reference packs
 
-Slots 2, 4, and 5 keep the entire countable header outside the frame before the first hook. They still require a fresh scene-specific gravity drape, real side thickness, irregular yarn behavior, cross-grain tension, and one weighted hem. No prior generated curtain source may be reused.
+Generate presentation, front, back, left, right, top, and bottom views from the validated dossier and its private source set. All views must depict one unchanged product in one coordinate system. Verify full-size identity, dimensions, alpha, unique hashes, materials, countable features, topology, pattern, finish, handedness, hidden geometry, mounting, and support. Build one atlas only after all seven views pass.
 
-The initial hidden-header proof exposed an incomplete header; its corrected crop then became a broad wall of periodic vertical folds. Hidden-header slots therefore use an oblique side composition with the curtain 35-55 percent open, asymmetrically gathered to one side, no more than 45 percent of panel width visible, and one real shower-interior edge behind it. This is a structural composition change, not another wording-only retry.
+No run-04 or run-05 identity pixels, atlases, acceptance decisions, or prompts may be reused.
 
-Further proof isolated the conditioning problem: the reviewed orthographic curtain views themselves contain a complete header and a highly regular fold map. Hidden-header slots therefore use a two-stage provider path. Stage one creates and reviews a one-use body-and-hem support reference with four to seven unequal fold masses, localized compression, cross-grain tension, and a nonperiodic hem. Stage two generates the bathroom natively from that support, a recorded identity crop with all invisible header geometry removed, and the exact-product material/detail crop. The support image is never composited and may never be reused by another scene.
+### 3. One-call first-pass candidates
 
-Full-header proof exposed a different tradeoff: one isolated support achieved the irregular drape but only eleven hooks; its retry achieved exactly twelve hooks but reverted to regular body folds. Full-header scenes therefore separate the constraints. One reviewed one-use scaffold supplies only the complete straight rod, both mounts, and twelve one-to-one hooks/openings. A recorded crop excludes its body. A second reviewed one-use support supplies only the body seams, irregular fold deformation, cross-grain tension, and weighted hem; a recorded crop excludes its top edge. The final bathroom uses those two role-isolated crops plus exact-product material evidence and renders one native curtain. Across the 600 finals, the manifest now requires 120 body supports and 48 full-header count scaffolds, for a 768-call provider floor before retries.
+After a product's reference pack passes, generate one fresh bathroom candidate for each product/style/slot job:
 
-A source-reference crop is allowed only to remove listing text, icons, or callout layout that lies outside the material or construction evidence. The original source, URL, crop bounds, and before/after hashes must be preserved in the private execution evidence. This exception never permits cropping, retouching, relighting, compositing, or local pixel repair of a final scene.
+- 10 products × 12 styles × 5 slots = 600 first-pass calls;
+- exact product visibly present in every call;
+- one complete reviewed atlas reused per product;
+- zero routine support-reference calls;
+- zero productless room-plate calls;
+- zero same-scene correction calls;
+- zero local pixel surgery or product compositing;
+- every output, prompt, reference version, decision, and SHA-256 preserved.
 
-### V4.18 solid-curtain conditioning correction
+A failed candidate is retained as evidence and replaced with a materially different bathroom. After two failures with the same root cause, revise the root contract before requesting a third candidate in that lane.
 
-Scene 01 reproduced the same catalog-fold defect in both allowed V4.17 body-support attempts. The targeted final retry preserved the weave, color, seam, hem, and quiet vertical gravity, but still produced three adjacent channels that remained nearly equal and full height. That repeated result is recorded as a strategy failure, not an invitation to spend more retries.
+## Visual direction
 
-The remaining contradictory input was the reviewed front identity image: its product identity was useful, but its periodic generated drape was a much stronger visual cue than the instruction to discard the fold rhythm. Solid-curtain body supports therefore no longer receive any generated identity-drape image. They receive only the reviewed exact-product material crop, which contains weave, yarn variation, color, thickness, and roughness without a reusable silhouette.
+The bathroom is the subject and the exact product is naturally incidental, but visible and identifiable. Candidate sets vary physical room, layout, camera, light source, time, budget, palette, fixture family, activity evidence, and material history.
 
-The solid-curtain body contract also stops asking the model for a row of “one to three compressions.” The target is now a mostly relaxed sheet: one broad face covering at least seventy percent of visible width, no more than one full-height trough, and one asymmetric displacement that changes width and fades into the face by the lower third. Two neighboring channels traceable from upper crop to hem are a hard reject. The reviewed identity remains authoritative evidence for the separate twelve-opening and twelve-hook construction, which stays completely outside styled-scene framing.
+Use credible iPhone behavior: reachable camera positions, mild convergence or roll, ordinary sharpening, deep focus, realistic shadow noise, and limited highlight recovery. Product and room share exposure, white balance, reflections, focus behavior, and noise.
 
-### V4.19 room-plate object-budget correction
+Materials must be nonperiodic at room scale. Repeated fractals, tiled veins, cloned folds, copy-pasted textile silhouettes, procedural ribbing, and blanket gloss are hard failures. Support, gravity, collisions, plumbing, electrical construction, clearances, doors, and reflections must be coherent.
 
-Fresh room plates for scenes 01, 02, and 03 independently repeated the same upstream failure: plausible phone cameras and clearable shower geometry were surrounded by coordinated plants, baskets, vases, shelves, display towels, bottles, trays, and matching textiles. The third occurrence triggered the systemic-failure stop.
+Each theme must be legible through architecture, materials, proportions, fixtures, color relationships, and mood. No theme is reduced to one color, surface, or prop formula. Bathrooms may range from lower-budget and attainable to high-budget and aspirational, but must remain cared for; ordinary age is allowed, decrepitude is not.
 
-The cause was additive prompt language. Each plate received a style description, palette, lived-in vocabulary, an assigned human trace, and a request for at least two more signs of use. A closing anti-vignette sentence did not counteract those positive object cues.
+## Decision semantics
 
-Textile room plates now treat the assigned human-trace sentence as an exact ceiling. No additional movable sign of use may be invented. Age comes from fixed wear, repairs, grout, scuffs, and paint variation. Style may enter through one fixed architectural or material cue only; the palette cannot become a matching object set. Decorative objects are zero, and an explicit pre-output audit limits the assigned human traces plus one functional floor textile to five semantic object groups. A stocked shelf, filled basket, display-towel stack, or toiletry cluster counts as multiple groups unless the exact grouping is named by the assigned trace; unauthorized groups must be removed rather than rearranged.
+The ledger uses these distinct states:
 
-## Visual acceptance rubric
+- `blocked_source_evidence`
+- `blocked_identity_pack`
+- `queued`
+- `generated`
+- `assistant_hard_reject`
+- `assistant_pass_owner_pending`
+- `owner_accepted`
+- `owner_declined`
+- `replacement_needed`
+- `superseded_evidence`
+- `unknown_not_reviewed`
 
-Every final needs at least 3/4 in:
+Assistant triage is provisional. Only `owner_accepted` is final selection evidence. Nothing becomes publishable merely because it passed assistant review.
 
-- real iPhone household-photo plausibility;
-- incidental-product framing;
-- plausible, scene-specific lighting;
-- nonrepeating materials and believable wear;
-- restrained human irregularity;
-- nonliteral but legible style;
-- product identity and physical construction.
+## Scope boundary
 
-Any hard reject overrides the numeric score.
+Authorized work is private and local: research, source and test changes, evidence preservation, image generation, assistant triage, contact sheets, owner-review preparation, and local commits. Push, merge to canonical `main`, deployment, public media publication, Supabase writes, Amazon Associates changes, and expansion beyond the ten-product pilot require separate authority.

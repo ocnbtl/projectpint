@@ -3,10 +3,10 @@ export const affiliatePilotV4Authorization = {
   generationAuthorized: true,
   fullScaleAuthorized: false,
   sourceImagesPrivateOnly: true,
-  regenerateAllPilotAssets: false,
+  regenerateAllPilotAssets: true,
   regenerateAllStyledAssets: true,
-  reuseReviewedIdentityAssets: true,
-  authorizedAt: "2026-07-31T05:00:00-04:00"
+  reuseReviewedIdentityAssets: false,
+  authorizedAt: "2026-08-01T05:14:04Z"
 } as const;
 
 export const affiliatePilotV4IdentityViews = [
@@ -69,11 +69,11 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
     ],
     privateReferenceCount: 1,
     identityPrompt:
-      "Exactly one OXO Good Grips stainless-steel soap dispenser. It has a tall gently tapered brushed-stainless body; a charcoal-gray rounded pump head; a short, nearly horizontal forward spout that does not tilt upward; a narrow clear blue-tinted reservoir band at the base; and one small oval OXO mark only on the lower-right front surface of the metal body. Preserve the same taper, height-to-width ratio, pump-to-body scale, short spout length and angle, base band, and seam locations from every view. The oval mark belongs only to the front surface: it must be absent from the canonical back and must never be copied onto a side or rear surface; preserve its true surface location across rotations. The steel is softly brushed and moderately rough, never chrome-bright, mirror-polished, glowing, or independently lit.",
+      "Exactly one OXO Good Grips stainless-steel soap dispenser, SKU 13273700. Define the manufacturer hero's broad marked side as the canonical front: in a true front elevation the short nearly horizontal spout reads in profile pointing viewer-left, and one small oval OXO mark appears only on the viewer-left lower portion of that broad front face. The product has a tall gently tapered brushed-stainless upper body, a charcoal-gray rounded pump head, and a transparent lower reservoir/window. The transparent lower section is not permanently blue: it takes on blue only when filled with blue soap and must otherwise remain optically clear. Preserve the same taper, height-to-width ratio, pump-to-body scale, short spout length and angle, clear lower section, seams, and one physical coordinate system from every view. Rotating 180 degrees to the canonical back exposes the opposite unmarked broad face and makes the same spout read toward viewer-right; never copy the oval mark onto a side or rear surface. The steel is softly brushed and moderately rough, never chrome-bright, mirror-polished, glowing, or independently lit.",
     countableFeatures: [
       "one pump head",
       "one short nearly horizontal spout",
-      "one blue-tinted base band",
+      "one transparent lower reservoir section",
       "one small oval front mark"
     ],
     hiddenGeometryPolicy:
@@ -94,7 +94,7 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
     ],
     privateReferenceCount: 1,
     identityPrompt:
-      "Exactly one 72-by-72-inch full-length solid muted terracotta-rust linen-blend shower curtain. It has a subtle irregular woven texture, exactly twelve reinforced top openings, plain side seams, and one plain weighted bottom hem. It has no separate top band. When hung, use exactly twelve separate simple silver hooks on one straight wall-mounted rod, tiny natural sags between suspension points, unequal fold widths and depths, cross-grain wrinkles, and changing fold amplitude from top to hem. Never convert the folds into repeated tubes or fractals and never add a pattern, stripe, border, ruffle, tassel, fringe, tieback, embroidery, ombre, valance, extra panel, or alternate color.",
+      "Exactly one 72-by-72-inch full-length solid muted terracotta-rust KOUFALL shower curtain in the listing-specified 20% flax-linen and 80% polyester blend. It has a subtle irregular woven texture, exactly twelve reinforced metal-grommet top openings, plain side seams, and one plain bottom hem. It has no separate top band. When hung with the included hardware, use exactly twelve separate silver ball-bead style hooks on one straight wall-mounted rod, tiny natural sags between suspension points, unequal fold widths and depths, cross-grain wrinkles, and changing fold amplitude from top to hem. Never convert the folds into repeated tubes or fractals and never add a pattern, stripe, border, ruffle, tassel, fringe, tieback, embroidery, ombre, valance, extra panel, or alternate color.",
     countableFeatures: [
       "exactly twelve reinforced top openings",
       "exactly twelve hooks when fully visible",
@@ -117,18 +117,18 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
     ],
     privateReferenceCount: 1,
     identityPrompt:
-      "Exactly one compact natural-bamboo Bambusi shower bench, approximately 17 inches wide by 9 inches deep by 17 inches high. Preserve the authorized geometry: a rectangular top with exactly nine front-to-back bamboo slats and eight dark gaps; a rounded outer top frame; a gently bowed front apron; four slightly splayed straight legs with small dark non-slip feet; open sides; and the same single lower open slatted shelf and joinery. The bamboo is matte-to-satin with stochastic natural grain, never glossy, flat, plastic, orange, arched, semicircular, or independently bright.",
+      "Exactly one compact natural-bamboo Bambusi shower bench, approximately 17 inches wide by 9 inches deep by 17 inches high. Preserve the authorized geometry visible in the exact manufacturer packshots: a rectangular top with exactly nine INTERIOR front-to-back bamboo slat boards and eight open gaps between adjacent boards; the surrounding rounded outer frame is not counted as a slat; a gently bowed front apron; four slightly splayed straight legs with small dark non-slip feet; open sides; and the same single lower open slatted shelf and joinery. Axis invariant: front and back identity views face the broad 17-inch-long sides, while left and right identity views face the narrow 9-inch-deep ends; never rotate a side view onto a broad face. The bamboo is matte-to-satin with stochastic natural grain, never glossy, flat, plastic, orange, arched, semicircular, or independently bright.",
     countableFeatures: [
-      "exactly nine front-to-back top slats",
+      "exactly nine interior front-to-back top slats",
       "exactly eight top gaps",
       "four straight legs",
       "four dark feet",
       "one lower open shelf"
     ],
     hiddenGeometryPolicy:
-      "Infer unseen joinery only as the simplest continuation of the authorized reference. Do not add braces, drawers, a third shelf, a back, arms, cushions, metal framing, curved legs, or decorative cutouts.",
+      "Infer unseen joinery only as the simplest continuation of the authorized reference. Do not add braces, drawers, a third shelf, a back, arms, cushions, metal framing, curved legs, or decorative cutouts. Bottom-view invariant: the camera is directly beneath the bench so all four dark foot pads face the lens at the four corners and the legs foreshorten into their pads; never substitute a front elevation with long vertical leg shafts. Show exactly four leg ends with exactly four pads, never duplicate or split a support, and preserve open green space through every slat gap and open bay instead of inventing a solid panel. Keep the top underside as exactly nine slats with eight gaps; treat the lower shelf as a separate shallower slatted plane and never merge its boards with, replace, or reduce the nine-slat top.",
     placementInvariant:
-      "Set all four feet on one level dry or plausibly wet floor with clearance from glass, walls, vanities, and drains. Props may rest on the top or lower shelf only when fully supported and may never conceal the nine-slat identity in every image.",
+      "Set all four feet on one level dry or plausibly wet floor with clearance from glass, walls, vanities, and drains. Props may rest on the top or lower shelf only when fully supported and may never conceal the nine-interior-slat identity in every image.",
     rationale:
       "Re-tests exact slat direction and count, shelf geometry, material roughness, contact, and exposure."
   },
@@ -164,7 +164,7 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
     ],
     privateReferenceCount: 3,
     identityPrompt:
-      "Exactly one Yamazaki Home Tower Slim Rolling Storage Cart in white, approximately 5.1 inches wide, 18.7 inches long, and 27 inches high including casters. Preserve the asymmetric reference topology: a narrow tall powder-coated white-steel body; one natural light-wood rectangular top; one solid concealment panel along one long side; one open opposite long side; one full-width upper shelf directly below the wood top; one shortened middle shelf occupying roughly two-thirds of the length and leaving one tall open bay; one full-width bottom shelf; one U-shaped pull handle at one short end; and exactly four small white nylon casters. Never mirror the asymmetry, widen it, equalize the compartments, change shelf count, add drawers or doors, hide casters, curve the body, or turn it into a generic trolley.",
+      "Exactly one Yamazaki Home Tower Slim Rolling Storage Cart in white, product number 4306, approximately 5.1 inches wide, 18.7 inches long, and 27 inches high including casters. Preserve the asymmetric physical topology: a narrow tall powder-coated white-steel body; one natural light wood-fiber rectangular top; one solid concealment panel along one long side; one open opposite long side; one full-width upper shelf directly below the wood top; one shortened middle shelf occupying roughly two-thirds of the length and leaving one tall open bay; one full-width bottom shelf; one detachable U-shaped pull handle; and exactly four small white nylon casters. The manufacturer permits the handle to attach at either short end: choose one attachment end for this campaign identity pack and preserve that single physical assembly across all seven rotations, but do not treat screen-space left or right as a fixed commercial attribute. Never mirror or symmetrize the compartment map within the selected assembly, widen it, equalize the compartments, change shelf count, add drawers or doors, hide casters, curve the body, or turn it into a generic trolley.",
     countableFeatures: [
       "one wood top",
       "one full-width upper shelf",
@@ -176,7 +176,7 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
       "exactly four casters"
     ],
     hiddenGeometryPolicy:
-      "All six orthographic views must agree on the same non-mirrored compartment map. Use only the complementary owner-authorized manufacturer views to resolve hidden edges; do not symmetrize or improvise internal shelves.",
+      "All six orthographic views must agree on the same physical compartment map and the one handle attachment end selected for this campaign pack. Use only the complementary manufacturer views to resolve hidden edges; camera rotation may change screen-space handedness, but may not symmetrize or improvise internal shelves.",
     placementInvariant:
       "Put all four casters on one level dry floor with the narrow body clear of walls, doors, shower glass, and toilet. Shelf loads must fit completely inside the real compartments and may not hide the shortened-middle-shelf/tall-bay topology in every image.",
     rationale:
@@ -187,7 +187,7 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
     homeStyleSlug: "vintage-eclectic",
     productRole: "patterned-shower-curtain",
     referenceSourceUrls: [
-      "https://www.lushdecor.com/collections/84-inch-shower-curtains/products/leah-shower-curtain"
+      "https://www.lushdecor.com/collections/84-inch-shower-curtains/products/leah-shower-curtain?variant=21969606275"
     ],
     privateReferenceCount: 1,
     identityPrompt:
@@ -215,7 +215,7 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
     ],
     privateReferenceCount: 2,
     identityPrompt:
-      "Exactly one Delta Trinsic model 759460-CZ fixed towel ring in Champagne Bronze, 5-11/16 inches high by 2 inches deep by 6-13/32 inches wide. Preserve the round wall escutcheon, short cylindrical offset stem, and one fixed non-pivoting rounded-square open C-shaped bar. In the canonical front orientation, the escutcheon is at the upper left; the bar runs right, bends down, runs left across the bottom, and ends in one short upward return at the lower left, leaving one deliberate opening on the left. The warm brushed champagne-bronze finish is continuous and softly reflective. Never close the ring, mirror its handedness, pivot it, add a hinge, double bar, square backplate, fastener on the face, or alternate finish.",
+      "Exactly one Delta Trinsic model 759460-CZ fixed towel ring in Champagne Bronze, 5-11/16 inches high by 2 inches deep by 6-13/32 inches wide. Preserve the round wall escutcheon, short cylindrical offset stem, and one fixed non-pivoting rounded-square open C-shaped bar. In the canonical front orientation, the escutcheon is at the upper left; the bar runs right, bends down, runs left across the bottom, and ends in one short upward return at the lower left, leaving one deliberate opening on the left. In true top or bottom plan, do not rotate or restage that C silhouette within the canvas: show the escutcheon as an edge at the rear wall plane, the stem projecting perpendicular to it by the two-inch depth, and the upper and lower spans largely overlapping in the bar plane. Preserve the mount's asymmetric width position in that collapsed plan: measured across the entire overlapped bar span from the lower-left return to the closed right bend, the stem center sits about 35% from the left endpoint, never at the midpoint. The warm brushed champagne-bronze finish is continuous and softly reflective. Never close the ring, mirror its handedness, pivot it, add a hinge, double bar, square backplate, fastener on the face, or alternate finish.",
     countableFeatures: [
       "one round escutcheon",
       "one offset stem",
@@ -261,7 +261,9 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
     productRole: "hanging-live-plant",
     referenceSourceUrls: [
       "https://www.amazon.com/dp/B0F3L72TC3",
-      "https://www.lowes.com/pd/Costa-Farms-Easy-To-Grow-Devil-s-Ivy-Golden-Pothos-House-Plant-in-10-in-Hanging-Basket/1001047690"
+      "https://costafarms.com/products/medium-pothos-parent",
+      "https://www.lowes.com/pd/Costa-Farms-Easy-To-Grow-Devil-s-Ivy-Golden-Pothos-House-Plant-in-10-in-Hanging-Basket/1001047690",
+      "https://pricehistory.app/p/costa-farms-golden-pothos-live-plant-devils-Si8WShQ2"
     ],
     privateReferenceCount: 3,
     identityPrompt:
@@ -308,7 +310,8 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
   }
 ] as const;
 
-export const affiliatePilotV4RealismReset = {
+/** Historical run-05 contract. Active code must use the run-06 exports below. */
+export const affiliatePilotV4Run05HistoricalRealismReset = {
   contractVersion: "affiliate-pilot-real-bathroom-v4.41",
   supersedesPromptVersion: "affiliate-pilot-identity-physical-photo-v4",
   supersedesGenerationVersion: "pilot-2026-07-27-run-04",
@@ -328,7 +331,7 @@ export const affiliatePilotV4RealismReset = {
     "Both allowed V4.36 Brass & Terrazzo Scene 01 calls obeyed the counter-only terrazzo map but repeated champagne brass across multiple fixture families and collapsed the wide room slot into a counter-dominant vanity crop. V4.37 assigns one exact brass family per slot, lists the required non-brass finish for every other hardware class, removes generic profile language that encouraged repeated warm metal, and adds a countertop-dispenser slot-01 broad-room contract requiring two non-vanity zones, a vanity below half-frame, an outer-third product position, and 8–14 percent product height. Both allowed V4.37 Brass & Terrazzo Scene 03 calls then converted a requested two-inch-open drawer into a broadly open drawer or tilt-out compartment with exposed storage. V4.38 retires that fragile open-storage geometry across the manifest. The replacement trace keeps every cabinet fully closed, uses one slightly off-level fixed cabinet pull plus one visibly angled folded washcloth, and forbids every other movable object. Both allowed V4.38 Brass & Terrazzo Scene 04 calls then failed the selected OXO back view in complementary ways: one exposed the front mark while keeping the spout viewer-left, and one hid the front mark but mirrored the spout viewer-right. The global full-product countable list competed with the orthographic view. V4.39 makes styled feature visibility scene-view-aware, makes the reviewed orthographic Image 2 authoritative, explicitly requires a plain unmarked rear surface and viewer-left spout for OXO back-view slots, and makes the used soap bar rest directly on a fixed surface without a dish or tray. The first V4.39 Scene 04 call proved those identity and soap-support corrections but regressed into a large near-centered counter close-up and omitted the damp towel for the second time in three direct calls. V4.40 gives countertop-dispenser slot 04 the same operational room-first limits as the proven broad slots and makes the towel fully visible on one fixed wall hook with one auditably darker damp patch. The two V4.40 same-scene corrections then exposed a remaining correction-contract contradiction: the generic edit prompt still required a visible canonical front, the full-product mark position, and the full countable list even though Image 3 was the canonical back. One correction left the front mark and mirrored spout untouched; the next fixed the spout but added rear pseudo-marks. V4.41 makes correction visibility scene-view-aware through Image 3, removes visible-front language, and states in the OXO identity contract that the oval mark exists only on the front surface and is absent from the canonical rear.",
 } as const;
 
-export const affiliatePilotV4ExecutionPolicy = {
+export const affiliatePilotV4Run05HistoricalExecutionPolicy = {
   providerAttemptBudgetPerAsset: 2,
   providerAttemptBudgetResetsOnlyAfterLoggedRootStrategyRevision: true,
   providerAttemptBudgetPerFiveSceneSet: 12,
@@ -423,7 +426,7 @@ export const affiliatePilotV4ExecutionPolicy = {
   reviewedIdentityBodyCropAllowedForInvisibleHeaderOnly: true
 } as const;
 
-export const affiliatePilotV4CameraRecipes = [
+export const affiliatePilotV4Run05HistoricalCameraRecipes = [
   "iPhone 15 Pro main 1x camera, 24 mm equivalent, held at chest height with a slight one-degree roll and mild uncorrected vertical convergence; no tripod and no portrait mode.",
   "iPhone 14 main 1x camera, about 26 mm equivalent, held one step inside the doorway and a little off center; one architectural edge may be loosely clipped.",
   "iPhone 15 Pro 2x camera, about 48 mm equivalent, used from across reachable dry floor for a compressed candid detail that still reads as part of a room.",
@@ -436,7 +439,7 @@ export const affiliatePilotV4CameraRecipes = [
   "iPhone 15 Pro main 1x camera, 24 mm equivalent, captured like a Live Photo moment with tiny hand-position imperfection and no artificial depth isolation."
 ] as const;
 
-export const affiliatePilotV4LightingRecipes = [
+export const affiliatePilotV4Run05HistoricalLightingRecipes = [
   "Cloudy north-window daylight with the electric lights off; the window is a little brighter than the room and shadow corners retain fine phone noise.",
   "Low early-morning sun entering from one side, creating one imperfect hard-edged patch and partial highlight clipping while the rest of the room stays cooler.",
   "Rainy midday window light with subdued contrast, a slightly cool automatic white balance, and no warm practical light.",
@@ -449,7 +452,7 @@ export const affiliatePilotV4LightingRecipes = [
   "Recently switched-on vanity light mixed with residual daylight; imperfect household color temperatures remain instead of being professionally neutralized."
 ] as const;
 
-export const affiliatePilotV4RoomHistoryRecipes = [
+export const affiliatePilotV4Run05HistoricalRoomHistoryRecipes = [
   "A compact owner-occupied bathroom updated in stages: safe recent plumbing beside one retained older finish and small signs of ordinary use.",
   "A modest rental bathroom with sound but not luxurious fixtures, painted trim, practical storage, and one reversible personal improvement.",
   "A 1990s family bathroom selectively refreshed rather than gut-renovated, with believable cabinet depth and a little wear at high-touch edges.",
@@ -462,7 +465,7 @@ export const affiliatePilotV4RoomHistoryRecipes = [
   "A recently renovated ordinary bathroom already showing normal life: softened towels, a water mark or two, and slight variation in grout or paint sheen."
 ] as const;
 
-export const affiliatePilotV4HumanTraceRecipes = [
+export const affiliatePilotV4Run05HistoricalHumanTraceRecipes = [
   "One hand towel hangs a little unevenly and a plain toothbrush cup has been set down slightly off square.",
   "Every cabinet and drawer is fully closed; one fixed vanity cabinet pull sits slightly off level, and one folded washcloth rests at a noticeable angle to the counter edge; no other movable object is present.",
   "A bath mat sits slightly skewed after use and one plain grooming brush lies nearby at a different angle.",
@@ -475,7 +478,7 @@ export const affiliatePilotV4HumanTraceRecipes = [
   "One empty fixed wall hook interrupts the used hook pattern and one towel edge is casually tucked; no other movable object is present."
 ] as const;
 
-export const affiliatePilotV4MaterialRecipes = [
+export const affiliatePilotV4Run05HistoricalMaterialRecipes = [
   "Favor matte and honed surfaces: slight grout-value variation, tiny edge wear, nonuniform plaster absorption, and no blanket glossy coating.",
   "Wood grain changes naturally from board to board, with believable end grain, joinery, and a faint high-touch sheen only where hands contact it.",
   "Fabric shows irregular yarn thickness, cross-grain tension, unequal folds, localized compression, and no cloned fold waveform or procedural ribbing.",
@@ -488,7 +491,7 @@ export const affiliatePilotV4MaterialRecipes = [
   "Painted plaster, ordinary laminate, and caulk show small nonrepeating roller marks, edge wear, repairs, and contact variation without procedural noise or blanket gloss."
 ] as const;
 
-export const affiliatePilotV4StyleVariationLanes = [
+export const affiliatePilotV4Run05HistoricalStyleVariationLanes = [
   "Express the style mainly through architecture and joinery; keep the wall color quiet and avoid the style's most obvious signature color.",
   "Express the style through two material choices and one textile, not through matched decor or literal themed wallpaper.",
   "Let one retained older element carry the style while the remaining fixtures are ordinary, safe, and visually restrained.",
@@ -501,7 +504,7 @@ export const affiliatePilotV4StyleVariationLanes = [
   "Treat the style name as an atmosphere, not a checklist: one convincing room history matters more than literal color matching."
 ] as const;
 
-export const affiliatePilotV4StyleSetExpressionLanes = [
+export const affiliatePilotV4Run05HistoricalStyleSetExpressionLanes = [
   "Express the style through one vanity, counter, or backsplash choice only. Keep the floor, wet-zone wall, and remaining large surfaces ordinary, non-signature, and materially distinct.",
   "Express the style through one wet-zone wall, wainscot, or tile field only. Keep the vanity top, floor, and remaining walls plain and materially different from slot 1.",
   "Express the style through the floor, trim, hardware, or one retained period element. Keep both the vanity top and main wet-zone walls free of the style's most obvious signature material or color.",
@@ -509,7 +512,7 @@ export const affiliatePilotV4StyleSetExpressionLanes = [
   "Use an alternate compatible palette plus one furniture or joinery decision. Avoid the style's most obvious signature color or material on every large surface, and do not repeat a dominant surface-and-palette combination from slots 1 through 4."
 ] as const;
 
-export const affiliatePilotV4StyleSpecificSetExpressionOverrides = {
+export const affiliatePilotV4Run05HistoricalStyleSpecificSetExpressionOverrides = {
   "modern-marble": [
     "COUNTER-ONLY STONE LANE. Marble or marble-look veining is allowed only on the vanity counter or its short backsplash. REQUIRED: use a plain solid-color ceramic, porcelain, resilient, or wood-look bathroom floor with zero stone veins, and use a plain plaster or solid-color tile wet-zone wall with zero stone veins.",
     "WET-ZONE-ONLY STONE LANE. Marble or marble-look veining is allowed only on one shower, tub, or wainscot field. REQUIRED: use a solid unpatterned vanity counter with zero veins, a plain solid-color floor with zero veins, and ordinary painted main walls.",
@@ -533,7 +536,7 @@ export const affiliatePilotV4StyleSpecificSetExpressionOverrides = {
   ]
 } as const;
 
-export const affiliatePilotV4VisualQaRubric = {
+export const affiliatePilotV4Run05HistoricalVisualQaRubric = {
   minimumScorePerDimension: 3,
   dimensions: [
     "reads as a real iPhone household photograph",
@@ -555,7 +558,7 @@ export const affiliatePilotV4VisualQaRubric = {
   ]
 } as const;
 
-export const affiliatePilotV4StyleProfiles = {
+export const affiliatePilotV4Run05HistoricalStyleProfiles = {
   "minimalist-elegance": {
     palette:
       "warm white, chalk, mushroom, and one charcoal accent; no sterile blue-white showroom",
@@ -654,7 +657,7 @@ export const affiliatePilotV4StyleProfiles = {
   }
 } as const;
 
-export const affiliatePilotV4ShotBlueprints = [
+export const affiliatePilotV4Run05HistoricalShotBlueprints = [
   {
     slot: 1,
     camera:
@@ -711,3 +714,280 @@ export const affiliatePilotV4ShotBlueprints = [
       "Perform an explicit ray check for every mirror and polished surface. A hinged door must have real jamb, hinges, swing clearance, latch, and correctly placed knob."
   }
 ] as const;
+
+// Run 06 deliberately uses a new contract. The earlier V4.1-V4.41 exports above
+// remain as historical source evidence only and are not imported by the active
+// manifest builder.
+export const affiliatePilotV4Run06Contract = {
+  contractVersion: "affiliate-pilot-evidence-pool-v4.61",
+  generationVersion: "pilot-2026-08-01-run-06",
+  supersedesContractVersion: "affiliate-pilot-real-bathroom-v4.41",
+  supersedesGenerationVersion: "pilot-2026-07-31-run-05",
+  preserveSupersededEvidence: true,
+  regenerateAllIdentityAssets: true,
+  regenerateAllStyledAssets: true,
+  reusePriorIdentityAssets: false,
+  reusePriorStyledAssets: false,
+  purpose:
+    "Build source-backed exact-product reference packs, then create a broad one-call pool of distinct bathroom candidates for assistant triage and owner curation.",
+  reason:
+    "The owner rejected run 05 for unreliable product references, synthetic realism, repeated room formulas, weak style legibility, and an inefficient same-scene repair architecture."
+} as const;
+
+export const affiliatePilotV4Run06DecisionStatuses = [
+  "blocked_source_evidence",
+  "blocked_identity_pack",
+  "queued",
+  "generated",
+  "assistant_hard_reject",
+  "assistant_pass_owner_pending",
+  "owner_accepted",
+  "owner_declined",
+  "replacement_needed",
+  "superseded_evidence",
+  "unknown_not_reviewed"
+] as const;
+
+export type AffiliatePilotV4Run06DecisionStatus =
+  (typeof affiliatePilotV4Run06DecisionStatuses)[number];
+
+export const affiliatePilotV4Run06EvidencePolicy = {
+  dossierSchemaVersion: "affiliate-product-evidence-dossier-v1",
+  privateDossierRoot: "affiliate-pilot/v4/private-evidence/product-dossiers",
+  sourceImageRoot: "affiliate-pilot/v4/private-evidence/product-sources",
+  requiredFields: [
+    "exactSkuIdentity",
+    "materials",
+    "finish",
+    "dimensions",
+    "topology",
+    "countableFeatures",
+    "patternOrGrain",
+    "mountingOrSupport",
+    "orientationAndHandedness",
+    "hiddenGeometry",
+    "explicitUnknowns",
+    "sources"
+  ],
+  minimumExactSkuSources: 2,
+  preferredSourceOrder: [
+    "manufacturer exact-SKU page or manual",
+    "major retailer exact-SKU listing",
+    "independent retailer exact-SKU listing"
+  ],
+  requireSourceUrl: true,
+  requireSourceTitle: true,
+  requireAccessedAt: true,
+  requireClaimLevelSourceLinks: true,
+  requirePrivateReferenceHashes: true,
+  blockIdentityGenerationOnUnresolvedIdentity: true,
+  neverTreatGeneratedEvidenceAsProductFact: true
+} as const;
+
+export const affiliatePilotV4Run06ExecutionPolicy = {
+  completeReferencePackPerProduct: true,
+  identityViewsPerProduct: 7,
+  identityAtlasPerProduct: true,
+  identityProviderCallsPerView: 1,
+  firstPassProviderCallsPerStyledJob: 1,
+  firstPassCandidateCount: 600,
+  routineSupportReferenceCalls: 0,
+  routineRoomPlateCalls: 0,
+  sameSceneCorrectionCalls: 0,
+  reusableProductCompositeAllowed: false,
+  localPixelSurgeryAllowed: false,
+  failedCandidateAction: "preserve_and_generate_materially_different_bathroom",
+  repeatedSameCauseLimit: 2,
+  thirdSameCauseCandidateRequiresRootRevision: true,
+  saveEveryProviderOutput: true,
+  exactPromptCaptureRequired: true,
+  referenceVersionCaptureRequired: true,
+  sha256CaptureRequired: true,
+  fullSizeAssistantReviewRequired: true,
+  assistantDecisionIsProvisional: true,
+  ownerDecisionRequiredForFinalAcceptance: true,
+  replacementOnlyAfterOwnerDeclineOrMissingSlot: true
+} as const;
+
+export const affiliatePilotV4Run06StyleProfiles = {
+  "minimalist-elegance": {
+    recognizableThrough:
+      "edited proportions, calm warm neutrals, precise joinery, restrained fixtures, and generous uncluttered circulation",
+    avoidFormula:
+      "Do not default every scene to white stone, black taps, a floating vanity, or an empty luxury showroom."
+  },
+  "modern-marble": {
+    recognizableThrough:
+      "one convincing stone relationship, crisp contemporary geometry, cool-to-neutral contrast, and controlled metal accents",
+    avoidFormula:
+      "Do not cover every surface in the same white-gray veining or repeat the same brass-and-marble vanity."
+  },
+  "spa-greenery": {
+    recognizableThrough:
+      "restful spatial rhythm, moisture-tolerant natural materials, muted botanical color relationships, and soft functional light",
+    avoidFormula:
+      "Do not require a plant, bamboo accessory, rolled towels, pebbles, steam, or sage paint in every scene."
+  },
+  "brass-terrazzo": {
+    recognizableThrough:
+      "warm metal hierarchy, a controlled aggregate surface, playful but buildable color, and clean contemporary construction",
+    avoidFormula:
+      "Do not repeat champagne brass across every fixture or apply terrazzo to the counter, floor, and wet wall together."
+  },
+  "boho-earth-tones": {
+    recognizableThrough:
+      "layered earthen color, tactile handmade surfaces, relaxed asymmetry, and a collected but functional room history",
+    avoidFormula:
+      "Do not force rattan, macrame, pampas, arched niches, or a terracotta wall into every bathroom."
+  },
+  "scandinavian-clean": {
+    recognizableThrough:
+      "daylight-aware planning, pale or mid-tone wood, practical storage, simple geometry, and soft low-contrast color",
+    avoidFormula:
+      "Do not reduce the style to an all-white room with one blond-wood vanity and identical gray towels."
+  },
+  "dark-moody": {
+    recognizableThrough:
+      "deep tonal structure, deliberate pools of practical light, readable material depth, and controlled reflective contrast",
+    avoidFormula:
+      "Do not make every surface black, crush shadow detail, or add cinematic haze and glowing fixtures."
+  },
+  "warm-editorial": {
+    recognizableThrough:
+      "warm layered light, composed color relationships, tactile finishes, and the feeling of a personal room photographed well",
+    avoidFormula:
+      "Do not turn the room into a magazine set, center every object, or repeat amber lamps and beige plaster."
+  },
+  "industrial-loft": {
+    recognizableThrough:
+      "honest structural materials, robust fixtures, exposed-but-coherent construction, and a practical converted-space character",
+    avoidFormula:
+      "Do not automatically add brick, black pipe, Edison bulbs, concrete on every plane, or unsafe exposed services."
+  },
+  "coastal-calm": {
+    recognizableThrough:
+      "airy light, weathered or washed material relationships, muted sea-and-sand color, and unfussy practical comfort",
+    avoidFormula:
+      "Do not add shells, anchors, rope, blue stripes, driftwood signs, or an ocean view as theme shorthand."
+  },
+  japandi: {
+    recognizableThrough:
+      "quiet proportion, warm natural material contrast, low visual noise, functional restraint, and carefully resolved details",
+    avoidFormula:
+      "Do not repeat slatted oak, limewash, black taps, pebble trays, or a hotel-spa composition in every scene."
+  },
+  "vintage-eclectic": {
+    recognizableThrough:
+      "a coherent mix of eras, retained character, expressive color or pattern, and repairs or updates that respect the room's history",
+    avoidFormula:
+      "Do not make the bathroom decrepit, costume-like, cluttered with antiques, or dependent on floral wallpaper."
+  }
+} as const;
+
+export const affiliatePilotV4Run06RoomArchetypes = [
+  "compact 1940s hall bathroom with a careful contemporary repair",
+  "ordinary 1970s family bathroom selectively updated over time",
+  "small 1990s builder bathroom improved on a realistic budget",
+  "urban apartment bathroom with tight but coherent circulation",
+  "bungalow bathroom retaining one useful period feature",
+  "accessible ground-floor bathroom with generous clearances",
+  "attic bathroom shaped by a real sloped roof",
+  "rental bathroom personalized through reversible choices",
+  "mid-range recent renovation with one retained older element",
+  "high-budget custom bathroom that still looks inhabited",
+  "shared household bathroom organized for several daily routines",
+  "narrow row-house bathroom with a buildable wet-zone plan"
+] as const;
+
+export const affiliatePilotV4Run06CameraRecipes = [
+  "iPhone main-camera doorway view with slight roll and natural vertical convergence",
+  "iPhone main-camera side view from reachable standing space with a loose architectural edge",
+  "iPhone wide-camera view used because the room is truly tight, retaining modest edge stretch",
+  "chest-height main-camera diagonal with imperfect but intentional framing",
+  "slightly lower main-camera view from clear dry floor, never inside a wall or fixture",
+  "quick threshold snapshot with one harmless partial obstruction at the edge",
+  "slightly elevated main-camera view that reveals circulation and support surfaces",
+  "candid opposite-corner view with ordinary phone sharpening and deep focus",
+  "close room-context view that remains architectural rather than a product hero",
+  "off-axis view chosen to keep mirror reflections physically coherent"
+] as const;
+
+export const affiliatePilotV4Run06LightingRecipes = [
+  "overcast morning window light with soft local practical fill",
+  "clear late-morning daylight with believable highlight clipping near the window",
+  "rainy afternoon daylight and slightly cool automatic white balance",
+  "late-afternoon side light with uneven falloff across the room",
+  "blue-hour window spill plus one hardwired warm practical",
+  "nighttime overhead household light with darker corners and visible falloff",
+  "warm vanity sconces balanced imperfectly against cool hall light",
+  "north-facing daylight with restrained contrast and no cinematic fill",
+  "bright summer daylight softened by an ordinary privacy shade",
+  "winter morning light with fine shadow noise and limited phone dynamic range"
+] as const;
+
+export const affiliatePilotV4Run06BudgetLanes = [
+  "attainable refresh using retained fixtures and careful paint or hardware choices",
+  "lower-budget room improved through maintenance and a few reversible upgrades",
+  "mid-range renovation with durable ordinary materials",
+  "upper-mid-range remodel with custom details used selectively",
+  "aspirational high-budget room whose construction and daily use remain believable"
+] as const;
+
+export const affiliatePilotV4Run06OccupancyStrategies = [
+  "evidence of a hurried weekday routine",
+  "evidence of a recently cleaned but actively used shared room",
+  "evidence of one person's quiet evening routine",
+  "evidence of children or guests without showing people",
+  "evidence of maintenance and small repairs accumulated over time",
+  "evidence of laundry or bathing activity kept physically supported",
+  "evidence of grooming activity with sparse unbranded objects",
+  "evidence of an older occupant's practical organization",
+  "evidence of a rental occupant's reversible personalization",
+  "evidence of weekend daylight use with one task left unfinished"
+] as const;
+
+export const affiliatePilotV4Run06MaterialBehaviors = [
+  "nonperiodic stone veining with slab-scale continuity and no cloned islands",
+  "wood grain that follows each board and changes naturally between pieces",
+  "fabric with gravity, thickness, irregular folds, and no repeated wave map",
+  "tile with coherent grout depth, subtle installation variation, and no fractal pattern",
+  "paint or plaster with restrained absorption variation and believable edge wear",
+  "brushed metal with directional roughness and shared room reflections",
+  "glass and mirrors with correct thickness, edges, occlusion, and reflected geometry",
+  "terrazzo or aggregate with stochastic scale and no tiled procedural repeat",
+  "caulk, seals, and wet-zone junctions that are complete, maintained, and plausible",
+  "towels and mats with unique nap, compression, and fold histories rather than copied silhouettes"
+] as const;
+
+export const affiliatePilotV4Run06VisualQaRubric = {
+  hardRejects: [
+    "featured product absent, duplicated, substituted, mirrored, malformed, or not identifiable",
+    "unsupported mass, impossible mounting, collision, incoherent plumbing or electrical construction",
+    "repeated or fractal texture, copied fold map, tiled stone or wood, or blanket gloss",
+    "AI-stock, showroom, real-estate-listing, or product-hero composition",
+    "physically impossible camera position, reflection, door swing, clearance, or perspective",
+    "theme illegible after considering architecture, materials, color relationships, fixtures, and mood",
+    "scene duplicates a prior bathroom's layout, camera, light, palette, and object pattern",
+    "readable pseudo-text, invented brand mark, packaging, watermark, or unsafe claim"
+  ],
+  assistantPassRequires: [
+    "full-size review",
+    "exact product visible and identity-consistent",
+    "bathroom reads as the subject and product as incidental",
+    "recognizable style without a single prop or color formula",
+    "nonperiodic materials and plausible phone-camera behavior",
+    "coherent support, gravity, construction, reflections, and clearances",
+    "materially distinct scene within its five-candidate set"
+  ],
+  corpusReviewAxes: [
+    "room layout",
+    "camera position",
+    "lighting source and time",
+    "budget lane",
+    "palette emphasis",
+    "fixture family",
+    "human activity evidence",
+    "material pattern and wear"
+  ],
+  ownerApprovalRequired: true
+} as const;
