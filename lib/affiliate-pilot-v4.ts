@@ -560,6 +560,45 @@ function countableChecklist(selection: AffiliatePilotV4Selection): string {
     .join("; ");
 }
 
+function styledCountableChecklist(
+  selection: AffiliatePilotV4Selection,
+  primarySceneReferenceView: AffiliatePilotV4IdentityView
+): string {
+  if (
+    selection.asin === "B0829N8C9G" &&
+    primarySceneReferenceView === "back"
+  ) {
+    return [
+      "one pump head",
+      "one short nearly horizontal spout projecting toward the viewer's left exactly as Image 2 shows",
+      "one blue-tinted base band",
+      "zero visible oval front marks because the visible steel surface is the plain continuous canonical rear"
+    ]
+      .map((feature, index) => `${index + 1}) ${feature}`)
+      .join("; ");
+  }
+  return countableChecklist(selection);
+}
+
+function sceneViewVisibilityGate(
+  selection: AffiliatePilotV4Selection,
+  primarySceneReferenceView: AffiliatePilotV4IdentityView
+): string {
+  const base =
+    `Image 2's reviewed ${primarySceneReferenceView} identity view is authoritative for which product surfaces and features are visible from this camera. ` +
+    "Never rotate or mirror the product to expose a feature that belongs on a hidden face, and never copy a hidden feature onto the visible surface.";
+  if (
+    selection.asin === "B0829N8C9G" &&
+    primarySceneReferenceView === "back"
+  ) {
+    return (
+      base +
+      " Show the plain continuous rear brushed-steel surface with no visible oval front mark. The short pump spout must project toward the viewer's left exactly as Image 2 shows; a visible front mark or viewer-right spout is a hard rejection."
+    );
+  }
+  return base;
+}
+
 function buildIdentityPrompt(
   product: AffiliateProduct,
   selection: AffiliatePilotV4Selection,
@@ -623,6 +662,14 @@ function buildStyledPrompt(
   const placement = ROLE_PLACEMENTS[selection.productRole][slot - 1];
   const primarySceneReferenceView =
     SCENE_REFERENCE_VIEW_BY_ROLE[selection.productRole][slot - 1];
+  const styledIdentityChecklist = styledCountableChecklist(
+    selection,
+    primarySceneReferenceView
+  );
+  const styledSceneViewVisibilityGate = sceneViewVisibilityGate(
+    selection,
+    primarySceneReferenceView
+  );
   const sceneId = `v4-${selection.asin}-${style.slug}-${String(slot).padStart(2, "0")}`;
   const recipeSeed = `${selection.asin}:${style.slug}`;
   const cameraRecipe = recipeFor(
@@ -736,7 +783,7 @@ function buildStyledPrompt(
       : `Input image roles: Image 1 is the reviewed seven-view identity atlas. Image 2 is the reviewed ${primarySceneReferenceView} identity view for this camera. Image 3 is the reviewed presentation anchor. Use them only for product identity; do not copy their backdrop, atlas layout, display pose, chroma color, lighting, or prior fabric drape into the room.`;
   const identityQa = textileRole
     ? "Identity: the exact twelve-opening and twelve-hook total remains verified in the reviewed identity evidence. The styled scene must reveal zero rod, mount, hook, reinforced opening, or top-edge pixels; any visible header geometry is a hard reject. Preserve the reviewed body color or print, side seam, fabric thickness, and weighted hem without inventing a visible count."
-    : `Identity: ${countableChecklist(selection)}.`;
+    : `Identity: ${styledIdentityChecklist}. ${styledSceneViewVisibilityGate}`;
   const styleDirection =
     `${style.name} atmosphere only. The style name and legacy description are thematic labels, not permission to add stereotyped colors, signature materials, decorative props, plants, art, steam, atmospheric effects, or a showroom formula. The assigned fixed-surface lane and Human trace below are the sole authorities for fixed style expression and movable household objects.`;
   const compositionIntent =
@@ -799,7 +846,8 @@ function buildStyledPrompt(
       "Movable-object ceiling: the assigned Human trace sentence is the only source of movable household objects. Do not add optional style props, decor, stocked storage, plants, bottles, tubes, packages, jars, candles, art, trays, baskets, or toiletry clusters. When the assigned trace names a grooming item, use one plain brush, comb, cup, cloth, hair tie, or loose unlabeled object rather than a container.",
       `Featured product present in the room: ${product.name} by ${product.brand}.`,
       `Product identity contract: ${selection.identityPrompt}`,
-      `Countable-feature preflight: ${countableChecklist(selection)}.`,
+      `Countable-feature preflight: ${styledIdentityChecklist}.`,
+      `Scene-view visibility gate: ${styledSceneViewVisibilityGate}`,
       `Hidden-geometry policy: ${selection.hiddenGeometryPolicy}`,
       `Product placement invariant: ${selection.placementInvariant}`,
       `Scene-specific product placement: ${placement}`,

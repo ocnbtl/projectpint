@@ -575,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.38" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.39" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -942,6 +942,21 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
         )
     )
   );
+  const directSoapBarJobs = styled.filter((job) =>
+    /plain soap bar/i.test(job.humanTraceRecipe)
+  );
+  assert.ok(directSoapBarJobs.length > 0);
+  assert.ok(
+    directSoapBarJobs.every(
+      (job) =>
+        /rests directly on a fixed vanity counter/i.test(
+          job.humanTraceRecipe
+        ) &&
+        /dish, tray, and holder are absent; no additional movable object/i.test(
+          job.humanTraceRecipe
+        )
+    )
+  );
   const closedCabinetHumanTraceJobs = styled.filter((job) =>
     /slightly off level/i.test(job.humanTraceRecipe)
   );
@@ -1303,6 +1318,28 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.match(oxoMinimalist[3]!.prompt, /back-view short spout projects toward the viewer'?s left/i);
   assert.match(oxoMinimalist[4]!.prompt, /left-view short spout projects toward the viewer'?s right/i);
   assert.match(oxoMinimalist[4]!.humanTraceRecipe, /plain grooming brush/i);
+  assert.ok(
+    styled.every((job) =>
+      job.prompt.includes("Scene-view visibility gate:")
+    )
+  );
+  const oxoSlotFour = styled.filter(
+    (job) => job.asin === "B0829N8C9G" && job.slot === 4
+  );
+  assert.equal(oxoSlotFour.length, 12);
+  assert.ok(
+    oxoSlotFour.every(
+      (job) =>
+        /zero visible oval front marks/i.test(job.prompt) &&
+        /plain continuous canonical rear/i.test(job.prompt) &&
+        /spout must project toward the viewer'?s left exactly as Image 2 shows/i.test(
+          job.prompt
+        ) &&
+        /visible front mark or viewer-right spout is a hard rejection/i.test(
+          job.prompt
+        )
+    )
+  );
   const oxoSlotOne = styled.filter(
     (job) => job.asin === "B0829N8C9G" && job.slot === 1
   );
