@@ -575,7 +575,7 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     manifest.jobs.every(
       (job) =>
-        job.promptVersion === "affiliate-pilot-real-bathroom-v4.39" &&
+        job.promptVersion === "affiliate-pilot-real-bathroom-v4.40" &&
         job.generationVersion === "pilot-2026-07-31-run-05" &&
         job.storageKey.startsWith("affiliate-pilot/v4/")
     )
@@ -949,6 +949,12 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
   assert.ok(
     directSoapBarJobs.every(
       (job) =>
+        /exactly one hand towel hangs fully visible from one fixed wall hook/i.test(
+          job.humanTraceRecipe
+        ) &&
+        /one small visibly darker damp patch/i.test(
+          job.humanTraceRecipe
+        ) &&
         /rests directly on a fixed vanity counter/i.test(
           job.humanTraceRecipe
         ) &&
@@ -1337,7 +1343,14 @@ test("the v4 realism reset reuses reviewed identities and queues 600 varied room
         ) &&
         /visible front mark or viewer-right spout is a hard rejection/i.test(
           job.prompt
-        )
+        ) &&
+        job.prompt.includes(
+          "Broad tight-room bathroom view that uses the 0.5x lens to reveal an ordinary room, never a counter close-up."
+        ) &&
+        job.prompt.includes("at least two coherent non-vanity room zones") &&
+        job.prompt.includes("outer image third") &&
+        job.prompt.includes("8–14 percent of frame height") &&
+        job.prompt.includes("exact fully visible wall-hook towel")
     )
   );
   const oxoSlotOne = styled.filter(
