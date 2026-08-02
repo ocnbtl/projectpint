@@ -48,6 +48,7 @@
     "repair:visible-chroma:affiliate-pilot-v4": "node --import tsx scripts/repair-affiliate-pilot-v4-visible-chroma.ts",
     "build:identity-atlas:affiliate-pilot-v4": "node --import tsx scripts/build-affiliate-pilot-v4-identity-atlas.ts",
     "prepare:styled:affiliate-pilot-v4": "node --import tsx scripts/prepare-affiliate-pilot-v4-styled-run.ts",
+    "migrate:photographic-realism:affiliate-pilot-v4": "node --import tsx scripts/migrate-affiliate-pilot-v4-photographic-realism.ts",
     "ingest:styled:affiliate-pilot-v4": "node --import tsx scripts/ingest-affiliate-pilot-v4-styled.ts",
     "review:styled-set:affiliate-pilot-v4": "node --import tsx scripts/review-affiliate-pilot-v4-styled-set.ts",
     "render:affiliate-pilot-v4": "node --import tsx scripts/render-affiliate-pilot-v4-manifest.ts",

@@ -1,6 +1,6 @@
 # Affiliate Pilot V4 Evidence-Pool Reset
 
-Status: run 05 is preserved as owner-superseded evidence. Run 06 is blocked on fresh exact-SKU research. No old identity view or styled scene is reusable.
+Status: run 05 is preserved as owner-superseded evidence. Run 06 completed all ten source dossiers and locked seven-view identity packs. The owner rejected the first fifteen run-06 styled passes as still insufficiently realistic, so those images are evidence only and the v4.70 photographic prompt calibration now controls remaining and replacement candidates.
 
 ## Why run 05 was superseded
 
@@ -63,6 +63,24 @@ Use credible iPhone behavior: reachable camera positions, mild convergence or ro
 Materials must be nonperiodic at room scale. Repeated fractals, tiled veins, cloned folds, copy-pasted textile silhouettes, procedural ribbing, and blanket gloss are hard failures. Support, gravity, collisions, plumbing, electrical construction, clearances, doors, and reflections must be coherent.
 
 Each theme must be legible through architecture, materials, proportions, fixtures, color relationships, and mood. No theme is reduced to one color, surface, or prop formula. Bathrooms may range from lower-budget and attainable to high-budget and aspirational, but must remain cared for; ordinary age is allowed, decrepitude is not.
+
+### V4.70 photographic calibration
+
+The first fifteen run-06 assistant passes repeated beige, white, and wood rooms; towels, plants, rugs, framed art, and vases; near-perfect real-estate framing; procedural surfaces; and product placement that read as enlarged or pasted into the room. Product identity alone did not make those outputs usable.
+
+V4.70 therefore requires:
+
+- one concrete theme-specific palette and architectural direction per slot, not a generic style adjective;
+- a short photographic brief instead of stacked audit prose and repeated negative instructions;
+- a strict one- or two-clue human-trace cap, plus explicit suppression of the recurring staging kit unless the concrete scene requires one item;
+- honest product scale by product role, with small counter products remaining small;
+- handheld phone exposure cues such as mixed color temperature, clipped highlights, blocked shadows, mild roll, ordinary deep focus, and shadow noise;
+- maintained but visibly real construction, including natural grout, seams, thickness, board direction, fabric gravity, and nonrepeating wear;
+- blanket owner decline of the first fifteen styled passes and fresh-room replacements rather than local repair.
+
+The first v4.70 calibration proof is preserved as a hard reject because the product mark is too small. The second, a blue-gray-tile and charcoal-vanity OXO bathroom, is preserved as `assistant_pass_owner_pending`; it is not owner-approved or publishable.
+
+The first official v4.70 breadth check preserved two new OXO replacements as hard rejects rather than repairing them: candidate 02 omitted the required oval OXO mark, while candidate 03 restored product identity but introduced cloned black wall fixtures and a staged, centered composition. Fresh candidate 04 is queued for that lane. A Bambusi/Japandi indigo-room candidate and a Creative Home/Modern Marble dark-green-backsplash candidate cleared assistant hard-failure screening and remain `assistant_pass_owner_pending`. Neither is owner-approved or publishable.
 
 ## Decision semantics
 

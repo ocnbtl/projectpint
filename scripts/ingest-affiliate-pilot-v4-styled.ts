@@ -111,12 +111,12 @@ const replacementOptions = {
     "restrained rental-friendly refresh with reversible hardware and textiles"
   ],
   occupancy: [
-    "evidence of a recent shower through one damp towel and a partly opened window",
-    "evidence of a rushed weekday routine with one supported garment and a moved bath mat",
-    "evidence of bath cleanup with one folded cloth and a drying ledge",
-    "evidence of a shared morning routine with two sparse, nonmatching use traces",
-    "evidence of evening ventilation with one towel and an open interior door",
-    "evidence of routine floor drying with one displaced mat and no decorative vignette"
+    "one damp towel and a partly opened window; no other movable styling",
+    "one supported garment and a shifted bath mat; no other movable styling",
+    "one used washcloth on a dry ledge and one open cabinet door; no other movable styling",
+    "two sparse nonmatching grooming clues partly below the sightline; no other movable styling",
+    "one towel and an open interior door; no other movable styling",
+    "one displaced mat and the cropped edge of a laundry hamper; no other movable styling"
   ],
   material: [
     "painted plaster and small-format matte floor tile with irregular but coherent grout",
@@ -159,6 +159,8 @@ function buildReplacementJob(sourceJob: JsonRecord): JsonRecord {
     .slice(0, 20);
   const diversityPlan = {
     corpusSeed,
+    themeDirectionId: sourceJob.diversityPlan?.themeDirectionId,
+    themeDirection: sourceJob.diversityPlan?.themeDirection,
     roomArchetypeId: `replacement-room-${corpusSeed}`,
     roomArchetype: replacementChoice(replacementOptions.room, corpusSeed, 0),
     cameraId: `replacement-camera-${corpusSeed}`,
@@ -177,12 +179,35 @@ function buildReplacementJob(sourceJob: JsonRecord): JsonRecord {
       /^Scene identity: .*$/m,
       `Scene identity: ${replacementSceneId}; corpus diversity seed: ${corpusSeed}.`
     );
-  prompt = replacePromptLine(prompt, "Room archetype", diversityPlan.roomArchetype);
-  prompt = replacePromptLine(prompt, "Budget lane", diversityPlan.budget);
-  prompt = replacePromptLine(prompt, "Camera", diversityPlan.camera);
-  prompt = replacePromptLine(prompt, "Lighting", diversityPlan.lighting);
-  prompt = replacePromptLine(prompt, "Occupancy direction", diversityPlan.occupancy);
-  prompt = replacePromptLine(prompt, "Material focus", diversityPlan.material);
+  if (sourceJob.promptVersion === "affiliate-pilot-photographic-realism-v4.70") {
+    prompt = replacePromptLine(
+      prompt,
+      "Room and budget",
+      `${diversityPlan.roomArchetype}; ${diversityPlan.budget}`
+    );
+    prompt = replacePromptLine(
+      prompt,
+      "Camera and exposure",
+      `${diversityPlan.camera}; ${diversityPlan.lighting}. Use ordinary deep focus, mild phone sharpening, faint shadow noise, limited highlight recovery, imperfect verticals, and no synthetic depth blur or cinematic grade`
+    );
+    prompt = replacePromptLine(
+      prompt,
+      "Human trace cap",
+      `${diversityPlan.occupancy}. Use only these clues. Unless the concrete scene direction explicitly requires one, do not add the recurring staging kit of plant, vase, branch, framed art, candle, tray, folded-towel stack, woven basket, slippers, robe, styled bottle grouping, or coordinated spa vignette`
+    );
+    prompt = replacePromptLine(
+      prompt,
+      "Material truth",
+      `${diversityPlan.material}. Preserve real thickness, seams, grout depth, board direction, fabric gravity, and nonrepeating wear. No cloned folds, tiled veins, repeated fractals, or blanket gloss`
+    );
+  } else {
+    prompt = replacePromptLine(prompt, "Room archetype", diversityPlan.roomArchetype);
+    prompt = replacePromptLine(prompt, "Budget lane", diversityPlan.budget);
+    prompt = replacePromptLine(prompt, "Camera", diversityPlan.camera);
+    prompt = replacePromptLine(prompt, "Lighting", diversityPlan.lighting);
+    prompt = replacePromptLine(prompt, "Occupancy direction", diversityPlan.occupancy);
+    prompt = replacePromptLine(prompt, "Material focus", diversityPlan.material);
+  }
   const separation =
     `Replacement separation: this fills the missing slot left by ${sourceJob.sceneId}. Create a genuinely different physical bathroom, layout, palette, camera position, lighting pattern, and activity trace; do not reconstruct the rejected candidate. Preserve the exact product contract and correct the audited rejection cause: ${rejectionCause}.`;
   const rootRevisionDirective = rootRevision

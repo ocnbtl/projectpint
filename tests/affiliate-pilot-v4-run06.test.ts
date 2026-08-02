@@ -21,7 +21,10 @@ test("run 06 rebuilds every reference and creates an owner-curation candidate po
   const identity = manifest.jobs.filter((job) => job.kind === "identity");
   const styled = manifest.jobs.filter((job) => job.kind === "styled");
 
-  assert.equal(AFFILIATE_PILOT_V4_PROMPT_VERSION, "affiliate-pilot-evidence-pool-v4.61");
+  assert.equal(
+    AFFILIATE_PILOT_V4_PROMPT_VERSION,
+    "affiliate-pilot-photographic-realism-v4.70"
+  );
   assert.equal(AFFILIATE_PILOT_V4_GENERATION_VERSION, "pilot-2026-08-01-run-06");
   const bambusi = affiliatePilotV4Selections.find((selection) => selection.asin === "B0DC7VG6Z9");
   assert.ok(bambusi);
@@ -120,11 +123,17 @@ test("run 06 rebuilds every reference and creates an owner-curation candidate po
         job.replacementForCandidateId === null &&
         job.storageKey.includes("affiliate-pilot/v4/candidates/") &&
         job.ownerSelectedStorageKey.includes("/styles/") &&
-        job.prompt.includes("The bathroom is the subject") &&
+        job.prompt.includes("candid, unedited-looking iPhone snapshot") &&
+        job.prompt.includes("Concrete scene direction") &&
+        job.prompt.includes("Human trace cap") &&
+        job.prompt.includes("recurring staging kit") &&
+        job.prompt.includes("Product placement and scale") &&
         job.prompt.includes("Fresh-candidate rule") &&
         job.prompt.includes("not owner-approved or publishable") &&
-        job.prompt.includes("Repeated fractals, cloned folds, tiled veins") &&
-        job.prompt.includes("do not make it dirty, trashed, damaged, abandoned, or decrepit")
+        job.prompt.includes("No cloned folds, tiled veins, repeated fractals") &&
+        job.prompt.includes("Attractive does not mean pristine") &&
+        !job.prompt.includes("Invent a scene-specific") &&
+        !job.prompt.includes("one to three ordinary human-use clues")
     )
   );
   assert.equal(new Set(styled.map((job) => job.diversityPlan.corpusSeed)).size, 600);
@@ -138,6 +147,7 @@ test("run 06 rebuilds every reference and creates an owner-curation candidate po
   for (const jobs of sets.values()) {
     assert.equal(jobs.length, 5);
     for (const key of [
+      "themeDirectionId",
       "roomArchetypeId",
       "cameraId",
       "lightingId",
@@ -147,6 +157,13 @@ test("run 06 rebuilds every reference and creates an owner-curation candidate po
     ] as const) {
       assert.equal(new Set(jobs.map((job) => job.diversityPlan[key])).size, 5);
     }
+    assert.ok(
+      jobs.every(
+        (job) =>
+          job.diversityPlan.themeDirection.length > 40 &&
+          job.prompt.includes(job.diversityPlan.themeDirection)
+      )
+    );
   }
 
   assert.deepEqual(manifest.decisionStatuses, [

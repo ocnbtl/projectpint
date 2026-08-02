@@ -60,6 +60,8 @@ type ProductLike = Pick<
 
 type DiversityPlan = {
   corpusSeed: string;
+  themeDirectionId: string;
+  themeDirection: string;
   roomArchetypeId: string;
   roomArchetype: string;
   cameraId: string;
@@ -260,8 +262,19 @@ function diversityPlanFor(asin: string, styleSlug: string, slot: number): Divers
     7,
     "material"
   );
+  const profile =
+    affiliatePilotV4Run06StyleProfiles[
+      styleSlug as keyof typeof affiliatePilotV4Run06StyleProfiles
+    ];
+  if (!profile) throw new Error(`Missing run-06 style profile for ${styleSlug}.`);
+  const themeDirection = profile.sceneDirections[slot - 1];
+  if (!themeDirection) {
+    throw new Error(`Missing run-06 theme direction for ${styleSlug} slot ${slot}.`);
+  }
   return {
     corpusSeed: sha256(seedText).slice(0, 20),
+    themeDirectionId: `theme-${String(slot).padStart(2, "0")}`,
+    themeDirection,
     roomArchetypeId: room.id,
     roomArchetype: room.value,
     cameraId: camera.id,
@@ -275,6 +288,30 @@ function diversityPlanFor(asin: string, styleSlug: string, slot: number): Divers
     materialId: material.id,
     material: material.value
   };
+}
+
+function styledScaleInstruction(productRole: AffiliatePilotV4ProductRole): string {
+  switch (productRole) {
+    case "countertop-dispenser":
+      return "Keep the dispenser at honest 6-inch household scale, usually about 7-12% of image height.";
+    case "countertop-soap-dish":
+      return "Keep the soap dish at honest palm-sized scale, usually about 3-6% of image height.";
+    case "wall-towel-ring":
+      return "Keep the mounted ring at ordinary hand-towel scale and integrated into the wall composition, never enlarged for recognition.";
+    case "shower-bench":
+      return "Keep the bench at its documented furniture dimensions and in proportion to the shower, vanity, and door.";
+    case "rolling-cart":
+      return "Keep the cart at its documented slim floor-standing dimensions and in proportion to ordinary fixtures.";
+    case "wall-mirror":
+      return "Keep the mirror at its documented wall-mounted dimensions with credible anchors, reflected geometry, and room scale.";
+    case "solid-shower-curtain":
+    case "patterned-shower-curtain":
+      return "Keep the curtain at standard tub or shower height and width with real header, rings, hem, thickness, gravity, and clearance.";
+    case "hanging-live-plant":
+      return "Keep the hanging plant and pot at the documented household scale with a credible ceiling or wall support and natural gravity.";
+    case "bathtub-caddy":
+      return "Keep the caddy at its documented span across a standard bathtub with both ends fully supported.";
+  }
 }
 
 function buildIdentityPrompt(
@@ -328,26 +365,24 @@ function buildStyledPrompt(
       "Use case: photorealistic-natural.",
       "Asset type: first-pass owner-curation candidate for a private bathroom inspiration gallery.",
       `Scene identity: ${sceneId}; corpus diversity seed: ${diversity.corpusSeed}.`,
-      "Primary request: create a believable iPhone photograph of a real, cared-for home bathroom that contains the exact featured product. The bathroom is the subject; the product is naturally incidental, off-center, visibly present, and identifiable at ordinary household scale.",
+      "Primary request: create a candid, unedited-looking iPhone snapshot of a real, attractive, owner-occupied bathroom. It must feel photographed in passing rather than styled for a listing, catalog, or social-media set. The bathroom is the subject; the exact featured product is useful, incidental, off-center, visible, and identifiable.",
       `Featured exact product: ${product.name} by ${product.brand}, ASIN ${product.asin}.`,
-      `Reference pack: use the complete reviewed seven-view atlas at ${atlasKey(product as AffiliateProduct)} together with the validated dossier at ${dossierKey(product.asin)}. These references define product identity only; do not copy their backdrop, pose, lighting, or atlas layout into the bathroom.`,
+      `Reference pack: use the reviewed atlas at ${atlasKey(product as AffiliateProduct)} and the validated dossier at ${dossierKey(product.asin)} for product identity only. Do not copy their backdrop, lighting, pose, or atlas layout.`,
       `Product contract: ${selection.identityPrompt}`,
       `Countable-feature audit: ${countableChecklist(selection)}.`,
-      `Support and placement: ${selection.placementInvariant}`,
-      `Hidden geometry: ${selection.hiddenGeometryPolicy}`,
-      `Style: ${style.name}. Make it recognizable through ${profile.recognizableThrough}. ${profile.avoidFormula}`,
-      `Room archetype: ${diversity.roomArchetype}.`,
-      `Budget lane: ${diversity.budget}.`,
-      `Camera: ${diversity.camera}. Keep ordinary phone sharpening, realistic deep focus, mild noise, limited highlight recovery, and small framing imperfections; no fake portrait blur, perfect tripod symmetry, or impossible camera volume.`,
-      `Lighting: ${diversity.lighting}. Product and room must share exposure, white balance, color spill, shadow softness, reflections, focus, noise, and highlight rolloff.`,
-      `Occupancy direction: ${diversity.occupancy}. Invent a scene-specific, sparse, coherent set of one to three ordinary human-use clues; do not repeat a fixed soap/brush/slippers/towel/toilet kit, coordinate a decor vignette, add a competing product silhouette, or use readable labels and pseudo-text.`,
-      `Material focus: ${diversity.material}. All fabric, stone, aggregate, tile, grout, wood, paint, glass, metal, towels, and wear must be stochastic and nonperiodic at room scale. Repeated fractals, cloned folds, tiled veins, and blanket gloss are hard failures.`,
-      "Physical gate: every mass has support and gravity; doors and drawers have clearance; plumbing and wet-zone construction connect coherently; electrical devices are omitted unless complete and plausible; reflections agree with the room and camera; no collision, floating object, duplicate fixture, or broken topology.",
-      "Realism range: make the room maintained and credible at its assigned budget. Ordinary age and repair are welcome, but do not make it dirty, trashed, damaged, abandoned, or decrepit. Do not produce a showroom, advertisement, synthetic interior render, real-estate listing, or centered product hero.",
-      "Fresh-candidate rule: generate a new physical bathroom and composition from scratch. Do not edit, repair, imitate, or reuse any prior room, candidate, product composite, room plate, generated support image, prop arrangement, texture map, or fold silhouette.",
+      `Product placement and scale: ${selection.placementInvariant} ${styledScaleInstruction(selection.productRole)} It must sit or mount naturally and share the room's light, white balance, reflections, focus, noise, and contact shadow.`,
+      `Style: ${style.name}, recognizable through ${profile.recognizableThrough}.`,
+      `Concrete scene direction: ${diversity.themeDirection}`,
+      `Room and budget: ${diversity.roomArchetype}; ${diversity.budget}.`,
+      `Camera and exposure: ${diversity.camera}; ${diversity.lighting}. Use ordinary deep focus, mild phone sharpening, faint shadow noise, limited highlight recovery, imperfect verticals, and no synthetic depth blur or cinematic grade.`,
+      `Human trace cap: ${diversity.occupancy}. Use only these clues. Unless the concrete scene direction explicitly requires one, do not add the recurring staging kit of plant, vase, branch, framed art, candle, tray, folded-towel stack, woven basket, slippers, robe, styled bottle grouping, or coordinated spa vignette.`,
+      `Material truth: ${diversity.material}. Preserve real thickness, seams, grout depth, board direction, fabric gravity, and nonrepeating wear. No cloned folds, tiled veins, repeated fractals, or blanket gloss.`,
+      "Physical plausibility: use buildable household construction, functional wet-zone junctions, ordinary fixture clearances, coherent mirrors and reflections, and fully supported objects.",
+      `Theme guardrail: ${profile.avoidFormula}`,
+      "Realism range: clean and cared for at the assigned budget, with ordinary age and small inconsistencies. Attractive does not mean pristine, luxury, beige, empty, decrepit, or staged.",
+      "Fresh-candidate rule: generate a new room and photograph from scratch. Do not repair, imitate, or reuse a prior room, prop arrangement, texture map, or composition.",
       "Decision semantics: this output is not owner-approved or publishable. It will be saved as generated evidence, screened for hard failures, and if it passes will remain owner-pending.",
-      `Final audit: ${qaFocus}.`,
-      "Constraints: exactly one canonical featured product; no people or hands; no packaging; no alternate variation; no invented product claim; no text overlay; no watermark.",
+      "Constraints: exactly one featured product; no duplicate or competing product silhouette; no people or hands; no packaging, pseudo-text, text overlay, or watermark.",
       "Output: one image exactly 1024x1536 pixels in a 2:3 portrait frame."
     ].join("\n"),
     qaFocus

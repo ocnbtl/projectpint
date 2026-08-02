@@ -719,7 +719,7 @@ export const affiliatePilotV4Run05HistoricalShotBlueprints = [
 // remain as historical source evidence only and are not imported by the active
 // manifest builder.
 export const affiliatePilotV4Run06Contract = {
-  contractVersion: "affiliate-pilot-evidence-pool-v4.61",
+  contractVersion: "affiliate-pilot-photographic-realism-v4.70",
   generationVersion: "pilot-2026-08-01-run-06",
   supersedesContractVersion: "affiliate-pilot-real-bathroom-v4.41",
   supersedesGenerationVersion: "pilot-2026-07-31-run-05",
@@ -729,9 +729,9 @@ export const affiliatePilotV4Run06Contract = {
   reusePriorIdentityAssets: false,
   reusePriorStyledAssets: false,
   purpose:
-    "Build source-backed exact-product reference packs, then create a broad one-call pool of distinct bathroom candidates for assistant triage and owner curation.",
+    "Use the locked source-backed exact-product reference packs to create a broad one-call pool of candid, materially distinct bathroom photographs for assistant triage and owner curation.",
   reason:
-    "The owner rejected run 05 for unreliable product references, synthetic realism, repeated room formulas, weak style legibility, and an inefficient same-scene repair architecture."
+    "The owner rejected run 05 and the first fifteen run-06 passes for synthetic real-estate polish, repeated beige-white-wood rooms, repeated plant-towel-rug staging, weak style separation, procedural materials, and product placement that looked enlarged or pasted in."
 } as const;
 
 export const affiliatePilotV4Run06DecisionStatuses = [
@@ -814,73 +814,157 @@ export const affiliatePilotV4Run06StyleProfiles = {
     recognizableThrough:
       "edited proportions, calm warm neutrals, precise joinery, restrained fixtures, and generous uncluttered circulation",
     avoidFormula:
-      "Do not default every scene to white stone, black taps, a floating vanity, or an empty luxury showroom."
+      "Do not default every scene to white stone, black taps, a floating vanity, or an empty luxury showroom.",
+    sceneDirections: [
+      "A compact 1940s apartment bath with worn black-and-white basketweave floor, off-white tile, mushroom-painted inset vanity, and plain chrome fixtures; no decorative objects.",
+      "A cared-for 1960s bath with pale blue-gray square tile, deep-charcoal painted vanity, warm-walnut medicine cabinet, chrome fixtures, and one rust textile.",
+      "A small contemporary apartment bath using chalk walls, burgundy laminate cabinetry, quiet gray sheet flooring, and brushed stainless details without stone.",
+      "An upper-mid-range bath with one pale green aggregate floor, bone solid-surface vanity, dark oak storage, and restrained nickel fixtures; no matching accessories.",
+      "A rental-friendly bath with retained white ceramic tile, a navy medicine cabinet, simple birch shelf, and reversible hardware changes in a limited cool palette."
+    ]
   },
   "modern-marble": {
     recognizableThrough:
       "one convincing stone relationship, crisp contemporary geometry, cool-to-neutral contrast, and controlled metal accents",
     avoidFormula:
-      "Do not cover every surface in the same white-gray veining or repeat the same brass-and-marble vanity."
+      "Do not cover every surface in the same white-gray veining or repeat the same brass-and-marble vanity.",
+    sceneDirections: [
+      "Use one honed gray-veined marble vanity remnant only; pair it with painted cabinetry, ceramic wet-wall tile, and ordinary chrome.",
+      "Use a black-and-cream marble checkerboard floor only; keep the counter solid, walls painted, and fixtures brushed nickel.",
+      "Use a narrow dark-green marble backsplash band with warm wood cabinetry and plain off-white tile elsewhere.",
+      "Place one salvaged champagne-marble counter in an otherwise believable older family bath with retained tub, simple paint, and mixed-age hardware.",
+      "Use gray marble only on the tub surround, with a laminate vanity, small-format ceramic floor, and no brass or decorative stone objects."
+    ]
   },
   "spa-greenery": {
     recognizableThrough:
       "restful spatial rhythm, moisture-tolerant natural materials, muted botanical color relationships, and soft functional light",
     avoidFormula:
-      "Do not require a plant, bamboo accessory, rolled towels, pebbles, steam, or sage paint in every scene."
+      "Do not require a plant, bamboo accessory, rolled towels, pebbles, steam, or sage paint in every scene.",
+    sceneDirections: [
+      "Use a moss-green glazed ceramic wet wall, warm white paint, and light ash storage with zero visible plants.",
+      "Use eucalyptus-painted cabinetry, charcoal floor tile, cream walls, and exactly one humidity-tolerant plant in a plain nursery pot.",
+      "Use a muted green aggregate floor, white tile, walnut accents, and zero plants or bamboo accessories.",
+      "Use sea-glass-blue-green cabinet fronts, pale gray tile, and soft daylight; greenery appears only as an exterior tree through the window.",
+      "Use no green major surface: express the style through warm cork-toned storage, diffused privacy-glass light, a calm layout, and one small trailing plant."
+    ]
   },
   "brass-terrazzo": {
     recognizableThrough:
       "warm metal hierarchy, a controlled aggregate surface, playful but buildable color, and clean contemporary construction",
     avoidFormula:
-      "Do not repeat champagne brass across every fixture or apply terrazzo to the counter, floor, and wet wall together."
+      "Do not repeat champagne brass across every fixture or apply terrazzo to the counter, floor, and wet wall together.",
+    sceneDirections: [
+      "Use a warm multicolor terrazzo floor with one aged-brass faucet; all other hardware is chrome and walls are plain tile.",
+      "Use a narrow terrazzo backsplash band and one brass sconce; keep the floor ceramic, vanity painted, and plumbing nickel.",
+      "Use a muted cream terrazzo counter, matte-painted cabinetry, and dark bronze mirror frame with no other aggregate surface.",
+      "Use terrazzo only at the shower threshold and one unlacquered-brass towel fixture in an otherwise ordinary retained-tile bath.",
+      "Use a plain stochastic aggregate floor and one warm-brass mirror frame; counter, wet wall, and fixtures remain non-brass and non-terrazzo."
+    ]
   },
   "boho-earth-tones": {
     recognizableThrough:
       "layered earthen color, tactile handmade surfaces, relaxed asymmetry, and a collected but functional room history",
     avoidFormula:
-      "Do not force rattan, macrame, pampas, arched niches, or a terracotta wall into every bathroom."
+      "Do not force rattan, macrame, pampas, arched niches, or a terracotta wall into every bathroom.",
+    sceneDirections: [
+      "Use muted clay paint, handmade cream wall tile, dark wood cabinetry, and indigo textile color with no rattan or dried plants.",
+      "Use ochre cabinetry, brown-red quarry floor tile, white walls, and a mismatched vintage mirror without decorative baskets.",
+      "Use dusty plum walls above retained beige tile, medium oak storage, and one patterned textile; no macrame or pampas.",
+      "Use olive paint, warm gray plaster, rust-colored sheet flooring, and ordinary chrome fixtures in a collected low-budget room.",
+      "Use deep terracotta only on the vanity, with chalk walls, blue-gray ceramic floor, and a simple flea-market medicine cabinet."
+    ]
   },
   "scandinavian-clean": {
     recognizableThrough:
       "daylight-aware planning, pale or mid-tone wood, practical storage, simple geometry, and soft low-contrast color",
     avoidFormula:
-      "Do not reduce the style to an all-white room with one blond-wood vanity and identical gray towels."
+      "Do not reduce the style to an all-white room with one blond-wood vanity and identical gray towels.",
+    sceneDirections: [
+      "Use pale gray-blue walls, birch plywood storage, white ceramic tile, and red-brown linoleum with practical open circulation.",
+      "Use muted butter-yellow cabinetry, cool gray floor tile, simple chrome, and daylight without decorative greenery.",
+      "Use mid-tone oak, off-white laminate, dark blue ceramic floor, and compact built-in storage sized for a shared household.",
+      "Use whitewashed pine wall storage, dusty green paint, retained porcelain fixtures, and one utilitarian textile color.",
+      "Use light beech cabinetry, warm gray sheet floor, matte white tile, and black only in one necessary hardware family."
+    ]
   },
   "dark-moody": {
     recognizableThrough:
       "deep tonal structure, deliberate pools of practical light, readable material depth, and controlled reflective contrast",
     avoidFormula:
-      "Do not make every surface black, crush shadow detail, or add cinematic haze and glowing fixtures."
+      "Do not make every surface black, crush shadow detail, or add cinematic haze and glowing fixtures.",
+    sceneDirections: [
+      "Use deep aubergine walls, cream tile, walnut cabinetry, and one warm practical light with readable shadow detail.",
+      "Use charcoal-blue cabinetry, pale gray tile, an aged nickel mirror, and cool rainy daylight rather than black surfaces.",
+      "Use dark olive wet-wall tile, warm white walls, natural oak storage, and ordinary overhead light with imperfect falloff.",
+      "Use oxblood paint above retained white tile, gray floor, and chrome fixtures in a small older bath with no cinematic props.",
+      "Use deep brown plaster, light terrazzo floor, blackened-steel storage, and one plain amber ceiling practical; no haze or candles."
+    ]
   },
   "warm-editorial": {
     recognizableThrough:
       "warm layered light, composed color relationships, tactile finishes, and the feeling of a personal room photographed well",
     avoidFormula:
-      "Do not turn the room into a magazine set, center every object, or repeat amber lamps and beige plaster."
+      "Do not turn the room into a magazine set, center every object, or repeat amber lamps and beige plaster.",
+    sceneDirections: [
+      "Use peach-gray wall paint, dark cherry vanity, cream tile, and late-afternoon side light with ordinary household contrast.",
+      "Use mustard cabinetry, pale blue ceramic tile, chrome fixtures, and imperfect warm vanity light without decorative styling.",
+      "Use warm white walls, burgundy floor tile, walnut trim, and one colored textile in a real family bathroom.",
+      "Use clay-pink tile only in the wet zone, gray painted storage, and mixed window-plus-ceiling light with no plant or vase.",
+      "Use tobacco-brown cabinetry, ivory solid surface, faded green floor, and a casual doorway composition rather than a magazine vignette."
+    ]
   },
   "industrial-loft": {
     recognizableThrough:
       "honest structural materials, robust fixtures, exposed-but-coherent construction, and a practical converted-space character",
     avoidFormula:
-      "Do not automatically add brick, black pipe, Edison bulbs, concrete on every plane, or unsafe exposed services."
+      "Do not automatically add brick, black pipe, Edison bulbs, concrete on every plane, or unsafe exposed services.",
+    sceneDirections: [
+      "Use one sealed concrete floor, painted masonry walls, galvanized storage, and complete code-safe chrome plumbing; no brick.",
+      "Use glazed white utility tile, dark steel-framed storage, warm plywood cabinetry, and one visible but safely enclosed structural column.",
+      "Use charcoal porcelain floor, cream-painted block, stainless fixtures, and robust surface-mounted conduit only where complete and code-safe.",
+      "Use one retained brick party wall behind sealed glass, ordinary ceramic elsewhere, and no black-pipe decor or Edison bulbs.",
+      "Use gray microcement only in the wet zone, blue-painted metal cabinetry, warm wood trim, and plain institutional lighting."
+    ]
   },
   "coastal-calm": {
     recognizableThrough:
       "airy light, weathered or washed material relationships, muted sea-and-sand color, and unfussy practical comfort",
     avoidFormula:
-      "Do not add shells, anchors, rope, blue stripes, driftwood signs, or an ocean view as theme shorthand."
+      "Do not add shells, anchors, rope, blue stripes, driftwood signs, or an ocean view as theme shorthand.",
+    sceneDirections: [
+      "Use chalk walls, washed blue-gray cabinetry, pale sand ceramic floor, and hazy daylight with no nautical objects.",
+      "Use sea-glass tile only in the shower, warm white vanity, light oak trim, and muted nickel fixtures.",
+      "Use faded aqua paint, cream sheet flooring, retained white tile, and sun-bleached textile color in a modest room.",
+      "Use weathered-gray wood storage, pale blue floor tile, white walls, and bright but clipped summer window light without an ocean view.",
+      "Use dune-beige plaster, deep marine-blue vanity, plain ceramic wet wall, and unfussy chrome in a compact apartment bath."
+    ]
   },
   japandi: {
     recognizableThrough:
       "quiet proportion, warm natural material contrast, low visual noise, functional restraint, and carefully resolved details",
     avoidFormula:
-      "Do not repeat slatted oak, limewash, black taps, pebble trays, or a hotel-spa composition in every scene."
+      "Do not repeat slatted oak, limewash, black taps, pebble trays, or a hotel-spa composition in every scene.",
+    sceneDirections: [
+      "Use warm gray plaster, mid-tone oak storage, off-white ceramic tile, and aged nickel fixtures with zero decor objects.",
+      "Use muted indigo cabinetry, pale ash trim, cream tile, and a dark gray floor in a compact functional layout.",
+      "Use clay-beige walls, dark walnut storage, simple white fixtures, and one woven textile color without baskets or plants.",
+      "Use pale green-gray tile, natural maple cabinetry, charcoal sheet floor, and chrome fixtures in a maintained older bath.",
+      "Use warm white walls, smoke-blue vanity, medium oak trim, and restrained daylight; no slatted feature wall or spa accessories."
+    ]
   },
   "vintage-eclectic": {
     recognizableThrough:
       "a coherent mix of eras, retained character, expressive color or pattern, and repairs or updates that respect the room's history",
     avoidFormula:
-      "Do not make the bathroom decrepit, costume-like, cluttered with antiques, or dependent on floral wallpaper."
+      "Do not make the bathroom decrepit, costume-like, cluttered with antiques, or dependent on floral wallpaper.",
+    sceneDirections: [
+      "Retain pink 1950s wall tile, add a dark green painted vanity and simple chrome repairs, with no wallpaper or antique clutter.",
+      "Retain blue 1930s hex floor, use a mustard medicine cabinet, white tile, and one mismatched modern light fixture.",
+      "Use a 1970s brown-and-cream floor, burgundy cabinetry, pale walls, and a repaired vintage mirror in an actively maintained room.",
+      "Use a small-scale geometric wallpaper above plain tile, navy cabinetry, chrome fixtures, and no floral print or decorative antiques.",
+      "Use retained mint tile, natural wood storage, black-and-white floor, and one contemporary sconce to show a coherent mix of eras."
+    ]
   }
 } as const;
 
@@ -934,16 +1018,16 @@ export const affiliatePilotV4Run06BudgetLanes = [
 ] as const;
 
 export const affiliatePilotV4Run06OccupancyStrategies = [
-  "evidence of a hurried weekday routine",
-  "evidence of a recently cleaned but actively used shared room",
-  "evidence of one person's quiet evening routine",
-  "evidence of children or guests without showing people",
-  "evidence of maintenance and small repairs accumulated over time",
-  "evidence of laundry or bathing activity kept physically supported",
-  "evidence of grooming activity with sparse unbranded objects",
-  "evidence of an older occupant's practical organization",
-  "evidence of a rental occupant's reversible personalization",
-  "evidence of weekend daylight use with one task left unfinished"
+  "one slightly damp hand towel and a medicine-cabinet door left two inches open; no other movable styling",
+  "one open vanity drawer with ordinary grooming items mostly below the sightline and one used washcloth; no other movable styling",
+  "one bath toy drying upside-down and one plainly renewed caulk line; no other movable styling",
+  "one partially used toilet-paper roll and one uncoordinated hand towel; no other movable styling",
+  "one small dry-area hardware repair in progress with a single tool safely supported; no other movable styling",
+  "one bath mat shifted after recent use and one damp towel; no other movable styling",
+  "one plain toothbrush cup and one slightly askew hand towel; no other movable styling",
+  "one wall-mounted grab bar and one plain comb on a dry surface; no other movable styling",
+  "one removable over-door hook holding a single garment and one plain cup; no other movable styling",
+  "one open interior door and the cropped edge of a real laundry hamper; no other movable styling"
 ] as const;
 
 export const affiliatePilotV4Run06MaterialBehaviors = [
