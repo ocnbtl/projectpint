@@ -1,6 +1,6 @@
 # Affiliate Pilot V4 Evidence-Pool Reset
 
-Status: run 05 is preserved as owner-superseded evidence. Run 06 completed all ten source dossiers and locked seven-view identity packs. The owner rejected the first fifteen run-06 styled passes as still insufficiently realistic, so those images are evidence only and the v4.70 photographic prompt calibration now controls remaining and replacement candidates.
+Status: run 05 is preserved as owner-superseded evidence. Run 06 completed all ten source dossiers and locked seven-view identity packs. The owner rejected the first fifteen run-06 styled passes and both initial v4.70 owner-pending candidates as still insufficiently realistic. Those images are evidence only; the v4.71 lived-in iPhone realism contract now controls remaining and replacement candidates.
 
 ## Why run 05 was superseded
 
@@ -80,7 +80,20 @@ V4.70 therefore requires:
 
 The first v4.70 calibration proof is preserved as a hard reject because the product mark is too small. The second, a blue-gray-tile and charcoal-vanity OXO bathroom, is preserved as `assistant_pass_owner_pending`; it is not owner-approved or publishable.
 
-The first official v4.70 breadth check preserved two new OXO replacements as hard rejects rather than repairing them: candidate 02 omitted the required oval OXO mark, while candidate 03 restored product identity but introduced cloned black wall fixtures and a staged, centered composition. Fresh candidate 04 is queued for that lane. A Bambusi/Japandi indigo-room candidate and a Creative Home/Modern Marble dark-green-backsplash candidate cleared assistant hard-failure screening and remain `assistant_pass_owner_pending`. Neither is owner-approved or publishable.
+The first official v4.70 breadth check preserved two new OXO replacements as hard rejects rather than repairing them: candidate 02 omitted the required oval OXO mark, while candidate 03 restored product identity but introduced cloned black wall fixtures and a staged, centered composition. Fresh candidate 04 is queued for that lane. A Bambusi/Japandi indigo-room candidate and a Creative Home/Modern Marble dark-green-backsplash candidate initially cleared assistant hard-failure screening, but the owner later declined both. The Bambusi room had spray-perfect blue paint and an overly perfect bamboo finish. The Creative Home room had repetitive, fractal-looking cabinet grain. Both still looked like AI homes rather than ordinary iPhone photographs.
+
+### V4.71 lived-in iPhone correction
+
+V4.71 treats realism as a camera-roll and material-forensics gate, not a general style adjective:
+
+- frame every call as a raw homeowner camera-roll snapshot rather than gallery or editorial imagery;
+- reproduce default iPhone HEIC/JPEG behavior: modest computational sharpening and local HDR, imperfect leveling, edge distortion, mixed white balance, shadow noise, and at least one clipped highlight or blocked shadow;
+- require three uncoordinated daily-use traces left where a person used them, without arranging a decor vignette;
+- require fine paint roller or brush stipple, uneven cut-in edges, isolated touch-up sheen, and sparse high-touch scuffs;
+- construct wood and bamboo from distinct physical pieces with board-specific grain direction, growth rings, pores, end grain, color, water spotting, and edge wear; repeated or fractal grain is a hard reject;
+- preserve the two owner-declined v4.70 candidates and queue materially different candidate-03 rooms rather than editing either image.
+
+The first two v4.71 candidate-03 replacements were generated and passed assistant hard-failure screening. The Bambusi/Japandi replacement uses a cramped older hall bath, ordinary doorway crop, clipped frosted-window exposure, used textiles, worn door hardware, and non-glossy supported bamboo. The Creative Home/Modern Marble replacement uses a loosely cropped older family bath, clipped window, open medicine cabinet, casually hung towel, visibly brush-painted clay vanity, and no exposed wood-grain field. Both remain `assistant_pass_owner_pending`; neither is owner-approved or publishable.
 
 ## Decision semantics
 

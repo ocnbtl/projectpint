@@ -23,7 +23,7 @@ test("run 06 rebuilds every reference and creates an owner-curation candidate po
 
   assert.equal(
     AFFILIATE_PILOT_V4_PROMPT_VERSION,
-    "affiliate-pilot-photographic-realism-v4.70"
+    "affiliate-pilot-lived-in-iphone-realism-v4.71"
   );
   assert.equal(AFFILIATE_PILOT_V4_GENERATION_VERSION, "pilot-2026-08-01-run-06");
   const bambusi = affiliatePilotV4Selections.find((selection) => selection.asin === "B0DC7VG6Z9");
@@ -123,15 +123,26 @@ test("run 06 rebuilds every reference and creates an owner-curation candidate po
         job.replacementForCandidateId === null &&
         job.storageKey.includes("affiliate-pilot/v4/candidates/") &&
         job.ownerSelectedStorageKey.includes("/styles/") &&
-        job.prompt.includes("candid, unedited-looking iPhone snapshot") &&
+        job.prompt.includes("raw homeowner iPhone camera-roll photograph") &&
+        job.prompt.includes("real person's camera roll") &&
+        job.prompt.includes("Camera-roll test") &&
         job.prompt.includes("Concrete scene direction") &&
-        job.prompt.includes("Human trace cap") &&
-        job.prompt.includes("recurring staging kit") &&
+        job.prompt.includes("Room history and budget") &&
+        job.prompt.includes("Camera authenticity") &&
+        job.prompt.includes("default iPhone HEIC/JPEG look") &&
+        job.prompt.includes("Everyday evidence") &&
+        job.prompt.includes("Surface forensic realism") &&
+        job.prompt.includes("fine roller or brush stipple") &&
+        job.prompt.includes("growth rings and color change between pieces") &&
         job.prompt.includes("Product placement and scale") &&
         job.prompt.includes("Fresh-candidate rule") &&
         job.prompt.includes("not owner-approved or publishable") &&
-        job.prompt.includes("No cloned folds, tiled veins, repeated fractals") &&
-        job.prompt.includes("Attractive does not mean pristine") &&
+        job.prompt.includes("no RAW processing") &&
+        job.prompt.includes("Never use fractal grain") &&
+        job.prompt.includes("not pristine, empty, luxury-perfect") &&
+        !job.prompt.includes("first-pass owner-curation candidate for a private bathroom inspiration gallery") &&
+        !job.prompt.includes("Human trace cap") &&
+        !job.prompt.includes("real, attractive, owner-occupied bathroom") &&
         !job.prompt.includes("Invent a scene-specific") &&
         !job.prompt.includes("one to three ordinary human-use clues")
     )

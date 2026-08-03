@@ -719,7 +719,7 @@ export const affiliatePilotV4Run05HistoricalShotBlueprints = [
 // remain as historical source evidence only and are not imported by the active
 // manifest builder.
 export const affiliatePilotV4Run06Contract = {
-  contractVersion: "affiliate-pilot-photographic-realism-v4.70",
+  contractVersion: "affiliate-pilot-lived-in-iphone-realism-v4.71",
   generationVersion: "pilot-2026-08-01-run-06",
   supersedesContractVersion: "affiliate-pilot-real-bathroom-v4.41",
   supersedesGenerationVersion: "pilot-2026-07-31-run-05",
@@ -729,9 +729,9 @@ export const affiliatePilotV4Run06Contract = {
   reusePriorIdentityAssets: false,
   reusePriorStyledAssets: false,
   purpose:
-    "Use the locked source-backed exact-product reference packs to create a broad one-call pool of candid, materially distinct bathroom photographs for assistant triage and owner curation.",
+    "Use the locked source-backed exact-product reference packs to create a broad one-call pool of ordinary lived-in iPhone camera-roll photographs for assistant triage and owner curation.",
   reason:
-    "The owner rejected run 05 and the first fifteen run-06 passes for synthetic real-estate polish, repeated beige-white-wood rooms, repeated plant-towel-rug staging, weak style separation, procedural materials, and product placement that looked enlarged or pasted in."
+    "The owner rejected run 05, the first fifteen run-06 passes, and the first two v4.70 owner-pending candidates for synthetic real-estate polish, overly perfect paint and bamboo, repeated or fractal wood grain, insufficient lived-in evidence, and camera behavior that did not read as an ordinary iPhone snapshot."
 } as const;
 
 export const affiliatePilotV4Run06DecisionStatuses = [
@@ -831,7 +831,7 @@ export const affiliatePilotV4Run06StyleProfiles = {
     sceneDirections: [
       "Use one honed gray-veined marble vanity remnant only; pair it with painted cabinetry, ceramic wet-wall tile, and ordinary chrome.",
       "Use a black-and-cream marble checkerboard floor only; keep the counter solid, walls painted, and fixtures brushed nickel.",
-      "Use a narrow dark-green marble backsplash band with warm wood cabinetry and plain off-white tile elsewhere.",
+      "Reuse one narrow dark-green marble backsplash band above a muted clay-painted older vanity with fine roller stipple, a softened high-touch edge, and plain off-white tile elsewhere; no visible wood cabinetry.",
       "Place one salvaged champagne-marble counter in an otherwise believable older family bath with retained tub, simple paint, and mixed-age hardware.",
       "Use gray marble only on the tub surround, with a laminate vanity, small-format ceramic floor, and no brass or decorative stone objects."
     ]
@@ -947,7 +947,7 @@ export const affiliatePilotV4Run06StyleProfiles = {
       "Do not repeat slatted oak, limewash, black taps, pebble trays, or a hotel-spa composition in every scene.",
     sceneDirections: [
       "Use warm gray plaster, mid-tone oak storage, off-white ceramic tile, and aged nickel fixtures with zero decor objects.",
-      "Use muted indigo cabinetry, pale ash trim, cream tile, and a dark gray floor in a compact functional layout.",
+      "Use a small 1980s hall bath with muted indigo paint rolled over an older vanity, pale ash window trim, cream four-inch tile, and a dark gray sheet floor; the bamboo bench shows faint water spots and nonuniform edge darkening rather than a showroom finish.",
       "Use clay-beige walls, dark walnut storage, simple white fixtures, and one woven textile color without baskets or plants.",
       "Use pale green-gray tile, natural maple cabinetry, charcoal sheet floor, and chrome fixtures in a maintained older bath.",
       "Use warm white walls, smoke-blue vanity, medium oak trim, and restrained daylight; no slatted feature wall or spa accessories."
@@ -969,31 +969,31 @@ export const affiliatePilotV4Run06StyleProfiles = {
 } as const;
 
 export const affiliatePilotV4Run06RoomArchetypes = [
-  "compact 1940s hall bathroom with a careful contemporary repair",
-  "ordinary 1970s family bathroom selectively updated over time",
-  "small 1990s builder bathroom improved on a realistic budget",
-  "urban apartment bathroom with tight but coherent circulation",
-  "bungalow bathroom retaining one useful period feature",
-  "accessible ground-floor bathroom with generous clearances",
-  "attic bathroom shaped by a real sloped roof",
-  "rental bathroom personalized through reversible choices",
-  "mid-range recent renovation with one retained older element",
-  "high-budget custom bathroom that still looks inhabited",
-  "shared household bathroom organized for several daily routines",
-  "narrow row-house bathroom with a buildable wet-zone plan"
+  "compact 1940s hall bathroom repaired in stages by its owner",
+  "ordinary 1970s family bathroom selectively updated over several years",
+  "small 1990s builder bathroom three years after a practical refresh",
+  "urban apartment bathroom whose tight circulation still shows daily use",
+  "bungalow bathroom retaining one useful worn period feature",
+  "accessible ground-floor bathroom with functional, non-showroom clearances",
+  "attic bathroom shaped by a real sloped roof and accumulated repairs",
+  "rental bathroom personalized through visibly reversible choices",
+  "mid-range renovation already showing ordinary water spots and touch wear",
+  "five-year-old custom bathroom photographed during an ordinary weekday routine",
+  "busy shared-household bathroom after a quick, incomplete tidy",
+  "narrow row-house bathroom with a buildable wet-zone plan and mixed-age finishes"
 ] as const;
 
 export const affiliatePilotV4Run06CameraRecipes = [
-  "iPhone main-camera doorway view with slight roll and natural vertical convergence",
-  "iPhone main-camera side view from reachable standing space with a loose architectural edge",
-  "iPhone wide-camera view used because the room is truly tight, retaining modest edge stretch",
-  "chest-height main-camera diagonal with imperfect but intentional framing",
-  "slightly lower main-camera view from clear dry floor, never inside a wall or fixture",
-  "quick threshold snapshot with one harmless partial obstruction at the edge",
-  "slightly elevated main-camera view that reveals circulation and support surfaces",
-  "candid opposite-corner view with ordinary phone sharpening and deep focus",
-  "close room-context view that remains architectural rather than a product hero",
-  "off-axis view chosen to keep mirror reflections physically coherent"
+  "iPhone 11 main 1x doorway snapshot with slight clockwise roll, converging verticals, and a clipped jamb edge",
+  "iPhone 12 main 1x side snapshot from reachable standing space with one loose architectural crop",
+  "iPhone 13 mini wide camera used only because the room is tight, retaining edge stretch and imperfect leveling",
+  "chest-height iPhone 11 main-camera diagonal framed quickly rather than composed symmetrically",
+  "slightly low iPhone SE snapshot from clear dry floor with modest wide-lens distortion",
+  "quick iPhone 12 threshold snapshot with a door edge intruding and no geometric correction",
+  "slightly elevated iPhone 13 main-camera view with casual downward tilt and uncorrected verticals",
+  "opposite-corner iPhone 11 snapshot with default sharpening, deep focus, and a little shadow noise",
+  "closer iPhone 12 room-context snapshot with an imperfect crop and no portrait-mode blur",
+  "off-axis iPhone SE view selected for a coherent mirror reflection rather than a polished composition"
 ] as const;
 
 export const affiliatePilotV4Run06LightingRecipes = [
@@ -1018,29 +1018,29 @@ export const affiliatePilotV4Run06BudgetLanes = [
 ] as const;
 
 export const affiliatePilotV4Run06OccupancyStrategies = [
-  "one slightly damp hand towel and a medicine-cabinet door left two inches open; no other movable styling",
-  "one open vanity drawer with ordinary grooming items mostly below the sightline and one used washcloth; no other movable styling",
-  "one bath toy drying upside-down and one plainly renewed caulk line; no other movable styling",
-  "one partially used toilet-paper roll and one uncoordinated hand towel; no other movable styling",
-  "one small dry-area hardware repair in progress with a single tool safely supported; no other movable styling",
-  "one bath mat shifted after recent use and one damp towel; no other movable styling",
-  "one plain toothbrush cup and one slightly askew hand towel; no other movable styling",
-  "one wall-mounted grab bar and one plain comb on a dry surface; no other movable styling",
-  "one removable over-door hook holding a single garment and one plain cup; no other movable styling",
-  "one open interior door and the cropped edge of a real laundry hamper; no other movable styling"
+  "one slightly damp hand towel, a medicine-cabinet door left two inches open, and a few dried water spots beside the faucet",
+  "one open vanity drawer with ordinary grooming items mostly below the sightline, one used washcloth, and a plain hair tie near the sink",
+  "one bath toy drying upside-down, one visibly renewed caulk line, and two water drops left on the shower sill",
+  "one partially used toilet-paper roll, one uncoordinated hand towel, and a small wastebasket edge cropped low in frame",
+  "one small dry-area hardware repair with a single safely supported screwdriver, one loose screw in a cup, and an open cabinet door",
+  "one bath mat shifted after recent use, one damp towel, and faint water spotting on the lower mirror edge",
+  "one unmatched plastic toothbrush cup, one slightly askew hand towel, and a tiny toothpaste spot low on the mirror",
+  "one wall-mounted grab bar, one plain comb on a dry surface, and one cabinet pull with softened high-touch sheen",
+  "one removable over-door hook holding a single garment, one plain cup, and one partly open drawer",
+  "one open interior door, the cropped edge of a real laundry hamper, and one casually reused hand towel"
 ] as const;
 
 export const affiliatePilotV4Run06MaterialBehaviors = [
-  "nonperiodic stone veining with slab-scale continuity and no cloned islands",
-  "wood grain that follows each board and changes naturally between pieces",
-  "fabric with gravity, thickness, irregular folds, and no repeated wave map",
-  "tile with coherent grout depth, subtle installation variation, and no fractal pattern",
-  "paint or plaster with restrained absorption variation and believable edge wear",
-  "brushed metal with directional roughness and shared room reflections",
-  "glass and mirrors with correct thickness, edges, occlusion, and reflected geometry",
-  "terrazzo or aggregate with stochastic scale and no tiled procedural repeat",
-  "caulk, seals, and wet-zone junctions that are complete, maintained, and plausible",
-  "towels and mats with unique nap, compression, and fold histories rather than copied silhouettes"
+  "stone with sparse unique veins, slab-scale continuity, small mineral interruptions, and no recurring island motif",
+  "wood assembled from distinct boards whose growth rings, color, grain direction, pores, and high-touch dulling vary piece by piece",
+  "fabric with uneven yarn and nap, real thickness, gravity, compressed contact areas, and unrelated folds",
+  "tile with coherent grout depth, slightly variable grout tone, tiny alignment drift, and unique face reflections",
+  "paint and plaster with fine roller stipple, slightly uneven cut-in edges, isolated touch-up sheen, and one nonrepeating scuff",
+  "brushed metal with directional roughness, fingerprints or water-softened highlights, and the room's shared reflections",
+  "glass and mirrors with visible edge thickness, small water spots, correct occlusion, and coherent reflected geometry",
+  "terrazzo or aggregate with irregular chip scale, spacing, rotation, partial cuts, and no tiled procedural repeat",
+  "caulk, seals, and wet-zone junctions that are complete but hand-applied, with small bead-width variation and maintained discoloration",
+  "towels and mats with unique nap, compressed fibers, softened used edges, and unrelated fold histories"
 ] as const;
 
 export const affiliatePilotV4Run06VisualQaRubric = {
@@ -1048,7 +1048,9 @@ export const affiliatePilotV4Run06VisualQaRubric = {
     "featured product absent, duplicated, substituted, mirrored, malformed, or not identifiable",
     "unsupported mass, impossible mounting, collision, incoherent plumbing or electrical construction",
     "repeated or fractal texture, copied fold map, tiled stone or wood, or blanket gloss",
+    "spray-perfect paint, plastic-perfect bamboo, uninterrupted furniture grain, or surfaces with no installation history",
     "AI-stock, showroom, real-estate-listing, or product-hero composition",
+    "professional interior-photography exposure, perfect auto-leveling, uniformly recovered highlights, or synthetic depth blur instead of ordinary iPhone behavior",
     "physically impossible camera position, reflection, door swing, clearance, or perspective",
     "theme illegible after considering architecture, materials, color relationships, fixtures, and mood",
     "scene duplicates a prior bathroom's layout, camera, light, palette, and object pattern",
@@ -1060,6 +1062,7 @@ export const affiliatePilotV4Run06VisualQaRubric = {
     "bathroom reads as the subject and product as incidental",
     "recognizable style without a single prop or color formula",
     "nonperiodic materials and plausible phone-camera behavior",
+    "visible lived-in evidence and material-specific wear without staged decor",
     "coherent support, gravity, construction, reflections, and clearances",
     "materially distinct scene within its five-candidate set"
   ],

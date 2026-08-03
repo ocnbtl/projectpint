@@ -87,12 +87,12 @@ const replacementOptions = {
     "compact apartment bathroom shaped by a masonry service chase"
   ],
   camera: [
-    "chest-height oblique phone view from the sink side with a slightly clipped door casing",
-    "casual standing phone view from beside the tub, avoiding a centered one-point composition",
-    "credible doorway-side phone view angled across the short dimension of the room",
-    "waist-height phone view from the vanity return with mild wide-lens edge stretch",
-    "off-center phone view from an open circulation pocket with one foreground edge interruption",
-    "slightly elevated handheld phone view looking diagonally past a retained fixture"
+    "chest-height iPhone 11 main-camera view from the sink side with a clipped door casing and slight roll",
+    "casual iPhone 12 main-camera view from beside the tub, avoiding a centered one-point composition",
+    "quick doorway-side iPhone SE view angled across the short dimension with imperfect leveling",
+    "waist-height iPhone 13 mini wide-camera view from the vanity return with retained edge stretch",
+    "off-center iPhone 11 snapshot from an open circulation pocket with one foreground interruption",
+    "slightly elevated iPhone 12 snapshot looking diagonally past a retained fixture without architectural correction"
   ],
   lighting: [
     "cool overcast window light mixed imperfectly with one neutral ceiling practical",
@@ -111,20 +111,20 @@ const replacementOptions = {
     "restrained rental-friendly refresh with reversible hardware and textiles"
   ],
   occupancy: [
-    "one damp towel and a partly opened window; no other movable styling",
-    "one supported garment and a shifted bath mat; no other movable styling",
-    "one used washcloth on a dry ledge and one open cabinet door; no other movable styling",
-    "two sparse nonmatching grooming clues partly below the sightline; no other movable styling",
-    "one towel and an open interior door; no other movable styling",
-    "one displaced mat and the cropped edge of a laundry hamper; no other movable styling"
+    "one damp towel, a partly opened window, and dried water spots beside the faucet",
+    "one supported garment, a shifted bath mat, and a plain hair tie on a dry ledge",
+    "one used washcloth on a dry ledge, one open cabinet door, and a small wastebasket edge cropped low",
+    "two nonmatching grooming clues partly below the sightline and one faint toothpaste spot low on the mirror",
+    "one casually reused towel, an open interior door, and a few water drops on the shower sill",
+    "one displaced mat, the cropped edge of a laundry hamper, and one cabinet pull with softened touch wear"
   ],
   material: [
-    "painted plaster and small-format matte floor tile with irregular but coherent grout",
-    "original ceramic wall tile beside newer sheet flooring with plausible seams",
-    "laminate cabinetry, enamel, and quiet painted walls with ordinary edge wear",
-    "privacy glass, ceramic tile, and painted wood with correct thickness and joinery",
-    "matte porcelain floor tile and retained glazed wall tile with distinct installation histories",
-    "painted trim, nonrepeating vinyl floor pattern, and honest aged grout"
+    "roller-stippled painted plaster and small-format matte floor tile with irregular but coherent grout",
+    "original ceramic wall tile beside newer sheet flooring with plausible seams, water spotting, and unrelated wear",
+    "laminate cabinetry, enamel, and brush-painted walls with isolated touch-up sheen and ordinary edge wear",
+    "privacy glass, ceramic tile, and board-built painted wood with correct thickness, unique grain, and joinery",
+    "matte porcelain floor tile and retained glazed wall tile with distinct installation and cleaning histories",
+    "brush-painted trim, nonrepeating vinyl floor pattern, softened high-touch edges, and honestly aged grout"
   ]
 } as const;
 
@@ -179,7 +179,24 @@ function buildReplacementJob(sourceJob: JsonRecord): JsonRecord {
       /^Scene identity: .*$/m,
       `Scene identity: ${replacementSceneId}; corpus diversity seed: ${corpusSeed}.`
     );
-  if (sourceJob.promptVersion === "affiliate-pilot-photographic-realism-v4.70") {
+  if (sourceJob.promptVersion === "affiliate-pilot-lived-in-iphone-realism-v4.71") {
+    prompt = replacePromptLine(
+      prompt,
+      "Room history and budget",
+      `${diversityPlan.roomArchetype}; ${diversityPlan.budget}. The room has been used since installation and was not reset for this photograph`
+    );
+    prompt = replacePromptLine(
+      prompt,
+      "Camera authenticity",
+      `${diversityPlan.camera}; ${diversityPlan.lighting}. Reproduce a default iPhone HEIC/JPEG look with modest computational sharpening, local auto-HDR, slight edge distortion, imperfect leveling, fine shadow noise, mixed white balance, and at least one clipped highlight or blocked shadow; no RAW processing, Lightroom grade, tripod precision, portrait blur, or architectural correction`
+    );
+    prompt = replacePromptLine(
+      prompt,
+      "Everyday evidence",
+      `${diversityPlan.occupancy}. These clues are functional and uncoordinated; never align, color-match, center, or style them`
+    );
+    prompt = replacePromptLine(prompt, "Material emphasis", diversityPlan.material);
+  } else if (sourceJob.promptVersion === "affiliate-pilot-photographic-realism-v4.70") {
     prompt = replacePromptLine(
       prompt,
       "Room and budget",

@@ -64,7 +64,7 @@ if (manifest.promptVersion === EXPECTED_NEW_PROMPT_VERSION) {
 }
 
 const templates = buildAffiliatePilotV4Manifest(affiliateApprovedCohortFixture());
-if (templates.promptVersion !== EXPECTED_NEW_PROMPT_VERSION) {
+if (String(templates.promptVersion) !== EXPECTED_NEW_PROMPT_VERSION) {
   throw new Error(`Source templates are not at ${EXPECTED_NEW_PROMPT_VERSION}.`);
 }
 const templateByKey = new Map(
