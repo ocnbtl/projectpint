@@ -95,6 +95,14 @@ V4.71 treats realism as a camera-roll and material-forensics gate, not a general
 
 The first two v4.71 candidate-03 replacements were generated and passed assistant hard-failure screening. The Bambusi/Japandi replacement uses a cramped older hall bath, ordinary doorway crop, clipped frosted-window exposure, used textiles, worn door hardware, and non-glossy supported bamboo. The Creative Home/Modern Marble replacement uses a loosely cropped older family bath, clipped window, open medicine cabinet, casually hung towel, visibly brush-painted clay vanity, and no exposed wood-grain field. The owner approved both candidate-03 images after visual review. They are preserved as `owner_accepted` private selection evidence, but neither image has been copied to its owner-selected publication path or made publishable.
 
+### V4.71 owner-review wave A
+
+On 2026-08-03, private batch `v471-owner-review-001` froze and completed 50 balanced owner-review jobs: five candidates for each of the ten pilot products. The freezer records the final library target as ten images per product/style; this 50-image package is wave A toward that target, not completion of the full ten-per-style library.
+
+The run reused the 104-call locked identity corpus and made 75 fresh styled provider calls to obtain the 50 review-ready candidates, preserving every screened failure and materially different replacement. The styled call ledger reached 105 while identity calls remained unchanged at 104. All 50 frozen review slots resolve to unique existing files in `assistant_pass_owner_pending`; none is owner-approved or publishable.
+
+The private review package contains an interactive local approve/deny gallery, a Markdown checklist, a machine-readable review index, and five numbered contact sheets of ten candidates each. The gallery and images remain under untracked `output/affiliate-pilot/` evidence. The tracked renderer, freezer, prompt-strengthening guard, replacement remapper, and ingest changes contain no generated image bytes.
+
 ## Decision semantics
 
 The ledger uses these distinct states:

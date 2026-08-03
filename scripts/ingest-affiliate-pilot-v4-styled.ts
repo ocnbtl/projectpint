@@ -70,8 +70,14 @@ if (!fs.existsSync(atlasPath) || sha256File(atlasPath) !== pack.atlasSha256) {
 }
 
 const metadata = await sharp(inputPath).metadata();
-if (metadata.width !== 1024 || metadata.height !== 1536 || metadata.format !== "png") {
-  throw new Error(`${sceneId} provider output must be a 1024x1536 PNG.`);
+if (metadata.format !== "png") {
+  throw new Error(`${sceneId} provider output must be a PNG.`);
+}
+if (
+  decision === "assistant_pass_owner_pending" &&
+  (metadata.width !== 1024 || metadata.height !== 1536)
+) {
+  throw new Error(`${sceneId} owner-pending provider output must be exactly 1024x1536.`);
 }
 const inputSha256 = sha256File(inputPath);
 const candidatePath = path.join(outputRoot, String(job.storageKey));
@@ -179,7 +185,7 @@ function buildReplacementJob(sourceJob: JsonRecord): JsonRecord {
       /^Scene identity: .*$/m,
       `Scene identity: ${replacementSceneId}; corpus diversity seed: ${corpusSeed}.`
     );
-  if (sourceJob.promptVersion === "affiliate-pilot-lived-in-iphone-realism-v4.71") {
+  if (String(sourceJob.promptVersion).startsWith("affiliate-pilot-lived-in-iphone-realism-v4.71")) {
     prompt = replacePromptLine(
       prompt,
       "Room history and budget",
