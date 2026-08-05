@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
+import { Script } from "node:vm";
 
 const require = createRequire(import.meta.url);
 const sharp = require("sharp") as any;
@@ -128,15 +129,19 @@ const cards = reviewJobs
 const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Project Pint ${escapeHtml(batchId)} owner review</title><style>
 :root{color-scheme:dark;font-family:Inter,system-ui,sans-serif;background:#111;color:#f5f5f5}body{margin:0;padding:24px}.top{position:sticky;top:0;z-index:3;background:#111e;padding:12px 0 18px;backdrop-filter:blur(12px)}h1{margin:0 0 6px;font-size:24px}.summary{color:#bbb;margin-bottom:12px}.toolbar{display:flex;gap:10px;flex-wrap:wrap}button{border:1px solid #555;background:#252525;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}.card{background:#1d1d1d;border:2px solid #333;border-radius:12px;overflow:hidden}.card.approve{border-color:#2f9e64}.card.deny{border-color:#cf4b4b}.card img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}.meta{display:flex;gap:12px;padding:12px 12px 8px}.number{font-size:25px;font-weight:800}.meta small{display:block;color:#aaa;margin-top:4px}.amazon-link{display:inline-block;margin:0 12px 12px;color:#f1b05a;font-weight:700;text-decoration:none}.amazon-link:hover,.amazon-link:focus-visible{text-decoration:underline}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 12px 10px}.actions button.active[data-decision=APPROVE]{background:#17633d;border-color:#39b879}.actions button.active[data-decision=DENY]{background:#792f2f;border-color:#e06060}textarea{box-sizing:border-box;width:calc(100% - 24px);margin:0 12px 12px;background:#111;color:#fff;border:1px solid #555;border-radius:7px;padding:8px;resize:vertical}
 </style></head><body><div class="top"><h1>Project Pint · ${escapeHtml(batchId)}</h1><div class="summary"><span id="progress">0 / ${reviewJobs.length} decided</span> · private owner selection only · nothing here is published</div><div class="toolbar"><button id="copy">Copy decision list</button><button id="download">Download JSON</button><button id="clear">Clear decisions</button></div></div><main class="grid">${cards}</main><script>
-const key=${JSON.stringify(`project-pint:${batchId}:decisions`)};const cards=[...document.querySelectorAll('.card')];let state=JSON.parse(localStorage.getItem(key)||'{}');
-function save(){localStorage.setItem(key,JSON.stringify(state));render()}
+const key=${JSON.stringify(`project-pint:${batchId}:decisions`)};const cards=[...document.querySelectorAll('.card')];
+function loadState(){try{return JSON.parse(localStorage.getItem(key)||'{}')}catch{return {}}}let state=loadState();
+function save(){try{localStorage.setItem(key,JSON.stringify(state))}catch{}render()}
 function render(){let count=0;cards.forEach(card=>{const n=card.dataset.number;const entry=state[n]||{};card.classList.toggle('approve',entry.decision==='APPROVE');card.classList.toggle('deny',entry.decision==='DENY');card.querySelectorAll('[data-decision]').forEach(b=>b.classList.toggle('active',b.dataset.decision===entry.decision));card.querySelector('textarea').value=entry.note||'';if(entry.decision)count++});document.querySelector('#progress').textContent=count+' / '+cards.length+' decided'}
 cards.forEach(card=>{const n=card.dataset.number;card.querySelectorAll('[data-decision]').forEach(b=>b.onclick=()=>{state[n]={...(state[n]||{}),decision:b.dataset.decision};save()});card.querySelector('textarea').onchange=e=>{state[n]={...(state[n]||{}),note:e.target.value.trim()};save()}});
 function rows(){return cards.map(card=>{const n=card.dataset.number;const entry=state[n]||{};return {reviewNumber:Number(n),sceneId:${JSON.stringify(reviewJobs.map((job) => job.sceneId))}[Number(n)-1],decision:entry.decision||'UNDECIDED',note:entry.note||''}})}
-document.querySelector('#copy').onclick=async()=>{const text=rows().map(r=>String(r.reviewNumber).padStart(3,'0')+' '+r.decision+(r.note?' — '+r.note:'')).join('\n');await navigator.clipboard.writeText(text);document.querySelector('#copy').textContent='Copied';setTimeout(()=>document.querySelector('#copy').textContent='Copy decision list',1200)};
+document.querySelector('#copy').onclick=async()=>{const text=rows().map(r=>String(r.reviewNumber).padStart(3,'0')+' '+r.decision+(r.note?' — '+r.note:'')).join('\\n');await navigator.clipboard.writeText(text);document.querySelector('#copy').textContent='Copied';setTimeout(()=>document.querySelector('#copy').textContent='Copy decision list',1200)};
 document.querySelector('#download').onclick=()=>{const blob=new Blob([JSON.stringify({batchId:${JSON.stringify(batchId)},decisions:rows()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=${JSON.stringify(`${batchId}-decisions.json`)};a.click();URL.revokeObjectURL(a.href)};
 document.querySelector('#clear').onclick=()=>{if(confirm('Clear every saved decision for this batch?')){state={};save()}};render();
 </script></body></html>`;
+const inlineScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+if (!inlineScript) throw new Error(`Rendered ${batchId} without an inline review script.`);
+new Script(inlineScript, { filename: `${batchId}-owner-review-inline.js` });
 fs.writeFileSync(path.join(reviewRoot, "index.html"), html, "utf8");
 
 const markdown = [
