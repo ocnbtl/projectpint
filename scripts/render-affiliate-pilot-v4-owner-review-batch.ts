@@ -30,6 +30,14 @@ function escapeXml(value: unknown): string {
   return escapeHtml(value);
 }
 
+function amazonListingUrl(asin: unknown): string {
+  const normalizedAsin = String(asin).trim().toUpperCase();
+  if (!/^[A-Z0-9]{10}$/.test(normalizedAsin)) {
+    throw new Error(`Cannot build Amazon listing URL for invalid ASIN: ${normalizedAsin}`);
+  }
+  return `https://www.amazon.com/dp/${normalizedAsin}`;
+}
+
 const batchId = argument("batch-id");
 const repositoryRoot = process.cwd();
 const reviewRoot = path.join(
@@ -61,6 +69,7 @@ const reviewJobs: JsonRecord[] = (batch.jobs as JsonRecord[]).map((frozen): Json
     ...frozen,
     candidateSha256: current.candidateSha256,
     generationEvidencePath: current.generationEvidencePath,
+    amazonListingUrl: amazonListingUrl(frozen.asin),
     absoluteCandidatePath: candidatePath,
     relativeImagePath: path.relative(reviewRoot, candidatePath).replace(/\\/g, "/")
   };
@@ -110,13 +119,14 @@ const cards = reviewJobs
     (job) => `<article class="card" data-number="${job.reviewNumber}">
       <img loading="lazy" src="${escapeHtml(job.relativeImagePath)}" alt="Review ${job.reviewNumber}: ${escapeHtml(job.productName)} in ${escapeHtml(job.styleSlug)}" />
       <div class="meta"><div class="number">${String(job.reviewNumber).padStart(3, "0")}</div><div><strong>${escapeHtml(job.productName)}</strong><small>${escapeHtml(job.brand)} · ${escapeHtml(job.asin)} · ${escapeHtml(job.styleSlug)} · slot ${escapeHtml(job.slot)}</small></div></div>
+      <a class="amazon-link" href="${escapeHtml(job.amazonListingUrl)}" target="_blank" rel="noopener noreferrer">View Amazon listing <span aria-hidden="true">↗</span></a>
       <div class="actions"><button type="button" data-decision="APPROVE">Approve</button><button type="button" data-decision="DENY">Deny</button></div>
       <textarea rows="2" placeholder="Optional reason or correction"></textarea>
     </article>`
   )
   .join("\n");
 const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Project Pint ${escapeHtml(batchId)} owner review</title><style>
-:root{color-scheme:dark;font-family:Inter,system-ui,sans-serif;background:#111;color:#f5f5f5}body{margin:0;padding:24px}.top{position:sticky;top:0;z-index:3;background:#111e;padding:12px 0 18px;backdrop-filter:blur(12px)}h1{margin:0 0 6px;font-size:24px}.summary{color:#bbb;margin-bottom:12px}.toolbar{display:flex;gap:10px;flex-wrap:wrap}button{border:1px solid #555;background:#252525;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}.card{background:#1d1d1d;border:2px solid #333;border-radius:12px;overflow:hidden}.card.approve{border-color:#2f9e64}.card.deny{border-color:#cf4b4b}.card img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}.meta{display:flex;gap:12px;padding:12px}.number{font-size:25px;font-weight:800}.meta small{display:block;color:#aaa;margin-top:4px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 12px 10px}.actions button.active[data-decision=APPROVE]{background:#17633d;border-color:#39b879}.actions button.active[data-decision=DENY]{background:#792f2f;border-color:#e06060}textarea{box-sizing:border-box;width:calc(100% - 24px);margin:0 12px 12px;background:#111;color:#fff;border:1px solid #555;border-radius:7px;padding:8px;resize:vertical}
+:root{color-scheme:dark;font-family:Inter,system-ui,sans-serif;background:#111;color:#f5f5f5}body{margin:0;padding:24px}.top{position:sticky;top:0;z-index:3;background:#111e;padding:12px 0 18px;backdrop-filter:blur(12px)}h1{margin:0 0 6px;font-size:24px}.summary{color:#bbb;margin-bottom:12px}.toolbar{display:flex;gap:10px;flex-wrap:wrap}button{border:1px solid #555;background:#252525;color:#fff;border-radius:8px;padding:9px 13px;cursor:pointer}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}.card{background:#1d1d1d;border:2px solid #333;border-radius:12px;overflow:hidden}.card.approve{border-color:#2f9e64}.card.deny{border-color:#cf4b4b}.card img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}.meta{display:flex;gap:12px;padding:12px 12px 8px}.number{font-size:25px;font-weight:800}.meta small{display:block;color:#aaa;margin-top:4px}.amazon-link{display:inline-block;margin:0 12px 12px;color:#f1b05a;font-weight:700;text-decoration:none}.amazon-link:hover,.amazon-link:focus-visible{text-decoration:underline}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 12px 10px}.actions button.active[data-decision=APPROVE]{background:#17633d;border-color:#39b879}.actions button.active[data-decision=DENY]{background:#792f2f;border-color:#e06060}textarea{box-sizing:border-box;width:calc(100% - 24px);margin:0 12px 12px;background:#111;color:#fff;border:1px solid #555;border-radius:7px;padding:8px;resize:vertical}
 </style></head><body><div class="top"><h1>Project Pint · ${escapeHtml(batchId)}</h1><div class="summary"><span id="progress">0 / ${reviewJobs.length} decided</span> · private owner selection only · nothing here is published</div><div class="toolbar"><button id="copy">Copy decision list</button><button id="download">Download JSON</button><button id="clear">Clear decisions</button></div></div><main class="grid">${cards}</main><script>
 const key=${JSON.stringify(`project-pint:${batchId}:decisions`)};const cards=[...document.querySelectorAll('.card')];let state=JSON.parse(localStorage.getItem(key)||'{}');
 function save(){localStorage.setItem(key,JSON.stringify(state));render()}
@@ -136,7 +146,7 @@ const markdown = [
   "",
   ...reviewJobs.map(
     (job) =>
-      `- ${String(job.reviewNumber).padStart(3, "0")} [ ] APPROVE [ ] DENY — ${job.productName} (${job.asin}), ${job.styleSlug}, slot ${job.slot} — \`${job.sceneId}\``
+      `- ${String(job.reviewNumber).padStart(3, "0")} [ ] APPROVE [ ] DENY — ${job.productName} (${job.asin}), ${job.styleSlug}, slot ${job.slot} — [Amazon listing](${job.amazonListingUrl}) — \`${job.sceneId}\``
   )
 ].join("\n");
 fs.writeFileSync(path.join(reviewRoot, "OWNER_REVIEW.md"), `${markdown}\n`, "utf8");
