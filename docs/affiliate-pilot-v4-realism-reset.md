@@ -103,6 +103,18 @@ The run reused the 104-call locked identity corpus and made 75 fresh styled prov
 
 The private review package contains an interactive local approve/deny gallery, a Markdown checklist, a machine-readable review index, and five numbered contact sheets of ten candidates each. The gallery and images remain under untracked `output/affiliate-pilot/` evidence. The tracked renderer, freezer, prompt-strengthening guard, replacement remapper, and ingest changes contain no generated image bytes.
 
+### V4.72 owner-feedback wave B
+
+On 2026-08-05, the owner export for `v471-owner-review-001` was hash-preserved and applied: 26 images were accepted, 24 were declined, and every decline included a reason. Twenty-eight private owner-selected copies now exist when the two earlier accepted calibration images are included. These files remain private selection evidence and have not been published.
+
+Wave B batch `v472-owner-review-002` contains 50 new owner-pending candidates across the eight products whose exact identities remain active. Twelve initial hard failures were replaced in their original product/style/slot lanes before rendering the final gallery. Each review card links to the exact Amazon ASIN, persists Approve/Deny state locally, requires a reason for every Deny before decisions can be copied or downloaded, and exports a batch-specific JSON file.
+
+The owner cross-check corrected the Bambusi identity contract to exactly eight top slats and exactly eight lower-shelf slats, with seven gaps on each level. The prior generated identity atlas is preserved but quarantined for future Bambusi calls because its top view mutated the product to nine top slats. Subsequent corrective candidates use the exact manufacturer source image and record its path and hash as supplemental generation evidence.
+
+Two products remain intentionally outside Wave B. Yamazaki Tower ASIN `B07PFYZ3DP` is retired pending owner approval of a better-priced, better-reviewed replacement. Creative Home ASIN `B000MS63E2` is blocked until its no-slat, rounder exact listing identity is rebuilt. No silent product substitution was made.
+
+The first Wave B generation call used a condensed manual transcription rather than the byte-exact frozen prompt. That evidence discrepancy is explicitly recorded in `generation-execution-amendment.json`; the candidate remains owner-pending and must not be represented as byte-exact execution. All later Wave B generation calls used their frozen manifest prompts directly.
+
 ## Decision semantics
 
 The ledger uses these distinct states:

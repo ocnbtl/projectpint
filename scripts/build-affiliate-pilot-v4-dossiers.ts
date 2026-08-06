@@ -125,8 +125,8 @@ const configs: Record<string, DossierConfig> = {
       materials: confirmed(["Natural bamboo construction with dark non-slip foot pads."], ["bambusi-manufacturer"]),
       finish: confirmed(["Warm natural bamboo in a matte-to-satin finish with irregular real wood grain."], ["bambusi-manufacturer"]),
       dimensions: confirmed(["Approximately 17 inches wide by 9 inches deep by 17 inches high."], ["bambusi-manufacturer"]),
-      topology: confirmed(["Rectangular concave/slightly bowed nine-slat top, four straight slightly splayed legs, open sides, and one lower slatted shelf."], ["bambusi-manufacturer"]),
-      countableFeatures: confirmed(["Exactly nine interior front-to-back top slats, eight top gaps, four legs, four dark feet, and one lower shelf."], ["bambusi-manufacturer"]),
+        topology: confirmed(["Rectangular concave/slightly bowed eight-slat top, four straight slightly splayed legs, open sides, and one lower eight-slat shelf."], ["bambusi-manufacturer"]),
+        countableFeatures: confirmed(["Exactly eight interior front-to-back top slats with seven gaps, exactly eight lower-shelf slats with seven gaps, four legs, four dark feet, and one lower shelf."], ["bambusi-manufacturer"]),
       patternOrGrain: confirmed(["Nonrepeating longitudinal bamboo grain and natural color variation; no orange plastic gloss."], ["bambusi-manufacturer"]),
       mountingOrSupport: confirmed(["Freestanding; all four non-slip feet contact one level surface."], ["bambusi-manufacturer"]),
       orientationAndHandedness: confirmed(["No reversible controls; the gently bowed front apron and slat direction define the canonical front."], ["bambusi-manufacturer"]),
@@ -134,7 +134,7 @@ const configs: Record<string, DossierConfig> = {
     },
     references: [{ sourceId: "bambusi-manufacturer", ordinals: [1, 2, 3, 4, 5, 6, 7, 8], role: "topology" }],
     explicitUnknowns: [{ field: "underside fastener placement", handling: "Do not expose or count fasteners; continue the visible bamboo rails conservatively.", identityCritical: false }],
-    contradictions: []
+      contradictions: [{ field: "slat count", observation: "The legacy identity contract transcribed nine interior top slats and did not lock the lower-shelf count.", resolution: "Owner cross-check against the exact listing images confirms exactly eight top slats and eight lower-shelf slats, with seven gaps on each level.", status: "resolved" }]
   },
   B08TLP2D54: {
     sourceClaims: {

@@ -117,18 +117,20 @@ export const affiliatePilotV4Selections: readonly AffiliatePilotV4Selection[] = 
     ],
     privateReferenceCount: 1,
     identityPrompt:
-      "Exactly one compact natural-bamboo Bambusi shower bench, approximately 17 inches wide by 9 inches deep by 17 inches high. Preserve the authorized geometry visible in the exact manufacturer packshots: a rectangular top with exactly nine INTERIOR front-to-back bamboo slat boards and eight open gaps between adjacent boards; the surrounding rounded outer frame is not counted as a slat; a gently bowed front apron; four slightly splayed straight legs with small dark non-slip feet; open sides; and the same single lower open slatted shelf and joinery. Axis invariant: front and back identity views face the broad 17-inch-long sides, while left and right identity views face the narrow 9-inch-deep ends; never rotate a side view onto a broad face. The bamboo is matte-to-satin with stochastic natural grain, never glossy, flat, plastic, orange, arched, semicircular, or independently bright.",
+      "Exactly one compact natural-bamboo Bambusi shower bench, approximately 17 inches wide by 9 inches deep by 17 inches high. Preserve the authorized geometry visible in the exact manufacturer packshots: a rectangular top with exactly eight INTERIOR front-to-back bamboo slat boards and seven open gaps between adjacent boards; the surrounding rounded outer frame is not counted as a slat; a gently bowed front apron; four slightly splayed straight legs with small dark non-slip feet; open sides; and one lower open shelf with exactly eight front-to-back slat boards and seven open gaps. Axis invariant: front and back identity views face the broad 17-inch-long sides, while left and right identity views face the narrow 9-inch-deep ends; never rotate a side view onto a broad face. The bamboo is matte-to-satin with stochastic natural grain, never glossy, flat, plastic, orange, arched, semicircular, or independently bright.",
     countableFeatures: [
-      "exactly nine interior front-to-back top slats",
-      "exactly eight top gaps",
+      "exactly eight interior front-to-back top slats",
+      "exactly seven top gaps",
+      "exactly eight lower-shelf slats",
+      "exactly seven lower-shelf gaps",
       "four straight legs",
       "four dark feet",
       "one lower open shelf"
     ],
     hiddenGeometryPolicy:
-      "Infer unseen joinery only as the simplest continuation of the authorized reference. Do not add braces, drawers, a third shelf, a back, arms, cushions, metal framing, curved legs, or decorative cutouts. Bottom-view invariant: the camera is directly beneath the bench so all four dark foot pads face the lens at the four corners and the legs foreshorten into their pads; never substitute a front elevation with long vertical leg shafts. Show exactly four leg ends with exactly four pads, never duplicate or split a support, and preserve open green space through every slat gap and open bay instead of inventing a solid panel. Keep the top underside as exactly nine slats with eight gaps; treat the lower shelf as a separate shallower slatted plane and never merge its boards with, replace, or reduce the nine-slat top.",
+      "Infer unseen joinery only as the simplest continuation of the authorized reference. Do not add braces, drawers, a third shelf, a back, arms, cushions, metal framing, curved legs, or decorative cutouts. Bottom-view invariant: the camera is directly beneath the bench so all four dark foot pads face the lens at the four corners and the legs foreshorten into their pads; never substitute a front elevation with long vertical leg shafts. Show exactly four leg ends with exactly four pads, never duplicate or split a support, and preserve open green space through every slat gap and open bay instead of inventing a solid panel. Keep the top underside as exactly eight slats with seven gaps; treat the lower shelf as a separate shallower plane with exactly eight slats and seven gaps, and never merge either level's boards or reduce its eight-slat count.",
     placementInvariant:
-      "Set all four feet on one level dry or plausibly wet floor with clearance from glass, walls, vanities, and drains. Props may rest on the top or lower shelf only when fully supported and may never conceal the nine-interior-slat identity in every image.",
+      "Set all four feet on one level dry or plausibly wet floor with clearance from glass, walls, vanities, and drains. Props may rest on the top or lower shelf only when fully supported and may never conceal the eight-top-slat or eight-lower-slat identity in any image.",
     rationale:
       "Re-tests exact slat direction and count, shelf geometry, material roughness, contact, and exposure."
   },

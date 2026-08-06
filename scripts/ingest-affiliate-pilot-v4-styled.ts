@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
+import { affiliatePilotV4Selections } from "../data/affiliate-pilot.v4.ts";
 
 const require = createRequire(import.meta.url);
 const sharp = require("sharp") as any;
@@ -33,6 +34,10 @@ const decision = argument("decision")!;
 const audit = argument("reason")!;
 const rejectionCause = argument("cause", false);
 const rootRevision = argument("root-revision", false);
+const supplementalReferenceArgument = argument("supplemental-reference", false);
+const supplementalReferencePath = supplementalReferenceArgument
+  ? path.resolve(supplementalReferenceArgument)
+  : null;
 if (decision !== "assistant_pass_owner_pending" && decision !== "assistant_hard_reject") {
   throw new Error("--decision must be assistant_pass_owner_pending or assistant_hard_reject.");
 }
@@ -40,6 +45,9 @@ if (decision === "assistant_hard_reject" && !rejectionCause) {
   throw new Error("--cause=... is required for an assistant hard reject.");
 }
 if (!fs.existsSync(inputPath)) throw new Error(`Input image does not exist: ${inputPath}`);
+if (supplementalReferencePath && !fs.existsSync(supplementalReferencePath)) {
+  throw new Error(`Supplemental reference does not exist: ${supplementalReferencePath}`);
+}
 
 const repositoryRoot = process.cwd();
 const outputRoot = path.join(repositoryRoot, "output");
@@ -147,6 +155,35 @@ function replacePromptLine(prompt: string, label: string, value: string): string
   return lines.join("\n");
 }
 
+function refreshCurrentProductContract(prompt: string, asin: string): string {
+  const selection = affiliatePilotV4Selections.find((candidate) => candidate.asin === asin);
+  if (!selection) throw new Error(`Cannot refresh replacement product contract for ${asin}.`);
+  const lines = prompt.split("\n");
+  const productContractIndex = lines.findIndex((line) => line.startsWith("Product contract:"));
+  const countableAuditIndex = lines.findIndex((line) => line.startsWith("Countable-feature audit:"));
+  if (productContractIndex < 0 || countableAuditIndex < 0) {
+    throw new Error(`Cannot refresh replacement product contract lines for ${asin}.`);
+  }
+  lines[productContractIndex] = `Product contract: ${selection.identityPrompt}`;
+  lines[countableAuditIndex] = `Countable-feature audit: ${selection.countableFeatures
+    .map((feature, index) => `${index + 1}) ${feature}`)
+    .join("; ")}.`;
+  if (asin === "B0DC7VG6Z9") {
+    const referenceIndex = lines.findIndex(
+      (line) => line.startsWith("Reference pack:") || line.startsWith("Corrective reference pack:")
+    );
+    if (referenceIndex < 0) throw new Error("Cannot refresh Bambusi corrective reference line.");
+    lines[referenceIndex] =
+      "Corrective reference pack: use the exact manufacturer image at output/affiliate-pilot/v4/private-evidence/product-sources/B0DC7VG6Z9/bambusi-manufacturer-04.jpg and the validated dossier at output/affiliate-pilot/v4/private-evidence/product-dossiers/B0DC7VG6Z9/dossier.json for product identity. The generated reference atlas is quarantined for future Bambusi calls because its top view mutated the verified eight-slat product into nine slats; do not use that atlas as visual guidance.";
+  }
+  return lines
+    .join("\n")
+    .replace(
+      "may never conceal the nine-interior-slat identity in every image",
+      "may never conceal the eight-top-slat or eight-lower-slat identity in any image"
+    );
+}
+
 function buildReplacementJob(sourceJob: JsonRecord): JsonRecord {
   const siblingJobs = jobs.filter(
     (candidate) =>
@@ -180,12 +217,14 @@ function buildReplacementJob(sourceJob: JsonRecord): JsonRecord {
     materialId: `replacement-material-${corpusSeed}`,
     material: replacementChoice(replacementOptions.material, corpusSeed, 2)
   };
-  let prompt = String(sourceJob.prompt)
-    .replace(
+  let prompt = refreshCurrentProductContract(String(sourceJob.prompt), String(sourceJob.asin)).replace(
       /^Scene identity: .*$/m,
       `Scene identity: ${replacementSceneId}; corpus diversity seed: ${corpusSeed}.`
     );
-  if (String(sourceJob.promptVersion).startsWith("affiliate-pilot-lived-in-iphone-realism-v4.71")) {
+  if (
+    String(sourceJob.promptVersion).startsWith("affiliate-pilot-lived-in-iphone-realism-v4.71") ||
+    String(sourceJob.promptVersion).startsWith("affiliate-pilot-owner-feedback-v4.72")
+  ) {
     prompt = replacePromptLine(
       prompt,
       "Room history and budget",
@@ -332,6 +371,12 @@ const call = {
   evidencePath: path.relative(repositoryRoot, evidencePath).replace(/\\/g, "/"),
   candidatePath: path.relative(repositoryRoot, candidatePath).replace(/\\/g, "/"),
   candidateSha256: inputSha256,
+  supplementalReferencePath: supplementalReferencePath
+    ? path.relative(repositoryRoot, supplementalReferencePath).replace(/\\/g, "/")
+    : null,
+  supplementalReferenceSha256: supplementalReferencePath
+    ? sha256File(supplementalReferencePath)
+    : null,
   dimensions: { width: metadata.width, height: metadata.height },
   decision,
   audit,
