@@ -55,6 +55,7 @@
     "prepare:owner-review-batch:affiliate-pilot-v4": "node --import tsx scripts/prepare-affiliate-pilot-v4-owner-review-batch.ts",
     "strengthen:owner-review-batch:affiliate-pilot-v4": "node --import tsx scripts/strengthen-affiliate-pilot-v4-owner-review-batch.ts",
     "replace:owner-review-batch-job:affiliate-pilot-v4": "node --import tsx scripts/replace-affiliate-pilot-v4-owner-review-batch-job.ts",
+    "substitute:owner-review-batch-job:affiliate-pilot-v4": "node --import tsx scripts/substitute-affiliate-pilot-v4-owner-review-batch-job.ts",
     "render:owner-review-batch:affiliate-pilot-v4": "node --import tsx scripts/render-affiliate-pilot-v4-owner-review-batch.ts",
     "apply:owner-review-decisions:affiliate-pilot-v4": "node --import tsx scripts/apply-affiliate-pilot-v4-owner-review-decisions.ts",
     "prepare:owner-feedback-wave:affiliate-pilot-v4": "node --import tsx scripts/prepare-affiliate-pilot-v4-owner-feedback-wave.ts",

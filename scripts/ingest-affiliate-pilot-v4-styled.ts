@@ -176,6 +176,14 @@ function refreshCurrentProductContract(prompt: string, asin: string): string {
     lines[referenceIndex] =
       "Corrective reference pack: use the exact manufacturer image at output/affiliate-pilot/v4/private-evidence/product-sources/B0DC7VG6Z9/bambusi-manufacturer-04.jpg and the validated dossier at output/affiliate-pilot/v4/private-evidence/product-dossiers/B0DC7VG6Z9/dossier.json for product identity. The generated reference atlas is quarantined for future Bambusi calls because its top view mutated the verified eight-slat product into nine slats; do not use that atlas as visual guidance.";
   }
+  if (asin === "B0D2KK6MNS") {
+    const referenceIndex = lines.findIndex(
+      (line) => line.startsWith("Reference pack:") || line.startsWith("Corrective reference pack:")
+    );
+    if (referenceIndex < 0) throw new Error("Cannot refresh KOUFALL corrective reference line.");
+    lines[referenceIndex] =
+      "Corrective reference pack: use the exact Amazon listing scene at output/affiliate-pilot/v4/private-evidence/product-sources/B0D2KK6MNS/amazon-exact-asin-02.jpg together with the listing grommet close-up at output/affiliate-pilot/v4/private-evidence/product-sources/B0D2KK6MNS/amazon-exact-asin-06.jpg. The older generated atlas is quarantined because it depicts an incorrect header count. Preserve exactly twelve reinforced metal grommet holes and twelve silver ball-bead hooks; do not use that atlas as visual guidance.";
+  }
   return lines
     .join("\n")
     .replace(
@@ -223,7 +231,7 @@ function buildReplacementJob(sourceJob: JsonRecord): JsonRecord {
     );
   if (
     String(sourceJob.promptVersion).startsWith("affiliate-pilot-lived-in-iphone-realism-v4.71") ||
-    String(sourceJob.promptVersion).startsWith("affiliate-pilot-owner-feedback-v4.72")
+    String(sourceJob.promptVersion).startsWith("affiliate-pilot-owner-feedback-v4.7")
   ) {
     prompt = replacePromptLine(
       prompt,

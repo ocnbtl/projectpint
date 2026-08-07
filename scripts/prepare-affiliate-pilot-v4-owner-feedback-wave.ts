@@ -4,7 +4,8 @@ import path from "node:path";
 
 type JsonRecord = Record<string, any>;
 
-const PROMPT_VERSION = "affiliate-pilot-owner-feedback-v4.72-wave-b";
+const PROMPT_VERSION = "affiliate-pilot-owner-feedback-v4.73-wave-c";
+const WAVE_LABEL = "wave C";
 const RETIRED_CART_ASIN = "B07PFYZ3DP";
 const IDENTITY_REBUILD_ASIN = "B000MS63E2";
 
@@ -30,44 +31,74 @@ function sha256(value: string): string {
   return createHash("sha256").update(value).digest("hex");
 }
 
+function sha256File(filePath: string): string {
+  return createHash("sha256").update(fs.readFileSync(filePath)).digest("hex");
+}
+
 function promptGuard(asin: string): string {
   const guards: Record<string, string> = {
     B0829N8C9G:
-      "The OXO dispenser must share the room's exposure and white balance: no glowing steel, bright halo, independent product lighting, or fake edge contrast. Every nearby fixed fixture must be recognizable and physically complete; never substitute an overturned cup or ambiguous object for faucet hardware.",
+      "The OXO dispenser must share the room's exposure and white balance: no glowing steel, bright halo, independent product lighting, fake edge contrast, or washed-out pump top. Preserve the listing-accurate charcoal pump color and a short nearly horizontal spout that never points upward. Every nearby fixed fixture must be recognizable and physically complete; never substitute an overturned cup or ambiguous object for faucet hardware.",
     B0DC7VG6Z9:
-      "The Bambusi bench has exactly eight distinct narrow top slats and exactly eight distinct narrow lower-shelf slats. Both counts must be visually auditable with no merged, hidden, extra, missing, or overly wide slats. If the model cannot satisfy 8-over-8 exactly, discard the output.",
+      "The Bambusi bench has exactly eight distinct narrow top slats and exactly eight distinct narrow lower-shelf slats. Both counts must be visually auditable with even construction spacing and no merged, hidden, extra, missing, uneven, or overly wide slats. Each bamboo board needs its own subtle nonrepeating grain, color, end grain, and wear; no cloned or synthetic wood texture and no strange light leaking between slats. Some scenes may include one or two ordinary functional items such as a casually placed towel, brush, comb, or bottle, but they must not hide the 8-over-8 count or look staged. If the model cannot satisfy 8-over-8 exactly, discard the output.",
     B00176AOKM:
-      "Both metal extension arms of the Aquala caddy must rest visibly and securely on opposite dry bathtub rims with believable weight and contact shadows; no floating edge or impossible attachment. Spa Greenery must be unmistakable through a restrained green fixed finish plus one plausible living plant or clearly visible leafy exterior foliage.",
+      "The Aquala caddy must span the tub rather than sit in the water: both metal extension arms rest visibly and securely on opposite dry bathtub rims with believable weight and contact shadows, with no floating edge, submerged tray, flying corner, or impossible attachment. Preserve the listing-accurate front hook and all support hardware; the hook must be present and visually coherent. Spa Greenery must be unmistakable through a restrained green fixed finish plus one plausible living plant or clearly visible leafy exterior foliage.",
     B008X0VM0Q:
-      "The Trinsic towel ring must be rigidly mounted, geometrically square, and level in the physical room even if the phone camera has slight roll. Door and fixture scale must remain ordinary and mutually coherent.",
+      "The Trinsic towel ring must be rigidly mounted, geometrically square, and level in the physical room even if the phone camera has slight roll. Any mirror reflection must preserve its straight rigid geometry, mounting direction, scale, and location; nearby dispensers and accessories must be fully supported with contact shadows and never float. Door and fixture scale must remain ordinary and mutually coherent.",
     B08TLP2D54:
-      "All vanity and mirror lights must be deliberately aligned, evenly mounted, electrically plausible, and free of doubled, drifting, or mismatched fixtures.",
+      "The Hubba mirror and every reflected doorway, wall, fixture, and object must obey one consistent room geometry and face the physically correct direction. All vanity and mirror lights must be deliberately aligned, evenly mounted, electrically plausible, and free of doubled, drifting, or mismatched fixtures. Do not add random cups, upside-down containers, or unexplained props.",
     B07SG7BV11:
-      "Preserve the exact Leah curtain print, panel count, hanging geometry, and textile scale that passed owner review; vary the real room and camera conditions without redesigning the curtain.",
+      "Preserve the exact Leah curtain print, panel count, hanging geometry, and textile scale that passed owner review; vary the real room and camera conditions without redesigning the curtain. Curtain lighting must follow the room rather than glow or flatten artificially. Spa Greenery scenes need visible green fixed finishes or plausible living foliage. Hair ties and every small accessory must remain separate recognizable objects with no fused, mutated, or unexplained attachments.",
     B0D2KK6MNS:
-      "Preserve the exact terracotta linen-blend curtain color, weave, header, drape, and single-panel identity that passed owner review; vary the real room without beautifying it into a catalog set.",
+      "Preserve the exact terracotta linen-blend curtain color, weave, drape, and single-panel identity that passed owner review. The header must show exactly twelve listing-accurate hanging holes or grommet positions, never 13, 18, 19, or another count. The bottom hem must hang with natural weight, small unrelated folds, and slight real-world irregularity rather than a ruler-straight synthetic line. Vary the real room without beautifying it into a catalog set.",
     B0F3L72TC3:
-      "Preserve one exact healthy Golden Pothos in its documented 10-inch hanging basket with believable vines, leaf variation, gravity, and support; do not clone leaves or add competing plants."
+      "Preserve one exact healthy Golden Pothos in its documented 10-inch hanging basket with the listing-accurate top hanger, suspension junctions, and support geometry. Use believable vines, leaf variation, gravity, and support; do not clone leaves, simplify or redesign the hanger top, or add competing plants."
   };
   return guards[asin] ?? "Preserve exact product identity and correct physical installation before considering style.";
 }
 
-function feedbackPrompt(prompt: string, sceneId: string, asin: string, reasons: string[]): string {
+function feedbackPrompt(
+  prompt: string,
+  sceneId: string,
+  asin: string,
+  reasons: string[],
+  approvals: string[]
+): string {
   if (!prompt.includes("Decision semantics:")) throw new Error(`${sceneId} prompt lacks Decision semantics.`);
   const uniqueReasons = [...new Set(reasons.map((reason) => reason.trim()).filter(Boolean))];
   const feedback = uniqueReasons.length
     ? uniqueReasons.map((reason, index) => `${index + 1}) ${reason}`).join("\n")
-    : "No product-specific denial was recorded in wave A; preserve the accepted identity standard while creating a materially new room.";
+    : "No product-specific denial was recorded in the source review batch; preserve the accepted identity standard while creating a materially new room.";
+  const uniqueApprovals = [...new Set(approvals.map((reason) => reason.trim()).filter(Boolean))];
+  const approvalEvidence = uniqueApprovals.length
+    ? uniqueApprovals.map((reason, index) => `${index + 1}) ${reason}`).join("\n")
+    : "No detailed positive note was recorded; preserve every previously accepted product and realism trait.";
   const correction = [
-    `Owner-feedback wave: ${sceneId}. Generate a genuinely new physical bathroom and phone photograph; do not repair or imitate any earlier image.`,
+    `Owner-feedback ${WAVE_LABEL}: ${sceneId}. Generate a genuinely new physical bathroom and phone photograph; do not repair or imitate any earlier image.`,
     `Owner denial evidence for this product: ${feedback}`,
+    `Owner approval evidence to preserve: ${approvalEvidence}`,
     `Mandatory product correction: ${promptGuard(asin)}`,
     "Cross-image plausibility gate: every fixed object must have a recognizable household function, coherent scale, complete geometry, and buildable attachment. Reject ambiguous surrogate objects, impossible junctions, duplicate fixtures, and unexplained shapes.",
     "Style legibility gate: make the named style immediately legible through fixed architecture, finishes, proportions, and light while retaining an ordinary maintained home. Do not rely on a caption, a coordinated decor kit, or generic luxury materials.",
     "Owner-review semantics: assistant screening remains provisional; this candidate is neither approved nor publishable until the owner explicitly decides."
   ].join("\n");
-  return prompt
-    .replace(/^Scene identity: .*$/m, `Scene identity: ${sceneId}; owner-feedback corpus wave B.`)
+  const withSceneIdentity = prompt.replace(
+    /^Scene identity: .*$/m,
+    `Scene identity: ${sceneId}; owner-feedback corpus ${WAVE_LABEL}.`
+  );
+  const withVerifiedReference =
+    asin === "B0DC7VG6Z9"
+      ? withSceneIdentity.replace(
+          /^Reference pack: .*$/m,
+          "Reference pack: use the owner-verified Bambusi manufacturer listing image at output/affiliate-pilot/v4/private-evidence/product-sources/B0DC7VG6Z9/bambusi-manufacturer-04.jpg for exact 8-over-8 identity. The older generated atlas is quarantined and must not be used. Use the validated dossier only for supporting textual identity. Do not copy the listing backdrop, lighting, or pose."
+        )
+      : asin === "B0D2KK6MNS"
+        ? withSceneIdentity.replace(
+            /^Reference pack: .*$/m,
+            "Reference pack: use the exact Amazon listing scene at output/affiliate-pilot/v4/private-evidence/product-sources/B0D2KK6MNS/amazon-exact-asin-02.jpg together with the listing grommet close-up at output/affiliate-pilot/v4/private-evidence/product-sources/B0D2KK6MNS/amazon-exact-asin-06.jpg. The older generated atlas is quarantined because it depicts an incorrect header count and must not be used. Preserve exactly twelve reinforced metal grommet holes and twelve silver ball-bead hooks. Do not copy the listing backdrop, lighting, or pose."
+          )
+        : withSceneIdentity;
+  return withVerifiedReference
     .replace("Decision semantics:", `${correction}\nDecision semantics:`);
 }
 
@@ -84,6 +115,13 @@ function nextCandidateStorageKey(source: JsonRecord, candidateOrdinal: number): 
 const batchId = argument("batch-id");
 const sourceBatchId = argument("source-batch-id", "v471-owner-review-001");
 const count = Number.parseInt(argument("count", "50"), 10);
+const avoidBatchId = argument("avoid-batch-id", "");
+const extraExcludedAsins = new Set(
+  argument("exclude-asins", "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean)
+);
 if (!/^[a-z0-9][a-z0-9-]*$/.test(batchId)) throw new Error("--batch-id must be a lowercase storage slug.");
 if (!Number.isInteger(count) || count < 1) throw new Error("--count must be a positive integer.");
 
@@ -104,6 +142,12 @@ if (fs.existsSync(batchPath)) throw new Error(`Batch already exists: ${batchPath
 
 const manifest = readJson(manifestPath);
 const ledger = readJson(ledgerPath);
+const avoidBatch = avoidBatchId
+  ? readJson(path.join(v4Root, "private-evidence", "owner-review-batches", avoidBatchId, "batch.json"))
+  : null;
+const avoidedOwnerSelectedKeys = new Set(
+  ((avoidBatch?.jobs ?? []) as JsonRecord[]).map((job) => String(job.ownerSelectedStorageKey))
+);
 const receipt = readJson(sourceReceiptPath);
 const identityCalls = ledger.identityGeneration?.calls as JsonRecord[] | undefined;
 const lock = ledger.styledGeneration?.identityLock as JsonRecord | undefined;
@@ -115,7 +159,7 @@ if (lock.styledIdentityGenerationAllowed !== false) throw new Error("Styled iden
 const products = manifest.products as JsonRecord[];
 const jobs = manifest.jobs as JsonRecord[];
 const styledJobs = jobs.filter((job) => job.kind === "styled");
-const blockedAsins = new Set([RETIRED_CART_ASIN, IDENTITY_REBUILD_ASIN]);
+const blockedAsins = new Set([RETIRED_CART_ASIN, IDENTITY_REBUILD_ASIN, ...extraExcludedAsins]);
 const eligibleProducts = products.filter((product) => !blockedAsins.has(String(product.asin)));
 if (count < eligibleProducts.length) throw new Error(`${count} jobs cannot cover ${eligibleProducts.length} products.`);
 
@@ -125,7 +169,15 @@ if (!cart || !soapDish) throw new Error("Owner-directed blocked products are mis
 cart.approvalStatus = "owner_retired_pending_replacement";
 cart.collectionStatus = "excluded_from_generation_pending_better_product";
 cart.ownerDirective =
-  "Remove and replace this cart with a different Amazon product because the listing reviews are weak and the product is expensive.";
+  "Keep the original cart retired. The proposed SPACEKEEPER replacement (ASIN B07QRH2PZS) is also owner-rejected because its design is too complex to reproduce accurately and consistently. Do not generate either cart; research a simpler replacement and obtain owner approval before identity work.";
+cart.rejectedReplacementCandidates = [
+  {
+    asin: "B07QRH2PZS",
+    productName: "SPACEKEEPER rolling storage cart",
+    status: "owner_rejected_topology_too_complex",
+    reason: "Design is too complex to replicate accurately and consistently."
+  }
+];
 soapDish.referencePackStatus = "owner_rejected_identity_rebuild_required";
 soapDish.collectionStatus = "excluded_from_generation_pending_exact_identity_rebuild";
 soapDish.ownerDirective =
@@ -169,6 +221,17 @@ for (const { decision, job } of declineJobs) {
   values.push(String(decision.reason));
   feedbackByAsin.set(String(job.asin), values);
 }
+const approvalFeedbackByAsin = new Map<string, string[]>();
+for (const decision of (receipt.decisions as JsonRecord[]).filter(
+  (entry) => entry.decision === "owner_accepted"
+)) {
+  const job = styledJobs.find((candidate) => candidate.sceneId === decision.sceneId);
+  const reason = String(decision.reason ?? "").trim();
+  if (!job || blockedAsins.has(String(job.asin)) || /^Owner approved review \d+ in /i.test(reason)) continue;
+  const values = approvalFeedbackByAsin.get(String(job.asin)) ?? [];
+  values.push(reason);
+  approvalFeedbackByAsin.set(String(job.asin), values);
+}
 
 const acceptedCount = (asin: string): number =>
   styledJobs.filter(
@@ -194,21 +257,24 @@ for (const product of eligibleProducts) {
   const asin = String(product.asin);
   const target = targets.get(asin)!;
   const reasons = feedbackByAsin.get(asin) ?? [];
+  const approvals = approvalFeedbackByAsin.get(asin) ?? [];
   const productSelected: JsonRecord[] = [];
   const reservedKeys = new Set(
     styledJobs
       .filter((job) => job.asin === asin && job.status === "owner_accepted")
       .map((job) => String(job.ownerSelectedStorageKey))
   );
+  for (const key of avoidedOwnerSelectedKeys) reservedKeys.add(key);
 
   for (const { decision, job: source } of declineJobs.filter((entry) => entry.job.asin === asin)) {
     if (productSelected.length >= target) break;
+    if (reservedKeys.has(String(source.ownerSelectedStorageKey))) continue;
     const laneJobs = styledJobs.filter(
       (job) => job.asin === asin && job.styleSlug === source.styleSlug && Number(job.slot) === Number(source.slot)
     );
     const candidateOrdinal = Math.max(...laneJobs.map((job) => Number(job.candidateOrdinal))) + 1;
     const sceneId = `v4-${asin}-${source.styleSlug}-${String(source.slot).padStart(2, "0")}-candidate-${String(candidateOrdinal).padStart(2, "0")}`;
-    const prompt = feedbackPrompt(String(source.prompt), sceneId, asin, reasons);
+    const prompt = feedbackPrompt(String(source.prompt), sceneId, asin, reasons, approvals);
     const replacement: JsonRecord = {
       ...source,
       id: `${source.productId}:${source.styleSlug}:${source.slot}:candidate:${candidateOrdinal}`,
@@ -223,7 +289,7 @@ for (const product of eligibleProducts) {
       generationStrategy: "fresh_owner_feedback_replacement_candidate",
       replacementForCandidateId: source.id,
       replacementForCandidateSha256: source.candidateSha256,
-      replacementCause: "owner_feedback_wave_b",
+      replacementCause: "owner_feedback_wave_c",
       rootRevisionApplied: String(decision.reason),
       ownerDecisionAt: undefined,
       ownerDecisionReason: undefined,
@@ -265,11 +331,11 @@ for (const product of eligibleProducts) {
     );
   for (const job of queued) {
     if (productSelected.length >= target) break;
-    const prompt = feedbackPrompt(String(job.prompt), String(job.sceneId), asin, reasons);
+    const prompt = feedbackPrompt(String(job.prompt), String(job.sceneId), asin, reasons, approvals);
     job.promptVersion = PROMPT_VERSION;
     job.prompt = prompt;
     job.promptSha256 = sha256(prompt);
-    job.generationStrategy = "owner_feedback_wave_b_new_style_candidate";
+    job.generationStrategy = "owner_feedback_wave_c_new_style_candidate";
     job.rootRevisionApplied = reasons.length
       ? [...new Set(reasons)].join(" | ")
       : "Preserve wave-A accepted identity and realism while expanding style coverage.";
@@ -298,6 +364,7 @@ const batch = {
   batchId,
   sourceOwnerDecisionBatchId: sourceBatchId,
   sourceOwnerDecisionReceiptPath: path.relative(repositoryRoot, sourceReceiptPath).replace(/\\/g, "/"),
+  avoidedOwnerReviewBatchId: avoidBatchId || null,
   createdAt: occurredAt,
   status: "generation_queued",
   targetOwnerReviewCandidateCount: count,
@@ -308,16 +375,31 @@ const batch = {
   styledIdentityGenerationAllowed: false,
   excludedProducts: [
     { asin: RETIRED_CART_ASIN, reason: cart.ownerDirective },
-    { asin: IDENTITY_REBUILD_ASIN, reason: soapDish.ownerDirective }
+    { asin: IDENTITY_REBUILD_ASIN, reason: soapDish.ownerDirective },
+    ...[...extraExcludedAsins].map((asin) => ({
+      asin,
+      reason: "Temporarily excluded from this batch by explicit preparation argument."
+    }))
   ],
   selectionPolicy:
     "Eight generation-ready products; owner-declined lanes receive fresh replacements first, then unique lanes are chosen in slot-first style rotation. Lowest accepted products receive remainder jobs.",
   decisionSemantics:
     "Assistant screening is provisional. Only explicit owner_accepted or owner_declined decisions are final. This batch is private and not publishable.",
   ownerFeedbackSummary: Object.fromEntries(feedbackByAsin),
+  ownerApprovalEvidenceSummary: Object.fromEntries(approvalFeedbackByAsin),
   replacementCount: replacements.length,
   jobs: selected.map((job, index) => {
     const product = productByAsin.get(job.asin)!;
+    const referencePath =
+      job.asin === "B0DC7VG6Z9"
+        ? "output/affiliate-pilot/v4/private-evidence/product-sources/B0DC7VG6Z9/bambusi-manufacturer-04.jpg"
+        : job.asin === "B0D2KK6MNS"
+          ? "output/affiliate-pilot/v4/private-evidence/product-sources/B0D2KK6MNS/amazon-exact-asin-02.jpg"
+          : `output/${job.atlasStorageKey}`;
+    const absoluteReferencePath = path.join(repositoryRoot, referencePath);
+    if (!fs.existsSync(absoluteReferencePath)) {
+      throw new Error(`Missing generation reference for ${job.sceneId}: ${referencePath}`);
+    }
     return {
       reviewNumber: index + 1,
       sceneId: job.sceneId,
@@ -335,8 +417,8 @@ const batch = {
       exactPrompt: job.prompt,
       requestedModel: job.requestedModel,
       requestedQuality: job.requestedQuality,
-      atlasPath: `output/${job.atlasStorageKey}`,
-      atlasSha256: job.referencePackSha256,
+      atlasPath: referencePath,
+      atlasSha256: sha256File(absoluteReferencePath),
       candidatePath: `output/${job.storageKey}`,
       ownerSelectedStorageKey: job.ownerSelectedStorageKey,
       statusAtFreeze: job.status
@@ -345,7 +427,7 @@ const batch = {
 };
 
 manifest.promptVersion = PROMPT_VERSION;
-manifest.status = "owner_feedback_wave_b_generation_queued";
+manifest.status = "owner_feedback_wave_c_generation_queued";
 manifest.jobs = jobs;
 ledger.styledGeneration.replacementQueued =
   Number(ledger.styledGeneration.replacementQueued ?? 0) + replacements.length;
@@ -357,7 +439,7 @@ ledger.events.push({
   sourceBatchId,
   selectedCount: selected.length,
   replacementCount: replacements.length,
-  excludedAsins: [RETIRED_CART_ASIN, IDENTITY_REBUILD_ASIN],
+  excludedAsins: [...blockedAsins],
   identityCallCount: identityCalls.length,
   styledIdentityGenerationCallCount: 0
 });
@@ -366,5 +448,5 @@ writeJsonAtomic(batchPath, batch);
 writeJsonAtomic(manifestPath, manifest);
 writeJsonAtomic(ledgerPath, ledger);
 process.stdout.write(
-  `Prepared ${batchId}: ${selected.length} jobs across ${eligibleProducts.length} products, ${replacements.length} owner-feedback replacements, two blocked products excluded.\n`
+  `Prepared ${batchId}: ${selected.length} jobs across ${eligibleProducts.length} products, ${replacements.length} owner-feedback replacements, ${blockedAsins.size} products excluded.\n`
 );
