@@ -115,7 +115,10 @@ function nextCandidateStorageKey(source: JsonRecord, candidateOrdinal: number): 
 const batchId = argument("batch-id");
 const sourceBatchId = argument("source-batch-id", "v471-owner-review-001");
 const count = Number.parseInt(argument("count", "50"), 10);
-const avoidBatchId = argument("avoid-batch-id", "");
+const avoidBatchIds = argument("avoid-batch-id", "")
+  .split(",")
+  .map((value) => value.trim())
+  .filter(Boolean);
 const extraExcludedAsins = new Set(
   argument("exclude-asins", "")
     .split(",")
@@ -142,11 +145,13 @@ if (fs.existsSync(batchPath)) throw new Error(`Batch already exists: ${batchPath
 
 const manifest = readJson(manifestPath);
 const ledger = readJson(ledgerPath);
-const avoidBatch = avoidBatchId
-  ? readJson(path.join(v4Root, "private-evidence", "owner-review-batches", avoidBatchId, "batch.json"))
-  : null;
+const avoidBatches = avoidBatchIds.map((avoidBatchId) =>
+  readJson(path.join(v4Root, "private-evidence", "owner-review-batches", avoidBatchId, "batch.json"))
+);
 const avoidedOwnerSelectedKeys = new Set(
-  ((avoidBatch?.jobs ?? []) as JsonRecord[]).map((job) => String(job.ownerSelectedStorageKey))
+  avoidBatches.flatMap((avoidBatch) =>
+    ((avoidBatch?.jobs ?? []) as JsonRecord[]).map((job) => String(job.ownerSelectedStorageKey))
+  )
 );
 const receipt = readJson(sourceReceiptPath);
 const identityCalls = ledger.identityGeneration?.calls as JsonRecord[] | undefined;
@@ -364,7 +369,8 @@ const batch = {
   batchId,
   sourceOwnerDecisionBatchId: sourceBatchId,
   sourceOwnerDecisionReceiptPath: path.relative(repositoryRoot, sourceReceiptPath).replace(/\\/g, "/"),
-  avoidedOwnerReviewBatchId: avoidBatchId || null,
+  avoidedOwnerReviewBatchId: avoidBatchIds.length === 1 ? avoidBatchIds[0] : null,
+  avoidedOwnerReviewBatchIds: avoidBatchIds,
   createdAt: occurredAt,
   status: "generation_queued",
   targetOwnerReviewCandidateCount: count,
