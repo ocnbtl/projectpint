@@ -6,3 +6,7 @@ node_modules
 *.tsbuildinfo
 outputs/**/*.zip
 figma-make-source/
+data/sheets/Affiliate_Owner_Review_Decisions.json
+
+.vercel
+.env*

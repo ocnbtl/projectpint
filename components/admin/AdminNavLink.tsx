@@ -82,6 +82,13 @@ function AdminNavIcon({ name }: { name: string }) {
           <path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.2-1.2" />
         </svg>
       );
+    case "review":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="4" y="4" width="16" height="16" rx="2" />
+          <path d="m8 12 2.5 2.5L16 9" />
+        </svg>
+      );
     default:
       return (
         <svg viewBox="0 0 24 24" aria-hidden="true">

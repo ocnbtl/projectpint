@@ -22,6 +22,7 @@ const NAV_ITEMS = [
   { href: "/admin/users", label: "Users", icon: "users" },
   { href: "/admin/products", label: "Products", icon: "package" },
   { href: "/admin/affiliate-links", label: "Affiliate Catalog", icon: "link" },
+  { href: "/admin/media-review", label: "Media Review", icon: "review" },
   { href: "/admin/analytics", label: "Analytics", icon: "chart" }
 ];
 

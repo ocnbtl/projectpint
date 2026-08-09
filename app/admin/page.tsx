@@ -208,6 +208,15 @@ export default async function AdminPage() {
               </span>
               Download Review Pack
             </Link>
+            <Link href="/admin/media-review" className="btn btn-ghost admin-home-action-link">
+              <span className="admin-action-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <rect x="4" y="4" width="16" height="16" rx="2" />
+                  <path d="m8 12 2.5 2.5L16 9" />
+                </svg>
+              </span>
+              Review Affiliate Media
+            </Link>
           </div>
         </section>
 

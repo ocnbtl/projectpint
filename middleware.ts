@@ -5,7 +5,7 @@ import { getAdminSessionCookieName, verifyAdminSessionToken } from "./lib/admin-
 const KNOWN_ADMIN_PATHS = [
   /^\/admin\/?$/,
   /^\/admin\/login\/?$/,
-  /^\/admin\/(?:affiliate-links|analytics|customers|emails|pins|products|users)\/?$/,
+  /^\/admin\/(?:affiliate-links|analytics|customers|emails|media-review|pins|products|users)\/?$/,
   /^\/admin\/(?:blogs|guides|inspiration)(?:\/[^/]+)?\/?$/,
   /^\/admin\/preview\/(?:blogs|guides|inspiration)\/[^/]+\/?$/
 ];
