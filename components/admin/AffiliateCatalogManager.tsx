@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import type { AffiliateProduct, AffiliateWorkflowStatus } from "../../lib/affiliate-catalog";
 import { useUnsavedChangesGuard } from "./useUnsavedChangesGuard";
 
@@ -15,9 +15,11 @@ interface AffiliateCatalogManagerProps {
 }
 
 type CatalogSort = "name" | "brand" | "category" | "style" | "updated";
+type CatalogGroup = "style" | "category" | "none";
+type CatalogQueue = "all" | "needs_review" | "missing_link" | "needs_media" | "inactive";
 type EditorState = { index: number | null; draft: AffiliateProduct } | null;
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 20;
 const WORKFLOW_LABELS: Record<AffiliateWorkflowStatus, string> = {
   research: "Research",
   needs_approval: "Needs approval",
@@ -140,7 +142,9 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
   const [workflowFilter, setWorkflowFilter] = useState("all");
   const [approvalFilter, setApprovalFilter] = useState("all");
   const [availabilityFilter, setAvailabilityFilter] = useState("all");
+  const [queueFilter, setQueueFilter] = useState<CatalogQueue>("all");
   const [sort, setSort] = useState<CatalogSort>("style");
+  const [groupBy, setGroupBy] = useState<CatalogGroup>("style");
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<Set<string>>(() => new Set());
   const [bulkAction, setBulkAction] = useState("");
@@ -179,7 +183,18 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
       const workflowMatch = workflowFilter === "all" || product.workflowStatus === workflowFilter;
       const approvalMatch = approvalFilter === "all" || product.approvalStatus === approvalFilter;
       const availabilityMatch = availabilityFilter === "all" || product.availabilityStatus === availabilityFilter;
-      return searchMatch && styleMatch && categoryMatch && workflowMatch && approvalMatch && availabilityMatch;
+      const progress = mediaProgress(product);
+      const queueMatch = queueFilter === "all" ||
+        (queueFilter === "needs_review" && (
+          product.approvalStatus === "pending" ||
+          product.approvalStatus === "rejected" ||
+          product.workflowStatus === "needs_approval" ||
+          product.availabilityStatus === "uncertain"
+        )) ||
+        (queueFilter === "missing_link" && !product.associatesUrl) ||
+        (queueFilter === "needs_media" && progress.ready < progress.total && !product.retired && !product.unavailable) ||
+        (queueFilter === "inactive" && (product.retired || product.unavailable));
+      return searchMatch && styleMatch && categoryMatch && workflowMatch && approvalMatch && availabilityMatch && queueMatch;
     });
 
     return [...filtered].sort((a, b) => {
@@ -193,6 +208,7 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
     availabilityFilter,
     categoryFilter,
     products,
+    queueFilter,
     query,
     sort,
     styleFilter,
@@ -202,12 +218,26 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
 
   const pageCount = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
   const pageProducts = filteredProducts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const groupedPageProducts = useMemo(() => {
+    const groups = new Map<string, AffiliateProduct[]>();
+    for (const product of pageProducts) {
+      const key = groupBy === "style"
+        ? styleNames.get(primaryStyle(product)) ?? primaryStyle(product)
+        : groupBy === "category"
+          ? product.category
+          : "All products";
+      const values = groups.get(key) ?? [];
+      values.push(product);
+      groups.set(key, values);
+    }
+    return [...groups.entries()];
+  }, [groupBy, pageProducts, styleNames]);
   const allPageSelected = pageProducts.length > 0 && pageProducts.every((product) => selected.has(product.id));
   const somePageSelected = pageProducts.some((product) => selected.has(product.id));
 
   useEffect(() => {
     setPage(1);
-  }, [query, styleFilter, categoryFilter, workflowFilter, approvalFilter, availabilityFilter, sort]);
+  }, [query, styleFilter, categoryFilter, workflowFilter, approvalFilter, availabilityFilter, queueFilter, sort, groupBy]);
 
   useEffect(() => {
     if (page > pageCount) setPage(pageCount);
@@ -542,58 +572,44 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
     setWorkflowFilter("all");
     setApprovalFilter("all");
     setAvailabilityFilter("all");
+    setQueueFilter("all");
   }
 
+  const activeAdvancedFilters = [styleFilter, categoryFilter, workflowFilter, approvalFilter, availabilityFilter]
+    .filter((value) => value !== "all").length;
+
   return (
-    <section className="admin-panel affiliate-catalog-panel">
-      <div className="affiliate-catalog-toolbar">
+    <section className="admin-panel affiliate-catalog-panel" aria-labelledby="affiliate-catalog-workspace-title">
+      <header className="affiliate-catalog-workspace-header">
+        <div>
+          <p className="eyebrow">Canonical product workspace</p>
+          <h2 id="affiliate-catalog-workspace-title">Catalog records</h2>
+          <p>Search first, narrow to an operating queue, then edit or select records without leaving the page.</p>
+        </div>
+        <div className="affiliate-catalog-actions">
+          <button type="button" className="btn btn-ghost" onClick={() => openEditor()}>Add product</button>
+          <button type="button" className="btn btn-accent" onClick={() => void saveChanges()} disabled={saving || !dirty}>
+            {saving ? "Saving..." : "Save changes"}
+          </button>
+        </div>
+      </header>
+
+      <div className="affiliate-catalog-primary-toolbar">
         <label className="affiliate-catalog-search">
-          <span>Search catalog</span>
+          <span className="admin-sr-only">Search catalog</span>
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Product, brand, ASIN, category..."
+            placeholder="Search product, brand, ASIN, category, or slug"
           />
         </label>
         <label>
-          <span>Style</span>
-          <select value={styleFilter} onChange={(event) => setStyleFilter(event.target.value)}>
-            <option value="all">All styles</option>
-            {styles.map((style) => <option key={style.slug} value={style.slug}>{style.name}</option>)}
-          </select>
-        </label>
-        <label>
-          <span>Category</span>
-          <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)}>
-            <option value="all">All categories</option>
-            {categories.map((category) => <option key={category} value={category}>{category}</option>)}
-          </select>
-        </label>
-        <label>
-          <span>Lifecycle</span>
-          <select value={workflowFilter} onChange={(event) => setWorkflowFilter(event.target.value)}>
-            <option value="all">All lifecycle states</option>
-            {Object.entries(WORKFLOW_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-          </select>
-        </label>
-        <label>
-          <span>Approval</span>
-          <select value={approvalFilter} onChange={(event) => setApprovalFilter(event.target.value)}>
-            <option value="all">All approvals</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="approved_with_caveat">Approved with caveat</option>
-            <option value="rejected">Rejected</option>
-          </select>
-        </label>
-        <label>
-          <span>Availability</span>
-          <select value={availabilityFilter} onChange={(event) => setAvailabilityFilter(event.target.value)}>
-            <option value="all">All availability</option>
-            <option value="verified_available">Verified available</option>
-            <option value="uncertain">Uncertain</option>
-            <option value="unavailable">Unavailable</option>
+          <span>Group</span>
+          <select value={groupBy} onChange={(event) => setGroupBy(event.target.value as CatalogGroup)}>
+            <option value="style">By style</option>
+            <option value="category">By category</option>
+            <option value="none">No groups</option>
           </select>
         </label>
         <label>
@@ -607,6 +623,72 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
           </select>
         </label>
       </div>
+
+      <div className="affiliate-catalog-queue-tabs" aria-label="Catalog queues">
+        {([
+          ["all", "All"],
+          ["needs_review", "Needs review"],
+          ["missing_link", "Missing Associates link"],
+          ["needs_media", "Needs media"],
+          ["inactive", "Inactive"]
+        ] as Array<[CatalogQueue, string]>).map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={queueFilter === value}
+            onClick={() => setQueueFilter(value)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <details className="affiliate-catalog-filter-disclosure">
+        <summary>Advanced filters{activeAdvancedFilters ? ` (${activeAdvancedFilters})` : ""}</summary>
+        <div className="affiliate-catalog-toolbar">
+          <label>
+            <span>Style</span>
+            <select value={styleFilter} onChange={(event) => setStyleFilter(event.target.value)}>
+              <option value="all">All styles</option>
+              {styles.map((style) => <option key={style.slug} value={style.slug}>{style.name}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>Category</span>
+            <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)}>
+              <option value="all">All categories</option>
+              {categories.map((category) => <option key={category} value={category}>{category}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>Lifecycle</span>
+            <select value={workflowFilter} onChange={(event) => setWorkflowFilter(event.target.value)}>
+              <option value="all">All lifecycle states</option>
+              {Object.entries(WORKFLOW_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>Approval</span>
+            <select value={approvalFilter} onChange={(event) => setApprovalFilter(event.target.value)}>
+              <option value="all">All approvals</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="approved_with_caveat">Approved with caveat</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </label>
+          <label>
+            <span>Availability</span>
+            <select value={availabilityFilter} onChange={(event) => setAvailabilityFilter(event.target.value)}>
+              <option value="all">All availability</option>
+              <option value="verified_available">Verified available</option>
+              <option value="uncertain">Uncertain</option>
+              <option value="unavailable">Unavailable</option>
+            </select>
+          </label>
+          <button type="button" className="btn btn-ghost" onClick={clearFilters}>Clear filters</button>
+        </div>
+      </details>
 
       <div className="affiliate-catalog-actionbar">
         <div className="affiliate-catalog-bulk">
@@ -642,20 +724,12 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
             Apply
           </button>
         </div>
-        <div className="affiliate-catalog-actions">
-          <button type="button" className="btn btn-ghost" onClick={clearFilters}>Clear filters</button>
-          <button type="button" className="btn btn-ghost" onClick={() => openEditor()}>Add product</button>
-          <button type="button" className="btn btn-accent" onClick={() => void saveChanges()} disabled={saving || !dirty}>
-            {saving ? "Saving..." : "Save changes"}
-          </button>
+        <div className="affiliate-catalog-result-state">
+          <p>{filteredProducts.length} of {products.length} products · {PAGE_SIZE} per page</p>
+          <span className={`admin-save-pill${dirty ? " is-dirty" : ""}`}>
+            {dirty ? "Unsaved changes" : "Saved state current"}
+          </span>
         </div>
-      </div>
-
-      <div className="affiliate-catalog-state-row">
-        <p>{filteredProducts.length} of {products.length} products</p>
-        <span className={`admin-save-pill${dirty ? " is-dirty" : ""}`}>
-          {dirty ? "Unsaved changes" : "Saved state current"}
-        </span>
       </div>
       {status ? (
         <div className={`admin-inline-status-row${conflict ? " is-error" : ""}`} aria-live="polite">
@@ -704,9 +778,19 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
                   <button type="button" className="btn btn-ghost" onClick={clearFilters}>Clear filters</button>
                 </td>
               </tr>
-            ) : pageProducts.map((product) => {
-              const progress = mediaProgress(product);
-              return (
+            ) : groupedPageProducts.map(([groupName, groupProducts]) => (
+              <Fragment key={groupName}>
+                {groupBy !== "none" ? (
+                  <tr className="affiliate-catalog-group-row">
+                    <th colSpan={8} scope="rowgroup">
+                      <span>{groupName}</span>
+                      <small>{groupProducts.length} on this page</small>
+                    </th>
+                  </tr>
+                ) : null}
+                {groupProducts.map((product) => {
+                  const progress = mediaProgress(product);
+                  return (
                 <tr key={product.id} className={selected.has(product.id) ? "is-selected" : undefined}>
                   <td>
                     <label className="admin-row-checkbox">
@@ -726,6 +810,9 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
                       {product.approvalStatus === "rejected" ? (
                         <span className="affiliate-decision-reason">{product.approvalHistory.at(-1)?.reason}</span>
                       ) : null}
+                      <span className={`affiliate-associate-status${product.associatesUrl ? " is-ready" : ""}`}>
+                        {product.associatesUrl ? "Associates link added" : "Associates link missing"}
+                      </span>
                       <a href={product.canonicalAmazonUrl} target="_blank" rel="noreferrer">Open Amazon listing</a>
                     </div>
                   </td>
@@ -742,8 +829,10 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
                   <td><span className={`affiliate-status ${statusTone(product.availabilityStatus)}`}>{product.availabilityStatus.replaceAll("_", " ")}</span></td>
                   <td><button type="button" className="btn btn-ghost" onClick={() => openEditor(product)}>Edit</button></td>
                 </tr>
-              );
-            })}
+                  );
+                })}
+              </Fragment>
+            ))}
           </tbody>
         </table>
       </div>
@@ -754,10 +843,13 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
             <strong>No products match these filters.</strong>
             <span>Clear one or more filters, or add a new canonical product.</span>
           </div>
-        ) : pageProducts.map((product) => {
-          const progress = mediaProgress(product);
-          return (
-            <article key={product.id} className={`affiliate-catalog-mobile-card${selected.has(product.id) ? " is-selected" : ""}`}>
+        ) : groupedPageProducts.map(([groupName, groupProducts]) => (
+          <section key={groupName} className="affiliate-catalog-mobile-group">
+            {groupBy !== "none" ? <h3>{groupName} <small>{groupProducts.length}</small></h3> : null}
+            {groupProducts.map((product) => {
+              const progress = mediaProgress(product);
+              return (
+                <article key={product.id} className={`affiliate-catalog-mobile-card${selected.has(product.id) ? " is-selected" : ""}`}>
               <div className="affiliate-mobile-card-head">
                 <label className="admin-row-checkbox">
                   <input
@@ -769,7 +861,7 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
                   <span aria-hidden="true" />
                 </label>
                 <div>
-                  <h3>{product.name}</h3>
+                  <h4>{product.name}</h4>
                   <p>{product.brand} · {product.asin}</p>
                 </div>
               </div>
@@ -779,6 +871,7 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
                 <div><dt>Approval</dt><dd>{product.approvalStatus.replaceAll("_", " ")}</dd></div>
                 <div><dt>Lifecycle</dt><dd>{WORKFLOW_LABELS[product.workflowStatus]}</dd></div>
                 <div><dt>Media</dt><dd>{progress.ready} / {progress.total}</dd></div>
+                <div><dt>Affiliate link</dt><dd>{product.associatesUrl ? "Added" : "Missing"}</dd></div>
                 <div><dt>Availability</dt><dd>{product.availabilityStatus.replaceAll("_", " ")}</dd></div>
               </dl>
               {product.approvalStatus === "rejected" ? (
@@ -788,9 +881,11 @@ export function AffiliateCatalogManager({ initialProducts, styles }: AffiliateCa
                 <a className="btn btn-ghost" href={product.canonicalAmazonUrl} target="_blank" rel="noreferrer">Amazon</a>
                 <button type="button" className="btn btn-ghost" onClick={() => openEditor(product)}>Edit product</button>
               </div>
-            </article>
-          );
-        })}
+                </article>
+              );
+            })}
+          </section>
+        ))}
       </div>
 
       <nav className="affiliate-catalog-pagination" aria-label="Affiliate catalog pages">

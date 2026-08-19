@@ -30,23 +30,23 @@ export function AffiliateReplacementQueue({ proposals, styles }: AffiliateReplac
 
   return (
     <section className="admin-panel affiliate-replacement-panel" aria-labelledby="affiliate-replacement-heading">
-      <div className="affiliate-replacement-header">
-        <div>
-          <p className="eyebrow">Owner decisions recorded</p>
-          <h2 id="affiliate-replacement-heading">Approved replacement record</h2>
-          <p>
-            These 19 decisions fill every rejected style slot. The record remains read-only and private; accepted
-            replacements are now part of the local canonical cohort and rights-blocked media manifest.
-          </p>
-        </div>
-        <div className="affiliate-replacement-counts" aria-label="Replacement decision summary">
-          <span><strong>{approveCount}</strong> approve</span>
-          <span><strong>{caveatCount}</strong> with caveat</span>
-          <span><strong>{reusedCount}</strong> canonical reuse</span>
-        </div>
-      </div>
-
-      <div className="affiliate-replacement-table-wrap">
+      <details className="affiliate-replacement-disclosure">
+        <summary>
+          <span>
+            <small>Read-only owner history</small>
+            <strong id="affiliate-replacement-heading">Approved replacement record</strong>
+          </span>
+          <span className="affiliate-replacement-counts" aria-label="Replacement decision summary">
+            <span><strong>{proposals.length}</strong> decisions</span>
+            <span><strong>{approveCount}</strong> approve</span>
+            <span><strong>{caveatCount}</strong> caveat</span>
+            <span><strong>{reusedCount}</strong> reuse</span>
+          </span>
+        </summary>
+        <p className="affiliate-replacement-intro">
+          These decisions fill every rejected style slot. The record stays private and does not publish products.
+        </p>
+        <div className="affiliate-replacement-table-wrap">
         <table className="affiliate-replacement-table">
           <thead>
             <tr>
@@ -103,9 +103,9 @@ export function AffiliateReplacementQueue({ proposals, styles }: AffiliateReplac
             })}
           </tbody>
         </table>
-      </div>
+        </div>
 
-      <div className="affiliate-replacement-mobile-list">
+        <div className="affiliate-replacement-mobile-list">
         {proposals.map((proposal) => {
           const product = proposal.proposedProduct;
           return (
@@ -138,7 +138,8 @@ export function AffiliateReplacementQueue({ proposals, styles }: AffiliateReplac
             </article>
           );
         })}
-      </div>
+        </div>
+      </details>
     </section>
   );
 }

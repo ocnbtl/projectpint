@@ -24,6 +24,7 @@ import { buildAffiliatePilotManifest } from "../lib/affiliate-pilot.ts";
 import { buildAffiliatePilotV2Manifest } from "../lib/affiliate-pilot-v2.ts";
 import { buildAffiliatePilotV3Manifest } from "../lib/affiliate-pilot-v3.ts";
 import { inspirationStyles } from "../lib/redesign-data.ts";
+import { parseOwnerMediaCoverage } from "../lib/affiliate-media-coverage.ts";
 
 async function withLocalCatalog(
   context: test.TestContext,
@@ -590,7 +591,7 @@ test("public affiliate detail keeps media gates and swipe gallery controls expli
   assert.match(gallery, /onPointerUp/);
 });
 
-test("admin replacement record exposes human-readable owner decisions and normalized cohort counts", async () => {
+test("admin affiliate workspace keeps owner history secondary and exposes searchable hierarchy", async () => {
   const page = await fs.readFile(path.join(process.cwd(), "app/admin/affiliate-links/page.tsx"), "utf8");
   const queue = await fs.readFile(
     path.join(process.cwd(), "components/admin/AffiliateReplacementQueue.tsx"),
@@ -602,13 +603,61 @@ test("admin replacement record exposes human-readable owner decisions and normal
   );
   const styles = await fs.readFile(path.join(process.cwd(), "app/globals.css"), "utf8");
   assert.match(page, /affiliateReplacementFixture/);
-  assert.match(page, /60 approved style slots use/);
-  assert.match(page, /59 canonical products/);
+  assert.match(page, /readOwnerMediaCoverage/);
+  assert.match(page, /AffiliateMediaCoveragePanel/);
   assert.match(queue, /Approved replacement record/);
+  assert.match(queue, /affiliate-replacement-disclosure/);
   assert.match(queue, /ownerRejectionReason/);
   assert.match(queue, /reuseExistingCanonical/);
   assert.match(manager, /editorTriggerRef/);
   assert.match(manager, /editorTriggerRef\.current\?\.focus\(\)/);
+  assert.match(manager, /affiliate-catalog-queue-tabs/);
+  assert.match(manager, /groupedPageProducts/);
+  assert.match(manager, /Missing Associates link/);
   assert.match(styles, /\.affiliate-replacement-mobile-list/);
+  assert.match(styles, /\.affiliate-media-coverage-panel/);
+  assert.match(styles, /\.affiliate-catalog-summary-strip/);
   assert.match(styles, /@media \(max-width: 820px\)[\s\S]*\.affiliate-replacement-table-wrap/);
+});
+
+test("owner media coverage validates approved, queued, and per-style counts", () => {
+  const styleSlug = inspirationStyles[0]!.slug;
+  const coverage = parseOwnerMediaCoverage({
+    schemaVersion: "affiliate-pilot-v4-owner-media-coverage-v1",
+    generatedAt: "2026-08-18T23:30:00.000Z",
+    sourceOwnerDecisionBatchId: "v478-owner-review-008",
+    currentGenerationBatchId: "v479-owner-review-009",
+    finalLibraryTargetPerProductStyle: 10,
+    styleOrder: [styleSlug],
+    totals: {
+      ownerSelectedPrivateCopiesAllProducts: 72,
+      usableApprovedEligibleProducts: 71,
+      queuedInCurrentBatch: 100,
+      eligibleProducts: 8,
+      excludedProducts: 2
+    },
+    excludedProducts: [{ asin: "B000MS63E2", reason: "Identity rebuild required." }],
+    products: [{
+      asin: "B00176AOKM",
+      productName: "Aquala Extendable Bamboo Bath Caddy",
+      approvedUsable: 2,
+      queuedInCurrentBatch: 13,
+      targetAcrossStyles: 10,
+      stillNeededBeforeBatch: 8,
+      projectedStillNeededIfAllApproved: 0,
+      setAcrossAllStyles: false,
+      styles: {
+        [styleSlug]: {
+          approvedUsable: 2,
+          queuedInCurrentBatch: 8,
+          stillNeededBeforeBatch: 8,
+          projectedStillNeededIfAllApproved: 0,
+          setForTarget: false
+        }
+      }
+    }]
+  });
+  assert.equal(coverage.totals.ownerSelectedPrivateCopiesAllProducts, 72);
+  assert.equal(coverage.products[0]?.styles[styleSlug]?.queuedInCurrentBatch, 8);
+  assert.throws(() => parseOwnerMediaCoverage({ ...coverage, totals: { ...coverage.totals, queuedInCurrentBatch: -1 } }));
 });

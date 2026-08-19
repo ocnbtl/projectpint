@@ -234,3 +234,24 @@ test("media-review admin surface preserves authentication, private storage, and 
   assert.match(importer, /importOwnerReviewBatchToHostedStorage/);
   assert.match(packageJson, /import:owner-review-hosted:affiliate-pilot-v4/);
 });
+
+test("owner-feedback wave D is coverage-aware and uses exact listing references", async () => {
+  const source = await fs.readFile(
+    path.join(process.cwd(), "scripts/prepare-affiliate-pilot-v4-owner-feedback-wave.ts"),
+    "utf8"
+  );
+
+  assert.match(source, /affiliate-pilot-owner-feedback-v4\.79-wave-d/);
+  assert.match(source, /coverageScore/);
+  assert.match(source, /acceptedCountForStyle/);
+  assert.match(source, /owner-media-coverage\.json/);
+  assert.match(source, /ownerDenialTaxonomyCounts/);
+  assert.match(source, /Generated atlases and contextual advertisements are not identity references/);
+  assert.match(source, /generationReferences/);
+  assert.match(source, /exactly twelve reinforced header openings and exactly twelve separate ordinary hooks/);
+  assert.match(source, /exactly eight distinct narrow top slats/);
+  assert.match(source, /one opening only on the left/);
+  assert.match(source, /both contacts, weight, and contact shadows/);
+  assert.doesNotMatch(source, /owner_feedback_wave_c/);
+  assert.doesNotMatch(source, /Wave B must contain/);
+});

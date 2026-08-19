@@ -60,6 +60,7 @@
     "render:owner-review-batch:affiliate-pilot-v4": "node --import tsx scripts/render-affiliate-pilot-v4-owner-review-batch.ts",
     "apply:owner-review-decisions:affiliate-pilot-v4": "node --import tsx scripts/apply-affiliate-pilot-v4-owner-review-decisions.ts",
     "import:owner-review-hosted:affiliate-pilot-v4": "node --import tsx scripts/import-affiliate-pilot-v4-owner-review-hosted.ts",
+    "sync:owner-media-coverage:affiliate-pilot-v4": "node --import tsx scripts/sync-affiliate-owner-media-coverage.ts",
     "prepare:owner-feedback-wave:affiliate-pilot-v4": "node --import tsx scripts/prepare-affiliate-pilot-v4-owner-feedback-wave.ts",
     "migrate:bambusi-slat-contract:affiliate-pilot-v4": "node --import tsx scripts/migrate-affiliate-pilot-v4-bambusi-slat-contract.ts",
     "annotate:generation-amendment:affiliate-pilot-v4": "node --import tsx scripts/annotate-affiliate-pilot-v4-generation-execution-amendment.ts",

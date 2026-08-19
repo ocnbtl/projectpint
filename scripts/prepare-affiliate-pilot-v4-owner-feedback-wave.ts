@@ -4,10 +4,50 @@ import path from "node:path";
 
 type JsonRecord = Record<string, any>;
 
-const PROMPT_VERSION = "affiliate-pilot-owner-feedback-v4.73-wave-c";
-const WAVE_LABEL = "wave C";
+const PROMPT_VERSION = "affiliate-pilot-owner-feedback-v4.79-wave-d";
+const WAVE_LABEL = "wave D";
 const RETIRED_CART_ASIN = "B07PFYZ3DP";
 const IDENTITY_REBUILD_ASIN = "B000MS63E2";
+const FINAL_LIBRARY_TARGET_PER_PRODUCT_STYLE = 10;
+
+const VERIFIED_REFERENCE_PATHS: Record<string, string[]> = {
+  B00176AOKM: [
+    "output/affiliate-pilot/v4/private-evidence/product-sources/B00176AOKM/umbra-manufacturer-02.jpg"
+  ],
+  B008X0VM0Q: [
+    "output/affiliate-pilot/v4/private-evidence/product-sources/B008X0VM0Q/delta-manufacturer-01.webp"
+  ],
+  B07SG7BV11: [
+    "output/affiliate-pilot/v4/private-evidence/product-sources/B07SG7BV11/lush-decor-manufacturer-01.jpg"
+  ],
+  B0829N8C9G: [
+    "output/affiliate-pilot/v4/private-evidence/product-sources/B0829N8C9G/oxo-manufacturer-01.jpg"
+  ],
+  B08TLP2D54: [
+    "output/affiliate-pilot/v4/private-evidence/product-sources/B08TLP2D54/umbra-manufacturer-02.jpg"
+  ],
+  B0D2KK6MNS: [
+    "output/affiliate-pilot/v4/private-evidence/product-sources/B0D2KK6MNS/amazon-exact-asin-02.jpg",
+    "output/affiliate-pilot/v4/private-evidence/product-sources/B0D2KK6MNS/amazon-exact-asin-06.jpg"
+  ],
+  B0DC7VG6Z9: [
+    "output/affiliate-pilot/v4/private-evidence/product-sources/B0DC7VG6Z9/bambusi-manufacturer-04.jpg"
+  ],
+  B0F3L72TC3: [
+    "output/affiliate-pilot/v4/private-evidence/product-sources/B0F3L72TC3/pricehistory-exact-asin-01.jpg"
+  ]
+};
+
+const GLOBAL_OWNER_FEEDBACK_GATES = [
+  "Exact-product gate: treat the supplied exact listing reference as an identity contract, not loose inspiration. Match the product's silhouette, proportions, countable parts, material transitions, color, orientation, and attachment before adding style.",
+  "Installation and physics gate: the product and every permanent fixture must be supported, level where appropriate, attached to a plausible surface, and grounded by consistent contact shadows. No floating edges, impossible junctions, reversed hardware, or unsupported weight.",
+  "Single-object gate: render exactly one featured product. Do not clone, mirror, merge, or mutate its parts. Do not add duplicate faucets, handles, spouts, outlets, switches, hooks, lights, dispensers, or accessory fragments.",
+  "Room-coherence gate: use a real buildable bathroom with complete ordinary fixtures and one coherent camera perspective. Prefer simple nonrepeating stone, plaster, wood, or tile over countable geometric patterns that can warp.",
+  "Reflection gate: omit mirrors unless the featured product is the Hubba mirror. For the Hubba mirror, keep the reflected scene simple and ray-consistent with the camera and room.",
+  "Prop gate: use few ordinary, unlabeled props. No visible writing, pseudo-logos, garbled labels, coordinated decor kits, competing plants, or ambiguous objects near the featured product.",
+  "Photographic realism gate: create a plausible handheld phone photograph with one exposure, one white balance, natural lens perspective, restrained dynamic range, mild lived-in irregularity, and no catalog glow, halo, excessive polish, or synthetic symmetry.",
+  "Style gate: express the named style through architecture, fixed finishes, proportions, and available light. Style is subordinate to exact identity, physical validity, and an ordinary cared-for bathroom."
+];
 
 function argument(name: string, fallback?: string): string {
   const prefix = `--${name}=`;
@@ -35,24 +75,77 @@ function sha256File(filePath: string): string {
   return createHash("sha256").update(fs.readFileSync(filePath)).digest("hex");
 }
 
+const DENIAL_TAXONOMY: Array<{ category: string; pattern: RegExp }> = [
+  {
+    category: "exact_product_identity_or_details",
+    pattern:
+      /product|identity|wrong (?:item|shape|color|size|proportion|orientation)|dispenser|pump|spout|caddy|tray|bench|slat|towel ring|mirror|curtain|grommet|hook|pothos|basket|hanger|plant/i
+  },
+  {
+    category: "physical_geometry_or_support",
+    pattern: /float|support|contact|weight|physics|impossible|geometry|warped|bent|tilt|level|attached|attachment|junction|merged|malformed|glitch|artifact/i
+  },
+  {
+    category: "installation_or_orientation",
+    pattern: /install|mount|orientation|direction|backward|reverse|rim|wall|rod|ceiling|span|upright|upside.down/i
+  },
+  {
+    category: "duplicate_or_mutated_objects",
+    pattern: /duplicat|double|extra|multiple|clone|mutat|fused|second |two (?:pump|spout|faucet|handle|ring|basket|plant)/i
+  },
+  {
+    category: "texture_or_pattern_artifacts",
+    pattern: /texture|pattern|tile|grain|fold|fabric|floral|repeat|seam|slab/i
+  },
+  {
+    category: "fixture_or_architecture_errors",
+    pattern: /fixture|faucet|handle|door|cabinet|drawer|vanity|toilet|shower|outlet|switch|architecture|countertop/i
+  },
+  {
+    category: "exact_count_failure",
+    pattern: /count|\b(?:eleven|twelve|thirteen|fourteen|11|12|13|14)\b|missing (?:hook|slat|opening)|too many (?:hook|slat|opening)/i
+  },
+  {
+    category: "lighting_or_reflection",
+    pattern: /light|exposure|white balance|glow|halo|reflection|reflected|mirror image|shadow/i
+  },
+  { category: "garbled_or_visible_text", pattern: /text|label|word|logo|letter|writing/i },
+  { category: "style_miss", pattern: /style|not (?:spa|coastal|japandi|boho|industrial|vintage|minimal|scandinavian)/i }
+];
+
+function denialTaxonomyCounts(decisions: JsonRecord[]): Record<string, number> {
+  const counts = Object.fromEntries(DENIAL_TAXONOMY.map(({ category }) => [category, 0])) as Record<
+    string,
+    number
+  >;
+  counts.other_review_detail = 0;
+  for (const decision of decisions.filter((entry) => entry.decision === "owner_declined")) {
+    const reason = String(decision.reason ?? "");
+    const matches = DENIAL_TAXONOMY.filter(({ pattern }) => pattern.test(reason));
+    if (!matches.length) counts.other_review_detail += 1;
+    for (const { category } of matches) counts[category] += 1;
+  }
+  return counts;
+}
+
 function promptGuard(asin: string): string {
   const guards: Record<string, string> = {
     B0829N8C9G:
-      "The OXO dispenser must share the room's exposure and white balance: no glowing steel, bright halo, independent product lighting, fake edge contrast, or washed-out pump top. Preserve the listing-accurate charcoal pump color and a short nearly horizontal spout that never points upward. Every nearby fixed fixture must be recognizable and physically complete; never substitute an overturned cup or ambiguous object for faucet hardware.",
+      "Render one OXO Good Grips 12-ounce stainless dispenser, upright on a dry level counter: a tall slender tapered brushed-steel body, clear nonslip base ring, one charcoal pump, and one short nearly horizontal charcoal spout facing into the room. The pump is not a faucet, cap, double spout, upward nozzle, or broad mushroom. Match the room's exposure and white balance with no glowing steel, halo, independent product lighting, or washed-out pump top. Keep nearby faucet hardware simple, recognizable, complete, and spatially separate.",
     B0DC7VG6Z9:
-      "The Bambusi bench has exactly eight distinct narrow top slats and exactly eight distinct narrow lower-shelf slats. Both counts must be visually auditable with even construction spacing and no merged, hidden, extra, missing, uneven, or overly wide slats. Each bamboo board needs its own subtle nonrepeating grain, color, end grain, and wear; no cloned or synthetic wood texture and no strange light leaking between slats. Some scenes may include one or two ordinary functional items such as a casually placed towel, brush, comb, or bottle, but they must not hide the 8-over-8 count or look staged. If the model cannot satisfy 8-over-8 exactly, discard the output.",
+      "Render one exact compact Bambusi bamboo shower bench, about 17 by 9 by 17 inches, level on the floor. It has exactly eight distinct narrow top slats, exactly eight distinct narrow lower-shelf slats, seven even gaps on each surface, a subtly bowed front apron, and four separate straight slightly splayed legs with small dark feet. No curved legs, center slab, merged boards, extra braces, warped shelf, or missing foot. Both 8-over-8 counts must remain visually auditable. Each board has subtle nonrepeating bamboo grain and end grain. At most one simple towel or bottle may appear, and it cannot obscure the count.",
     B00176AOKM:
-      "The Aquala caddy must span the tub rather than sit in the water: both metal extension arms rest visibly and securely on opposite dry bathtub rims with believable weight and contact shadows, with no floating edge, submerged tray, flying corner, or impossible attachment. Preserve the listing-accurate front hook and all support hardware; the hook must be present and visually coherent. Spa Greenery must be unmistakable through a restrained green fixed finish plus one plausible living plant or clearly visible leafy exterior foliage.",
+      "Render one exact Umbra Aquala bamboo bath caddy, roughly 28.13 by 8.63 inches and extendable to 37 inches. Its long bamboo board runs along the tub's long axis while its two chrome extension arms bridge the short dimension: one arm must visibly rest on each opposite dry rim edge. Use a close three-quarter view that proves both contacts, weight, and contact shadows. Preserve the listing layout: book support, wine-glass slot, cup recess, phone slot, and coherent front hooks and extension hardware in their real positions. No long-way span, submerged tray, floating arm, flying corner, decorative dots, invented wire loop, or impossible attachment.",
     B008X0VM0Q:
-      "The Trinsic towel ring must be rigidly mounted, geometrically square, and level in the physical room even if the phone camera has slight roll. Any mirror reflection must preserve its straight rigid geometry, mounting direction, scale, and location; nearby dispensers and accessories must be fully supported with contact shadows and never float. Door and fixture scale must remain ordinary and mutually coherent.",
+      "Render one exact Delta Trinsic Champagne Bronze towel ring: a rigid squared C-shaped metal bar, round wall escutcheon, horizontal top arm, vertical right side, horizontal lower arm, one opening only on the left, and one short upward stop at the lower-left tip. It must never become a closed square, double rail, round loop, left-mounted reverse, or extra bar. Mount the round escutcheon flush to one wall, keep the bar level, and hang one ordinary towel from the lower arm without changing the geometry. Omit mirrors and nearby dispensers.",
     B08TLP2D54:
-      "The Hubba mirror and every reflected doorway, wall, fixture, and object must obey one consistent room geometry and face the physically correct direction. All vanity and mirror lights must be deliberately aligned, evenly mounted, electrically plausible, and free of doubled, drifting, or mismatched fixtures. Do not add random cups, upside-down containers, or unexplained props.",
+      "Render one exact Umbra Hubba brass wall mirror at 34.25 inches wide by 36.25 inches high: a broad nearly square arch with rounded top corners, short straight sides, softly rounded bottom corners, and a very thin brass rim. It must not become a tall narrow doorway shape, a semicircle, a pill, or an overly wide landscape arch. Mount it flat above a simple vanity. Keep the reflected scene sparse and ray-consistent: one plain opposing wall or window and no reflected doorway, shower, second mirror, doubled light, drifting fixture, or unreadable vanity object.",
     B07SG7BV11:
-      "Preserve the exact Leah curtain print, panel count, hanging geometry, and textile scale that passed owner review; vary the real room and camera conditions without redesigning the curtain. Curtain lighting must follow the room rather than glow or flatten artificially. Spa Greenery scenes need visible green fixed finishes or plausible living foliage. Hair ties and every small accessory must remain separate recognizable objects with no fused, mutated, or unexplained attachments.",
+      "Render one exact 72-by-72-inch Lush Decor Leah shower curtain in the blue colorway: one white fabric panel with the listing-accurate large watercolor flowers in deep teal, aqua, gray, and muted taupe at the same motif scale. Show exactly twelve reinforced header openings and exactly twelve separate ordinary hooks, evenly spaced; count them before accepting. No orange colorway, redesigned flowers, extra panel, top band, fused hooks, hidden thirteenth hook, repeated motif seam, or glowing fabric. Keep adjacent fixtures and accessories simple and separate.",
     B0D2KK6MNS:
-      "Preserve the exact terracotta linen-blend curtain color, weave, drape, and single-panel identity that passed owner review. The header must show exactly twelve listing-accurate hanging holes or grommet positions, never 13, 18, 19, or another count. The bottom hem must hang with natural weight, small unrelated folds, and slight real-world irregularity rather than a ruler-straight synthetic line. Vary the real room without beautifying it into a catalog set.",
+      "Render one exact 72-by-72-inch KOUFALL terracotta rust linen-blend shower curtain: one solid-color textured panel, no print, no decorative top band, and a plain weighted hem. Show exactly twelve reinforced metal grommet openings and exactly twelve separate silver ball-bead hooks, evenly spaced; count them before accepting. Preserve the warm muted terracotta color, visible linen-like weave, natural weight, and small nonrepeating folds. No 11th or 13th opening, fused hooks, duplicate panel, repeated fold stamp, ruler-straight hem, or catalog glow.",
     B0F3L72TC3:
-      "Preserve one exact healthy Golden Pothos in its documented 10-inch hanging basket with the listing-accurate top hanger, suspension junctions, and support geometry. Use believable vines, leaf variation, gravity, and support; do not clone leaves, simplify or redesign the hanger top, or add competing plants."
+      "Render one exact healthy Golden Pothos in its documented 10-inch black ribbed plastic hanging basket. Preserve three distinct hanger straps attached at three basket points, converging into one central junction and one top hook that is visibly attached to a real ceiling hook or wall bracket. The basket must hang freely with believable gravity; varied heart-shaped green-and-gold leaves and a few vines descend naturally. No floor pot, white planter, missing strap, free-floating hook, doubled basket, cloned leaves, rod collision, light collision, or competing plant."
   };
   return guards[asin] ?? "Preserve exact product identity and correct physical installation before considering style.";
 }
@@ -64,7 +157,11 @@ function feedbackPrompt(
   reasons: string[],
   approvals: string[]
 ): string {
-  if (!prompt.includes("Decision semantics:")) throw new Error(`${sceneId} prompt lacks Decision semantics.`);
+  const basePrompt = prompt.replace(
+    /Owner-feedback wave [A-Z]:[\s\S]*?Owner-review semantics: assistant screening remains provisional; this candidate is neither approved nor publishable until the owner explicitly decides\.\n?/g,
+    ""
+  );
+  if (!basePrompt.includes("Decision semantics:")) throw new Error(`${sceneId} prompt lacks Decision semantics.`);
   const uniqueReasons = [...new Set(reasons.map((reason) => reason.trim()).filter(Boolean))];
   const feedback = uniqueReasons.length
     ? uniqueReasons.map((reason, index) => `${index + 1}) ${reason}`).join("\n")
@@ -78,26 +175,21 @@ function feedbackPrompt(
     `Owner denial evidence for this product: ${feedback}`,
     `Owner approval evidence to preserve: ${approvalEvidence}`,
     `Mandatory product correction: ${promptGuard(asin)}`,
-    "Cross-image plausibility gate: every fixed object must have a recognizable household function, coherent scale, complete geometry, and buildable attachment. Reject ambiguous surrogate objects, impossible junctions, duplicate fixtures, and unexplained shapes.",
-    "Style legibility gate: make the named style immediately legible through fixed architecture, finishes, proportions, and light while retaining an ordinary maintained home. Do not rely on a caption, a coordinated decor kit, or generic luxury materials.",
+    ...GLOBAL_OWNER_FEEDBACK_GATES,
     "Owner-review semantics: assistant screening remains provisional; this candidate is neither approved nor publishable until the owner explicitly decides."
   ].join("\n");
-  const withSceneIdentity = prompt.replace(
+  const withSceneIdentity = basePrompt.replace(
     /^Scene identity: .*$/m,
     `Scene identity: ${sceneId}; owner-feedback corpus ${WAVE_LABEL}.`
   );
-  const withVerifiedReference =
-    asin === "B0DC7VG6Z9"
-      ? withSceneIdentity.replace(
-          /^Reference pack: .*$/m,
-          "Reference pack: use the owner-verified Bambusi manufacturer listing image at output/affiliate-pilot/v4/private-evidence/product-sources/B0DC7VG6Z9/bambusi-manufacturer-04.jpg for exact 8-over-8 identity. The older generated atlas is quarantined and must not be used. Use the validated dossier only for supporting textual identity. Do not copy the listing backdrop, lighting, or pose."
-        )
-      : asin === "B0D2KK6MNS"
-        ? withSceneIdentity.replace(
-            /^Reference pack: .*$/m,
-            "Reference pack: use the exact Amazon listing scene at output/affiliate-pilot/v4/private-evidence/product-sources/B0D2KK6MNS/amazon-exact-asin-02.jpg together with the listing grommet close-up at output/affiliate-pilot/v4/private-evidence/product-sources/B0D2KK6MNS/amazon-exact-asin-06.jpg. The older generated atlas is quarantined because it depicts an incorrect header count and must not be used. Preserve exactly twelve reinforced metal grommet holes and twelve silver ball-bead hooks. Do not copy the listing backdrop, lighting, or pose."
-          )
-        : withSceneIdentity;
+  const verifiedReferences = VERIFIED_REFERENCE_PATHS[asin];
+  if (!verifiedReferences?.length) throw new Error(`${sceneId} lacks a verified exact-product reference.`);
+  const withVerifiedReference = withSceneIdentity.replace(
+    /^Reference pack: .*$/m,
+    `Reference pack: use only these owner-verified exact listing references for product identity: ${verifiedReferences.join(
+      ", "
+    )}. Generated atlases and contextual advertisements are not identity references. Preserve the exact product but create a new room, composition, light, and camera position; do not copy a listing backdrop or pose.`
+  );
   return withVerifiedReference
     .replace("Decision semantics:", `${correction}\nDecision semantics:`);
 }
@@ -141,7 +233,8 @@ const sourceReceiptPath = path.join(
 );
 const batchRoot = path.join(v4Root, "private-evidence", "owner-review-batches", batchId);
 const batchPath = path.join(batchRoot, "batch.json");
-if (fs.existsSync(batchPath)) throw new Error(`Batch already exists: ${batchPath}`);
+const refreshExisting = argument("refresh-existing", "false") === "true";
+if (fs.existsSync(batchPath) && !refreshExisting) throw new Error(`Batch already exists: ${batchPath}`);
 
 const manifest = readJson(manifestPath);
 const ledger = readJson(ledgerPath);
@@ -238,10 +331,81 @@ for (const decision of (receipt.decisions as JsonRecord[]).filter(
   approvalFeedbackByAsin.set(String(job.asin), values);
 }
 
+if (refreshExisting) {
+  const existingBatch = readJson(batchPath);
+  if (existingBatch.status !== "generation_queued") {
+    throw new Error(`Cannot refresh ${batchId} after generation has started.`);
+  }
+  const existingJobs = existingBatch.jobs as JsonRecord[];
+  if (existingJobs.some((job) => fs.existsSync(path.join(repositoryRoot, String(job.candidatePath))))) {
+    throw new Error(`Cannot refresh ${batchId}; at least one candidate file already exists.`);
+  }
+  for (const frozenJob of existingJobs) {
+    const manifestJob = styledJobs.find((job) => job.sceneId === frozenJob.sceneId);
+    if (!manifestJob) throw new Error(`Manifest job missing for ${frozenJob.sceneId}.`);
+    const asin = String(manifestJob.asin);
+    const prompt = feedbackPrompt(
+      String(manifestJob.prompt),
+      String(manifestJob.sceneId),
+      asin,
+      feedbackByAsin.get(asin) ?? [],
+      approvalFeedbackByAsin.get(asin) ?? []
+    );
+    const promptSha256 = sha256(prompt);
+    const referenceEvidence = (VERIFIED_REFERENCE_PATHS[asin] ?? []).map((referencePath) => {
+      const absoluteReferencePath = path.join(repositoryRoot, referencePath);
+      if (!fs.existsSync(absoluteReferencePath)) {
+        throw new Error(`Missing generation reference for ${manifestJob.sceneId}: ${referencePath}`);
+      }
+      return { path: referencePath, sha256: sha256File(absoluteReferencePath) };
+    });
+    if (!referenceEvidence.length) throw new Error(`No verified references for ${manifestJob.sceneId}.`);
+    manifestJob.promptVersion = PROMPT_VERSION;
+    manifestJob.prompt = prompt;
+    manifestJob.promptSha256 = promptSha256;
+    frozenJob.promptVersion = PROMPT_VERSION;
+    frozenJob.promptSha256 = promptSha256;
+    frozenJob.exactPrompt = prompt;
+    frozenJob.atlasPath = referenceEvidence[0].path;
+    frozenJob.atlasSha256 = referenceEvidence[0].sha256;
+    frozenJob.generationReferences = referenceEvidence;
+  }
+  const refreshedAt = new Date().toISOString();
+  existingBatch.promptVersion = PROMPT_VERSION;
+  existingBatch.refreshedAt = refreshedAt;
+  existingBatch.ownerDenialTaxonomyCounts = denialTaxonomyCounts(receipt.decisions as JsonRecord[]);
+  manifest.promptVersion = PROMPT_VERSION;
+  manifest.status = "owner_feedback_wave_d_generation_queued";
+  manifest.jobs = jobs;
+  ledger.updatedAt = refreshedAt;
+  ledger.events.push({
+    type: "owner_feedback_review_batch_prompts_refreshed",
+    occurredAt: refreshedAt,
+    batchId,
+    sourceBatchId,
+    refreshedCount: existingJobs.length,
+    identityCallCount: identityCalls.length,
+    styledIdentityGenerationCallCount: 0
+  });
+  writeJsonAtomic(batchPath, existingBatch);
+  writeJsonAtomic(manifestPath, manifest);
+  writeJsonAtomic(ledgerPath, ledger);
+  process.stdout.write(`Refreshed ${batchId}: ${existingJobs.length} unstarted jobs, prior feedback blocks replaced.\n`);
+  process.exit(0);
+}
+
 const acceptedCount = (asin: string): number =>
   styledJobs.filter(
     (job) =>
       job.asin === asin &&
+      job.status === "owner_accepted" &&
+      job.ownerSelectionUseStatus !== "quarantined_identity_mismatch_revalidation_required"
+  ).length;
+const acceptedCountForStyle = (asin: string, styleSlug: string): number =>
+  styledJobs.filter(
+    (job) =>
+      job.asin === asin &&
+      job.styleSlug === styleSlug &&
       job.status === "owner_accepted" &&
       job.ownerSelectionUseStatus !== "quarantined_identity_mismatch_revalidation_required"
   ).length;
@@ -264,6 +428,16 @@ for (const product of eligibleProducts) {
   const reasons = feedbackByAsin.get(asin) ?? [];
   const approvals = approvalFeedbackByAsin.get(asin) ?? [];
   const productSelected: JsonRecord[] = [];
+  const selectedCountForStyle = (styleSlug: string): number =>
+    productSelected.filter((job) => job.styleSlug === styleSlug).length;
+  const coverageScore = (styleSlug: string): number =>
+    acceptedCountForStyle(asin, styleSlug) + selectedCountForStyle(styleSlug);
+  const compareCoverage = (left: JsonRecord, right: JsonRecord): number =>
+    coverageScore(String(left.styleSlug)) - coverageScore(String(right.styleSlug)) ||
+    styleOrder.indexOf(String(left.styleSlug)) - styleOrder.indexOf(String(right.styleSlug)) ||
+    Number(left.slot) - Number(right.slot) ||
+    Number(left.candidateOrdinal) - Number(right.candidateOrdinal) ||
+    String(left.sceneId).localeCompare(String(right.sceneId));
   const reservedKeys = new Set(
     styledJobs
       .filter((job) => job.asin === asin && job.status === "owner_accepted")
@@ -271,9 +445,12 @@ for (const product of eligibleProducts) {
   );
   for (const key of avoidedOwnerSelectedKeys) reservedKeys.add(key);
 
-  for (const { decision, job: source } of declineJobs.filter((entry) => entry.job.asin === asin)) {
-    if (productSelected.length >= target) break;
-    if (reservedKeys.has(String(source.ownerSelectedStorageKey))) continue;
+  const remainingDeclines = declineJobs
+    .filter((entry) => entry.job.asin === asin)
+    .filter((entry) => !reservedKeys.has(String(entry.job.ownerSelectedStorageKey)));
+  while (productSelected.length < target && remainingDeclines.length) {
+    remainingDeclines.sort((left, right) => compareCoverage(left.job, right.job));
+    const { decision, job: source } = remainingDeclines.shift()!;
     const laneJobs = styledJobs.filter(
       (job) => job.asin === asin && job.styleSlug === source.styleSlug && Number(job.slot) === Number(source.slot)
     );
@@ -294,7 +471,7 @@ for (const product of eligibleProducts) {
       generationStrategy: "fresh_owner_feedback_replacement_candidate",
       replacementForCandidateId: source.id,
       replacementForCandidateSha256: source.candidateSha256,
-      replacementCause: "owner_feedback_wave_c",
+      replacementCause: "owner_feedback_wave_d",
       rootRevisionApplied: String(decision.reason),
       ownerDecisionAt: undefined,
       ownerDecisionReason: undefined,
@@ -326,21 +503,17 @@ for (const product of eligibleProducts) {
     const current = queuedByLane.get(key);
     if (!current || Number(job.candidateOrdinal) < Number(current.candidateOrdinal)) queuedByLane.set(key, job);
   }
-  const queued = [...queuedByLane.values()]
-    .filter((job) => !reservedKeys.has(String(job.ownerSelectedStorageKey)))
-    .sort(
-      (left, right) =>
-        Number(left.slot) - Number(right.slot) ||
-        styleOrder.indexOf(String(left.styleSlug)) - styleOrder.indexOf(String(right.styleSlug)) ||
-        Number(left.candidateOrdinal) - Number(right.candidateOrdinal)
-    );
-  for (const job of queued) {
-    if (productSelected.length >= target) break;
+  const queued = [...queuedByLane.values()].filter(
+    (job) => !reservedKeys.has(String(job.ownerSelectedStorageKey))
+  );
+  while (productSelected.length < target && queued.length) {
+    queued.sort(compareCoverage);
+    const job = queued.shift()!;
     const prompt = feedbackPrompt(String(job.prompt), String(job.sceneId), asin, reasons, approvals);
     job.promptVersion = PROMPT_VERSION;
     job.prompt = prompt;
     job.promptSha256 = sha256(prompt);
-    job.generationStrategy = "owner_feedback_wave_c_new_style_candidate";
+    job.generationStrategy = "owner_feedback_wave_d_coverage_gap_candidate";
     job.rootRevisionApplied = reasons.length
       ? [...new Set(reasons)].join(" | ")
       : "Preserve wave-A accepted identity and realism while expanding style coverage.";
@@ -358,12 +531,79 @@ if (
   new Set(selected.map((job) => job.sceneId)).size !== count ||
   new Set(selected.map((job) => job.ownerSelectedStorageKey)).size !== count
 ) {
-  throw new Error(`Wave B must contain ${count} unique scenes and owner-selected lanes.`);
+    throw new Error(`${WAVE_LABEL} must contain ${count} unique scenes and owner-selected lanes.`);
 }
 
 const occurredAt = new Date().toISOString();
 fs.mkdirSync(batchRoot, { recursive: true });
 const productByAsin = new Map(products.map((product) => [product.asin, product]));
+const usableApprovedJobs = styledJobs.filter(
+  (job) =>
+    job.status === "owner_accepted" &&
+    job.ownerSelectionUseStatus !== "quarantined_identity_mismatch_revalidation_required"
+);
+const allOwnerSelectedJobs = styledJobs.filter((job) => job.status === "owner_accepted");
+const denialCounts = denialTaxonomyCounts(receipt.decisions as JsonRecord[]);
+const coverageProducts = eligibleProducts.map((product) => {
+  const asin = String(product.asin);
+  const accepted = usableApprovedJobs.filter((job) => job.asin === asin);
+  const planned = selected.filter((job) => job.asin === asin);
+  const styles = Object.fromEntries(
+    styleOrder.map((styleSlug) => {
+      const approvedUsable = accepted.filter((job) => job.styleSlug === styleSlug).length;
+      const queuedInCurrentBatch = planned.filter((job) => job.styleSlug === styleSlug).length;
+      return [
+        styleSlug,
+        {
+          approvedUsable,
+          queuedInCurrentBatch,
+          stillNeededBeforeBatch: Math.max(0, FINAL_LIBRARY_TARGET_PER_PRODUCT_STYLE - approvedUsable),
+          projectedStillNeededIfAllApproved: Math.max(
+            0,
+            FINAL_LIBRARY_TARGET_PER_PRODUCT_STYLE - approvedUsable - queuedInCurrentBatch
+          ),
+          setForTarget: approvedUsable >= FINAL_LIBRARY_TARGET_PER_PRODUCT_STYLE
+        }
+      ];
+    })
+  );
+  const targetAcrossStyles = styleOrder.length * FINAL_LIBRARY_TARGET_PER_PRODUCT_STYLE;
+  return {
+    asin,
+    productName: product.productName,
+    approvedUsable: accepted.length,
+    queuedInCurrentBatch: planned.length,
+    targetAcrossStyles,
+    stillNeededBeforeBatch: Math.max(0, targetAcrossStyles - accepted.length),
+    projectedStillNeededIfAllApproved: Math.max(0, targetAcrossStyles - accepted.length - planned.length),
+    setAcrossAllStyles: Object.values(styles).every((style: any) => style.setForTarget),
+    styles
+  };
+});
+const coverageReport = {
+  schemaVersion: "affiliate-pilot-v4-owner-media-coverage-v1",
+  generatedAt: occurredAt,
+  sourceOwnerDecisionBatchId: sourceBatchId,
+  currentGenerationBatchId: batchId,
+  finalLibraryTargetPerProductStyle: FINAL_LIBRARY_TARGET_PER_PRODUCT_STYLE,
+  styleOrder,
+  totals: {
+    ownerSelectedPrivateCopiesAllProducts: allOwnerSelectedJobs.length,
+    usableApprovedEligibleProducts: usableApprovedJobs.filter((job) => !blockedAsins.has(String(job.asin))).length,
+    queuedInCurrentBatch: selected.length,
+    eligibleProducts: eligibleProducts.length,
+    excludedProducts: blockedAsins.size
+  },
+  excludedProducts: [
+    { asin: RETIRED_CART_ASIN, reason: cart.ownerDirective },
+    { asin: IDENTITY_REBUILD_ASIN, reason: soapDish.ownerDirective },
+    ...[...extraExcludedAsins].map((asin) => ({
+      asin,
+      reason: "Temporarily excluded from this batch by explicit preparation argument."
+    }))
+  ],
+  products: coverageProducts
+};
 const batch = {
   schemaVersion: "affiliate-pilot-v4-owner-review-batch-v2",
   batchId,
@@ -375,7 +615,7 @@ const batch = {
   status: "generation_queued",
   targetOwnerReviewCandidateCount: count,
   targetPerProduct: Object.fromEntries(targets),
-  finalLibraryTargetPerProductStyle: 10,
+  finalLibraryTargetPerProductStyle: FINAL_LIBRARY_TARGET_PER_PRODUCT_STYLE,
   promptVersion: PROMPT_VERSION,
   identityCallCountAtBatchFreeze: identityCalls.length,
   styledIdentityGenerationAllowed: false,
@@ -388,23 +628,27 @@ const batch = {
     }))
   ],
   selectionPolicy:
-    "Eight generation-ready products; owner-declined lanes receive fresh replacements first, then unique lanes are chosen in slot-first style rotation. Lowest accepted products receive remainder jobs.",
+    "Eight generation-ready products; lowest-coverage products receive remainder jobs. Within each product, owner-declined lanes receive materially new replacements first and every choice is ranked by the lowest current usable product-style count, then deterministic style, slot, and candidate order. Accepted and avoided owner lanes remain reserved.",
   decisionSemantics:
     "Assistant screening is provisional. Only explicit owner_accepted or owner_declined decisions are final. This batch is private and not publishable.",
   ownerFeedbackSummary: Object.fromEntries(feedbackByAsin),
   ownerApprovalEvidenceSummary: Object.fromEntries(approvalFeedbackByAsin),
+  ownerDenialTaxonomyCounts: denialCounts,
+  coverageBeforeGeneration: coverageProducts,
   replacementCount: replacements.length,
   jobs: selected.map((job, index) => {
     const product = productByAsin.get(job.asin)!;
-    const referencePath =
-      job.asin === "B0DC7VG6Z9"
-        ? "output/affiliate-pilot/v4/private-evidence/product-sources/B0DC7VG6Z9/bambusi-manufacturer-04.jpg"
-        : job.asin === "B0D2KK6MNS"
-          ? "output/affiliate-pilot/v4/private-evidence/product-sources/B0D2KK6MNS/amazon-exact-asin-02.jpg"
-          : `output/${job.atlasStorageKey}`;
-    const absoluteReferencePath = path.join(repositoryRoot, referencePath);
-    if (!fs.existsSync(absoluteReferencePath)) {
-      throw new Error(`Missing generation reference for ${job.sceneId}: ${referencePath}`);
+    const referencePaths = VERIFIED_REFERENCE_PATHS[String(job.asin)] ?? [];
+    if (!referencePaths.length) throw new Error(`No verified references configured for ${job.sceneId}.`);
+    const referenceEvidence = referencePaths.map((referencePath) => {
+      const absoluteReferencePath = path.join(repositoryRoot, referencePath);
+      if (!fs.existsSync(absoluteReferencePath)) {
+        throw new Error(`Missing generation reference for ${job.sceneId}: ${referencePath}`);
+      }
+      return { path: referencePath, sha256: sha256File(absoluteReferencePath) };
+    });
+    if (referenceEvidence.some((reference) => reference.path.includes("/atlases/"))) {
+      throw new Error(`${job.sceneId} must not use a generated atlas as an identity reference.`);
     }
     return {
       reviewNumber: index + 1,
@@ -423,8 +667,9 @@ const batch = {
       exactPrompt: job.prompt,
       requestedModel: job.requestedModel,
       requestedQuality: job.requestedQuality,
-      atlasPath: referencePath,
-      atlasSha256: sha256File(absoluteReferencePath),
+      atlasPath: referenceEvidence[0].path,
+      atlasSha256: referenceEvidence[0].sha256,
+      generationReferences: referenceEvidence,
       candidatePath: `output/${job.storageKey}`,
       ownerSelectedStorageKey: job.ownerSelectedStorageKey,
       statusAtFreeze: job.status
@@ -433,7 +678,7 @@ const batch = {
 };
 
 manifest.promptVersion = PROMPT_VERSION;
-manifest.status = "owner_feedback_wave_c_generation_queued";
+manifest.status = "owner_feedback_wave_d_generation_queued";
 manifest.jobs = jobs;
 ledger.styledGeneration.replacementQueued =
   Number(ledger.styledGeneration.replacementQueued ?? 0) + replacements.length;
@@ -451,6 +696,7 @@ ledger.events.push({
 });
 
 writeJsonAtomic(batchPath, batch);
+writeJsonAtomic(path.join(v4Root, "private-evidence", "owner-media-coverage.json"), coverageReport);
 writeJsonAtomic(manifestPath, manifest);
 writeJsonAtomic(ledgerPath, ledger);
 process.stdout.write(
