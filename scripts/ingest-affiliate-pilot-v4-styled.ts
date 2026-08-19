@@ -155,19 +155,66 @@ function replacePromptLine(prompt: string, label: string, value: string): string
   return lines.join("\n");
 }
 
+function sanitizeNonHubbaReflectionConflict(asin: string, prompt: string): string {
+  if (asin === "B08TLP2D54") return prompt;
+  return prompt
+    .split("\n")
+    .filter((line) => !(/^\d+\)/.test(line) && /\bmirror(?:s|ed|ing)?\b/i.test(line)))
+    .map((line) => {
+      if (line.startsWith("Camera authenticity:") && /\bmirror/i.test(line)) {
+        return "Camera authenticity: off-axis view chosen to keep door, window, fixture, and room geometry physically coherent; ordinary mixed bathroom light with fine shadow noise and limited phone dynamic range. Reproduce a default iPhone HEIC/JPEG look with modest computational sharpening and local auto-HDR, slight edge distortion, imperfect leveling, fine luminance and chroma noise in shadows, mixed white balance when lights differ, and at least one partially clipped highlight or blocked shadow; no RAW processing, Lightroom grade, flash balancing, tripod precision, portrait-mode blur, or architectural correction.";
+      }
+      if (line.startsWith("Everyday evidence:") && /\bmirror/i.test(line)) {
+        return line.replace(/(?:one )?faint toothpaste spot low on the mirror/gi, "one faint toothpaste spot beside the faucet");
+      }
+      if (line.startsWith("Concrete scene direction:") && /\bmirror/i.test(line)) {
+        return line
+          .replace(/a mismatched vintage mirror/gi, "one plain painted wall surface")
+          .replace(/an aged nickel mirror/gi, "one plain painted wall surface");
+      }
+      if (line.startsWith("Material emphasis:") && /\bmirror/i.test(line)) {
+        return "Material emphasis: ceramic, wood, glass windows, and textiles with correct thickness, edges, occlusion, and nonrepeating wear.";
+      }
+      if (line.startsWith("Physical plausibility:")) {
+        return "Physical plausibility: use buildable household construction, functional wet-zone junctions, ordinary fixture clearances, complete recognizable fixtures, coherent door and window geometry, and fully supported objects. Do not place reflective wall glass or a reflective medicine-cabinet panel in the room.";
+      }
+      if (line.startsWith("Single-object gate:")) {
+        return "Single-object gate: render exactly one featured product. Do not clone, reflect-duplicate, merge, or mutate its parts. Do not add duplicate faucets, handles, spouts, outlets, switches, hooks, lights, dispensers, or accessory fragments.";
+      }
+      if (line.startsWith("Reflection gate:")) {
+        return "Reflective-wall gate: this featured product is not a wall reflector. Show no wall-mounted reflective glass, reflective medicine-cabinet panel, or vanity reflector anywhere in the room.";
+      }
+      return line
+        .replace(/mirror-polished/gi, "high-polished")
+        .replace(/mirror its handedness/gi, "reverse its handedness")
+        .replace(/omit mirrors/gi, "use no reflective wall glass")
+        .replace(/\bmirrors?\b/gi, "reflective wall glass");
+    })
+    .join("\n");
+}
+
 function refreshCurrentProductContract(prompt: string, asin: string): string {
   const selection = affiliatePilotV4Selections.find((candidate) => candidate.asin === asin);
   if (!selection) throw new Error(`Cannot refresh replacement product contract for ${asin}.`);
   const lines = prompt.split("\n");
-  const productContractIndex = lines.findIndex((line) => line.startsWith("Product contract:"));
-  const countableAuditIndex = lines.findIndex((line) => line.startsWith("Countable-feature audit:"));
-  if (productContractIndex < 0 || countableAuditIndex < 0) {
-    throw new Error(`Cannot refresh replacement product contract lines for ${asin}.`);
-  }
-  lines[productContractIndex] = `Product contract: ${selection.identityPrompt}`;
-  lines[countableAuditIndex] = `Countable-feature audit: ${selection.countableFeatures
+  const productContractLine = `Product contract: ${selection.identityPrompt}`;
+  const countableAuditLine = `Countable-feature audit: ${selection.countableFeatures
     .map((feature, index) => `${index + 1}) ${feature}`)
     .join("; ")}.`;
+  let productContractIndex = lines.findIndex((line) => line.startsWith("Product contract:"));
+  if (productContractIndex < 0) {
+    const referenceIndex = lines.findIndex(
+      (line) => line.startsWith("Reference pack:") || line.startsWith("Corrective reference pack:")
+    );
+    if (referenceIndex < 0) throw new Error(`Cannot insert replacement product contract for ${asin}.`);
+    productContractIndex = referenceIndex + 1;
+    lines.splice(productContractIndex, 0, productContractLine);
+  } else {
+    lines[productContractIndex] = productContractLine;
+  }
+  const countableAuditIndex = lines.findIndex((line) => line.startsWith("Countable-feature audit:"));
+  if (countableAuditIndex < 0) lines.splice(productContractIndex + 1, 0, countableAuditLine);
+  else lines[countableAuditIndex] = countableAuditLine;
   if (asin === "B0DC7VG6Z9") {
     const referenceIndex = lines.findIndex(
       (line) => line.startsWith("Reference pack:") || line.startsWith("Corrective reference pack:")
@@ -287,6 +334,7 @@ function buildReplacementJob(sourceJob: JsonRecord): JsonRecord {
     "Decision semantics:",
     `${separation}${rootRevisionDirective ? `\n${rootRevisionDirective}` : ""}\nDecision semantics:`
   );
+  prompt = sanitizeNonHubbaReflectionConflict(String(sourceJob.asin), prompt);
   return {
     ...sourceJob,
     id: `${sourceJob.productId}:${sourceJob.styleSlug}:${sourceJob.slot}:candidate:${candidateOrdinal}`,

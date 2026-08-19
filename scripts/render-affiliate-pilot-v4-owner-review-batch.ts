@@ -68,6 +68,9 @@ const reviewJobs: JsonRecord[] = (batch.jobs as JsonRecord[]).map((frozen): Json
   if (!fs.existsSync(candidatePath)) throw new Error(`Missing candidate ${candidatePath}.`);
   return {
     ...frozen,
+    statusAtFreeze: current.status,
+    sourceOwnerReviewBatchId: frozen.sourceOwnerReviewBatchId ?? batchId,
+    sourceReviewNumber: frozen.sourceReviewNumber ?? frozen.reviewNumber,
     candidateSha256: current.candidateSha256,
     generationEvidencePath: current.generationEvidencePath,
     amazonListingUrl: amazonListingUrl(frozen.asin),

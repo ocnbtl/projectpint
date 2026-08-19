@@ -4,7 +4,7 @@ import path from "node:path";
 
 type JsonRecord = Record<string, any>;
 
-const PROMPT_VERSION = "affiliate-pilot-owner-feedback-v4.79-wave-d";
+const PROMPT_VERSION = "affiliate-pilot-owner-feedback-v4.79-wave-d-r3";
 const WAVE_LABEL = "wave D";
 const RETIRED_CART_ASIN = "B07PFYZ3DP";
 const IDENTITY_REBUILD_ASIN = "B000MS63E2";
@@ -150,6 +150,51 @@ function promptGuard(asin: string): string {
   return guards[asin] ?? "Preserve exact product identity and correct physical installation before considering style.";
 }
 
+function sanitizeNonHubbaReflectionConflict(asin: string, prompt: string): string {
+  if (asin === "B08TLP2D54") return prompt;
+  return prompt
+    .split("\n")
+    .filter(
+      (line) =>
+        !(/^\d+\)/.test(line) && /\bmirror(?:s|ed|ing)?\b/i.test(line)) &&
+        !(
+          asin === "B0DC7VG6Z9" &&
+          (line.startsWith("Product contract:") || line.startsWith("Countable-feature audit:"))
+        )
+    )
+    .map((line) => {
+      if (line.startsWith("Camera authenticity:") && /\bmirror/i.test(line)) {
+        return "Camera authenticity: off-axis view chosen to keep door, window, fixture, and room geometry physically coherent; ordinary mixed bathroom light with fine shadow noise and limited phone dynamic range. Reproduce a default iPhone HEIC/JPEG look with modest computational sharpening and local auto-HDR, slight edge distortion, imperfect leveling, fine luminance and chroma noise in shadows, mixed white balance when lights differ, and at least one partially clipped highlight or blocked shadow; no RAW processing, Lightroom grade, flash balancing, tripod precision, portrait-mode blur, or architectural correction.";
+      }
+      if (line.startsWith("Everyday evidence:") && /\bmirror/i.test(line)) {
+        return line.replace(/(?:one )?faint toothpaste spot low on the mirror/gi, "one faint toothpaste spot beside the faucet");
+      }
+      if (line.startsWith("Concrete scene direction:") && /\bmirror/i.test(line)) {
+        return line
+          .replace(/a mismatched vintage mirror/gi, "one plain painted wall surface")
+          .replace(/an aged nickel mirror/gi, "one plain painted wall surface");
+      }
+      if (line.startsWith("Material emphasis:") && /\bmirror/i.test(line)) {
+        return "Material emphasis: ceramic, wood, glass windows, and textiles with correct thickness, edges, occlusion, and nonrepeating wear.";
+      }
+      if (line.startsWith("Physical plausibility:")) {
+        return "Physical plausibility: use buildable household construction, functional wet-zone junctions, ordinary fixture clearances, complete recognizable fixtures, coherent door and window geometry, and fully supported objects. Do not place reflective wall glass or a reflective medicine-cabinet panel in the room.";
+      }
+      if (line.startsWith("Single-object gate:")) {
+        return "Single-object gate: render exactly one featured product. Do not clone, reflect-duplicate, merge, or mutate its parts. Do not add duplicate faucets, handles, spouts, outlets, switches, hooks, lights, dispensers, or accessory fragments.";
+      }
+      if (line.startsWith("Reflection gate:")) {
+        return "Reflective-wall gate: this featured product is not a wall reflector. Show no wall-mounted reflective glass, reflective medicine-cabinet panel, or vanity reflector anywhere in the room.";
+      }
+      return line
+        .replace(/mirror-polished/gi, "high-polished")
+        .replace(/mirror its handedness/gi, "reverse its handedness")
+        .replace(/omit mirrors/gi, "use no reflective wall glass")
+        .replace(/\bmirrors?\b/gi, "reflective wall glass");
+    })
+    .join("\n");
+}
+
 function feedbackPrompt(
   prompt: string,
   sceneId: string,
@@ -190,8 +235,10 @@ function feedbackPrompt(
       ", "
     )}. Generated atlases and contextual advertisements are not identity references. Preserve the exact product but create a new room, composition, light, and camera position; do not copy a listing backdrop or pose.`
   );
-  return withVerifiedReference
-    .replace("Decision semantics:", `${correction}\nDecision semantics:`);
+  return sanitizeNonHubbaReflectionConflict(
+    asin,
+    withVerifiedReference.replace("Decision semantics:", `${correction}\nDecision semantics:`)
+  );
 }
 
 function nextCandidateStorageKey(source: JsonRecord, candidateOrdinal: number): string {
