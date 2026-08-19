@@ -61,12 +61,12 @@ function compactBambusiPrompt(prompt: string): string {
   return [
     "Use case: photorealistic-natural.",
     sceneIdentity,
-    "Create one genuinely new, raw homeowner iPhone photo of an ordinary maintained bathroom. The room must look buildable, used, and naturally imperfect, never like a render, catalog set, luxury showroom, or staged social post.",
-    "BINDING MANUFACTURER REFERENCE: copy the supplied Bambusi bench identity exactly. The reference is authoritative for silhouette, proportions, construction, bamboo color, and every countable part; it is not loose inspiration.",
-    "Corrective reference pack: use the supplied exact Bambusi manufacturer image and validated product dossier as the binding identity source; do not use a generated reference atlas.",
-    "HIGHEST-PRIORITY COUNT GATE: the top contains EXACTLY 8 separate narrow front-to-back bamboo slat boards with EXACTLY 7 open gaps. The lower shelf also contains EXACTLY 8 separate narrow front-to-back bamboo slat boards with EXACTLY 7 open gaps. The rounded perimeter rails are frames and are not slats. Silently count 1-2-3-4-5-6-7-8 on each surface before returning the image. If either surface is not exactly eight, discard and regenerate.",
+    "EDIT AND OUTPAINT TASK: preserve the supplied exact Bambusi manufacturer photograph as a locked product layer. Do not redraw, reconstruct, reinterpret, rotate, crop, rescale nonuniformly, or alter any pixel-level bench geometry. Replace only the original white background and white floor around the bench with a genuinely new ordinary maintained bathroom, then match believable contact shadows and room light without changing the bench itself.",
+    "BINDING MANUFACTURER REFERENCE: the supplied bench is authoritative for silhouette, proportions, construction, bamboo color, every countable part, and camera angle. Keep its complete perimeter and all four feet visible. It is not loose inspiration and must remain recognizably the same photographed object.",
+    "Corrective reference pack: use the exact manufacturer image at output/affiliate-pilot/v4/private-evidence/product-sources/B0DC7VG6Z9/bambusi-manufacturer-04.jpg and the validated dossier at output/affiliate-pilot/v4/private-evidence/product-dossiers/B0DC7VG6Z9/dossier.json for product identity. Do not use a generated reference atlas.",
+    "HIGHEST-PRIORITY COUNT GATE: the top contains EXACTLY 8 separate WIDE front-to-back bamboo slat boards and only 7 dark negative-space separator gaps. Organize them mentally as FOUR boards on the left plus FOUR boards on the right: 4 + 4 = 8, with three gaps inside each group and one central gap, 3 + 1 + 3 = 7. Repeat that same 4 + 4 board structure on the lower shelf. The rounded perimeter rails are frames and are not slats. Never continue the repeating pattern to a ninth board or eighth gap. If either surface is not exactly eight boards, discard and regenerate.",
     "Exact product geometry: one compact natural-bamboo Bambusi shower bench about 17 inches wide, 9 inches deep, and 17 inches high; rectangular eight-slat top; subtly bowed front apron; four separate straight slightly splayed legs; four small dark non-slip feet; open sides; one eight-slat lower shelf. No ninth slat, merged board, wide center slab, extra brace, curved leg, warped shelf, missing foot, duplicate bench, or logo-like mark.",
-    "Product visibility: use a close three-quarter view that leaves the entire top and entire lower shelf bare, unobstructed, and easy to count. Keep all four feet supported on one level bathroom floor with realistic clearance and contact shadows. Do not place any towel, bottle, garment, basket, or other object on either slatted surface.",
+    "Product visibility: retain the reference's close three-quarter product view and leave the entire top and lower shelf bare, unobstructed, and easy to count. Place all four feet on one level bathroom floor using only new contact shadows at the feet. Do not place any object in front of, behind, through, or on the bench.",
     style,
     sceneDirection,
     roomHistory,
@@ -75,6 +75,108 @@ function compactBambusiPrompt(prompt: string): string {
     material,
     "Bathroom realism: use one coherent perspective, complete ordinary fixtures, plausible wet-zone junctions, natural phone exposure, surface variation, and nonrepeating bamboo grain that follows each separate board. The exact bench should be useful and incidental rather than hero-lit.",
     "Scene limits: exactly one featured bench; no people or hands; no wall mirror or reflective medicine cabinet; no duplicated fixtures; no plants, wall art, shelf display, candles, baskets, packaging, labels, pseudo-text, overlay, watermark, or coordinated decor kit. Keep all permitted everyday traces away from the bench.",
+    "Owner-review semantics: assistant screening is provisional. The image is not owner-approved or publishable until the owner explicitly decides.",
+    "Output: one image exactly 1024x1536 pixels in a 2:3 portrait frame."
+  ].join("\n");
+}
+
+function compactKoufallPrompt(prompt: string): string {
+  const sceneIdentity = promptLine(prompt, "Scene identity:", "Scene identity: owner-feedback retry.");
+  const style = promptLine(prompt, "Style:", "Style: ordinary maintained residential bathroom.");
+  const sceneDirection = promptLine(
+    prompt,
+    "Concrete scene direction:",
+    "Concrete scene direction: a believable, modest residential bathroom with coherent fixtures and finishes."
+  );
+  const roomHistory = promptLine(
+    prompt,
+    "Room history and budget:",
+    "Room history and budget: an incrementally updated real home bathroom, used since installation and not reset for a photograph."
+  );
+  const camera = promptLine(
+    prompt,
+    "Camera authenticity:",
+    "Camera authenticity: an imperfect handheld phone snapshot with natural perspective, mixed bathroom light, fine shadow noise, and restrained dynamic range."
+  );
+  const everyday = promptLine(
+    prompt,
+    "Everyday evidence:",
+    "Everyday evidence: sparse functional traces of ordinary use, kept away from the curtain header."
+  );
+  const material = promptLine(
+    prompt,
+    "Material emphasis:",
+    "Material emphasis: ordinary ceramic, painted wood, tile, and textiles with nonrepeating wear."
+  );
+
+  return [
+    "Use case: photorealistic-natural.",
+    sceneIdentity,
+    "Create one genuinely new, raw homeowner iPhone photo of an ordinary maintained bathroom. The room must look buildable, used, and naturally imperfect, never like a render, catalog set, luxury showroom, or staged social post.",
+    "BINDING LISTING REFERENCES: copy the supplied KOUFALL curtain identity exactly. The full listing scene and grommet close-up are authoritative for color, weave, header construction, hooks, dimensions, and countable parts; they are not loose inspiration.",
+    "Corrective reference pack: use the exact Amazon listing scene and grommet close-up supplied for ASIN B0D2KK6MNS. Do not use any generated atlas or substitute curtain.",
+    "HIGHEST-PRIORITY IDENTITY GATE: the installed curtain is the exact 72-by-72-inch KOUFALL product with twelve grommets and twelve silver ball-bead hooks, but this retry must keep the entire rod, header, every grommet, and every hook completely above the image frame. Do not render partial, cropped, silhouetted, or reflected header hardware anywhere in the image.",
+    "Exact product geometry: one 72-by-72-inch full-length rectangular KOUFALL shower curtain in solid muted terracotta-rust, made from a 20% flax-linen and 80% polyester blend with a subtle irregular woven texture, plain side seams, no separate top band, and one plain weighted bottom hem. No print, stripe, border, ruffle, tassel, fringe, tieback, embroidery, ombre, valance, second panel, or alternate color.",
+    "Composition: use a deliberate lower three-quarter phone view of the installed curtain. Fill much of the frame with its irregular woven terracotta-rust fabric, natural unequal folds, plain side seams, and complete weighted bottom hem. Begin the visible curtain well below its top band so no rod, opening, hook, ring, clip, or attachment point appears.",
+    "Fabric physics: use tiny natural sags between suspension points, unequal fold widths and depths, cross-grain wrinkles, and changing fold amplitude from header to hem. The fabric hangs under gravity and never becomes repeated tubes, corrugation, cloned folds, floating cloth, or a ruler-straight synthetic sheet.",
+    style,
+    sceneDirection,
+    roomHistory,
+    camera,
+    everyday,
+    material,
+    "Bathroom realism: use one coherent perspective, complete ordinary fixtures, plausible wet-zone junctions, natural phone exposure, small surface variation, and nonrepeating texture. Keep the curtain useful and installed rather than hero-lit.",
+    "Scene limits: exactly one featured curtain panel on one straight rod; no people or hands; no wall mirror or reflective medicine cabinet; no duplicate fixtures; no plants, wall art, packaging, labels, pseudo-text, overlay, watermark, or coordinated decor kit.",
+    "Owner-review semantics: assistant screening is provisional. The image is not owner-approved or publishable until the owner explicitly decides.",
+    "Output: one image exactly 1024x1536 pixels in a 2:3 portrait frame."
+  ].join("\n");
+}
+
+function compactLushPrompt(prompt: string): string {
+  const sceneIdentity = promptLine(prompt, "Scene identity:", "Scene identity: owner-feedback retry.");
+  const style = promptLine(prompt, "Style:", "Style: ordinary maintained residential bathroom.");
+  const sceneDirection = promptLine(
+    prompt,
+    "Concrete scene direction:",
+    "Concrete scene direction: a believable, modest residential bathroom with coherent fixtures and finishes."
+  );
+  const roomHistory = promptLine(
+    prompt,
+    "Room history and budget:",
+    "Room history and budget: an incrementally updated real home bathroom, used since installation and not reset for a photograph."
+  );
+  const camera = promptLine(
+    prompt,
+    "Camera authenticity:",
+    "Camera authenticity: an imperfect handheld phone snapshot with natural perspective, mixed bathroom light, fine shadow noise, and restrained dynamic range."
+  );
+  const everyday = promptLine(
+    prompt,
+    "Everyday evidence:",
+    "Everyday evidence: sparse functional traces of ordinary use, kept away from the featured curtain."
+  );
+  const material = promptLine(
+    prompt,
+    "Material emphasis:",
+    "Material emphasis: ordinary ceramic, painted wood, tile, and textiles with nonrepeating wear."
+  );
+
+  return [
+    "Use case: photorealistic-natural.",
+    sceneIdentity,
+    "Create one genuinely new, raw homeowner iPhone photo of an ordinary maintained bathroom. The room must look buildable, used, and naturally imperfect, never like a render, catalog set, luxury showroom, or staged social post.",
+    "BINDING MANUFACTURER REFERENCE: copy the supplied Lush Decor Leah blue shower-curtain identity exactly. The reference is authoritative for the white ground, large loose watercolor floral hierarchy, colors, polyester fabric, and hem; it is not loose inspiration.",
+    "HIGHEST-PRIORITY IDENTITY GATE: the installed curtain is the exact 72-by-72-inch Leah product with twelve openings and twelve ordinary hooks, but this retry must keep the entire rod, header, every opening, and every hook completely above the image frame. Do not render partial, cropped, silhouetted, or reflected header hardware anywhere in the image.",
+    "Exact product: one white polyester curtain panel with the listing-accurate large loose watercolor flowers and leaves in deep teal, aqua blue, smoky gray, muted taupe, and soft charcoal. Preserve the major motif scale and placement hierarchy through natural folds. No small tiled repeat, redesigned blossoms, repeated seam, orange colorway, stripe, border, ruffle, tassel, fringe, tieback, valance, second panel, or glowing fabric.",
+    "Composition: use a deliberate lower three-quarter phone view of the installed curtain. Fill much of the frame with the stable large-scale Leah print, natural nonrepeating folds, plain side seams, and complete plain bottom hem. Begin the visible curtain well below its top band so no rod, opening, hook, ring, clip, or attachment point appears.",
+    style,
+    sceneDirection,
+    roomHistory,
+    camera,
+    everyday,
+    material,
+    "Bathroom realism: use one coherent perspective, a complete functional tub or shower, plausible wet-zone junctions, natural phone exposure, surface variation, and nonrepeating material texture. Keep the exact curtain useful and incidental rather than hero-lit.",
+    "Scene limits: exactly one featured curtain panel; no people or hands; no wall mirror or reflective medicine cabinet; no duplicate fixtures; no plants, wall art, packaging, labels, pseudo-text, overlay, watermark, or coordinated decor kit.",
     "Owner-review semantics: assistant screening is provisional. The image is not owner-approved or publishable until the owner explicitly decides.",
     "Output: one image exactly 1024x1536 pixels in a 2:3 portrait frame."
   ].join("\n");
@@ -136,6 +238,8 @@ function compactHubbaPrompt(prompt: string): string {
 function sanitize(asin: string, prompt: string): string {
   if (asin === "B08TLP2D54") return compactHubbaPrompt(prompt);
   if (asin === "B0DC7VG6Z9") return compactBambusiPrompt(prompt);
+  if (asin === "B0D2KK6MNS") return compactKoufallPrompt(prompt);
+  if (asin === "B07SG7BV11") return compactLushPrompt(prompt);
   return prompt
     .split("\n")
     .filter(
@@ -209,7 +313,7 @@ for (const frozen of batch.jobs as JsonRecord[]) {
   Object.assign(job, { prompt: nextPrompt, promptSha256: nextHash, promptVersion: version });
   Object.assign(frozen, { exactPrompt: nextPrompt, promptSha256: nextHash, promptVersion: version });
   if (job.asin === "B08TLP2D54") {
-    const generationReferences = ((job.generationReferences ?? []) as JsonRecord[]).filter((reference) =>
+    const generationReferences = ((job.generationReferences ?? frozen.generationReferences ?? []) as JsonRecord[]).filter((reference) =>
       String(reference.path).endsWith("/umbra-manufacturer-02.jpg")
     );
     if (generationReferences.length !== 1) {
@@ -238,7 +342,7 @@ batch.amendments = [
     hubbaJobCountCompacted: hubbaCompacted,
     alreadySanitizedJobCount: alreadySanitized,
     decidedJobCountPreserved: decidedPreserved,
-    reason: "Collapse accumulated retry history and preserve focused owner-confirmed Bambusi count and Hubba reflection identity gates."
+    reason: "Collapse accumulated retry history and preserve focused KOUFALL and Bambusi count gates plus the Hubba reflection identity gate."
   }
 ];
 manifest.status = "owner_feedback_wave_d_generation_queued_prompt_conflict_sanitized";

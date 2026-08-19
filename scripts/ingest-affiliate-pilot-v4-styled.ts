@@ -278,7 +278,7 @@ function buildReplacementJob(sourceJob: JsonRecord): JsonRecord {
     );
   if (
     String(sourceJob.promptVersion).startsWith("affiliate-pilot-lived-in-iphone-realism-v4.71") ||
-    String(sourceJob.promptVersion).startsWith("affiliate-pilot-owner-feedback-v4.7")
+    String(sourceJob.promptVersion).startsWith("affiliate-pilot-owner-feedback-v4.")
   ) {
     prompt = replacePromptLine(
       prompt,
