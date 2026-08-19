@@ -3942,7 +3942,7 @@ a.dd-feature-card:hover {
   display: grid;
   grid-template-columns: minmax(240px, 1.5fr) repeat(6, minmax(135px, 0.8fr));
   gap: 0.7rem;
-  align-items: end;
+  align-items: flex-end;
 }
 
 .affiliate-catalog-toolbar label,
@@ -4559,7 +4559,7 @@ a.dd-feature-card:hover {
 }
 
 .affiliate-catalog-primary-toolbar {
-  align-items: end;
+  align-items: flex-end;
   display: grid;
   gap: 0.65rem;
   grid-template-columns: minmax(280px, 1fr) minmax(130px, 170px) minmax(140px, 190px);
